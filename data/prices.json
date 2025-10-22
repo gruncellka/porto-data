@@ -108,37 +108,37 @@
         ],
         "service_prices": [
             {
-                "service_id": "einschreiben",
+                "service_id": "registered_mail",
                 "price": 250,
                 "effective_from": null,
                 "effective_to": null
             },
             {
-                "service_id": "einschreiben_einwurf",
+                "service_id": "registered_mail_mailbox",
                 "price": 250,
                 "effective_from": null,
                 "effective_to": null
             },
             {
-                "service_id": "einschreiben_rueckschein",
+                "service_id": "registered_mail_return_receipt",
                 "price": 470,
                 "effective_from": null,
                 "effective_to": null
             },
             {
-                "service_id": "einschreiben_eigenhaendig",
+                "service_id": "registered_mail_personal",
                 "price": 470,
                 "effective_from": null,
                 "effective_to": null
             },
             {
-                "service_id": "einschreiben_eigenhaendig_rueckschein",
+                "service_id": "registered_mail_personal_return_receipt",
                 "price": 690,
                 "effective_from": null,
                 "effective_to": null
             },
             {
-                "service_id": "zusatzversicherung_500",
+                "service_id": "additional_insurance_500",
                 "price": 250,
                 "effective_from": null,
                 "effective_to": null

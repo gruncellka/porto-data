@@ -137,11 +137,11 @@
             "description": "Find prices by matching product_id, zone, and weight_tier"
         },
         "available_services": [
-            "einschreiben",
-            "einschreiben_einwurf",
-            "einschreiben_rueckschein",
-            "einschreiben_eigenhaendig",
-            "einschreiben_eigenhaendig_rueckschein"
+            "registered_mail",
+            "registered_mail_mailbox",
+            "registered_mail_return_receipt",
+            "registered_mail_personal",
+            "registered_mail_personal_return_receipt"
         ]
     }
 }

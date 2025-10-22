@@ -4,7 +4,7 @@
         "version": "0.0.1",
         "description": "Deutsche Post / DHL pricing and rules data with schema validation"
     },
-    "generated_at": "2025-10-22T20:42:37.575804Z",
+    "generated_at": "2025-10-22T22:42:21.518976Z",
     "schemas": {
         "count": 9,
         "files": [
@@ -60,8 +60,8 @@
         "files": [
             {
                 "path": "data/data_links.json",
-                "checksum": "bd4c16e49ac1b20ce7ba8e2c351cde7470648b4689bfd4843804ae3ab021899e",
-                "size": 4365
+                "checksum": "5a8328ce84f5ba33d96865e6555be5231b132b48695276bdae2b58f7e22b1c3e",
+                "size": 4378
             },
             {
                 "path": "data/dimensions.json",
@@ -75,8 +75,8 @@
             },
             {
                 "path": "data/prices.json",
-                "checksum": "964be2c0c5f886331f47ef072f6da35c8f7f5ca1492eb6dbe11dd49cf9beeb19",
-                "size": 4480
+                "checksum": "9ae954ffc889f1407a0785656d1837a9dbb5f419ca32d66e231a5f60f1e6fc2e",
+                "size": 4495
             },
             {
                 "path": "data/products.json",
@@ -90,8 +90,8 @@
             },
             {
                 "path": "data/services.json",
-                "checksum": "349309347b8c30a43d6aaf9552a9b004434d3cdb91b7dd256c0a2f2a6e8d8d51",
-                "size": 1959
+                "checksum": "a0dc3c0809bd4bbd8d6f58ad92fa5f2911675b2efebda44572548140c3cea316",
+                "size": 1972
             },
             {
                 "path": "data/weight_tiers.json",
