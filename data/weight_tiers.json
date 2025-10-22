@@ -1,0 +1,53 @@
+{
+    "file_type": "weight_tiers",
+    "unit": {
+        "weight": "g"
+    },
+    "weight_tiers": {
+        "W0020": {
+            "min": 0,
+            "max": 20,
+            "label": "Up to 20g"
+        },
+        "W0050": {
+            "min": 21,
+            "max": 50,
+            "label": "Up to 50g"
+        },
+        "W0500": {
+            "min": 51,
+            "max": 500,
+            "label": "Up to 500g"
+        },
+        "W1000": {
+            "min": 501,
+            "max": 1000,
+            "label": "Up to 1000g"
+        },
+        "W2000": {
+            "min": 1001,
+            "max": 2000,
+            "label": "Up to 2000g"
+        },
+        "W5000": {
+            "min": 2001,
+            "max": 5000,
+            "label": "Up to 5000g"
+        },
+        "W10000": {
+            "min": 5001,
+            "max": 10000,
+            "label": "Up to 10000g"
+        },
+        "W20000": {
+            "min": 10001,
+            "max": 20000,
+            "label": "Up to 20000g"
+        },
+        "W31500": {
+            "min": 20001,
+            "max": 31500,
+            "label": "Up to 31500g"
+        }
+    }
+}

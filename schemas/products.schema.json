@@ -1,0 +1,117 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/schemas/products.schema.json",
+    "title": "Products Schema",
+    "description": "Schema for postal products definitions",
+    "type": "object",
+    "required": [
+        "file_type",
+        "unit",
+        "products"
+    ],
+    "properties": {
+        "file_type": {
+            "type": "string",
+            "const": "products",
+            "description": "File type identifier"
+        },
+        "unit": {
+            "type": "object",
+            "required": [
+                "dimension",
+                "weight"
+            ],
+            "properties": {
+                "dimension": {
+                    "type": "string",
+                    "const": "mm"
+                },
+                "weight": {
+                    "type": "string",
+                    "const": "g"
+                }
+            },
+            "additionalProperties": false
+        },
+        "products": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+                "type": "object",
+                "required": [
+                    "id",
+                    "name",
+                    "dimension_ids",
+                    "supported_zones",
+                    "weight_tier",
+                    "effective_from",
+                    "effective_to"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "pattern": "^[a-z_]+$",
+                        "description": "Semantic English product ID"
+                    },
+                    "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "description": "Official German product name"
+                    },
+                    "dimension_ids": {
+                        "type": "array",
+                        "minItems": 1,
+                        "items": {
+                            "type": "string",
+                            "enum": [
+                                "DL",
+                                "C6",
+                                "C5",
+                                "C4",
+                                "B4"
+                            ]
+                        },
+                        "description": "Supported dimension IDs"
+                    },
+                    "supported_zones": {
+                        "type": "array",
+                        "minItems": 1,
+                        "items": {
+                            "type": "string",
+                            "enum": [
+                                "domestic",
+                                "zone_1_eu",
+                                "zone_2_europe",
+                                "world"
+                            ]
+                        },
+                        "description": "Zones where this product is available"
+                    },
+                    "weight_tier": {
+                        "type": "string",
+                        "pattern": "^W[0-9]+$",
+                        "description": "Weight tier ID"
+                    },
+                    "effective_from": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date",
+                        "description": "Product effective start date"
+                    },
+                    "effective_to": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "format": "date",
+                        "description": "Product effective end date"
+                    }
+                },
+                "additionalProperties": false
+            }
+        }
+    },
+    "additionalProperties": false
+}

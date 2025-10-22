@@ -1,0 +1,218 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/schemas/data_links.schema.json",
+    "title": "Data Links Schema",
+    "description": "Schema for data file dependencies and relationships",
+    "type": "object",
+    "required": [
+        "file_type",
+        "schema_version",
+        "unit",
+        "dependencies",
+        "links",
+        "lookup_rules",
+        "global_settings"
+    ],
+    "properties": {
+        "file_type": {
+            "type": "string",
+            "const": "data_links",
+            "description": "File type identifier"
+        },
+        "schema_version": {
+            "type": "string",
+            "const": "1.0",
+            "description": "Schema version"
+        },
+        "unit": {
+            "type": "object",
+            "required": [
+                "weight",
+                "dimension",
+                "price",
+                "currency"
+            ],
+            "properties": {
+                "weight": {
+                    "type": "string",
+                    "const": "g"
+                },
+                "dimension": {
+                    "type": "string",
+                    "const": "mm"
+                },
+                "price": {
+                    "type": "string",
+                    "const": "cents"
+                },
+                "currency": {
+                    "type": "string",
+                    "const": "EUR"
+                }
+            },
+            "additionalProperties": false
+        },
+        "dependencies": {
+            "type": "object",
+            "patternProperties": {
+                "^[a-z_]+$": {
+                    "type": "object",
+                    "required": [
+                        "file",
+                        "depends_on",
+                        "description"
+                    ],
+                    "properties": {
+                        "file": {
+                            "type": "string",
+                            "pattern": "^[a-z_]+\\.json$",
+                            "description": "Data file name"
+                        },
+                        "depends_on": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "pattern": "^[a-z_]+\\.json$"
+                            },
+                            "description": "List of dependent files"
+                        },
+                        "description": {
+                            "type": "string",
+                            "minLength": 1,
+                            "description": "Dependency description"
+                        }
+                    },
+                    "additionalProperties": false
+                }
+            },
+            "additionalProperties": false
+        },
+        "links": {
+            "type": "object",
+            "patternProperties": {
+                "^[a-z_]+$": {
+                    "type": "object",
+                    "required": [
+                        "zones",
+                        "weight_tiers"
+                    ],
+                    "properties": {
+                        "zones": {
+                            "type": "array",
+                            "minItems": 1,
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "domestic",
+                                    "zone_1_eu",
+                                    "zone_2_europe",
+                                    "world"
+                                ]
+                            },
+                            "description": "Available zones for this product"
+                        },
+                        "weight_tiers": {
+                            "type": "array",
+                            "minItems": 1,
+                            "items": {
+                                "type": "string",
+                                "pattern": "^W[0-9]+$"
+                            },
+                            "description": "Available weight tiers for this product"
+                        }
+                    },
+                    "additionalProperties": false
+                }
+            },
+            "additionalProperties": false
+        },
+        "lookup_rules": {
+            "type": "object",
+            "required": [
+                "price_lookup",
+                "service_lookup",
+                "weight_resolution",
+                "zone_validation"
+            ],
+            "properties": {
+                "price_lookup": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Price lookup rule description"
+                },
+                "service_lookup": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Service lookup rule description"
+                },
+                "weight_resolution": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Weight resolution rule description"
+                },
+                "zone_validation": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Zone validation rule description"
+                }
+            },
+            "additionalProperties": false
+        },
+        "global_settings": {
+            "type": "object",
+            "required": [
+                "price_source",
+                "lookup_method",
+                "available_services"
+            ],
+            "properties": {
+                "price_source": {
+                    "type": "string",
+                    "pattern": "^[a-z_]+\\.json$",
+                    "description": "Source file for prices"
+                },
+                "lookup_method": {
+                    "type": "object",
+                    "required": [
+                        "file",
+                        "array",
+                        "match",
+                        "description"
+                    ],
+                    "properties": {
+                        "file": {
+                            "type": "string",
+                            "pattern": "^[a-z_]+\\.json$"
+                        },
+                        "array": {
+                            "type": "string",
+                            "minLength": 1
+                        },
+                        "match": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        },
+                        "description": {
+                            "type": "string",
+                            "minLength": 1
+                        }
+                    },
+                    "additionalProperties": false
+                },
+                "available_services": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "string",
+                        "pattern": "^[a-z_]+$"
+                    },
+                    "description": "List of available service IDs"
+                }
+            },
+            "additionalProperties": false
+        }
+    },
+    "additionalProperties": false
+}

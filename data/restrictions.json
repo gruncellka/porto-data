@@ -1,0 +1,794 @@
+{
+    "file_type": "restrictions",
+    "unit": {
+        "country_code": "ISO 3166-1 alpha-2",
+        "date": "ISO 8601"
+    },
+    "sanctions_information": {
+        "eu_sanctions": {
+            "description": "Germany/Deutsche Post complies with EU sanctions",
+            "primary_targets": [
+                "Russia (comprehensive sanctions)",
+                "Belarus (comprehensive sanctions)",
+                "Iran (nuclear-related sanctions)",
+                "North Korea (comprehensive sanctions)",
+                "Syria (comprehensive sanctions)"
+            ],
+            "source": "EU Common Foreign and Security Policy",
+            "url": "https://www.sanctionsmap.eu/"
+        },
+        "un_sanctions": {
+            "description": "Deutsche Post complies with UN Security Council sanctions",
+            "targets": [
+                "North Korea",
+                "Iran",
+                "Taliban (Afghanistan)",
+                "Various terrorist organizations"
+            ]
+        },
+        "german_national": {
+            "description": "Germany may have additional national restrictions",
+            "notes": "May be stricter than EU requirements in some cases"
+        }
+    },
+    "denied_party_screening": {
+        "description": "Deutsche Post conducts Denied Party Screening",
+        "details": "Shipments are screened against international sanctions lists to prevent transactions with prohibited individuals, entities, or destinations",
+        "compliance": [
+            "EU sanctions lists",
+            "UN sanctions lists",
+            "German national restrictions",
+            "OFAC (US sanctions - for DHL operations)",
+            "Other international embargo lists"
+        ]
+    },
+    "sources": [
+        "EU Sanctions Map",
+        "Deutsche Post Denied Party Screening policy",
+        "USPS International Mail Manual (reference)",
+        "Norway Posten country restrictions (reference)",
+        "Public information on international sanctions"
+    ],
+    "disclaimer": "This information is for reference only. Restrictions change frequently. Always verify current restrictions with Deutsche Post/DHL before shipping. | Volatility: This list can change rapidly due to political developments, conflicts, or natural disasters | Verification: Always verify current restrictions with Deutsche Post before sending | Customs: Even if postal service is available, customs duties and restrictions may apply | Payment: Payment services (Nachnahme, insurance) may not be available even if basic postal service exists | Recommendation: For business/important shipments, consult Deutsche Post customer service for current status",
+    "restrictions": [
+        {
+            "id": "CRIMEA_2014",
+            "country_code": "UA",
+            "region_code": "UA-43",
+            "claimed_by": "UA",
+            "occupied_by": "RU",
+            "status": "prohibited",
+            "reason": "Illegal annexation, EU sanctions",
+            "restrictions": "No postal services from EU/Germany",
+            "notes": "Annexed by Russia 2014, not recognized by international community",
+            "entity_type": "occupied_territory",
+            "framework_id": "EU_SANCTIONS_OCCUPIED_UA",
+            "effective_from": "2014-03-18",
+            "effective_to": null,
+            "effective_partial": false
+        },
+        {
+            "id": "DONETSK_2014",
+            "country_code": "UA",
+            "region_code": "UA-14",
+            "claimed_by": "UA",
+            "occupied_by": "RU",
+            "status": "prohibited",
+            "reason": "Occupation, EU sanctions",
+            "restrictions": "No postal services",
+            "notes": "Occupied territories in eastern Ukraine",
+            "entity_type": "occupied_territory",
+            "framework_id": "EU_SANCTIONS_OCCUPIED_UA",
+            "effective_from": "2014-04-07",
+            "effective_to": null,
+            "effective_partial": true
+        },
+        {
+            "id": "KHERSON_2022",
+            "country_code": "UA",
+            "region_code": "UA-65",
+            "claimed_by": "UA",
+            "occupied_by": "RU",
+            "status": "prohibited",
+            "reason": "Partial occupation, EU sanctions",
+            "restrictions": "No postal services to occupied areas",
+            "notes": "Southern Ukraine, partially occupied since 2022. City of Kherson liberated Nov 2022, but parts remain occupied",
+            "entity_type": "occupied_territory",
+            "framework_id": "EU_SANCTIONS_OCCUPIED_UA",
+            "effective_from": "2022-02-24",
+            "effective_to": null,
+            "effective_partial": true
+        },
+        {
+            "id": "KP_SANCTIONS",
+            "country_code": "KP",
+            "status": "prohibited",
+            "reason": "International sanctions, political situation",
+            "restrictions": "All merchandise prohibited. Only letters and postcards may be allowed with severe restrictions.",
+            "notes": "One of the most restricted destinations globally",
+            "entity_type": "country",
+            "framework_id": "UN_SC_RES_1718",
+            "zone_reference": null,
+            "effective_from": "2006-10-09",
+            "effective_to": null
+        },
+        {
+            "id": "LUHANSK_2014",
+            "country_code": "UA",
+            "region_code": "UA-09",
+            "claimed_by": "UA",
+            "occupied_by": "RU",
+            "status": "prohibited",
+            "reason": "Occupation, EU sanctions",
+            "restrictions": "No postal services",
+            "notes": "Occupied territories in eastern Ukraine",
+            "entity_type": "occupied_territory",
+            "framework_id": "EU_SANCTIONS_OCCUPIED_UA",
+            "effective_from": "2014-04-27",
+            "effective_to": null,
+            "effective_partial": true
+        },
+        {
+            "id": "SY_SANCTIONS",
+            "country_code": "SY",
+            "status": "prohibited",
+            "reason": "Ongoing conflict, EU sanctions",
+            "restrictions": "Most postal services suspended",
+            "notes": "Civil war and international sanctions",
+            "entity_type": "country",
+            "framework_id": "EU_36_2012",
+            "zone_reference": null,
+            "effective_from": "2011-05-09",
+            "effective_to": null
+        },
+        {
+            "id": "YE_CONFLICT",
+            "country_code": "YE",
+            "status": "prohibited",
+            "reason": "Ongoing conflict, operational challenges",
+            "restrictions": "Postal services severely limited or suspended",
+            "notes": "Humanitarian crisis and armed conflict",
+            "entity_type": "country",
+            "framework_id": "CONFLICT_YE",
+            "zone_reference": null,
+            "effective_from": "2015-03-26",
+            "effective_to": null
+        },
+        {
+            "id": "ZAPORIZHZHIA_2022",
+            "country_code": "UA",
+            "region_code": "UA-23",
+            "claimed_by": "UA",
+            "occupied_by": "RU",
+            "status": "prohibited",
+            "reason": "Partial occupation, EU sanctions",
+            "restrictions": "No postal services to occupied areas",
+            "notes": "Southern Ukraine, partially occupied since 2022",
+            "entity_type": "occupied_territory",
+            "framework_id": "EU_SANCTIONS_OCCUPIED_UA",
+            "effective_from": "2022-02-24",
+            "effective_to": null,
+            "effective_partial": true
+        },
+        {
+            "id": "AF_2021_TALIBAN",
+            "country_code": "AF",
+            "status": "severely_restricted",
+            "reason": "Political situation, operational challenges",
+            "restrictions": "Postal services severely limited or suspended",
+            "notes": "Service disruptions since Taliban takeover 2021",
+            "effective_from": "2021-08-15",
+            "effective_to": null,
+            "zone_reference": "zone_4_asia",
+            "entity_type": "country",
+            "framework_id": "CONFLICT_AF"
+        },
+        {
+            "id": "BY_2022_SANCTIONS",
+            "country_code": "BY",
+            "status": "severely_restricted",
+            "reason": "EU sanctions, support for Russian invasion",
+            "restrictions": "Parcel services suspended. Limited letter services.",
+            "notes": "Sanctions due to cooperation with Russia",
+            "effective_from": "2022-03-01",
+            "effective_to": null,
+            "zone_reference": "zone_2_europe",
+            "entity_type": "country",
+            "framework_id": "EU_833_2014"
+        },
+        {
+            "id": "IR_SANCTIONS",
+            "country_code": "IR",
+            "status": "severely_restricted",
+            "reason": "International sanctions, nuclear program",
+            "restrictions": "Severe limitations on all postal services. Payment restrictions.",
+            "notes": "Long-standing sanctions",
+            "effective_from": "2006-07-31",
+            "effective_to": null,
+            "zone_reference": null,
+            "entity_type": "country",
+            "framework_id": "UN_SC_RES_2231"
+        },
+        {
+            "id": "LY_CONFLICT",
+            "country_code": "LY",
+            "status": "severely_restricted",
+            "reason": "Civil conflict, instability",
+            "restrictions": "Parcel services suspended. Letter services limited.",
+            "notes": "Ongoing civil conflict",
+            "effective_from": "2011-02-17",
+            "effective_to": null,
+            "zone_reference": "zone_3_africa_middle_east",
+            "entity_type": "country",
+            "framework_id": "CONFLICT_LY"
+        },
+        {
+            "id": "RU_2022_SANCTIONS",
+            "country_code": "RU",
+            "status": "severely_restricted",
+            "reason": "EU sanctions following Ukraine invasion",
+            "restrictions": "Parcel services suspended. Letters may be restricted. Payment services blocked.",
+            "notes": "Restrictions imposed February 2022 onwards",
+            "effective_from": "2022-02-24",
+            "effective_to": null,
+            "zone_reference": "zone_2_europe",
+            "entity_type": "country",
+            "framework_id": "EU_833_2014"
+        },
+        {
+            "id": "SD_2023_CONFLICT",
+            "country_code": "SD",
+            "status": "severely_restricted",
+            "reason": "Political instability, conflict",
+            "restrictions": "Postal services severely disrupted",
+            "notes": "Ongoing conflict and humanitarian crisis",
+            "effective_from": "2023-04-15",
+            "effective_to": null,
+            "zone_reference": null,
+            "entity_type": "country",
+            "framework_id": "CONFLICT_SD"
+        },
+        {
+            "id": "SS_INFRASTRUCTURE",
+            "country_code": "SS",
+            "status": "severely_restricted",
+            "reason": "Civil conflict, infrastructure challenges",
+            "restrictions": "Postal services severely limited",
+            "notes": "Limited infrastructure",
+            "effective_from": "2013-12-15",
+            "effective_to": null,
+            "zone_reference": null,
+            "entity_type": "country",
+            "framework_id": "INFRASTRUCTURE_SS"
+        },
+        {
+            "id": "ABKHAZIA_1992",
+            "country_code": "GE",
+            "region_code": "GE-AB",
+            "claimed_by": "GE",
+            "occupied_by": "RU",
+            "status": "restricted",
+            "reason": "Disputed territory, limited recognition",
+            "restrictions": "Postal services via Georgia may be limited",
+            "notes": "De facto independent, Russian-backed. Affects Georgia partially.",
+            "entity_type": "occupied_territory",
+            "framework_id": "POLICY_RU_OCCUPIED",
+            "effective_from": "1992-09-01",
+            "effective_to": null,
+            "effective_partial": true
+        },
+        {
+            "id": "CF_CONFLICT",
+            "country_code": "CF",
+            "status": "restricted",
+            "reason": "Civil conflict, infrastructure",
+            "restrictions": "Postal services limited",
+            "notes": "Ongoing instability",
+            "effective_from": "2012-12-10",
+            "effective_to": null,
+            "zone_reference": null,
+            "entity_type": "country",
+            "framework_id": "INFRASTRUCTURE_CF"
+        },
+        {
+            "id": "HT_INSTABILITY",
+            "country_code": "HT",
+            "status": "restricted",
+            "reason": "Political instability, gang violence, infrastructure collapse",
+            "restrictions": "Postal services severely disrupted",
+            "notes": "Ongoing security crisis",
+            "effective_from": "2024-03-01",
+            "effective_to": null,
+            "zone_reference": null,
+            "entity_type": "country",
+            "framework_id": "INFRASTRUCTURE_HT"
+        },
+        {
+            "id": "NORTH_CYPRUS_1974",
+            "country_code": "CY",
+            "claimed_by": "CY",
+            "occupied_by": "TR",
+            "status": "restricted",
+            "reason": "Disputed territory, recognized only by Turkey",
+            "restrictions": "Postal services via Turkey (separate postal code system)",
+            "notes": "Divided since 1974, only Turkey recognizes TRNC. Affects Cyprus partially.",
+            "entity_type": "disputed_territory",
+            "framework_id": "POLICY_DISPUTED_TERRITORIES",
+            "effective_from": "1974-07-20",
+            "effective_to": null,
+            "effective_partial": true
+        },
+        {
+            "id": "SOUTH_OSSETIA_1991",
+            "country_code": "GE",
+            "region_code": "GE-SZ",
+            "claimed_by": "GE",
+            "occupied_by": "RU",
+            "status": "restricted",
+            "reason": "Disputed territory, limited recognition",
+            "restrictions": "Postal services via Georgia may be limited",
+            "notes": "De facto independent, Russian-backed. Affects Georgia partially.",
+            "entity_type": "occupied_territory",
+            "framework_id": "POLICY_RU_OCCUPIED",
+            "effective_from": "1991-11-28",
+            "effective_to": null,
+            "effective_partial": true
+        },
+        {
+            "id": "SO_CONFLICT",
+            "country_code": "SO",
+            "status": "restricted",
+            "reason": "Civil conflict, infrastructure challenges",
+            "restrictions": "Limited postal services",
+            "notes": "Some areas more accessible than others",
+            "effective_from": "1991-01-26",
+            "effective_to": null,
+            "zone_reference": null,
+            "entity_type": "country",
+            "framework_id": "INFRASTRUCTURE_SO"
+        },
+        {
+            "id": "TRANSNISTRIA_1992",
+            "country_code": "MD",
+            "region_code": "MD-SN",
+            "claimed_by": "MD",
+            "occupied_by": "RU",
+            "status": "restricted",
+            "reason": "Unrecognized breakaway state",
+            "restrictions": "Limited postal services via Moldova",
+            "notes": "De facto independent since 1992. Affects Moldova partially.",
+            "entity_type": "occupied_territory",
+            "framework_id": "POLICY_RU_OCCUPIED",
+            "effective_from": "1992-03-02",
+            "effective_to": null,
+            "effective_partial": true
+        },
+        {
+            "id": "VE_CRISIS",
+            "country_code": "VE",
+            "status": "restricted",
+            "reason": "Economic crisis, sanctions",
+            "restrictions": "Postal services disrupted, payment issues",
+            "notes": "US and EU sanctions affect services",
+            "effective_from": "2019-01-23",
+            "effective_to": null,
+            "zone_reference": "zone_5_americas",
+            "entity_type": "country",
+            "framework_id": "SANCTIONS_VE"
+        },
+        {
+            "id": "EH_TERRITORY",
+            "country_code": "EH",
+            "claimed_by": "MA",
+            "disputed_by": "Sahrawi_AR",
+            "status": "limited",
+            "reason": "Disputed territory",
+            "restrictions": "Services via Morocco",
+            "notes": "Postal services through Moroccan system. Territory controlled by Morocco.",
+            "zone_reference": null,
+            "entity_type": "disputed_territory",
+            "framework_id": "POLICY_DISPUTED_TERRITORIES",
+            "effective_from": "1975-11-14",
+            "effective_to": null,
+            "effective_partial": false
+        },
+        {
+            "id": "KM_LIMITED",
+            "country_code": "KM",
+            "status": "limited",
+            "reason": "Limited postal infrastructure",
+            "notes": "Small island nation with limited postal services",
+            "effective_from": null,
+            "effective_to": null,
+            "zone_reference": null,
+            "entity_type": "territory",
+            "framework_id": "INFRASTRUCTURE_LIMITED"
+        },
+        {
+            "id": "MS_LIMITED",
+            "country_code": "MS",
+            "status": "limited",
+            "reason": "Small Caribbean island, limited infrastructure",
+            "notes": "British overseas territory",
+            "effective_from": null,
+            "effective_to": null,
+            "zone_reference": null,
+            "entity_type": "territory",
+            "framework_id": "INFRASTRUCTURE_LIMITED"
+        },
+        {
+            "id": "PS_TERRITORY",
+            "country_code": "PS",
+            "status": "limited",
+            "reason": "Political situation, occupation",
+            "restrictions": "Services via Israel, limited access to some areas",
+            "notes": "West Bank and Gaza Strip. Service availability varies by area.",
+            "areas": {
+                "west_bank": "Limited service via Israeli postal system",
+                "gaza": "Severely restricted or unavailable"
+            },
+            "zone_reference": null,
+            "entity_type": "disputed_territory",
+            "framework_id": "POLICY_DISPUTED_TERRITORIES",
+            "effective_from": null,
+            "effective_to": null,
+            "effective_partial": true
+        },
+        {
+            "id": "TC_LIMITED",
+            "country_code": "TC",
+            "status": "limited",
+            "reason": "Small Caribbean islands",
+            "notes": "British overseas territory",
+            "effective_from": null,
+            "effective_to": null,
+            "zone_reference": null,
+            "entity_type": "territory",
+            "framework_id": "INFRASTRUCTURE_LIMITED"
+        },
+        {
+            "id": "TL_LIMITED",
+            "country_code": "TL",
+            "status": "limited",
+            "reason": "Limited postal infrastructure",
+            "notes": "Young nation with developing postal system",
+            "effective_from": null,
+            "effective_to": null,
+            "zone_reference": null,
+            "entity_type": "territory",
+            "framework_id": "INFRASTRUCTURE_LIMITED"
+        },
+        {
+            "id": "YT_LIMITED",
+            "country_code": "YT",
+            "status": "limited",
+            "reason": "French territory with limited direct services",
+            "notes": "Services via France",
+            "effective_from": null,
+            "effective_to": null,
+            "zone_reference": null,
+            "entity_type": "territory",
+            "framework_id": "INFRASTRUCTURE_LIMITED"
+        },
+        {
+            "id": "TW_TERRITORY",
+            "country_code": "TW",
+            "status": "operational",
+            "reason": "Political sensitivity (China claims sovereignty)",
+            "restrictions": "Normal service, but political considerations",
+            "notes": "De facto independent, full postal services available despite PRC claims",
+            "effective_from": null,
+            "effective_to": null,
+            "zone_reference": "zone_4_asia",
+            "entity_type": "disputed_territory",
+            "framework_id": "POLICY_TW"
+        }
+    ],
+    "compliance_frameworks": {
+        "EU_833_2014": {
+            "id": "EU_833_2014",
+            "label": "Council Regulation (EU) No 833/2014",
+            "description": "Comprehensive sanctions restricting trade and postal services with Russia and Belarus",
+            "type": "eu_sanctions",
+            "applies_to": [
+                "RU",
+                "BY"
+            ],
+            "effective_from": "2022-02-24",
+            "effective_to": null,
+            "legal_reference": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32014R0833",
+            "jurisdiction": [
+                "EU"
+            ]
+        },
+        "UN_SC_RES_1718": {
+            "id": "UN_SC_RES_1718",
+            "label": "UN Security Council Resolution 1718 (2006)",
+            "description": "Comprehensive sanctions on Democratic People's Republic of Korea",
+            "type": "un_sanctions",
+            "applies_to": [
+                "KP"
+            ],
+            "effective_from": "2006-10-14",
+            "effective_to": null,
+            "legal_reference": "https://www.un.org/securitycouncil/sanctions/1718",
+            "jurisdiction": [
+                "UN"
+            ]
+        },
+        "UN_SC_RES_2231": {
+            "id": "UN_SC_RES_2231",
+            "label": "UN Security Council Resolution 2231 (2015)",
+            "description": "Restrictions related to Iran nuclear program",
+            "type": "un_sanctions",
+            "applies_to": [
+                "IR"
+            ],
+            "effective_from": "2006-07-31",
+            "effective_to": null,
+            "legal_reference": "https://www.un.org/securitycouncil/content/2231",
+            "jurisdiction": [
+                "UN"
+            ]
+        },
+        "EU_36_2012": {
+            "id": "EU_36_2012",
+            "label": "Council Regulation (EU) No 36/2012",
+            "description": "Restrictive measures against Syria",
+            "type": "eu_sanctions",
+            "applies_to": [
+                "SY"
+            ],
+            "effective_from": "2011-05-09",
+            "effective_to": null,
+            "legal_reference": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32012R0036",
+            "jurisdiction": [
+                "EU"
+            ]
+        },
+        "CONFLICT_YE": {
+            "id": "CONFLICT_YE",
+            "label": "Yemen Humanitarian Crisis",
+            "description": "Postal services suspended due to ongoing conflict and humanitarian crisis",
+            "type": "operational_conflict",
+            "applies_to": [
+                "YE"
+            ],
+            "effective_from": "2015-03-26",
+            "effective_to": null,
+            "jurisdiction": [
+                "DP"
+            ]
+        },
+        "CONFLICT_AF": {
+            "id": "CONFLICT_AF",
+            "label": "Afghanistan Operational Restrictions",
+            "description": "Service disruptions following Taliban takeover and security situation",
+            "type": "operational_conflict",
+            "applies_to": [
+                "AF"
+            ],
+            "effective_from": "2021-08-15",
+            "effective_to": null,
+            "jurisdiction": [
+                "DP"
+            ]
+        },
+        "CONFLICT_LY": {
+            "id": "CONFLICT_LY",
+            "label": "Libya Civil Conflict",
+            "description": "Postal services restricted due to ongoing civil conflict and instability",
+            "type": "operational_conflict",
+            "applies_to": [
+                "LY"
+            ],
+            "effective_from": "2011-02-17",
+            "effective_to": null,
+            "jurisdiction": [
+                "DP"
+            ]
+        },
+        "CONFLICT_SD": {
+            "id": "CONFLICT_SD",
+            "label": "Sudan Conflict",
+            "description": "Postal services severely disrupted due to ongoing conflict",
+            "type": "operational_conflict",
+            "applies_to": [
+                "SD"
+            ],
+            "effective_from": "2023-04-15",
+            "effective_to": null,
+            "jurisdiction": [
+                "DP"
+            ]
+        },
+        "INFRASTRUCTURE_SS": {
+            "id": "INFRASTRUCTURE_SS",
+            "label": "South Sudan Infrastructure Challenges",
+            "description": "Limited postal infrastructure and ongoing conflict",
+            "type": "operational_infrastructure",
+            "applies_to": [
+                "SS"
+            ],
+            "effective_from": "2013-12-15",
+            "effective_to": null,
+            "jurisdiction": [
+                "DP"
+            ]
+        },
+        "INFRASTRUCTURE_HT": {
+            "id": "INFRASTRUCTURE_HT",
+            "label": "Haiti Security Crisis",
+            "description": "Political instability, gang violence, and infrastructure collapse",
+            "type": "operational_infrastructure",
+            "applies_to": [
+                "HT"
+            ],
+            "effective_from": "2024-03-01",
+            "effective_to": null,
+            "jurisdiction": [
+                "DP"
+            ]
+        },
+        "INFRASTRUCTURE_SO": {
+            "id": "INFRASTRUCTURE_SO",
+            "label": "Somalia Infrastructure Challenges",
+            "description": "Civil conflict and limited postal infrastructure",
+            "type": "operational_infrastructure",
+            "applies_to": [
+                "SO"
+            ],
+            "effective_from": "1991-01-26",
+            "effective_to": null,
+            "jurisdiction": [
+                "DP"
+            ]
+        },
+        "INFRASTRUCTURE_CF": {
+            "id": "INFRASTRUCTURE_CF",
+            "label": "Central African Republic Instability",
+            "description": "Ongoing civil conflict and infrastructure limitations",
+            "type": "operational_infrastructure",
+            "applies_to": [
+                "CF"
+            ],
+            "effective_from": "2012-12-10",
+            "effective_to": null,
+            "jurisdiction": [
+                "DP"
+            ]
+        },
+        "SANCTIONS_VE": {
+            "id": "SANCTIONS_VE",
+            "label": "Venezuela Sanctions and Economic Crisis",
+            "description": "US and EU sanctions affecting postal services and payment systems",
+            "type": "mixed_sanctions",
+            "applies_to": [
+                "VE"
+            ],
+            "effective_from": "2019-01-23",
+            "effective_to": null,
+            "jurisdiction": [
+                "EU",
+                "US",
+                "DP"
+            ]
+        },
+        "EU_SANCTIONS_OCCUPIED_UA": {
+            "id": "EU_SANCTIONS_OCCUPIED_UA",
+            "label": "EU Sanctions on Occupied Ukrainian Territories",
+            "description": "EU restrictive measures prohibit postal and commercial services to Russian-occupied regions of Ukraine. Originally introduced in 2014 for Crimea and extended in 2022 to cover newly occupied areas.",
+            "type": "eu_sanctions",
+            "jurisdiction": [
+                "EU"
+            ],
+            "applies_to": [
+                "UA"
+            ],
+            "regions": [
+                {
+                    "code": "UA-43",
+                    "name": "Crimea and Sevastopol"
+                },
+                {
+                    "code": "UA-09",
+                    "name": "Luhansk Oblast"
+                },
+                {
+                    "code": "UA-14",
+                    "name": "Donetsk Oblast"
+                },
+                {
+                    "code": "UA-23",
+                    "name": "Zaporizhzhia Oblast (occupied parts)"
+                },
+                {
+                    "code": "UA-65",
+                    "name": "Kherson Oblast (occupied parts)"
+                }
+            ],
+            "effective_from": "2014-03-18",
+            "effective_to": null,
+            "legal_reference": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32014D0145"
+        },
+        "POLICY_RU_OCCUPIED": {
+            "id": "POLICY_RU_OCCUPIED",
+            "label": "Russian-Occupied Post-Soviet Territories",
+            "description": "Operational restrictions on postal services to Russian-occupied territories in former Soviet states",
+            "type": "operational_political",
+            "jurisdiction": [
+                "DP"
+            ],
+            "applies_to": [
+                "GE",
+                "MD"
+            ],
+            "effective_from": null,
+            "effective_to": null
+        },
+        "POLICY_DISPUTED_TERRITORIES": {
+            "id": "POLICY_DISPUTED_TERRITORIES",
+            "label": "Disputed Territory Postal Policies",
+            "description": "Operational policies for postal services to internationally disputed territories",
+            "type": "operational_political",
+            "jurisdiction": [
+                "DP"
+            ],
+            "applies_to": [
+                "CY",
+                "EH",
+                "PS"
+            ],
+            "effective_from": null,
+            "effective_to": null
+        },
+        "POLICY_TW": {
+            "id": "POLICY_TW",
+            "label": "Taiwan Political Sensitivity",
+            "description": "Normal postal service available despite political considerations",
+            "type": "operational_political",
+            "applies_to": [
+                "TW"
+            ],
+            "effective_from": null,
+            "effective_to": null,
+            "operational_note": "Full service available. China claims sovereignty but does not affect operations.",
+            "jurisdiction": [
+                "DP"
+            ]
+        },
+        "INFRASTRUCTURE_LIMITED": {
+            "id": "INFRASTRUCTURE_LIMITED",
+            "label": "Limited Postal Infrastructure",
+            "description": "Small territories with limited or developing postal systems",
+            "type": "operational_infrastructure",
+            "applies_to": [
+                "KM",
+                "MS",
+                "TL",
+                "TC",
+                "YT"
+            ],
+            "effective_from": null,
+            "effective_to": null,
+            "jurisdiction": [
+                "DP"
+            ]
+        },
+        "POSTG_8": {
+            "id": "POSTG_8",
+            "label": "Postgesetz \u00a78 - Prohibited Items",
+            "description": "German postal law prohibiting dangerous goods, weapons, and prohibited substances",
+            "type": "german_law",
+            "applies_to": [
+                "ALL"
+            ],
+            "effective_from": null,
+            "effective_to": null,
+            "legal_reference": "https://www.gesetze-im-internet.de/postg/__8.html",
+            "jurisdiction": [
+                "DE"
+            ]
+        }
+    }
+}

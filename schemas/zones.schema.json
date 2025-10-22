@@ -1,0 +1,74 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/schemas/zones.schema.json",
+    "title": "Zones Schema",
+    "description": "Schema for shipping zones definitions",
+    "type": "object",
+    "required": [
+        "file_type",
+        "unit",
+        "zones"
+    ],
+    "properties": {
+        "file_type": {
+            "type": "string",
+            "const": "zones",
+            "description": "File type identifier"
+        },
+        "unit": {
+            "type": "object",
+            "required": [
+                "country_code"
+            ],
+            "properties": {
+                "country_code": {
+                    "type": "string",
+                    "const": "ISO 3166-1 alpha-2"
+                }
+            },
+            "additionalProperties": false
+        },
+        "zones": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+                "type": "object",
+                "required": [
+                    "id",
+                    "name",
+                    "description",
+                    "country_codes"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "pattern": "^[a-z0-9_]+$",
+                        "description": "Zone ID"
+                    },
+                    "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "description": "Zone name"
+                    },
+                    "description": {
+                        "type": "string",
+                        "minLength": 1,
+                        "description": "Zone description"
+                    },
+                    "country_codes": {
+                        "type": "array",
+                        "minItems": 1,
+                        "items": {
+                            "type": "string",
+                            "pattern": "^[A-Z]{2}$",
+                            "description": "ISO 3166-1 alpha-2 country code"
+                        },
+                        "description": "List of country codes in this zone"
+                    }
+                },
+                "additionalProperties": false
+            }
+        }
+    },
+    "additionalProperties": false
+}

@@ -1,0 +1,83 @@
+{
+    "file_type": "products",
+    "unit": {
+        "dimension": "mm",
+        "weight": "g"
+    },
+    "products": [
+        {
+            "id": "letter_standard",
+            "name": "Standardbrief",
+            "dimension_ids": [
+                "DL",
+                "C6"
+            ],
+            "supported_zones": [
+                "domestic",
+                "zone_1_eu",
+                "world"
+            ],
+            "weight_tier": "W0020",
+            "effective_from": null,
+            "effective_to": null
+        },
+        {
+            "id": "letter_compact",
+            "name": "Kompaktbrief",
+            "dimension_ids": [
+                "C5"
+            ],
+            "supported_zones": [
+                "domestic",
+                "zone_1_eu",
+                "world"
+            ],
+            "weight_tier": "W0050",
+            "effective_from": null,
+            "effective_to": null
+        },
+        {
+            "id": "letter_large",
+            "name": "Gro\u00dfbrief",
+            "dimension_ids": [
+                "C4"
+            ],
+            "supported_zones": [
+                "domestic",
+                "zone_1_eu",
+                "world"
+            ],
+            "weight_tier": "W0500",
+            "effective_from": null,
+            "effective_to": null
+        },
+        {
+            "id": "letter_maxi",
+            "name": "Maxibrief",
+            "dimension_ids": [
+                "B4"
+            ],
+            "supported_zones": [
+                "domestic",
+                "zone_1_eu",
+                "world"
+            ],
+            "weight_tier": "W1000",
+            "effective_from": null,
+            "effective_to": null
+        },
+        {
+            "id": "merchandise",
+            "name": "Warensendung",
+            "dimension_ids": [
+                "B4"
+            ],
+            "supported_zones": [
+                "domestic"
+            ],
+            "weight_tier": "W2000",
+            "effective_from": null,
+            "effective_to": null
+        }
+    ]
+}

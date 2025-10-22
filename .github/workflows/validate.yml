@@ -1,0 +1,19 @@
+name: Porto Data Validation
+
+on: [push, pull_request]
+
+jobs:
+    validate:
+        runs-on: ubuntu-22.04
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-python@v5
+              with:
+                  python-version: '3.11'
+                  cache: 'pip'
+            - name: Install dependencies
+              run: make setup
+            - name: Run schema validation
+              run: make validate
+            - name: Run code and JSON quality checks
+              run: make quality

@@ -1,0 +1,112 @@
+{
+    "project": {
+        "name": "porto-data",
+        "version": "0.0.1",
+        "description": "Deutsche Post / DHL pricing and rules data with schema validation"
+    },
+    "generated_at": "2025-10-22T20:42:37.575804Z",
+    "schemas": {
+        "count": 9,
+        "files": [
+            {
+                "path": "schemas/data_links.schema.json",
+                "checksum": "e7716903e412efa7994f8543aa3c011de46d15fc49eadaa2c7781c3629911f73",
+                "size": 7529
+            },
+            {
+                "path": "schemas/dimensions.schema.json",
+                "checksum": "42c1b89451792892fac17f0844f5b72078dd144bda1b9c46771633bf89950760",
+                "size": 7963
+            },
+            {
+                "path": "schemas/features.schema.json",
+                "checksum": "ef19071aaa6e2f58839bd550a330db01e7e5043c9225328dbff74e5c4f093be2",
+                "size": 1778
+            },
+            {
+                "path": "schemas/prices.schema.json",
+                "checksum": "daed2f1b350ffd9429d21cb617aa15cb2c9ff452f86c4c5ea4c42faf80752ac2",
+                "size": 5593
+            },
+            {
+                "path": "schemas/products.schema.json",
+                "checksum": "7092e278521f5c1c441669c8357647715d51b22de3312045b3f7d25f297d19e5",
+                "size": 3985
+            },
+            {
+                "path": "schemas/restrictions.schema.json",
+                "checksum": "e6503754ce9cb6e095e41d17662c407b96e56f0dd1f67b1b1f64213c6126ed7e",
+                "size": 12514
+            },
+            {
+                "path": "schemas/services.schema.json",
+                "checksum": "77a007a085527a248c704ca368b47878bb8d3737e5aec184b74b96006e3aef53",
+                "size": 2245
+            },
+            {
+                "path": "schemas/weight_tiers.schema.json",
+                "checksum": "56ae0ab4efb6e04878d7f719b2d69da575faf04214bf69e594dea0aedcc1804a",
+                "size": 2090
+            },
+            {
+                "path": "schemas/zones.schema.json",
+                "checksum": "9e6c818c19cfba2a96e0b78603b4b3a6a987f5d0bd47e26a7e7f839899b6ca6e",
+                "size": 2385
+            }
+        ]
+    },
+    "data": {
+        "count": 9,
+        "files": [
+            {
+                "path": "data/data_links.json",
+                "checksum": "bd4c16e49ac1b20ce7ba8e2c351cde7470648b4689bfd4843804ae3ab021899e",
+                "size": 4365
+            },
+            {
+                "path": "data/dimensions.json",
+                "checksum": "8c2fa98485728b4fb505bd81ee23f38794dd1174013009e49258c3793cbb1a1f",
+                "size": 3864
+            },
+            {
+                "path": "data/features.json",
+                "checksum": "9daedbc0ac39e95e6789d562c401c3d2bef3e5476dc6a097ece3b7f70c6bc0b9",
+                "size": 2247
+            },
+            {
+                "path": "data/prices.json",
+                "checksum": "964be2c0c5f886331f47ef072f6da35c8f7f5ca1492eb6dbe11dd49cf9beeb19",
+                "size": 4480
+            },
+            {
+                "path": "data/products.json",
+                "checksum": "f59e83d71b896cda6b4c05c0d0ddeb7f7e2e55b8ac06f4b0e0c2914164f38120",
+                "size": 2057
+            },
+            {
+                "path": "data/restrictions.json",
+                "checksum": "78b8abaee56e52e3ec7b683bdf7a5a42ead6e0d8b58aff2c86d94221bdbd89c6",
+                "size": 31085
+            },
+            {
+                "path": "data/services.json",
+                "checksum": "349309347b8c30a43d6aaf9552a9b004434d3cdb91b7dd256c0a2f2a6e8d8d51",
+                "size": 1959
+            },
+            {
+                "path": "data/weight_tiers.json",
+                "checksum": "429ce6d47bee7ff15a9af3044fb3e5419645cc7f6db3f8c1b183561a34ef9d3a",
+                "size": 1135
+            },
+            {
+                "path": "data/zones.json",
+                "checksum": "d23edbcea844b5266132fb4de014e69c95bf12afb61363b7825d1b32545d1d49",
+                "size": 5141
+            }
+        ]
+    },
+    "checksums": {
+        "algorithm": "SHA-256",
+        "note": "Use checksums to verify data integrity and detect changes"
+    }
+}

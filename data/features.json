@@ -1,0 +1,65 @@
+{
+    "file_type": "features",
+    "features": [
+        {
+            "id": "tracking_number",
+            "name": "Sendungsverfolgung",
+            "label": "Tracking number",
+            "description": "Unique tracking number for package monitoring"
+        },
+        {
+            "id": "proof_of_mailing",
+            "name": "Einlieferungsbeleg",
+            "label": "Proof of mailing",
+            "description": "Documentation that item was mailed"
+        },
+        {
+            "id": "delivery_confirmation",
+            "name": "Zustellbest\u00e4tigung",
+            "label": "Delivery confirmation",
+            "description": "Confirmation that item was delivered"
+        },
+        {
+            "id": "mailbox_delivery",
+            "name": "Briefkastenzustellung",
+            "label": "Mailbox delivery",
+            "description": "Item delivered directly to recipient's mailbox"
+        },
+        {
+            "id": "photo_proof_delivery",
+            "name": "Foto-Zustellnachweis",
+            "label": "Photo proof of delivery",
+            "description": "Photographic evidence of delivery"
+        },
+        {
+            "id": "recipient_signature",
+            "name": "Empf\u00e4ngerunterschrift",
+            "label": "Recipient signature required",
+            "description": "Recipient must sign upon delivery"
+        },
+        {
+            "id": "return_receipt",
+            "name": "R\u00fcckschein",
+            "label": "Return receipt to sender",
+            "description": "Receipt returned to sender as proof of delivery"
+        },
+        {
+            "id": "proof_of_delivery",
+            "name": "Zustellnachweis",
+            "label": "Proof of delivery",
+            "description": "Documentation proving successful delivery"
+        },
+        {
+            "id": "personal_delivery",
+            "name": "Eigenh\u00e4ndige Zustellung",
+            "label": "Personal delivery to recipient only",
+            "description": "Item delivered only to the named recipient"
+        },
+        {
+            "id": "id_verification",
+            "name": "Ausweiskontrolle",
+            "label": "ID verification",
+            "description": "Recipient must show identification"
+        }
+    ]
+}

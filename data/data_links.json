@@ -1,0 +1,147 @@
+{
+    "file_type": "data_links",
+    "schema_version": "1.0",
+    "unit": {
+        "weight": "g",
+        "dimension": "mm",
+        "price": "cents",
+        "currency": "EUR"
+    },
+    "dependencies": {
+        "products": {
+            "file": "products.json",
+            "depends_on": [
+                "prices.json",
+                "zones.json",
+                "weight_tiers.json",
+                "dimensions.json",
+                "services.json",
+                "features.json"
+            ],
+            "description": "Products require prices, zones, weight tiers, dimensions, services and features"
+        },
+        "services": {
+            "file": "services.json",
+            "depends_on": [
+                "features.json"
+            ],
+            "description": "Services require features and price information"
+        },
+        "prices": {
+            "file": "prices.json",
+            "depends_on": [
+                "products.json",
+                "services.json",
+                "zones.json",
+                "weight_tiers.json"
+            ],
+            "description": "Prices reference products, services, zones, and weight tiers"
+        },
+        "zones": {
+            "file": "zones.json",
+            "depends_on": [
+                "restrictions.json"
+            ],
+            "description": "Zones may have restricted destinations"
+        },
+        "weight_tiers": {
+            "file": "weight_tiers.json",
+            "depends_on": [],
+            "description": "Weight tiers are standalone definitions"
+        },
+        "dimensions": {
+            "file": "dimensions.json",
+            "depends_on": [],
+            "description": "Dimensions are standalone definitions"
+        },
+        "restrictions": {
+            "file": "restrictions.json",
+            "depends_on": [
+                "zones.json",
+                "products.json"
+            ],
+            "description": "Restrictions reference zones, products, and compliance frameworks"
+        },
+        "features": {
+            "file": "features.json",
+            "depends_on": [],
+            "description": "Features are standalone definitions referenced by services"
+        }
+    },
+    "links": {
+        "letter_standard": {
+            "zones": [
+                "domestic",
+                "zone_1_eu",
+                "world"
+            ],
+            "weight_tiers": [
+                "W0020"
+            ]
+        },
+        "letter_compact": {
+            "zones": [
+                "domestic",
+                "zone_1_eu",
+                "world"
+            ],
+            "weight_tiers": [
+                "W0050"
+            ]
+        },
+        "letter_large": {
+            "zones": [
+                "domestic",
+                "zone_1_eu",
+                "world"
+            ],
+            "weight_tiers": [
+                "W0500"
+            ]
+        },
+        "letter_maxi": {
+            "zones": [
+                "domestic",
+                "zone_1_eu",
+                "world"
+            ],
+            "weight_tiers": [
+                "W1000"
+            ]
+        },
+        "merchandise": {
+            "zones": [
+                "domestic"
+            ],
+            "weight_tiers": [
+                "W2000"
+            ]
+        }
+    },
+    "lookup_rules": {
+        "price_lookup": "Find price in prices.json where product_id + zone + weight_tier match",
+        "service_lookup": "Find service in services.json by id",
+        "weight_resolution": "Find weight_tier in weight_tiers.json where min <= weight <= max",
+        "zone_validation": "Check if zone is in product's zones array"
+    },
+    "global_settings": {
+        "price_source": "prices.json",
+        "lookup_method": {
+            "file": "prices.json",
+            "array": "prices.product_prices",
+            "match": {
+                "product_id": "from product id",
+                "zone": "from zones array",
+                "weight_tier": "from weight_tiers array"
+            },
+            "description": "Find prices by matching product_id, zone, and weight_tier"
+        },
+        "available_services": [
+            "einschreiben",
+            "einschreiben_einwurf",
+            "einschreiben_rueckschein",
+            "einschreiben_eigenhaendig",
+            "einschreiben_eigenhaendig_rueckschein"
+        ]
+    }
+}

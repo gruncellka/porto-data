@@ -1,0 +1,65 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/schemas/weight_tiers.schema.json",
+    "title": "Weight Tiers Schema",
+    "description": "Schema for weight tier definitions",
+    "type": "object",
+    "required": [
+        "file_type",
+        "unit",
+        "weight_tiers"
+    ],
+    "properties": {
+        "file_type": {
+            "type": "string",
+            "const": "weight_tiers",
+            "description": "File type identifier"
+        },
+        "unit": {
+            "type": "object",
+            "required": [
+                "weight"
+            ],
+            "properties": {
+                "weight": {
+                    "type": "string",
+                    "const": "g"
+                }
+            },
+            "additionalProperties": false
+        },
+        "weight_tiers": {
+            "type": "object",
+            "patternProperties": {
+                "^W[0-9]+$": {
+                    "type": "object",
+                    "required": [
+                        "min",
+                        "max",
+                        "label"
+                    ],
+                    "properties": {
+                        "min": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "description": "Minimum weight in grams"
+                        },
+                        "max": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "description": "Maximum weight in grams"
+                        },
+                        "label": {
+                            "type": "string",
+                            "minLength": 1,
+                            "description": "Human-readable weight tier label"
+                        }
+                    },
+                    "additionalProperties": false
+                }
+            },
+            "additionalProperties": false
+        }
+    },
+    "additionalProperties": false
+}

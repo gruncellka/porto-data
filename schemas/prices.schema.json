@@ -1,0 +1,147 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/schemas/prices.schema.json",
+    "title": "Prices Schema",
+    "description": "Schema for pricing information",
+    "type": "object",
+    "required": [
+        "file_type",
+        "unit",
+        "prices"
+    ],
+    "properties": {
+        "file_type": {
+            "type": "string",
+            "const": "prices",
+            "description": "File type identifier"
+        },
+        "unit": {
+            "type": "object",
+            "required": [
+                "price",
+                "currency"
+            ],
+            "properties": {
+                "price": {
+                    "type": "string",
+                    "const": "cents"
+                },
+                "currency": {
+                    "type": "string",
+                    "const": "EUR"
+                }
+            },
+            "additionalProperties": false
+        },
+        "prices": {
+            "type": "object",
+            "required": [
+                "product_prices",
+                "service_prices"
+            ],
+            "properties": {
+                "product_prices": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "object",
+                        "required": [
+                            "product_id",
+                            "zone",
+                            "weight_tier",
+                            "price",
+                            "effective_from"
+                        ],
+                        "properties": {
+                            "product_id": {
+                                "type": "string",
+                                "pattern": "^[a-z_]+$",
+                                "description": "Product ID reference"
+                            },
+                            "zone": {
+                                "type": "string",
+                                "enum": [
+                                    "domestic",
+                                    "zone_1_eu",
+                                    "zone_2_europe",
+                                    "world"
+                                ],
+                                "description": "Zone ID reference"
+                            },
+                            "weight_tier": {
+                                "type": "string",
+                                "pattern": "^W[0-9]+$",
+                                "description": "Weight tier ID reference"
+                            },
+                            "price": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "description": "Price in cents"
+                            },
+                            "effective_from": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "format": "date",
+                                "description": "Price effective start date"
+                            },
+                            "effective_to": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "format": "date",
+                                "description": "Price effective end date"
+                            }
+                        },
+                        "additionalProperties": false
+                    }
+                },
+                "service_prices": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                        "type": "object",
+                        "required": [
+                            "service_id",
+                            "price",
+                            "effective_from"
+                        ],
+                        "properties": {
+                            "service_id": {
+                                "type": "string",
+                                "pattern": "^[a-z0-9_]+$",
+                                "description": "Service ID reference"
+                            },
+                            "price": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "description": "Price in cents"
+                            },
+                            "effective_from": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "format": "date",
+                                "description": "Price effective start date"
+                            },
+                            "effective_to": {
+                                "type": [
+                                    "string",
+                                    "null"
+                                ],
+                                "format": "date",
+                                "description": "Price effective end date"
+                            }
+                        },
+                        "additionalProperties": false
+                    }
+                }
+            },
+            "additionalProperties": false
+        }
+    },
+    "additionalProperties": false
+}

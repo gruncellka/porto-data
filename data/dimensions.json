@@ -1,0 +1,152 @@
+{
+    "file_type": "dimensions",
+    "unit": {
+        "dimension": "mm"
+    },
+    "dimensions": [
+        {
+            "id": "DL",
+            "label": "DIN Lang",
+            "standard": "DIN 678",
+            "size": {
+                "width": 220,
+                "height": 110
+            },
+            "print_area": {
+                "x": 10,
+                "y": 45,
+                "width": 200,
+                "height": 60
+            },
+            "stamp_area": {
+                "x": 160,
+                "y": 10,
+                "width": 40,
+                "height": 40
+            },
+            "window_supported": true,
+            "window_area": {
+                "x": 20,
+                "y": 50,
+                "width": 90,
+                "height": 40
+            },
+            "orientation": "landscape",
+            "weight_tier": "W0020"
+        },
+        {
+            "id": "C6",
+            "label": "C6 Envelope",
+            "standard": "DIN 678",
+            "size": {
+                "width": 162,
+                "height": 114
+            },
+            "print_area": {
+                "x": 10,
+                "y": 45,
+                "width": 140,
+                "height": 60
+            },
+            "stamp_area": {
+                "x": 110,
+                "y": 10,
+                "width": 40,
+                "height": 40
+            },
+            "window_supported": true,
+            "window_area": {
+                "x": 20,
+                "y": 50,
+                "width": 90,
+                "height": 40
+            },
+            "orientation": "landscape",
+            "weight_tier": "W0020"
+        },
+        {
+            "id": "C5",
+            "label": "C5 Envelope",
+            "standard": "DIN 678",
+            "size": {
+                "width": 229,
+                "height": 162
+            },
+            "print_area": {
+                "x": 15,
+                "y": 50,
+                "width": 200,
+                "height": 90
+            },
+            "stamp_area": {
+                "x": 180,
+                "y": 15,
+                "width": 40,
+                "height": 40
+            },
+            "window_supported": true,
+            "window_area": {
+                "x": 20,
+                "y": 60,
+                "width": 90,
+                "height": 45
+            },
+            "orientation": "landscape",
+            "weight_tier": "W0050"
+        },
+        {
+            "id": "C4",
+            "label": "C4 Envelope",
+            "standard": "DIN 678",
+            "size": {
+                "width": 324,
+                "height": 229
+            },
+            "print_area": {
+                "x": 15,
+                "y": 60,
+                "width": 295,
+                "height": 150
+            },
+            "stamp_area": {
+                "x": 270,
+                "y": 15,
+                "width": 40,
+                "height": 40
+            },
+            "window_supported": true,
+            "window_area": {
+                "x": 20,
+                "y": 70,
+                "width": 90,
+                "height": 45
+            },
+            "orientation": "landscape",
+            "weight_tier": "W0500"
+        },
+        {
+            "id": "B4",
+            "label": "B4 Envelope",
+            "standard": "DIN 678",
+            "size": {
+                "width": 353,
+                "height": 250
+            },
+            "print_area": {
+                "x": 15,
+                "y": 70,
+                "width": 320,
+                "height": 170
+            },
+            "stamp_area": {
+                "x": 300,
+                "y": 15,
+                "width": 40,
+                "height": 40
+            },
+            "supports_window": false,
+            "orientation": "landscape",
+            "weight_tier": "W1000"
+        }
+    ]
+}

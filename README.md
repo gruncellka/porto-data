@@ -1,0 +1,340 @@
+# Porto Data
+
+**Structured JSON data for Deutsche Post / DHL shipping services**
+
+A comprehensive, schema-validated dataset containing Deutsche Post pricing, restrictions, zones, features, services, and compliance frameworks for international postal services with complete JSON schema validation and automated quality assurance.
+
+---
+
+## 🎯 Use Cases
+
+This dataset is perfect for:
+
+-   **E-commerce platforms** - Calculate shipping costs and restrictions
+-   **Logistics software** - Integrate Deutsche Post pricing and rules
+-   **Compliance tools** - Check shipping restrictions and sanctions
+-   **Research projects** - Analyze postal service patterns and policies
+-   **Educational purposes** - Learn about international shipping regulations
+
+---
+
+## 📈 Data Statistics
+
+-   **9 JSON files** with comprehensive postal data
+-   **9 JSON schemas** ensuring data integrity
+-   **100+ countries** covered in shipping zones
+-   **5 product types** (letters, merchandise)
+-   **5 service types** (registered mail, insurance)
+-   **31 restrictions** with 19 compliance frameworks
+
+---
+
+## 📦 What's Inside
+
+| File                | Description                                             |
+| ------------------- | ------------------------------------------------------- |
+| `products.json`     | Shipping products (letters, parcels, packages)          |
+| `services.json`     | Additional services (registered mail, insurance, etc.)  |
+| `prices.json`       | Pricing tables by product, zone, and weight             |
+| `zones.json`        | Geographic zones and country mappings                   |
+| `weight_tiers.json` | Weight brackets for pricing                             |
+| `dimensions.json`   | Size limits and specifications                          |
+| `features.json`     | Service features and capabilities                       |
+| `restrictions.json` | Shipping restrictions, sanctions, compliance frameworks |
+| `data_links.json`   | Cross-references between data files                     |
+
+**All data is validated against JSON schemas** in the `schemas/` directory.
+
+---
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+-   Python 3.11+
+-   Git
+
+### Installation
+
+```bash
+git clone <repository-url>
+cd porto-data-draft
+make setup
+```
+
+This installs:
+
+-   `jsonschema` for validation
+-   `ruff`, `mypy` for code quality (Ruff handles formatting + linting)
+-   Pre-commit hook for automatic validation
+
+### Verify Installation
+
+```bash
+make validate    # Validate all JSON files
+make quality     # Run all quality checks
+```
+
+---
+
+## 📊 Data Structure
+
+### Products → Prices → Zones
+
+```
+Product (e.g., "letter_standard")
+  ├─ has dimension_ids → dimensions.json
+  ├─ has weight_tier → weight_tiers.json
+  └─ has prices in zones → prices.json
+       └─ references zones.json
+```
+
+### Services → Features
+
+```
+Service (e.g., "einschreiben_einwurf")
+  ├─ has features → features.json
+  ├─ has coverage (in cents)
+  └─ applies to products → products.json
+```
+
+### Restrictions → Frameworks
+
+```
+Restriction (e.g., "YEMEN_2015")
+  ├─ country_code: "YE"
+  ├─ region_code: null
+  └─ framework_id → compliance_frameworks
+       └─ Legal basis (conflict zones, operational policies)
+```
+
+**All relationships are one-directional** (no circular dependencies).
+
+---
+
+## 📝 Common Tasks
+
+### Viewing Data
+
+All data files are in the `data/` directory. Open any `.json` file to view the data.
+
+### Making Changes
+
+```bash
+# 1. Edit JSON files
+vim data/products.json
+
+# 2. Validate your changes
+make validate
+
+# 3. Format your changes
+make format
+
+# 4. Commit
+git add .
+git commit -m "feat: update products"
+# → Pre-commit hook runs automatically and validates everything
+```
+
+### Manual Validation
+
+```bash
+make validate      # Validate JSON against schemas
+make lint-json     # Check JSON syntax only
+make format-json   # Auto-format JSON files
+```
+
+---
+
+## 🛠 Development
+
+### Pre-Commit Hook
+
+The pre-commit hook **automatically** runs on every commit:
+
+1. ✅ Formats all JSON and Python files
+2. ✅ Validates JSON syntax
+3. ✅ Validates against schemas
+4. ✅ Runs Python linting and type checking
+5. ✅ Generates metadata with checksums
+
+**If validation fails, commit is blocked** until you fix the errors.
+
+### Available Commands
+
+```bash
+# Validation
+make validate      # Validate all JSON files
+
+# Formatting
+make format        # Format JSON and Python
+make format-json   # Format JSON only
+make format-code   # Format Python only
+
+# Linting
+make lint          # Lint JSON and Python
+make lint-json     # Lint JSON only
+make lint-code     # Lint Python only
+
+# Quality
+make quality       # Run all checks (format, lint, validate, type-check)
+
+# Metadata
+make metadata      # Generate metadata.json with checksums
+
+# Help
+make help          # Show all commands
+```
+
+---
+
+## 🌍 Standards & Compliance
+
+### ISO Standards
+
+-   **Country codes**: ISO 3166-1 alpha-2 (`DE`, `US`, `FR`, `YE`)
+-   **Region codes**: ISO 3166-2 (`DE-BY`, `US-CA`, `FR-75`)
+-   **Dates**: ISO 8601 (`2024-01-15`, `2023-06-01`)
+
+### Jurisdiction Codes
+
+-   `EU` - European Union
+-   `UN` - United Nations
+-   `DE` - Germany (national)
+-   `DP` - Deutsche Post (operational)
+
+### Restrictions Features
+
+-   ✅ Tracks occupied/disputed territories
+-   ✅ Links to legal frameworks (EU sanctions, UN resolutions)
+-   ✅ Supports partial territory restrictions (`effective_partial`)
+-   ✅ Historical effective dates (`effective_from`, `effective_to`)
+
+---
+
+## 🔍 Schema Validation
+
+All JSON files are validated against schemas to ensure:
+
+-   ✅ Required fields are present
+-   ✅ Data types are correct (string, number, boolean, array)
+-   ✅ Values match allowed enums
+-   ✅ ISO codes follow correct patterns
+-   ✅ Dates are properly formatted
+-   ✅ Cross-references are valid
+
+### Example Validation Error
+
+```bash
+make validate
+```
+
+---
+
+## 📂 Project Structure
+
+```
+porto-data-draft/
+├── data/                   # Main data files (JSON)
+│   ├── products.json
+│   ├── services.json
+│   ├── prices.json
+│   ├── zones.json
+│   ├── weight_tiers.json
+│   ├── dimensions.json
+│   ├── restrictions.json
+│   ├── features.json
+│   └── data_links.json
+├── schemas/                # JSON schemas for validation
+│   ├── products.schema.json
+│   ├── services.schema.json
+│   └── ...
+├── scripts/                # Python validation scripts
+│   ├── validate_schemas.py
+│   └── generate_metadata.py
+├── hooks/                  # Git hooks
+│   └── pre-commit
+├── Makefile               # Build automation
+├── pyproject.toml         # Python dependencies
+└── metadata.json          # Generated checksums
+```
+
+---
+
+## 🎨 Code Quality Standards
+
+### JSON Formatting
+
+-   4-space indentation
+-   Keys are kept in original order (not sorted)
+-   Arrays are multi-line for readability
+-   Uses Python's built-in `json.tool`
+
+### Python Formatting
+
+-   **Ruff** (formatting, linting, and auto-fixes - line length: 100)
+-   **MyPy** (type checking)
+
+---
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Make your changes
+3. Run `make quality` to validate
+4. Commit (pre-commit hook validates automatically)
+5. Submit a pull request
+
+### Adding New Data
+
+1. Add your data to the appropriate JSON file
+2. Ensure it follows the schema
+3. Run `make validate` to check
+4. Run `make format` to auto-format
+
+### Updating Schemas
+
+1. Edit the schema file in `schema/`
+2. Update corresponding data in `data/`
+3. Run `make validate` to verify compatibility
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## ⚠️ Disclaimer
+
+This is **reference data** for Deutsche Post/DHL services. Always verify current restrictions, pricing, and service availability with Deutsche Post before shipping.
+
+Data accuracy is maintained on a best-effort basis. For official information, visit:
+
+-   Deutsche Post: https://www.deutschepost.de
+-   DHL: https://www.dhl.de
+
+---
+
+## 🔗 Related Resources
+
+-   [Deutsche Post Official Website](https://www.deutschepost.de)
+-   [DHL International Services](https://www.dhl.de)
+-   [EU Sanctions Map](https://www.sanctionsmap.eu/)
+-   [ISO 3166 Country Codes](https://www.iso.org/iso-3166-country-codes.html)
+
+---
+
+## Support
+
+For questions, issues, or contributions:
+
+-   📧 **E-Mail**: build@gruncellka.dev
+-   📧 **Issues**: Open a GitHub issue
+-   🔧 **Contributions**: Submit a pull request
+-   📖 **Documentation**: Check this README and inline comments
+
+---
+
+🔳 gruncellka

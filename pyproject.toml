@@ -1,0 +1,72 @@
+[project]
+name = "porto-data"
+version = "0.0.1"
+description = "Deutsche Post / DHL pricing and rules data with schema validation"
+license = {text = "MIT"}
+requires-python = ">=3.11"
+dependencies = [
+    "jsonschema>=4.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff>=0.1.0",
+    "mypy>=1.0.0",
+    "types-jsonschema>=4.0.0",
+    "types-toml>=0.10.0",
+]
+
+[project.scripts]
+porto-validate = "scripts.validate_schemas:main"
+
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = []
+package-dir = {"" = "scripts"}
+
+[tool.ruff]
+line-length = 100
+target-version = "py38"
+
+# Enable formatting (replaces Black)
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "N",   # pep8-naming
+    "UP",  # pyupgrade
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "SIM", # flake8-simplify
+]
+ignore = [
+    "E501", # line too long (handled by ruff format)
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["checksum_utils", "generate_metadata", "validate_schemas"]
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+check_untyped_defs = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+show_error_codes = true
+namespace_packages = true
+

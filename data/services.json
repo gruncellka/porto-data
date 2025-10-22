@@ -1,0 +1,60 @@
+{
+    "file_type": "services",
+    "services": [
+        {
+            "id": "einschreiben",
+            "name": "Einschreiben",
+            "description": "Tracking with proof of mailing",
+            "features": [
+                "tracking_number",
+                "proof_of_mailing",
+                "delivery_confirmation"
+            ]
+        },
+        {
+            "id": "einschreiben_einwurf",
+            "name": "Einschreiben Einwurf",
+            "description": "Registered delivery into mailbox",
+            "features": [
+                "tracking_number",
+                "mailbox_delivery",
+                "photo_proof_delivery"
+            ]
+        },
+        {
+            "id": "einschreiben_rueckschein",
+            "name": "Einschreiben R\u00fcckschein",
+            "description": "Registered mail with signature and return receipt",
+            "features": [
+                "tracking_number",
+                "recipient_signature",
+                "return_receipt",
+                "proof_of_delivery"
+            ]
+        },
+        {
+            "id": "einschreiben_eigenhaendig",
+            "name": "Einschreiben Eigenh\u00e4ndig",
+            "description": "Personal delivery to recipient only",
+            "features": [
+                "tracking_number",
+                "personal_delivery",
+                "id_verification",
+                "delivery_confirmation"
+            ]
+        },
+        {
+            "id": "einschreiben_eigenhaendig_rueckschein",
+            "name": "Einschreiben Eigenh\u00e4ndig R\u00fcckschein",
+            "name_en": "Registered Mail (Personal) with Return Receipt",
+            "description": "Personal delivery with signature and return receipt",
+            "features": [
+                "tracking_number",
+                "personal_delivery",
+                "id_verification",
+                "recipient_signature",
+                "return_receipt"
+            ]
+        }
+    ]
+}
