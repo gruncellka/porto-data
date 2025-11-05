@@ -4,7 +4,7 @@
         "version": "0.0.1",
         "description": "Deutsche Post / DHL pricing and rules data with schema validation"
     },
-    "generated_at": "2025-10-30T10:18:48.097551Z",
+    "generated_at": "2025-11-05T15:17:41.560699Z",
     "schemas": {
         "count": 9,
         "files": [
