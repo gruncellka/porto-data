@@ -85,11 +85,9 @@ metadata:
 	@. venv/bin/activate && python3 scripts/generate_metadata.py
 
 install-hooks:
-	@echo "Installing pre-commit hook..."
-	@mkdir -p .git/hooks
-	@cp hooks/pre-commit .git/hooks/pre-commit
-	@chmod +x .git/hooks/pre-commit
-	@echo "✓ Pre-commit hook installed"
+	@echo "Installing pre-commit hooks..."
+	@. venv/bin/activate && pre-commit install
+	@echo "✓ Pre-commit hooks installed"
 
 setup:
 	@echo "Setting up porto-data..."

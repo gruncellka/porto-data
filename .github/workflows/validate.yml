@@ -17,3 +17,16 @@ jobs:
               run: make validate
             - name: Run code and JSON quality checks
               run: make quality
+            - name: Verify metadata.json is up to date
+              run: |
+                . venv/bin/activate && python3 scripts/generate_metadata.py
+                if [ -n "$(git diff metadata.json)" ]; then
+                  echo "❌ metadata.json is out of date. The file must be regenerated and committed."
+                  echo "Run 'make metadata' locally, then commit the updated metadata.json file."
+                  git diff metadata.json
+                  exit 1
+                fi
+                echo "✓ metadata.json is up to date"
+            - name: Run pre-commit checks (verify all hooks pass)
+              run: |
+                . venv/bin/activate && pre-commit run --all-files
