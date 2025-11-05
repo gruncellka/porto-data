@@ -86,12 +86,21 @@ metadata:
 
 install-hooks:
 	@echo "Installing pre-commit hooks..."
-	@. venv/bin/activate && pre-commit install
+	@if [ -f venv/bin/pre-commit ]; then \
+		venv/bin/pre-commit install; \
+	else \
+		echo "Error: pre-commit not found. Run 'make setup' first."; \
+		exit 1; \
+	fi
 	@echo "✓ Pre-commit hooks installed"
 
 setup:
 	@echo "Setting up porto-data..."
 	@python3 -m venv venv
 	@. venv/bin/activate && pip install -q -e ".[dev]"
-	@$(MAKE) install-hooks
+	@if [ -d .git ]; then \
+		$(MAKE) install-hooks || echo "Warning: Could not install pre-commit hooks. Run 'make install-hooks' manually."; \
+	else \
+		echo "Skipping hook installation (not a git repository)"; \
+	fi
 	@echo "✓ Setup complete - run 'make help' for commands"
