@@ -76,13 +76,22 @@ def main():
     else:
         print(f"✓ All {len(VALIDATIONS)} files valid!")
 
+        # Check if any data/schema files are staged
+        import subprocess
+
+        check_staged_data = subprocess.run(
+            ["git", "diff", "--cached", "--name-only", "--", "data/", "schemas/"],
+            capture_output=True,
+            text=True,
+            cwd=".",
+        )
+        data_files_staged = bool(check_staged_data.stdout.strip())
+
         # Check if metadata needs updating
         if has_file_changes():
             print("")
             print("Changes detected, generating metadata.json...")
             try:
-                import subprocess
-
                 # Use the centralized metadata generator
                 result = subprocess.run(
                     ["python3", "scripts/generate_metadata.py"],
@@ -100,27 +109,30 @@ def main():
                     )
                     metadata_modified = bool(check_modified.stdout.strip())
 
-                    if metadata_modified:
-                        # Check if metadata.json is staged
-                        check_staged = subprocess.run(
-                            ["git", "diff", "--cached", "--name-only", "metadata.json"],
-                            capture_output=True,
-                            text=True,
-                            cwd=".",
-                        )
-                        metadata_staged = bool(check_staged.stdout.strip())
+                    # Check if metadata.json is staged
+                    check_staged_metadata = subprocess.run(
+                        ["git", "diff", "--cached", "--name-only", "metadata.json"],
+                        capture_output=True,
+                        text=True,
+                        cwd=".",
+                    )
+                    metadata_staged = bool(check_staged_metadata.stdout.strip())
 
-                        if not metadata_staged:
-                            print("")
-                            print("❌ ERROR: metadata.json was generated but is not staged!")
-                            print("")
-                            print("Please stage metadata.json in the same commit:")
-                            print("  git add metadata.json")
-                            print("  git commit")
-                            print("")
-                            sys.exit(1)
-                        else:
-                            print("✓ metadata.json generated and staged")
+                    # If data/schema files are staged and metadata needs updating but isn't staged, reject
+                    if data_files_staged and metadata_modified and not metadata_staged:
+                        print("")
+                        print("❌ ERROR: metadata.json was generated but is not staged!")
+                        print("")
+                        print("data/schema files are staged, but metadata.json is not.")
+                        print("Please stage metadata.json in the same commit:")
+                        print("  git add metadata.json")
+                        print("  git commit")
+                        print("")
+                        sys.exit(1)
+                    elif metadata_modified and metadata_staged:
+                        print("✓ metadata.json generated and staged")
+                    elif metadata_modified:
+                        print("✓ metadata.json generated (not needed for this commit)")
                     else:
                         print("✓ metadata.json up to date")
                 else:
@@ -128,6 +140,38 @@ def main():
             except Exception as e:
                 print(f"⚠ Warning: Could not generate metadata.json: {e}")
         else:
+            # Even if no changes detected, check if metadata.json should be staged
+            # (in case it was generated previously but not committed)
+            if data_files_staged:
+                check_modified = subprocess.run(
+                    ["git", "diff", "--name-only", "metadata.json"],
+                    capture_output=True,
+                    text=True,
+                    cwd=".",
+                )
+                metadata_modified = bool(check_modified.stdout.strip())
+
+                check_staged_metadata = subprocess.run(
+                    ["git", "diff", "--cached", "--name-only", "metadata.json"],
+                    capture_output=True,
+                    text=True,
+                    cwd=".",
+                )
+                metadata_staged = bool(check_staged_metadata.stdout.strip())
+
+                if metadata_modified and not metadata_staged:
+                    print("")
+                    print("❌ ERROR: metadata.json is modified but not staged!")
+                    print("")
+                    print(
+                        "Data/schema files are staged, but metadata.json is modified and not staged."
+                    )
+                    print("Please stage metadata.json in the same commit:")
+                    print("  git add metadata.json")
+                    print("  git commit")
+                    print("")
+                    sys.exit(1)
+
             print("")
             print("✓ No changes detected, skipping metadata generation")
 
