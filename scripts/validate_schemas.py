@@ -31,6 +31,46 @@ def load_project_metadata() -> dict:
 # This ensures we have a single source of truth for metadata generation
 
 
+def check_metadata_status() -> tuple[bool, bool]:
+    """Check if metadata.json is modified and/or staged.
+
+    Returns:
+        tuple: (is_modified, is_staged)
+    """
+    import subprocess
+
+    check_modified = subprocess.run(
+        ["git", "diff", "--name-only", "metadata.json"],
+        capture_output=True,
+        text=True,
+        cwd=".",
+    )
+    metadata_modified = bool(check_modified.stdout.strip())
+
+    check_staged = subprocess.run(
+        ["git", "diff", "--cached", "--name-only", "metadata.json"],
+        capture_output=True,
+        text=True,
+        cwd=".",
+    )
+    metadata_staged = bool(check_staged.stdout.strip())
+
+    return metadata_modified, metadata_staged
+
+
+def check_data_files_staged() -> bool:
+    """Check if any data/schema files are staged."""
+    import subprocess
+
+    check_staged_data = subprocess.run(
+        ["git", "diff", "--cached", "--name-only", "--", "data/", "schemas/"],
+        capture_output=True,
+        text=True,
+        cwd=".",
+    )
+    return bool(check_staged_data.stdout.strip())
+
+
 def validate_file(schema_path: str, data_path: str) -> bool:
     """Validate a data file against its schema."""
     try:
@@ -77,21 +117,15 @@ def main():
         print(f"✓ All {len(VALIDATIONS)} files valid!")
 
         # Check if any data/schema files are staged
-        import subprocess
-
-        check_staged_data = subprocess.run(
-            ["git", "diff", "--cached", "--name-only", "--", "data/", "schemas/"],
-            capture_output=True,
-            text=True,
-            cwd=".",
-        )
-        data_files_staged = bool(check_staged_data.stdout.strip())
+        data_files_staged = check_data_files_staged()
 
         # Check if metadata needs updating
         if has_file_changes():
             print("")
             print("Changes detected, generating metadata.json...")
             try:
+                import subprocess
+
                 # Use the centralized metadata generator
                 result = subprocess.run(
                     ["python3", "scripts/generate_metadata.py"],
@@ -100,30 +134,14 @@ def main():
                     cwd=".",
                 )
                 if result.returncode == 0:
-                    # Check if metadata.json was actually modified
-                    check_modified = subprocess.run(
-                        ["git", "diff", "--name-only", "metadata.json"],
-                        capture_output=True,
-                        text=True,
-                        cwd=".",
-                    )
-                    metadata_modified = bool(check_modified.stdout.strip())
-
-                    # Check if metadata.json is staged
-                    check_staged_metadata = subprocess.run(
-                        ["git", "diff", "--cached", "--name-only", "metadata.json"],
-                        capture_output=True,
-                        text=True,
-                        cwd=".",
-                    )
-                    metadata_staged = bool(check_staged_metadata.stdout.strip())
+                    metadata_modified, metadata_staged = check_metadata_status()
 
                     # If data/schema files are staged and metadata needs updating but isn't staged, reject
                     if data_files_staged and metadata_modified and not metadata_staged:
                         print("")
                         print("❌ ERROR: metadata.json was generated but is not staged!")
                         print("")
-                        print("data/schema files are staged, but metadata.json is not.")
+                        print("Data/schema files are staged, but metadata.json is not.")
                         print("Please stage metadata.json in the same commit:")
                         print("  git add metadata.json")
                         print("  git commit")
@@ -143,21 +161,7 @@ def main():
             # Even if no changes detected, check if metadata.json should be staged
             # (in case it was generated previously but not committed)
             if data_files_staged:
-                check_modified = subprocess.run(
-                    ["git", "diff", "--name-only", "metadata.json"],
-                    capture_output=True,
-                    text=True,
-                    cwd=".",
-                )
-                metadata_modified = bool(check_modified.stdout.strip())
-
-                check_staged_metadata = subprocess.run(
-                    ["git", "diff", "--cached", "--name-only", "metadata.json"],
-                    capture_output=True,
-                    text=True,
-                    cwd=".",
-                )
-                metadata_staged = bool(check_staged_metadata.stdout.strip())
+                metadata_modified, metadata_staged = check_metadata_status()
 
                 if metadata_modified and not metadata_staged:
                     print("")
