@@ -66,7 +66,7 @@ This installs:
 
 -   `jsonschema` for validation
 -   `ruff`, `mypy` for code quality (Ruff handles formatting + linting)
--   Pre-commit hook for automatic validation
+-   `pre-commit` framework with hooks for automatic validation
 
 ### Verify Installation
 
@@ -133,7 +133,9 @@ make format
 # 4. Commit
 git add .
 git commit -m "feat: update products"
-# → Pre-commit hook runs automatically and validates everything
+# → Pre-commit hooks run automatically and validate everything
+# → If metadata.json is regenerated, commit will be rejected
+# → Stage metadata.json and commit again
 ```
 
 ### Manual Validation
@@ -148,17 +150,25 @@ make format-json   # Auto-format JSON files
 
 ## 🛠 Development
 
-### Pre-Commit Hook
+### Pre-Commit Hooks
 
-The pre-commit hook **automatically** runs on every commit:
+The pre-commit framework **automatically** runs hooks on every commit:
 
-1. ✅ Formats all JSON and Python files
+1. ✅ Formats all JSON and Python files (auto-staged)
 2. ✅ Validates JSON syntax
 3. ✅ Validates against schemas
 4. ✅ Runs Python linting and type checking
-5. ✅ Generates metadata with checksums
+5. ✅ Regenerates metadata.json if data files changed
 
-**If validation fails, commit is blocked** until you fix the errors.
+**Important behaviors:**
+- ✅ Modified files are automatically staged (fixes uncommitted changes bug)
+- ⚠️ If `metadata.json` is regenerated, commit is rejected - you must review and stage it
+- ❌ If validation fails, commit is blocked until you fix the errors
+
+**Installing hooks:**
+```bash
+make install-hooks  # Installs pre-commit framework hooks
+```
 
 ### Available Commands
 
@@ -185,6 +195,18 @@ make metadata      # Generate metadata.json with checksums
 # Help
 make help          # Show all commands
 ```
+
+### About metadata.json
+
+The `metadata.json` file is automatically generated with checksums of all data and schema files. It's regenerated when:
+
+- Any file in `data/` or `schemas/` changes
+- Checksums don't match the current files
+
+**Commit behavior:**
+- If `metadata.json` is regenerated during commit, the commit is **rejected**
+- You must review the changes, stage `metadata.json`, and commit again
+- This ensures you're aware of metadata changes and can verify them before committing
 
 ---
 
@@ -252,11 +274,10 @@ porto-data-draft/
 ├── scripts/                # Python validation scripts
 │   ├── validate_schemas.py
 │   └── generate_metadata.py
-├── hooks/                  # Git hooks
-│   └── pre-commit
+├── .pre-commit-config.yaml # Pre-commit framework configuration
 ├── Makefile               # Build automation
 ├── pyproject.toml         # Python dependencies
-└── metadata.json          # Generated checksums
+└── metadata.json          # Generated checksums (auto-generated)
 ```
 
 ---
@@ -280,10 +301,12 @@ porto-data-draft/
 ## 🤝 Contributing
 
 1. Fork the repository
-2. Make your changes
-3. Run `make quality` to validate
-4. Commit (pre-commit hook validates automatically)
-5. Submit a pull request
+2. Run `make setup` to install dependencies and hooks
+3. Make your changes
+4. Run `make quality` to validate
+5. Commit (pre-commit hooks validate automatically)
+6. If `metadata.json` was regenerated, stage it and commit again
+7. Submit a pull request
 
 ### Adding New Data
 
@@ -291,6 +314,9 @@ porto-data-draft/
 2. Ensure it follows the schema
 3. Run `make validate` to check
 4. Run `make format` to auto-format
+5. Commit your changes
+6. If `metadata.json` was regenerated, the commit will be rejected
+7. Stage `metadata.json` and commit again
 
 ### Updating Schemas
 

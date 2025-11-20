@@ -36,7 +36,7 @@ help:
 # JSON Commands
 validate-json:
 	@echo "Validating JSON against schemas..."
-	@python3 scripts/validate_schemas.py
+	@. venv/bin/activate && python3 scripts/validate_schemas.py
 
 lint-json:
 	@echo "Linting JSON files for syntax errors..."
@@ -58,18 +58,18 @@ format-json:
 # Code Commands
 format-code:
 	@echo "Formatting Python code..."
-	@ruff format .
-	@ruff check --fix .
+	@. venv/bin/activate && ruff format .
+	@. venv/bin/activate && ruff check --fix .
 	@echo "✓ Code formatted"
 
 lint-code:
 	@echo "Linting Python code..."
-	@ruff check .
+	@. venv/bin/activate && ruff check .
 	@echo "✓ Code linting complete"
 
 type-check:
 	@echo "Type checking Python code..."
-	@mypy scripts/
+	@. venv/bin/activate && mypy scripts/
 	@echo "✓ Type check complete"
 
 # Unified Commands
@@ -82,17 +82,25 @@ lint: lint-json lint-code
 quality: format-json lint-json validate-json format-code lint-code type-check
 
 metadata:
-	@python3 scripts/generate_metadata.py
+	@. venv/bin/activate && python3 scripts/generate_metadata.py
 
 install-hooks:
-	@echo "Installing pre-commit hook..."
-	@mkdir -p .git/hooks
-	@cp hooks/pre-commit .git/hooks/pre-commit
-	@chmod +x .git/hooks/pre-commit
-	@echo "✓ Pre-commit hook installed"
+	@echo "Installing pre-commit hooks..."
+	@if [ -f venv/bin/pre-commit ]; then \
+		venv/bin/pre-commit install; \
+	else \
+		echo "Error: pre-commit not found. Run 'make setup' first."; \
+		exit 1; \
+	fi
+	@echo "✓ Pre-commit hooks installed"
 
 setup:
 	@echo "Setting up porto-data..."
-	@pip install -q -e ".[dev]"
-	@$(MAKE) install-hooks
+	@python3 -m venv venv
+	@. venv/bin/activate && pip install -q -e ".[dev]"
+	@if [ -d .git ]; then \
+		$(MAKE) install-hooks || echo "Warning: Could not install pre-commit hooks. Run 'make install-hooks' manually."; \
+	else \
+		echo "Skipping hook installation (not a git repository)"; \
+	fi
 	@echo "✓ Setup complete - run 'make help' for commands"

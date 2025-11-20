@@ -125,7 +125,6 @@ def main() -> None:
             new_metadata_copy.pop("generated_at", None)
 
             if existing_metadata_copy == new_metadata_copy:
-                print("✓ No changes detected, keeping existing metadata")
                 has_changes = False
             else:
                 print("✓ Changes detected, updating metadata")

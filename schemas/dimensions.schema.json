@@ -75,6 +75,11 @@
                                 "type": "integer",
                                 "minimum": 1,
                                 "description": "Height in millimeters"
+                            },
+                            "thickness": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "description": "Thickness in millimeters"
                             }
                         },
                         "additionalProperties": false
