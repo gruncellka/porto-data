@@ -81,9 +81,9 @@ def main():
             print("")
             print("Changes detected, generating metadata.json...")
             try:
-                # Use the centralized metadata generator
                 import subprocess
 
+                # Use the centralized metadata generator
                 result = subprocess.run(
                     ["python3", "scripts/generate_metadata.py"],
                     capture_output=True,
@@ -91,7 +91,38 @@ def main():
                     cwd=".",
                 )
                 if result.returncode == 0:
-                    print("⚠️ metadata.json generated successfully!")
+                    # Check if metadata.json was actually modified
+                    check_modified = subprocess.run(
+                        ["git", "diff", "--name-only", "metadata.json"],
+                        capture_output=True,
+                        text=True,
+                        cwd=".",
+                    )
+                    metadata_modified = bool(check_modified.stdout.strip())
+
+                    if metadata_modified:
+                        # Check if metadata.json is staged
+                        check_staged = subprocess.run(
+                            ["git", "diff", "--cached", "--name-only", "metadata.json"],
+                            capture_output=True,
+                            text=True,
+                            cwd=".",
+                        )
+                        metadata_staged = bool(check_staged.stdout.strip())
+
+                        if not metadata_staged:
+                            print("")
+                            print("❌ ERROR: metadata.json was generated but is not staged!")
+                            print("")
+                            print("Please stage metadata.json in the same commit:")
+                            print("  git add metadata.json")
+                            print("  git commit")
+                            print("")
+                            sys.exit(1)
+                        else:
+                            print("✓ metadata.json generated and staged")
+                    else:
+                        print("✓ metadata.json up to date")
                 else:
                     print(f"⚠ Warning: Could not generate metadata.json: {result.stderr}")
             except Exception as e:

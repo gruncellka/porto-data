@@ -164,7 +164,7 @@ The pre-commit framework **automatically** runs hooks on every commit:
 **Important behaviors:**
 
 -   ✅ Modified files are automatically staged (fixes uncommitted changes bug)
--   ⚠️ If `metadata.json` is regenerated, commit is rejected - you must review and stage it
+-   ❌ If `metadata.json` is regenerated but not staged, commit is **rejected** - you must stage `metadata.json` in the same commit
 -   ❌ If validation fails, commit is blocked until you fix the errors
 
 **Installing hooks:**
@@ -208,9 +208,9 @@ The `metadata.json` file is automatically generated with checksums of all data a
 
 **Commit behavior:**
 
--   If `metadata.json` is regenerated during commit, the commit is **rejected**
--   You must review the changes, stage `metadata.json`, and commit again
--   This ensures you're aware of metadata changes and can verify them before committing
+-   If `metadata.json` is regenerated during commit, the commit is **rejected** if `metadata.json` is not staged
+-   You must stage `metadata.json` in the same commit as your data changes: `git add metadata.json`
+-   This ensures `metadata.json` stays in sync with data files in the same commit
 
 ---
 
@@ -311,7 +311,7 @@ porto-data-draft/
 3. Make your changes
 4. Run `make quality` to validate
 5. Commit (pre-commit hooks validate automatically)
-6. If `metadata.json` was regenerated, stage it and commit again
+6. If `metadata.json` was regenerated, stage it: `git add metadata.json` and commit again
 7. Submit a pull request
 
 ### Adding New Data
@@ -321,8 +321,7 @@ porto-data-draft/
 3. Run `make validate` to check
 4. Run `make format` to auto-format
 5. Commit your changes
-6. If `metadata.json` was regenerated, the commit will be rejected
-7. Stage `metadata.json` and commit again
+6. If `metadata.json` was regenerated, stage it: `git add metadata.json` and commit again
 
 ### Updating Schemas
 
