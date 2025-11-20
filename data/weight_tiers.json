@@ -10,22 +10,22 @@
             "label": "Up to 20g"
         },
         "W0050": {
-            "min": 21,
+            "min": 0,
             "max": 50,
             "label": "Up to 50g"
         },
         "W0500": {
-            "min": 51,
+            "min": 0,
             "max": 500,
             "label": "Up to 500g"
         },
         "W1000": {
-            "min": 501,
+            "min": 0,
             "max": 1000,
             "label": "Up to 1000g"
         },
         "W2000": {
-            "min": 1001,
+            "min": 0,
             "max": 2000,
             "label": "Up to 2000g"
         },

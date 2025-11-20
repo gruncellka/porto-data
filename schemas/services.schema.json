@@ -55,6 +55,13 @@
                             "description": "Feature ID reference"
                         },
                         "description": "List of feature IDs this service provides"
+                    },
+                    "source_id": {
+                        "type": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "Deutsche Post PPL service identifier (note: services in PPL are typically composite products, not standalone IDs)"
                     }
                 },
                 "additionalProperties": false
