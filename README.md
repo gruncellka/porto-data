@@ -31,17 +31,17 @@ This dataset is perfect for:
 
 ## 📦 What's Inside
 
-| File                | Description                                             |
-| ------------------- | ------------------------------------------------------- |
-| `products.json`     | Shipping products (letters, parcels, packages)          |
-| `services.json`     | Additional services (registered mail, insurance, etc.)  |
-| `prices.json`       | Pricing tables by product, zone, and weight             |
-| `zones.json`        | Geographic zones and country mappings                   |
-| `weight_tiers.json` | Weight brackets for pricing                             |
-| `dimensions.json`   | Size limits and specifications                          |
-| `features.json`     | Service features and capabilities                       |
-| `restrictions.json` | Shipping restrictions, sanctions, compliance frameworks |
-| `data_links.json`   | Cross-references between data files                     |
+| File                | Description                                                        |
+| ------------------- | ------------------------------------------------------------------ |
+| `products.json`     | Shipping products (letters, parcels, packages)                     |
+| `services.json`     | Additional services (registered mail, insurance, etc.)             |
+| `prices.json`       | Pricing tables by product, zone, and weight (with effective dates) |
+| `zones.json`        | Geographic zones and country mappings                              |
+| `weight_tiers.json` | Weight brackets for pricing                                        |
+| `dimensions.json`   | Size limits and specifications                                     |
+| `features.json`     | Service features and capabilities                                  |
+| `restrictions.json` | Shipping restrictions, sanctions, compliance frameworks            |
+| `data_links.json`   | Cross-references between data files                                |
 
 **All data is validated against JSON schemas** in the `schemas/` directory.
 
@@ -86,6 +86,7 @@ Product (e.g., "letter_standard")
   ├─ has dimension_ids → dimensions.json
   ├─ has weight_tier → weight_tiers.json
   └─ has prices in zones → prices.json
+       ├─ price array with effective_from/effective_to dates
        └─ references zones.json
 ```
 
@@ -161,11 +162,13 @@ The pre-commit framework **automatically** runs hooks on every commit:
 5. ✅ Regenerates metadata.json if data files changed
 
 **Important behaviors:**
-- ✅ Modified files are automatically staged (fixes uncommitted changes bug)
-- ⚠️ If `metadata.json` is regenerated, commit is rejected - you must review and stage it
-- ❌ If validation fails, commit is blocked until you fix the errors
+
+-   ✅ Modified files are automatically staged (fixes uncommitted changes bug)
+-   ❌ If `metadata.json` is regenerated but not staged, commit is **rejected** - you must stage `metadata.json` in the same commit
+-   ❌ If validation fails, commit is blocked until you fix the errors
 
 **Installing hooks:**
+
 ```bash
 make install-hooks  # Installs pre-commit framework hooks
 ```
@@ -200,13 +203,14 @@ make help          # Show all commands
 
 The `metadata.json` file is automatically generated with checksums of all data and schema files. It's regenerated when:
 
-- Any file in `data/` or `schemas/` changes
-- Checksums don't match the current files
+-   Any file in `data/` or `schemas/` changes
+-   Checksums don't match the current files
 
 **Commit behavior:**
-- If `metadata.json` is regenerated during commit, the commit is **rejected**
-- You must review the changes, stage `metadata.json`, and commit again
-- This ensures you're aware of metadata changes and can verify them before committing
+
+-   If `metadata.json` is regenerated during commit, the commit is **rejected** if `metadata.json` is not staged
+-   You must stage `metadata.json` in the same commit as your data changes: `git add metadata.json`
+-   This ensures `metadata.json` stays in sync with data files in the same commit
 
 ---
 
@@ -271,6 +275,8 @@ porto-data-draft/
 │   ├── products.schema.json
 │   ├── services.schema.json
 │   └── ...
+├── resources/              # Original source files (PPL CSV, etc.)
+│   └── ppl/               # Deutsche Post price list files
 ├── scripts/                # Python validation scripts
 │   ├── validate_schemas.py
 │   └── generate_metadata.py
@@ -305,7 +311,7 @@ porto-data-draft/
 3. Make your changes
 4. Run `make quality` to validate
 5. Commit (pre-commit hooks validate automatically)
-6. If `metadata.json` was regenerated, stage it and commit again
+6. If `metadata.json` was regenerated, stage it: `git add metadata.json` and commit again
 7. Submit a pull request
 
 ### Adding New Data
@@ -315,8 +321,7 @@ porto-data-draft/
 3. Run `make validate` to check
 4. Run `make format` to auto-format
 5. Commit your changes
-6. If `metadata.json` was regenerated, the commit will be rejected
-7. Stage `metadata.json` and commit again
+6. If `metadata.json` was regenerated, stage it: `git add metadata.json` and commit again
 
 ### Updating Schemas
 

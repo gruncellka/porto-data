@@ -4,7 +4,7 @@
         "version": "0.0.1",
         "description": "Deutsche Post / DHL pricing and rules data with schema validation"
     },
-    "generated_at": "2025-11-05T15:17:41.560699Z",
+    "generated_at": "2025-11-20T15:32:12.997101Z",
     "schemas": {
         "count": 9,
         "files": [
@@ -25,8 +25,8 @@
             },
             {
                 "path": "schemas/prices.schema.json",
-                "checksum": "daed2f1b350ffd9429d21cb617aa15cb2c9ff452f86c4c5ea4c42faf80752ac2",
-                "size": 5593
+                "checksum": "b14415b7b6b43b53406c8ba511021f7ab1a10fe3cccfff3d4038eaabc46b024e",
+                "size": 7489
             },
             {
                 "path": "schemas/products.schema.json",
@@ -40,8 +40,8 @@
             },
             {
                 "path": "schemas/services.schema.json",
-                "checksum": "77a007a085527a248c704ca368b47878bb8d3737e5aec184b74b96006e3aef53",
-                "size": 2245
+                "checksum": "da6aab927c0b43dbc6222d2d062b58cec9f144c0cf7f58c1dac456d271f1039d",
+                "size": 2592
             },
             {
                 "path": "schemas/weight_tiers.schema.json",
@@ -75,8 +75,8 @@
             },
             {
                 "path": "data/prices.json",
-                "checksum": "9ae954ffc889f1407a0785656d1837a9dbb5f419ca32d66e231a5f60f1e6fc2e",
-                "size": 4495
+                "checksum": "5bcbdc3157d1892a75bd49c1a9a733a1fa894638cbf5e5bb012b690a7480d0ea",
+                "size": 7249
             },
             {
                 "path": "data/products.json",
@@ -95,8 +95,8 @@
             },
             {
                 "path": "data/weight_tiers.json",
-                "checksum": "429ce6d47bee7ff15a9af3044fb3e5419645cc7f6db3f8c1b183561a34ef9d3a",
-                "size": 1135
+                "checksum": "ef0f8c90423e1508060b8fbad4633f0619f5398d7083ac8efe1a349398e445df",
+                "size": 1142
             },
             {
                 "path": "data/zones.json",

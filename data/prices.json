@@ -10,138 +10,231 @@
                 "product_id": "letter_standard",
                 "zone": "domestic",
                 "weight_tier": "W0020",
-                "price": 85,
-                "effective_from": null,
-                "effective_to": null
+                "price": [
+                    {
+                        "price": 95,
+                        "effective_from": null,
+                        "effective_to": null
+                    }
+                ]
             },
             {
                 "product_id": "letter_standard",
                 "zone": "zone_1_eu",
                 "weight_tier": "W0020",
-                "price": 110,
-                "effective_from": null
+                "price": [
+                    {
+                        "price": 110,
+                        "effective_from": null,
+                        "effective_to": null
+                    }
+                ]
             },
             {
                 "product_id": "letter_standard",
                 "zone": "world",
                 "weight_tier": "W0020",
-                "price": 110,
-                "effective_from": null
+                "price": [
+                    {
+                        "price": 110,
+                        "effective_from": null,
+                        "effective_to": null
+                    }
+                ]
             },
             {
                 "product_id": "letter_compact",
                 "zone": "domestic",
                 "weight_tier": "W0050",
-                "price": 100,
-                "effective_from": null
+                "price": [
+                    {
+                        "price": 110,
+                        "effective_from": null,
+                        "effective_to": null
+                    }
+                ]
             },
             {
                 "product_id": "letter_compact",
                 "zone": "zone_1_eu",
                 "weight_tier": "W0050",
-                "price": 170,
-                "effective_from": null
+                "price": [
+                    {
+                        "price": 170,
+                        "effective_from": null,
+                        "effective_to": null
+                    }
+                ]
             },
             {
                 "product_id": "letter_compact",
                 "zone": "world",
                 "weight_tier": "W0050",
-                "price": 170,
-                "effective_from": null
+                "price": [
+                    {
+                        "price": 170,
+                        "effective_from": null,
+                        "effective_to": null
+                    }
+                ]
             },
             {
                 "product_id": "letter_large",
                 "zone": "domestic",
                 "weight_tier": "W0500",
-                "price": 160,
-                "effective_from": null
+                "price": [
+                    {
+                        "price": 180,
+                        "effective_from": null,
+                        "effective_to": null
+                    }
+                ]
             },
             {
                 "product_id": "letter_large",
                 "zone": "zone_1_eu",
                 "weight_tier": "W0500",
-                "price": 370,
-                "effective_from": null
+                "price": [
+                    {
+                        "price": 370,
+                        "effective_from": null,
+                        "effective_to": null
+                    }
+                ]
             },
             {
                 "product_id": "letter_large",
                 "zone": "world",
                 "weight_tier": "W0500",
-                "price": 370,
-                "effective_from": null
+                "price": [
+                    {
+                        "price": 370,
+                        "effective_from": null,
+                        "effective_to": null
+                    }
+                ]
             },
             {
                 "product_id": "letter_maxi",
                 "zone": "domestic",
                 "weight_tier": "W1000",
-                "price": 275,
-                "effective_from": null
+                "price": [
+                    {
+                        "price": 290,
+                        "effective_from": null,
+                        "effective_to": null
+                    }
+                ]
             },
             {
                 "product_id": "letter_maxi",
                 "zone": "zone_1_eu",
                 "weight_tier": "W1000",
-                "price": 700,
-                "effective_from": null
+                "price": [
+                    {
+                        "price": 700,
+                        "effective_from": null,
+                        "effective_to": null
+                    }
+                ]
             },
             {
                 "product_id": "letter_maxi",
                 "zone": "world",
                 "weight_tier": "W1000",
-                "price": 700,
-                "effective_from": null
+                "price": [
+                    {
+                        "price": 700,
+                        "effective_from": null,
+                        "effective_to": null
+                    }
+                ]
             },
             {
                 "product_id": "merchandise",
                 "zone": "domestic",
                 "weight_tier": "W1000",
-                "price": 270,
-                "effective_from": null
+                "price": [
+                    {
+                        "price": 270,
+                        "effective_from": null,
+                        "effective_to": null
+                    }
+                ]
             },
             {
                 "product_id": "merchandise",
                 "zone": "domestic",
                 "weight_tier": "W2000",
-                "price": 355,
-                "effective_from": null
+                "price": [
+                    {
+                        "price": 355,
+                        "effective_from": null,
+                        "effective_to": null
+                    }
+                ]
             }
         ],
         "service_prices": [
             {
                 "service_id": "registered_mail",
-                "price": 250,
-                "effective_from": null,
-                "effective_to": null
+                "price": [
+                    {
+                        "price": 265,
+                        "effective_from": null,
+                        "effective_to": null
+                    }
+                ]
             },
             {
                 "service_id": "registered_mail_mailbox",
-                "price": 250,
-                "effective_from": null,
-                "effective_to": null
+                "price": [
+                    {
+                        "price": 235,
+                        "effective_from": null,
+                        "effective_to": null
+                    }
+                ]
             },
             {
                 "service_id": "registered_mail_return_receipt",
-                "price": 470,
-                "effective_from": null,
-                "effective_to": null
+                "price": [
+                    {
+                        "price": 485,
+                        "effective_from": null,
+                        "effective_to": null
+                    }
+                ]
             },
             {
                 "service_id": "registered_mail_personal",
-                "price": 470,
-                "effective_from": null,
-                "effective_to": null
+                "price": [
+                    {
+                        "price": 470,
+                        "effective_from": null,
+                        "effective_to": null
+                    }
+                ]
             },
             {
                 "service_id": "registered_mail_personal_return_receipt",
-                "price": 690,
-                "effective_from": null,
-                "effective_to": null
+                "price": [
+                    {
+                        "price": 690,
+                        "effective_from": null,
+                        "effective_to": null
+                    }
+                ]
             },
             {
                 "service_id": "additional_insurance_500",
-                "price": 250,
-                "effective_from": null,
-                "effective_to": null
+                "price": [
+                    {
+                        "price": 250,
+                        "effective_from": null,
+                        "effective_to": null
+                    }
+                ]
             }
         ]
     }
