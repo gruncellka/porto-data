@@ -1,4 +1,5 @@
 {
+    "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/schemas/restrictions.schema.json",
     "file_type": "restrictions",
     "unit": {
         "country_code": "ISO 3166-1 alpha-2",

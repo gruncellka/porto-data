@@ -12,20 +12,62 @@ This module provides a centralized way to:
 import hashlib
 import json
 from pathlib import Path
-from typing import Dict
+from typing import Any, Dict
 
-# Centralized file mappings - single source of truth
-SCHEMA_DATA_MAPPINGS = {
-    "schemas/products.schema.json": "data/products.json",
-    "schemas/services.schema.json": "data/services.json",
-    "schemas/prices.schema.json": "data/prices.json",
-    "schemas/zones.schema.json": "data/zones.json",
-    "schemas/weight_tiers.schema.json": "data/weight_tiers.json",
-    "schemas/dimensions.schema.json": "data/dimensions.json",
-    "schemas/features.schema.json": "data/features.json",
-    "schemas/restrictions.schema.json": "data/restrictions.json",
-    "schemas/data_links.schema.json": "data/data_links.json",
-}
+
+def _get_project_root() -> Path:
+    """Determine project root by finding mappings.json relative to script location."""
+    # Get the directory where this script is located (scripts/)
+    script_dir = Path(__file__).parent
+    # Project root is one level up from scripts/
+    project_root = script_dir.parent
+    return project_root
+
+
+def load_mappings(mappings_path: str | None = None) -> Dict[str, str]:
+    """Load schema to data file mappings from mappings.json (source of truth).
+
+    Args:
+        mappings_path: Optional path to mappings.json. If None, automatically
+            finds it in the project root (relative to script location).
+
+    Returns:
+        Dictionary mapping schema paths to data file paths.
+    """
+    if mappings_path is None:
+        # Automatically determine project root and find mappings.json
+        project_root = _get_project_root()
+        mappings_file = project_root / "mappings.json"
+    else:
+        mappings_file = Path(mappings_path)
+
+    if not mappings_file.exists():
+        raise FileNotFoundError(
+            f"mappings.json not found at {mappings_file}. "
+            "This file is the source of truth for schema-to-data file mappings. "
+            f"Expected location: {_get_project_root() / 'mappings.json'}"
+        )
+
+    try:
+        with open(mappings_file, encoding="utf-8") as f:
+            mappings_data: Dict[str, Any] = json.load(f)
+        mappings_raw = mappings_data.get("mappings", {})
+        if not mappings_raw:
+            raise ValueError(f"No mappings found in {mappings_file}")
+        # Type check and convert to Dict[str, str]
+        if not isinstance(mappings_raw, dict):
+            raise ValueError(f"mappings must be a dictionary, got {type(mappings_raw)}")
+        # Validate all values are strings
+        mappings: Dict[str, str] = {}
+        for key, value in mappings_raw.items():
+            if not isinstance(key, str) or not isinstance(value, str):
+                raise ValueError(
+                    f"All mapping keys and values must be strings, got {type(key)} -> {type(value)}"
+                )
+            mappings[key] = value
+        return mappings
+    except json.JSONDecodeError as e:
+        raise ValueError(f"Invalid JSON in {mappings_file}: {e}") from e
 
 
 def compute_checksum(file_path: str) -> str:
@@ -37,14 +79,15 @@ def compute_checksum(file_path: str) -> str:
 def get_all_file_checksums() -> Dict[str, str]:
     """Get checksums for all schema and data files."""
     checksums = {}
+    mappings = load_mappings()
 
     # Add schema files
-    for schema_path in SCHEMA_DATA_MAPPINGS:
+    for schema_path in mappings:
         if Path(schema_path).exists():
             checksums[schema_path] = compute_checksum(schema_path)
 
     # Add data files
-    for data_path in SCHEMA_DATA_MAPPINGS.values():
+    for data_path in mappings.values():
         if Path(data_path).exists():
             checksums[data_path] = compute_checksum(data_path)
 
@@ -64,15 +107,30 @@ def get_existing_checksums_from_metadata(metadata_path: str = "metadata.json") -
 
     existing_checksums = {}
 
-    # Extract schema checksums
-    if "schemas" in metadata and "files" in metadata["schemas"]:
-        for file_info in metadata["schemas"]["files"]:
-            existing_checksums[file_info["path"]] = file_info["checksum"]
+    # Handle new structure with entities
+    if "entities" in metadata:
+        for _, entity_data in metadata["entities"].items():
+            # Extract data file checksum
+            if "data" in entity_data and "path" in entity_data["data"]:
+                existing_checksums[entity_data["data"]["path"]] = entity_data["data"].get(
+                    "checksum", ""
+                )
+            # Extract schema file checksum
+            if "schema" in entity_data and "path" in entity_data["schema"]:
+                existing_checksums[entity_data["schema"]["path"]] = entity_data["schema"].get(
+                    "checksum", ""
+                )
+    # Fallback to old structure for backward compatibility
+    else:
+        # Extract schema checksums
+        if "schemas" in metadata and "files" in metadata["schemas"]:
+            for file_info in metadata["schemas"]["files"]:
+                existing_checksums[file_info["path"]] = file_info["checksum"]
 
-    # Extract data checksums
-    if "data" in metadata and "files" in metadata["data"]:
-        for file_info in metadata["data"]["files"]:
-            existing_checksums[file_info["path"]] = file_info["checksum"]
+        # Extract data checksums
+        if "data" in metadata and "files" in metadata["data"]:
+            for file_info in metadata["data"]["files"]:
+                existing_checksums[file_info["path"]] = file_info["checksum"]
 
     return existing_checksums
 
@@ -87,4 +145,4 @@ def has_file_changes() -> bool:
 
 def get_schema_data_mappings() -> Dict[str, str]:
     """Get the schema to data file mappings."""
-    return SCHEMA_DATA_MAPPINGS.copy()
+    return load_mappings()

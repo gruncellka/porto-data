@@ -7,23 +7,48 @@ for all schemas and data JSON files.
 """
 
 import json
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List
 
 import tomllib
 
-from checksum_utils import get_all_file_checksums
+from checksum_utils import get_all_file_checksums, get_schema_data_mappings
 
 
 def get_file_info(file_path: Path, base_path: Path, checksums: Dict[str, str]) -> Dict[str, Any]:
     """Get file metadata with checksum."""
     relative_path = file_path.relative_to(base_path)
+    # Use as_posix() to normalize path separators to forward slashes
+    # This matches the format in mappings.json and ensures cross-platform compatibility
+    path_str = relative_path.as_posix()
     return {
-        "path": str(relative_path),
-        "checksum": checksums.get(str(relative_path), ""),
+        "path": path_str,
+        "checksum": checksums.get(path_str, ""),
         "size": file_path.stat().st_size,
     }
+
+
+def extract_entity_name(file_path: Path) -> str:
+    """Extract entity name from filename (e.g., 'products' from 'products.json')."""
+    name = file_path.stem
+    # Remove .schema suffix if present
+    if name.endswith(".schema"):
+        name = name[:-7]
+    return name
+
+
+def get_schema_url(schema_path: Path) -> str:
+    """Extract $id (canonical URL) from schema file."""
+    try:
+        with open(schema_path, encoding="utf-8") as f:
+            schema: Dict[str, Any] = json.load(f)
+        schema_id = schema.get("$id")
+        if isinstance(schema_id, str):
+            return schema_id
+        return ""
+    except (json.JSONDecodeError, FileNotFoundError, KeyError):
+        return ""
 
 
 def get_project_metadata(pyproject_path: Path) -> Dict[str, str]:
@@ -63,13 +88,33 @@ def generate_metadata() -> Dict[str, Any]:
     # Get all file checksums
     checksums = get_all_file_checksums()
 
-    # Collect schema files
-    schema_dir = project_root / "schemas"
-    schemas = collect_files(schema_dir, "*.json", project_root, checksums)
+    # Get schema to data mappings
+    mappings = get_schema_data_mappings()
 
-    # Collect data files
-    data_dir = project_root / "data"
-    data_files = collect_files(data_dir, "*.json", project_root, checksums)
+    # Build entities structure grouped by entity name
+    entities: Dict[str, Dict[str, Any]] = {}
+
+    for schema_path_str, data_path_str in mappings.items():
+        schema_path = project_root / schema_path_str
+        data_path = project_root / data_path_str
+
+        if not schema_path.exists() or not data_path.exists():
+            continue
+
+        # Extract entity name from data file
+        entity_name = extract_entity_name(data_path)
+
+        # Get schema URL from $id
+        schema_url = get_schema_url(schema_path)
+
+        # Build entity entry
+        entities[entity_name] = {
+            "data": get_file_info(data_path, project_root, checksums),
+            "schema": {
+                **get_file_info(schema_path, project_root, checksums),
+                "url": schema_url,
+            },
+        }
 
     # Build metadata
     metadata = {
@@ -78,15 +123,8 @@ def generate_metadata() -> Dict[str, Any]:
             "version": project_meta["version"],
             "description": project_meta["description"],
         },
-        "generated_at": datetime.utcnow().isoformat() + "Z",
-        "schemas": {
-            "count": len(schemas),
-            "files": schemas,
-        },
-        "data": {
-            "count": len(data_files),
-            "files": data_files,
-        },
+        "generated_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+        "entities": entities,
         "checksums": {
             "algorithm": "SHA-256",
             "note": "Use checksums to verify data integrity and detect changes",
@@ -147,8 +185,7 @@ def main() -> None:
         print(
             f"  - Project: {new_metadata['project']['name']} v{new_metadata['project']['version']}"
         )
-        print(f"  - Schemas: {new_metadata['schemas']['count']} files")
-        print(f"  - Data: {new_metadata['data']['count']} files")
+        print(f"  - Entities: {len(new_metadata['entities'])} entities")
         print(f"  - Generated at: {new_metadata['generated_at']}")
         print("  - Status: Updated (changes detected)")
     else:

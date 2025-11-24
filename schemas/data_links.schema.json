@@ -14,6 +14,11 @@
         "global_settings"
     ],
     "properties": {
+        "$schema": {
+            "type": "string",
+            "format": "uri",
+            "description": "JSON Schema URI reference"
+        },
         "file_type": {
             "type": "string",
             "const": "data_links",

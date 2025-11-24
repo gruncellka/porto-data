@@ -10,6 +10,11 @@
         "weight_tiers"
     ],
     "properties": {
+        "$schema": {
+            "type": "string",
+            "format": "uri",
+            "description": "JSON Schema URI reference"
+        },
         "file_type": {
             "type": "string",
             "const": "weight_tiers",

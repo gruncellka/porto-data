@@ -206,11 +206,20 @@ The `metadata.json` file is automatically generated with checksums of all data a
 -   Any file in `data/` or `schemas/` changes
 -   Checksums don't match the current files
 
+**Structure:**
+-   Grouped by entity name (e.g., `products`, `services`) with data and schema files linked together
+-   Includes canonical schema URLs from `$id` properties
+-   Each data file includes `$schema` property pointing to its schema URL
+
 **Commit behavior:**
 
 -   If `metadata.json` is regenerated during commit, the commit is **rejected** if `metadata.json` is not staged
 -   You must stage `metadata.json` in the same commit as your data changes: `git add metadata.json`
 -   This ensures `metadata.json` stays in sync with data files in the same commit
+
+### Schema Mapping
+
+Schema-to-data file mappings are defined in `mappings.json` (source of truth). All data files include a `$schema` property with the canonical schema URL for validation and editor support.
 
 ---
 
@@ -262,7 +271,7 @@ make validate
 ```
 porto-data-draft/
 ├── data/                   # Main data files (JSON)
-│   ├── products.json
+│   ├── products.json       # Includes $schema property
 │   ├── services.json
 │   ├── prices.json
 │   ├── zones.json
@@ -283,6 +292,7 @@ porto-data-draft/
 ├── .pre-commit-config.yaml # Pre-commit framework configuration
 ├── Makefile               # Build automation
 ├── pyproject.toml         # Python dependencies
+├── mappings.json          # Schema-to-data mappings (source of truth)
 └── metadata.json          # Generated checksums (auto-generated)
 ```
 
