@@ -1,4 +1,5 @@
 {
+    "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/schemas/services.schema.json",
     "file_type": "services",
     "services": [
         {

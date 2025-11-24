@@ -1,0 +1,13 @@
+{
+    "mappings": {
+        "schemas/products.schema.json": "data/products.json",
+        "schemas/services.schema.json": "data/services.json",
+        "schemas/prices.schema.json": "data/prices.json",
+        "schemas/zones.schema.json": "data/zones.json",
+        "schemas/weight_tiers.schema.json": "data/weight_tiers.json",
+        "schemas/dimensions.schema.json": "data/dimensions.json",
+        "schemas/features.schema.json": "data/features.json",
+        "schemas/restrictions.schema.json": "data/restrictions.json",
+        "schemas/data_links.schema.json": "data/data_links.json"
+    }
+}

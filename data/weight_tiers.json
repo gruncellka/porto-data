@@ -1,4 +1,5 @@
 {
+    "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/schemas/weight_tiers.schema.json",
     "file_type": "weight_tiers",
     "unit": {
         "weight": "g"
