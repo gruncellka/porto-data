@@ -1,5 +1,7 @@
 # Porto Data
 
+[![Porto Data Validation](https://github.com/gruncellka/porto-data/actions/workflows/validate.yml/badge.svg?branch=main)](https://github.com/gruncellka/porto-data/actions/workflows/validate.yml)
+
 **Structured JSON data for Deutsche Post / DHL shipping services**
 
 A comprehensive, schema-validated dataset containing Deutsche Post pricing, restrictions, zones, features, services, and compliance frameworks for international postal services with complete JSON schema validation and automated quality assurance.

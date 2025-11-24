@@ -1,6 +1,6 @@
 .PHONY: help setup install-hooks
-.PHONY: validate-json lint-json format-json
-.PHONY: format-code lint-code type-check
+.PHONY: validate-json lint-json format-json format-json-check
+.PHONY: format-code format-code-check lint-code type-check
 .PHONY: validate format lint quality metadata
 
 help:
@@ -11,14 +11,16 @@ help:
 	@echo "  make setup         - Install dependencies and pre-commit hooks"
 	@echo ""
 	@echo "JSON Commands:"
-	@echo "  make validate-json - Validate all JSON files against schemas"
-	@echo "  make lint-json     - Check JSON files for syntax errors (read-only)"
-	@echo "  make format-json   - Format and standardize JSON files (modifies files)"
+	@echo "  make validate-json    - Validate all JSON files against schemas"
+	@echo "  make lint-json        - Check JSON files for syntax errors (read-only)"
+	@echo "  make format-json        - Format and standardize JSON files (modifies files)"
+	@echo "  make format-json-check   - Check if JSON files are properly formatted (read-only)"
 	@echo ""
 	@echo "Code Commands:"
-	@echo "  make format-code   - Format Python code with ruff"
-	@echo "  make lint-code     - Lint Python code with ruff"
-	@echo "  make type-check    - Type check Python code with mypy"
+	@echo "  make format-code        - Format Python code with ruff"
+	@echo "  make format-code-check  - Check if Python code is properly formatted (read-only)"
+	@echo "  make lint-code        - Lint Python code with ruff"
+	@echo "  make type-check       - Type check Python code with mypy"
 	@echo ""
 	@echo "Unified Commands:"
 	@echo "  make validate      - Alias for validate-json"
@@ -51,20 +53,64 @@ lint-json:
 format-json:
 	@echo "Formatting JSON files..."
 	@for file in data/*.json schemas/*.json; do \
-		python3 -m json.tool "$$file" "$$file.tmp" && mv "$$file.tmp" "$$file" && echo "✓ $$file"; \
+		if [ -f "$$file" ]; then \
+			if python3 -m json.tool "$$file" "$$file.tmp" > /dev/null 2>&1; then \
+				if ! cmp -s "$$file" "$$file.tmp"; then \
+					if mv "$$file.tmp" "$$file"; then \
+						echo "✓ Formatted $$file"; \
+					else \
+						echo "✗ $$file: Failed to move formatted file (permissions issue?)"; \
+						rm -f "$$file.tmp"; \
+						exit 1; \
+					fi; \
+				else \
+					rm -f "$$file.tmp" && echo "✓ $$file (already formatted)"; \
+				fi; \
+			else \
+				echo "✗ $$file: Invalid JSON - cannot format"; \
+				rm -f "$$file.tmp"; \
+				exit 1; \
+			fi; \
+		fi; \
 	done
 	@echo "✓ All JSON files formatted"
+
+format-json-check:
+	@echo "Checking JSON formatting..."
+	@for file in data/*.json schemas/*.json; do \
+		if [ -f "$$file" ]; then \
+			if python3 -m json.tool "$$file" "$$file.tmp" > /dev/null 2>&1; then \
+				if ! cmp -s "$$file" "$$file.tmp"; then \
+					echo "✗ $$file is not properly formatted"; \
+					rm -f "$$file.tmp"; \
+					exit 1; \
+				fi; \
+				rm -f "$$file.tmp"; \
+				echo "✓ $$file"; \
+			else \
+				echo "✗ $$file: Invalid JSON - cannot check formatting"; \
+				rm -f "$$file.tmp"; \
+				exit 1; \
+			fi; \
+		fi; \
+	done
+	@echo "✓ All JSON files are properly formatted"
 
 # Code Commands
 format-code:
 	@echo "Formatting Python code..."
-	@. venv/bin/activate && ruff format .
-	@. venv/bin/activate && ruff check --fix .
+	@. venv/bin/activate && ruff format . || (echo "✗ Failed to format code with ruff" && exit 1)
+	@. venv/bin/activate && ruff check --fix . || (echo "✗ Failed to fix linting issues with ruff" && exit 1)
 	@echo "✓ Code formatted"
+
+format-code-check:
+	@echo "Checking Python code formatting..."
+	@. venv/bin/activate && ruff format --check . || (echo "✗ Code is not properly formatted. Run 'make format-code' to fix." && exit 1)
+	@echo "✓ Code formatting check complete"
 
 lint-code:
 	@echo "Linting Python code..."
-	@. venv/bin/activate && ruff check .
+	@. venv/bin/activate && ruff check . || (echo "✗ Code linting failed. Fix issues before committing." && exit 1)
 	@echo "✓ Code linting complete"
 
 type-check:
@@ -79,7 +125,7 @@ format: format-json format-code
 
 lint: lint-json lint-code
 
-quality: format-json lint-json validate-json format-code lint-code type-check
+quality: format-json-check lint-json validate-json format-code-check lint-code type-check
 
 metadata:
 	@. venv/bin/activate && python3 scripts/generate_metadata.py
