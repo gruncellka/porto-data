@@ -13,10 +13,18 @@ jobs:
                   cache: 'pip'
             - name: Install dependencies
               run: make setup
-            - name: Run schema validation
-              run: make validate
-            - name: Run code and JSON quality checks
-              run: make quality
+            - name: Validate JSON files against schemas
+              run: make validate-json
+            - name: Lint JSON syntax
+              run: make lint-json
+            - name: Check JSON formatting
+              run: make format-json-check
+            - name: Check Python code formatting
+              run: make format-code-check
+            - name: Lint Python code
+              run: make lint-code
+            - name: Type check Python code
+              run: make type-check
             - name: Verify metadata.json is up to date
               run: |
                 . venv/bin/activate && python3 scripts/generate_metadata.py
