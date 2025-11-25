@@ -129,9 +129,9 @@ jobs:
                 fi
                 echo "✓ metadata.json is up to date"
 
-    # Final validation job - creates visual graph endpoint
-    all-checks-passed:
-        name: All Checks Passed
+    # Final validation job - creates visual graph endpoint and satisfies "validate" check requirement
+    validate:
+        name: ✅ Validate
         runs-on: ubuntu-22.04
         needs:
             - validate-schemas
