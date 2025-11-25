@@ -12,14 +12,13 @@
         "products": {
             "file": "products.json",
             "depends_on": [
-                "prices.json",
                 "zones.json",
                 "weight_tiers.json",
                 "dimensions.json",
                 "services.json",
                 "features.json"
             ],
-            "description": "Products require prices, zones, weight tiers, dimensions, services and features"
+            "description": "Products require zones, weight tiers, dimensions, services and features"
         },
         "services": {
             "file": "services.json",
@@ -115,6 +114,7 @@
                 "domestic"
             ],
             "weight_tiers": [
+                "W1000",
                 "W2000"
             ]
         }

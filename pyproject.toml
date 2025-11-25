@@ -56,7 +56,7 @@ ignore = [
 ]
 
 [tool.ruff.lint.isort]
-known-first-party = ["checksum_utils", "generate_metadata", "validate_schemas"]
+known-first-party = ["utils", "generate_metadata", "validate_schemas", "validate_data_links"]
 
 [tool.mypy]
 python_version = "3.11"

@@ -39,6 +39,8 @@ help:
 validate-json:
 	@echo "Validating JSON against schemas..."
 	@. venv/bin/activate && python3 scripts/validate_schemas.py
+	@echo "Validating data_links.json..."
+	@. venv/bin/activate && python3 scripts/validate_data_links.py
 
 lint-json:
 	@echo "Linting JSON files for syntax errors..."

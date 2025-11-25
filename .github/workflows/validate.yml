@@ -3,7 +3,9 @@ name: Porto Data Validation
 on: [push, pull_request]
 
 jobs:
-    validate:
+    # Data Validation Jobs (run in parallel)
+    validate-schemas:
+        name: 📋 Validate JSON Schemas
         runs-on: ubuntu-22.04
         steps:
             - uses: actions/checkout@v4
@@ -14,17 +16,108 @@ jobs:
             - name: Install dependencies
               run: make setup
             - name: Validate JSON files against schemas
-              run: make validate-json
+              run: |
+                . venv/bin/activate && python3 scripts/validate_schemas.py
+
+    validate-data-links:
+        name: 🔗 Validate Data Links
+        runs-on: ubuntu-22.04
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-python@v5
+              with:
+                  python-version: '3.11'
+                  cache: 'pip'
+            - name: Install dependencies
+              run: make setup
+            - name: Validate data_links.json consistency
+              run: |
+                . venv/bin/activate && python3 scripts/validate_data_links.py
+
+    # JSON Quality Jobs (run in parallel)
+    lint-json:
+        name: 🔍 Lint JSON Syntax
+        runs-on: ubuntu-22.04
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-python@v5
+              with:
+                  python-version: '3.11'
+                  cache: 'pip'
+            - name: Install dependencies
+              run: make setup
             - name: Lint JSON syntax
               run: make lint-json
+
+    format-json:
+        name: ✨ Check JSON Formatting
+        runs-on: ubuntu-22.04
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-python@v5
+              with:
+                  python-version: '3.11'
+                  cache: 'pip'
+            - name: Install dependencies
+              run: make setup
             - name: Check JSON formatting
               run: make format-json-check
+
+    # Python Quality Jobs (run in parallel)
+    format-code:
+        name: 🐍 Check Python Formatting
+        runs-on: ubuntu-22.04
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-python@v5
+              with:
+                  python-version: '3.11'
+                  cache: 'pip'
+            - name: Install dependencies
+              run: make setup
             - name: Check Python code formatting
               run: make format-code-check
+
+    lint-code:
+        name: 🔎 Lint Python Code
+        runs-on: ubuntu-22.04
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-python@v5
+              with:
+                  python-version: '3.11'
+                  cache: 'pip'
+            - name: Install dependencies
+              run: make setup
             - name: Lint Python code
               run: make lint-code
+
+    type-check:
+        name: 📝 Type Check Python
+        runs-on: ubuntu-22.04
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-python@v5
+              with:
+                  python-version: '3.11'
+                  cache: 'pip'
+            - name: Install dependencies
+              run: make setup
             - name: Type check Python code
               run: make type-check
+
+    # Metadata (run in parallel)
+    verify-metadata:
+        name: 📊 Verify Metadata
+        runs-on: ubuntu-22.04
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-python@v5
+              with:
+                  python-version: '3.11'
+                  cache: 'pip'
+            - name: Install dependencies
+              run: make setup
             - name: Verify metadata.json is up to date
               run: |
                 . venv/bin/activate && python3 scripts/generate_metadata.py
@@ -35,6 +128,20 @@ jobs:
                   exit 1
                 fi
                 echo "✓ metadata.json is up to date"
-            - name: Run pre-commit checks (verify all hooks pass)
-              run: |
-                . venv/bin/activate && pre-commit run --all-files
+
+    # Final validation job - creates visual graph endpoint
+    all-checks-passed:
+        name: ✅ All Checks Passed
+        runs-on: ubuntu-22.04
+        needs:
+            - validate-schemas
+            - validate-data-links
+            - lint-json
+            - format-json
+            - format-code
+            - lint-code
+            - type-check
+            - verify-metadata
+        steps:
+            - name: All validation checks passed
+              run: echo "✅ All validation checks passed successfully!"

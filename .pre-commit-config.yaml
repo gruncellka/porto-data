@@ -76,3 +76,11 @@ repos:
         pass_filenames: false
         always_run: false
 
+      - id: validate-data-links
+        name: Validate data_links.json consistency
+        entry: bash -c 'if [ -f venv/bin/activate ]; then . venv/bin/activate; fi && python3 scripts/validate_data_links.py'
+        language: system
+        files: ^data/data_links\.json$|^data/(products|zones|weight_tiers|services|prices)\.json$
+        pass_filenames: false
+        always_run: false
+
