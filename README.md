@@ -1,6 +1,6 @@
 # Porto Data
 
-[![Porto Data Validation](https://github.com/gruncellka/porto-data/actions/workflows/validate.yml/badge.svg?branch=main)](https://github.com/gruncellka/porto-data/actions/workflows/validate.yml)
+[![porto-data-validation](https://github.com/gruncellka/porto-data/actions/workflows/porto-data-validation.yml/badge.svg)](https://github.com/gruncellka/porto-data/actions/workflows/porto-data-validation.yml)
 
 **Structured JSON data for Deutsche Post / DHL shipping services**
 
