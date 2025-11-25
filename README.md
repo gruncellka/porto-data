@@ -113,6 +113,16 @@ Restriction (e.g., "YEMEN_2015")
 
 **All relationships are one-directional** (no circular dependencies).
 
+### Data Links (Metadata)
+
+`data_links.json` provides links about data file relationships:
+- **Dependencies** - Which files depend on which
+- **Links** - Product-to-zone-to-weight-tier mappings for fast lookups
+- **Lookup rules** - How to find prices, services, and resolve weights
+- **Global settings** - Available services and price lookup configuration
+
+This metadata is primarily used by SDKs for optimized data access and validation, but is also useful for understanding the data structure.
+
 ---
 
 ## 📝 Common Tasks

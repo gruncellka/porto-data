@@ -13,7 +13,7 @@ from typing import Any, Dict, List
 
 import tomllib
 
-from checksum_utils import get_all_file_checksums, get_schema_data_mappings
+from utils import get_all_file_checksums, get_schema_data_mappings
 
 
 def get_file_info(file_path: Path, base_path: Path, checksums: Dict[str, str]) -> Dict[str, Any]:

@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
 """
-Shared utilities for checksum validation and change detection.
+Shared utilities for porto-data scripts.
 
 This module provides a centralized way to:
 - Define schema and data file mappings
 - Calculate file checksums
 - Detect changes in files
 - Validate metadata consistency
+- Load JSON files
+- Get data file lists
+- Get data file paths by entity name
 """
 
 import hashlib
@@ -146,3 +149,64 @@ def has_file_changes() -> bool:
 def get_schema_data_mappings() -> Dict[str, str]:
     """Get the schema to data file mappings."""
     return load_mappings()
+
+
+def load_json(filepath: Path | str) -> Dict[str, Any]:
+    """Load and parse JSON file.
+
+    Args:
+        filepath: Path to JSON file (Path object or string).
+
+    Returns:
+        Parsed JSON data as dictionary.
+
+    Raises:
+        FileNotFoundError: If file doesn't exist.
+        json.JSONDecodeError: If file contains invalid JSON.
+    """
+    path = Path(filepath) if isinstance(filepath, str) else filepath
+    with open(path, encoding="utf-8") as f:
+        return json.load(f)  # type: ignore[no-any-return]
+
+
+def get_data_file_path(entity_name: str) -> Path:
+    """Get data file path from mappings by entity name.
+
+    Args:
+        entity_name: Entity name (e.g., 'products', 'zones', 'data_links')
+
+    Returns:
+        Path to the data file
+
+    Raises:
+        FileNotFoundError: If no mapping found for the entity name
+    """
+    mappings = get_schema_data_mappings()
+    # Find schema file that matches entity name
+    schema_key = f"schemas/{entity_name}.schema.json"
+    if schema_key in mappings:
+        project_root = _get_project_root()
+        return project_root / mappings[schema_key]
+    raise FileNotFoundError(
+        f"No mapping found for '{entity_name}'. Available mappings: {list(mappings.keys())}"
+    )
+
+
+def get_data_files() -> set[str]:
+    """Get set of data file names from mappings.json (for dependency validation).
+
+    Used specifically for validating that files referenced in data_links.json
+    dependencies are actual data files from mappings.json.
+
+    Returns:
+        Set of data file names (e.g., {"products.json", "services.json", ...}).
+    """
+    mappings = load_mappings()
+    data_files = set()
+
+    for data_path in mappings.values():
+        # Extract filename from path (e.g., "data/products.json" -> "products.json")
+        filename = Path(data_path).name
+        data_files.add(filename)
+
+    return data_files

@@ -8,7 +8,7 @@ from pathlib import Path
 import tomllib
 from jsonschema import Draft7Validator, ValidationError
 
-from checksum_utils import get_schema_data_mappings, has_file_changes
+from utils import get_schema_data_mappings, has_file_changes
 
 # Get schema to data file mapping from shared module
 VALIDATIONS = get_schema_data_mappings()
