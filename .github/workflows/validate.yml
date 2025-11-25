@@ -131,7 +131,7 @@ jobs:
 
     # Final validation job - creates visual graph endpoint
     all-checks-passed:
-        name: ✅ All Checks Passed
+        name: All Checks Passed
         runs-on: ubuntu-22.04
         needs:
             - validate-schemas
