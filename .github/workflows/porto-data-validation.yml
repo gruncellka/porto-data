@@ -1,9 +1,8 @@
-name: Porto Data Validation
+name: porto-data-validation
 
 on: [push, pull_request]
 
 jobs:
-    # Data Validation Jobs (run in parallel)
     validate-schemas:
         name: 📋 Validate JSON Schemas
         runs-on: ubuntu-22.04
@@ -34,7 +33,6 @@ jobs:
               run: |
                 . venv/bin/activate && python3 scripts/validate_data_links.py
 
-    # JSON Quality Jobs (run in parallel)
     lint-json:
         name: 🔍 Lint JSON Syntax
         runs-on: ubuntu-22.04
@@ -63,7 +61,6 @@ jobs:
             - name: Check JSON formatting
               run: make format-json-check
 
-    # Python Quality Jobs (run in parallel)
     format-code:
         name: 🐍 Check Python Formatting
         runs-on: ubuntu-22.04
@@ -106,7 +103,6 @@ jobs:
             - name: Type check Python code
               run: make type-check
 
-    # Metadata (run in parallel)
     verify-metadata:
         name: 📊 Verify Metadata
         runs-on: ubuntu-22.04
@@ -129,8 +125,8 @@ jobs:
                 fi
                 echo "✓ metadata.json is up to date"
 
-    validate:
-        name: All checks passed
+    porto-data-validation:
+        name: Porto Data Validation
         runs-on: ubuntu-22.04
         needs:
             - validate-schemas
