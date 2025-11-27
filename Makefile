@@ -7,50 +7,67 @@ help:
 	@echo "Porto Data - Schema Validation & Code Quality"
 	@echo "=============================================="
 	@echo ""
-	@echo "Setup:"
+	@echo "Setup (First Time):"
 	@echo "  make setup         - Install dependencies and pre-commit hooks"
+	@echo ""
+	@echo "Most Common Commands:"
+	@echo "  make validate      - Validate all JSON files against schemas (most important)"
+	@echo "  make format        - Format both JSON and Python code"
+	@echo "  make lint          - Lint both JSON and Python code"
+	@echo "  make quality       - Run all quality checks (format, lint, validate, type-check)"
 	@echo ""
 	@echo "JSON Commands:"
 	@echo "  make validate-json    - Validate all JSON files against schemas"
-	@echo "  make lint-json        - Check JSON files for syntax errors (read-only)"
 	@echo "  make format-json        - Format and standardize JSON files (modifies files)"
+	@echo "  make lint-json        - Check JSON files for syntax errors (read-only)"
 	@echo "  make format-json-check   - Check if JSON files are properly formatted (read-only)"
 	@echo ""
 	@echo "Code Commands:"
 	@echo "  make format-code        - Format Python code with ruff"
-	@echo "  make format-code-check  - Check if Python code is properly formatted (read-only)"
 	@echo "  make lint-code        - Lint Python code with ruff"
 	@echo "  make type-check       - Type check Python code with mypy"
-	@echo ""
-	@echo "Unified Commands:"
-	@echo "  make validate      - Alias for validate-json"
-	@echo "  make format        - Format both JSON and code"
-	@echo "  make lint          - Lint both JSON and code"
-	@echo "  make quality       - Run all quality checks"
+	@echo "  make format-code-check  - Check if Python code is properly formatted (read-only)"
 	@echo ""
 	@echo "Metadata:"
 	@echo "  make metadata      - Generate metadata.json with checksums"
 	@echo ""
 	@echo "Hooks:"
-	@echo "  make install-hooks - Install pre-commit hook"
+	@echo "  make install-hooks - Install pre-commit hook (usually done by setup)"
 	@echo ""
 
+# ==========================================
+# Setup (First Time)
+# ==========================================
+setup:
+	@echo "Setting up porto-data..."
+	@python3 -m venv venv
+	@. venv/bin/activate && pip install -q -e ".[dev]"
+	@if [ -d .git ]; then \
+		$(MAKE) install-hooks || echo "Warning: Could not install pre-commit hooks. Run 'make install-hooks' manually."; \
+	else \
+		echo "Skipping hook installation (not a git repository)"; \
+	fi
+	@echo "✓ Setup complete - run 'make help' for commands"
+
+# ==========================================
+# Most Common Commands
+# ==========================================
+validate: validate-json
+
+format: format-json format-code
+
+lint: lint-json lint-code
+
+quality: format-json-check lint-json validate-json format-code-check lint-code type-check
+
+# ==========================================
 # JSON Commands
+# ==========================================
 validate-json:
 	@echo "Validating JSON against schemas..."
 	@. venv/bin/activate && python3 scripts/validate_schemas.py
 	@echo "Validating data_links.json..."
 	@. venv/bin/activate && python3 scripts/validate_data_links.py
-
-lint-json:
-	@echo "Linting JSON files for syntax errors..."
-	@for file in data/*.json; do \
-		python3 -m json.tool "$$file" > /dev/null && echo "✓ $$file" || (echo "✗ $$file: JSON syntax error" && exit 1); \
-	done
-	@for file in schemas/*.json; do \
-		python3 -m json.tool "$$file" > /dev/null && echo "✓ $$file" || (echo "✗ $$file: JSON syntax error" && exit 1); \
-	done
-	@echo "✓ All JSON files are valid"
 
 format-json:
 	@echo "Formatting JSON files..."
@@ -77,6 +94,16 @@ format-json:
 	done
 	@echo "✓ All JSON files formatted"
 
+lint-json:
+	@echo "Linting JSON files for syntax errors..."
+	@for file in data/*.json; do \
+		python3 -m json.tool "$$file" > /dev/null && echo "✓ $$file" || (echo "✗ $$file: JSON syntax error" && exit 1); \
+	done
+	@for file in schemas/*.json; do \
+		python3 -m json.tool "$$file" > /dev/null && echo "✓ $$file" || (echo "✗ $$file: JSON syntax error" && exit 1); \
+	done
+	@echo "✓ All JSON files are valid"
+
 format-json-check:
 	@echo "Checking JSON formatting..."
 	@for file in data/*.json schemas/*.json; do \
@@ -98,17 +125,14 @@ format-json-check:
 	done
 	@echo "✓ All JSON files are properly formatted"
 
+# ==========================================
 # Code Commands
+# ==========================================
 format-code:
 	@echo "Formatting Python code..."
 	@. venv/bin/activate && ruff format . || (echo "✗ Failed to format code with ruff" && exit 1)
 	@. venv/bin/activate && ruff check --fix . || (echo "✗ Failed to fix linting issues with ruff" && exit 1)
 	@echo "✓ Code formatted"
-
-format-code-check:
-	@echo "Checking Python code formatting..."
-	@. venv/bin/activate && ruff format --check . || (echo "✗ Code is not properly formatted. Run 'make format-code' to fix." && exit 1)
-	@echo "✓ Code formatting check complete"
 
 lint-code:
 	@echo "Linting Python code..."
@@ -120,18 +144,20 @@ type-check:
 	@. venv/bin/activate && mypy scripts/
 	@echo "✓ Type check complete"
 
-# Unified Commands
-validate: validate-json
+format-code-check:
+	@echo "Checking Python code formatting..."
+	@. venv/bin/activate && ruff format --check . || (echo "✗ Code is not properly formatted. Run 'make format-code' to fix." && exit 1)
+	@echo "✓ Code formatting check complete"
 
-format: format-json format-code
-
-lint: lint-json lint-code
-
-quality: format-json-check lint-json validate-json format-code-check lint-code type-check
-
+# ==========================================
+# Metadata
+# ==========================================
 metadata:
 	@. venv/bin/activate && python3 scripts/generate_metadata.py
 
+# ==========================================
+# Hooks (Usually Automatic)
+# ==========================================
 install-hooks:
 	@echo "Installing pre-commit hooks..."
 	@if [ -f venv/bin/pre-commit ]; then \
@@ -141,14 +167,3 @@ install-hooks:
 		exit 1; \
 	fi
 	@echo "✓ Pre-commit hooks installed"
-
-setup:
-	@echo "Setting up porto-data..."
-	@python3 -m venv venv
-	@. venv/bin/activate && pip install -q -e ".[dev]"
-	@if [ -d .git ]; then \
-		$(MAKE) install-hooks || echo "Warning: Could not install pre-commit hooks. Run 'make install-hooks' manually."; \
-	else \
-		echo "Skipping hook installation (not a git repository)"; \
-	fi
-	@echo "✓ Setup complete - run 'make help' for commands"

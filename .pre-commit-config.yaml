@@ -11,6 +11,41 @@
 
 repos:
     # ==========================================
+    # JSON Validation (MUST RUN FIRST)
+    # ==========================================
+    # Schema validation and metadata generation
+    # Note: metadata.json is automatically staged if modified
+    - repo: local
+      hooks:
+          - id: validate-schemas
+            name: Validate schemas and generate metadata
+            entry: bash -c 'if [ -f venv/bin/activate ]; then . venv/bin/activate; fi && python3 scripts/validate_schemas.py'
+            language: system
+            files: ^(data|schemas)/.*\.json$
+            pass_filenames: false
+            always_run: false
+
+          - id: validate-data-links
+            name: Validate data_links.json consistency
+            entry: bash -c 'if [ -f venv/bin/activate ]; then . venv/bin/activate; fi && python3 scripts/validate_data_links.py'
+            language: system
+            files: ^data/data_links\.json$|^data/(products|zones|weight_tiers|services|prices)\.json$
+            pass_filenames: false
+            always_run: false
+
+    # JSON syntax validation
+    - repo: local
+      hooks:
+          - id: lint-json
+            name: Validate JSON syntax
+            entry: bash -c 'for file in data/*.json schemas/*.json; do [ -f "$file" ] && python3 -m json.tool "$file" > /dev/null || exit 1; done'
+            language: system
+            types: [json]
+            files: ^(data|schemas)/.*\.json$
+            pass_filenames: false
+            always_run: false
+
+    # ==========================================
     # Standard Pre-commit Hooks
     # ==========================================
     - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -24,6 +59,21 @@ repos:
             args: ['--maxkb=300']
           - id: check-merge-conflict
           - id: detect-private-key
+
+    # ==========================================
+    # JSON Formatting (runs after validation)
+    # ==========================================
+    # JSON formatting (uses json.tool like Makefile)
+    - repo: local
+      hooks:
+          - id: format-json
+            name: Format JSON files
+            entry: bash -c 'for file in data/*.json schemas/*.json; do [ -f "$file" ] && python3 -m json.tool "$file" "$file.tmp" && mv "$file.tmp" "$file" || true; done'
+            language: system
+            types: [json]
+            files: ^(data|schemas)/.*\.json$
+            pass_filenames: false
+            always_run: false
 
     # ==========================================
     # Python Code Quality (porto-data only)
@@ -50,51 +100,3 @@ repos:
             additional_dependencies: [types-jsonschema, types-toml]
             args: ['--config-file=pyproject.toml']
             files: ^scripts/.*\.py$
-
-    # ==========================================
-    # JSON Quality (porto-data only)
-    # ==========================================
-
-    # JSON formatting (uses json.tool like Makefile)
-    - repo: local
-      hooks:
-          - id: format-json
-            name: Format JSON files
-            entry: bash -c 'for file in data/*.json schemas/*.json; do [ -f "$file" ] && python3 -m json.tool "$file" "$file.tmp" && mv "$file.tmp" "$file" || true; done'
-            language: system
-            types: [json]
-            files: ^(data|schemas)/.*\.json$
-            pass_filenames: false
-            always_run: false
-
-    # JSON syntax validation
-    - repo: local
-      hooks:
-          - id: lint-json
-            name: Validate JSON syntax
-            entry: bash -c 'for file in data/*.json schemas/*.json; do [ -f "$file" ] && python3 -m json.tool "$file" > /dev/null || exit 1; done'
-            language: system
-            types: [json]
-            files: ^(data|schemas)/.*\.json$
-            pass_filenames: false
-            always_run: false
-
-    # Schema validation and metadata generation
-    # Note: metadata.json is automatically staged if modified
-    - repo: local
-      hooks:
-          - id: validate-schemas
-            name: Validate schemas and generate metadata
-            entry: bash -c 'if [ -f venv/bin/activate ]; then . venv/bin/activate; fi && python3 scripts/validate_schemas.py'
-            language: system
-            files: ^(data|schemas)/.*\.json$
-            pass_filenames: false
-            always_run: false
-
-          - id: validate-data-links
-            name: Validate data_links.json consistency
-            entry: bash -c 'if [ -f venv/bin/activate ]; then . venv/bin/activate; fi && python3 scripts/validate_data_links.py'
-            language: system
-            files: ^data/data_links\.json$|^data/(products|zones|weight_tiers|services|prices)\.json$
-            pass_filenames: false
-            always_run: false
