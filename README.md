@@ -59,8 +59,8 @@ This dataset is perfect for:
 ### Installation
 
 ```bash
-git clone <repository-url>
-cd porto-data-draft
+git clone https://github.com/gruncellka/porto-data.git
+cd porto-data
 make setup
 ```
 
@@ -68,7 +68,9 @@ This installs:
 
 -   `jsonschema` for validation
 -   `ruff`, `mypy` for code quality (Ruff handles formatting + linting)
--   `pre-commit` framework with hooks for automatic validation
+-   `pre-commit` framework with hooks (installed automatically - no manual step needed)
+
+**Note:** Pre-commit hooks are automatically installed during `make setup` and will run automatically on every commit.
 
 ### Verify Installation
 
@@ -116,10 +118,11 @@ Restriction (e.g., "YEMEN_2015")
 ### Data Links (Metadata)
 
 `data_links.json` provides links about data file relationships:
-- **Dependencies** - Which files depend on which
-- **Links** - Product-to-zone-to-weight-tier mappings for fast lookups
-- **Lookup rules** - How to find prices, services, and resolve weights
-- **Global settings** - Available services and price lookup configuration
+
+-   **Dependencies** - Which files depend on which
+-   **Links** - Product-to-zone-to-weight-tier mappings for fast lookups
+-   **Lookup rules** - How to find prices, services, and resolve weights
+-   **Global settings** - Available services and price lookup configuration
 
 This metadata is primarily used by SDKs for optimized data access and validation, but is also useful for understanding the data structure.
 
@@ -182,7 +185,7 @@ The pre-commit framework **automatically** runs hooks on every commit:
 **Installing hooks:**
 
 ```bash
-make install-hooks  # Installs pre-commit framework hooks
+make install-hooks  # Reinstall pre-commit hooks (usually not needed)
 ```
 
 ### Available Commands
@@ -219,6 +222,7 @@ The `metadata.json` file is automatically generated with checksums of all data a
 -   Checksums don't match the current files
 
 **Structure:**
+
 -   Grouped by entity name (e.g., `products`, `services`) with data and schema files linked together
 -   Includes canonical schema URLs from `$id` properties
 -   Each data file includes `$schema` property pointing to its schema URL
@@ -281,7 +285,7 @@ make validate
 ## 📂 Project Structure
 
 ```
-porto-data-draft/
+porto-data/
 ├── data/                   # Main data files (JSON)
 │   ├── products.json       # Includes $schema property
 │   ├── services.json
@@ -347,7 +351,7 @@ porto-data-draft/
 
 ### Updating Schemas
 
-1. Edit the schema file in `schema/`
+1. Edit the schema file in `schemas/`
 2. Update corresponding data in `data/`
 3. Run `make validate` to verify compatibility
 
