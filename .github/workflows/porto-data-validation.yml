@@ -6,6 +6,7 @@ jobs:
     # ==========================================
     # JSON Validation (MUST RUN FIRST)
     # ==========================================
+    # These can run in parallel - both just need valid JSON files
     validate-schemas:
         name: 📋 Validate JSON Schemas
         runs-on: ubuntu-22.04
@@ -21,6 +22,24 @@ jobs:
               run: |
                   . venv/bin/activate && python3 scripts/validate_schemas.py
 
+    lint-json:
+        name: 🔍 Lint JSON Syntax
+        runs-on: ubuntu-22.04
+        # No dependency - just checks JSON syntax, doesn't need schemas
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-python@v5
+              with:
+                  python-version: '3.11'
+                  cache: 'pip'
+            - name: Install dependencies
+              run: make setup
+            - name: Lint JSON syntax
+              run: make lint-json
+
+    # ==========================================
+    # Data Links Validation (needs valid schemas)
+    # ==========================================
     validate-data-links:
         name: 🔗 Validate Data Links
         runs-on: ubuntu-22.04
@@ -37,23 +56,8 @@ jobs:
               run: |
                   . venv/bin/activate && python3 scripts/validate_data_links.py
 
-    lint-json:
-        name: 🔍 Lint JSON Syntax
-        runs-on: ubuntu-22.04
-        needs: [validate-schemas]
-        steps:
-            - uses: actions/checkout@v4
-            - uses: actions/setup-python@v5
-              with:
-                  python-version: '3.11'
-                  cache: 'pip'
-            - name: Install dependencies
-              run: make setup
-            - name: Lint JSON syntax
-              run: make lint-json
-
     # ==========================================
-    # Formatting and Code Quality (runs after validation)
+    # Formatting Checks (needs valid data)
     # ==========================================
     format-json:
         name: ✨ Check JSON Formatting
@@ -69,51 +73,6 @@ jobs:
               run: make setup
             - name: Check JSON formatting
               run: make format-json-check
-
-    format-code:
-        name: 🐍 Check Python Formatting
-        runs-on: ubuntu-22.04
-        needs: [validate-schemas]
-        steps:
-            - uses: actions/checkout@v4
-            - uses: actions/setup-python@v5
-              with:
-                  python-version: '3.11'
-                  cache: 'pip'
-            - name: Install dependencies
-              run: make setup
-            - name: Check Python code formatting
-              run: make format-code-check
-
-    lint-code:
-        name: 🔎 Lint Python Code
-        runs-on: ubuntu-22.04
-        needs: [validate-schemas]
-        steps:
-            - uses: actions/checkout@v4
-            - uses: actions/setup-python@v5
-              with:
-                  python-version: '3.11'
-                  cache: 'pip'
-            - name: Install dependencies
-              run: make setup
-            - name: Lint Python code
-              run: make lint-code
-
-    type-check:
-        name: 📝 Type Check Python
-        runs-on: ubuntu-22.04
-        needs: [validate-schemas]
-        steps:
-            - uses: actions/checkout@v4
-            - uses: actions/setup-python@v5
-              with:
-                  python-version: '3.11'
-                  cache: 'pip'
-            - name: Install dependencies
-              run: make setup
-            - name: Type check Python code
-              run: make type-check
 
     verify-metadata:
         name: 📊 Verify Metadata
@@ -138,18 +97,70 @@ jobs:
                   fi
                   echo "✓ metadata.json is up to date"
 
+    # ==========================================
+    # Python Code Quality (independent of JSON)
+    # ==========================================
+    # These can run in parallel with JSON validation - completely independent
+    format-code:
+        name: 🐍 Check Python Formatting
+        runs-on: ubuntu-22.04
+        # No dependency - Python code is independent of JSON validation
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-python@v5
+              with:
+                  python-version: '3.11'
+                  cache: 'pip'
+            - name: Install dependencies
+              run: make setup
+            - name: Check Python code formatting
+              run: make format-code-check
+
+    lint-code:
+        name: 🔎 Lint Python Code
+        runs-on: ubuntu-22.04
+        # No dependency - Python code is independent of JSON validation
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-python@v5
+              with:
+                  python-version: '3.11'
+                  cache: 'pip'
+            - name: Install dependencies
+              run: make setup
+            - name: Lint Python code
+              run: make lint-code
+
+    type-check:
+        name: 📝 Type Check Python
+        runs-on: ubuntu-22.04
+        # No dependency - Python code is independent of JSON validation
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-python@v5
+              with:
+                  python-version: '3.11'
+                  cache: 'pip'
+            - name: Install dependencies
+              run: make setup
+            - name: Type check Python code
+              run: make type-check
+
+    # ==========================================
+    # Final Summary (waits for all checks)
+    # ==========================================
     porto-data-validation:
         name: Porto Data Validation
         runs-on: ubuntu-22.04
         needs:
             - validate-schemas
-            - validate-data-links
             - lint-json
+            - validate-data-links
             - format-json
+            - verify-metadata
             - format-code
             - lint-code
             - type-check
-            - verify-metadata
         steps:
             - name: All validation checks passed
               run: echo "✅ All validation checks passed successfully!"
