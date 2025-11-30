@@ -2,9 +2,9 @@
     "project": {
         "name": "porto-data",
         "version": "0.0.1",
-        "description": "Deutsche Post / DHL pricing and rules data with schema validation"
+        "description": "Deutsche Post pricing and rules data with schema validation"
     },
-    "generated_at": "2025-11-25T08:03:41.932056Z",
+    "generated_at": "2025-11-30T18:05:11.811290Z",
     "entities": {
         "products": {
             "data": {
@@ -100,8 +100,8 @@
         "restrictions": {
             "data": {
                 "path": "data/restrictions.json",
-                "checksum": "fb0fc046efb24344f355e90205ef3533cf6f21571fba53b15fa1478a7f64d026",
-                "size": 31208
+                "checksum": "1dcb28ef7053d9fd6dff4f85fc9305f46eb286b86405b1ec834fa5f847ab2e82",
+                "size": 31183
             },
             "schema": {
                 "path": "schemas/restrictions.schema.json",

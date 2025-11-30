@@ -2,7 +2,7 @@
 
 [![porto-data-validation](https://github.com/gruncellka/porto-data/actions/workflows/porto-data-validation.yml/badge.svg)](https://github.com/gruncellka/porto-data/actions/workflows/porto-data-validation.yml)
 
-**Structured JSON data for Deutsche Post / DHL shipping services**
+**Structured JSON data for Deutsche Post shipping services**
 
 A comprehensive, schema-validated dataset containing Deutsche Post pricing, restrictions, zones, features, services, and compliance frameworks for international postal services with complete JSON schema validation and automated quality assurance.
 
@@ -365,19 +365,17 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## ⚠️ Disclaimer
 
-This is **reference data** for Deutsche Post/DHL services. Always verify current restrictions, pricing, and service availability with Deutsche Post before shipping.
+This is **reference data** for Deutsche Post services. Always verify current restrictions, pricing, and service availability with Deutsche Post before shipping.
 
 Data accuracy is maintained on a best-effort basis. For official information, visit:
 
 -   Deutsche Post: https://www.deutschepost.de
--   DHL: https://www.dhl.de
 
 ---
 
 ## 🔗 Related Resources
 
 -   [Deutsche Post Official Website](https://www.deutschepost.de)
--   [DHL International Services](https://www.dhl.de)
 -   [EU Sanctions Map](https://www.sanctionsmap.eu/)
 -   [ISO 3166 Country Codes](https://www.iso.org/iso-3166-country-codes.html)
 

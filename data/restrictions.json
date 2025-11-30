@@ -39,7 +39,7 @@
             "EU sanctions lists",
             "UN sanctions lists",
             "German national restrictions",
-            "OFAC (US sanctions - for DHL operations)",
+            "OFAC (US sanctions)",
             "Other international embargo lists"
         ]
     },
@@ -50,7 +50,7 @@
         "Norway Posten country restrictions (reference)",
         "Public information on international sanctions"
     ],
-    "disclaimer": "This information is for reference only. Restrictions change frequently. Always verify current restrictions with Deutsche Post/DHL before shipping. | Volatility: This list can change rapidly due to political developments, conflicts, or natural disasters | Verification: Always verify current restrictions with Deutsche Post before sending | Customs: Even if postal service is available, customs duties and restrictions may apply | Payment: Payment services (Nachnahme, insurance) may not be available even if basic postal service exists | Recommendation: For business/important shipments, consult Deutsche Post customer service for current status",
+    "disclaimer": "This information is for reference only. Restrictions change frequently. Always verify current restrictions with Deutsche Post before shipping. | Volatility: This list can change rapidly due to political developments, conflicts, or natural disasters | Verification: Always verify current restrictions with Deutsche Post before sending | Customs: Even if postal service is available, customs duties and restrictions may apply | Payment: Payment services (Nachnahme, insurance) may not be available even if basic postal service exists | Recommendation: For business/important shipments, consult Deutsche Post customer service for current status",
     "restrictions": [
         {
             "id": "CRIMEA_2014",
