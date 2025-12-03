@@ -37,6 +37,7 @@ def validate_and_analyze_data_links() -> dict[str, list[str]]:
         weight_tiers = load_json(DATA_DIR / "weight_tiers.json")
         services = load_json(DATA_DIR / "services.json")
         prices = load_json(DATA_DIR / "prices.json")
+        dimensions = load_json(DATA_DIR / "dimensions.json")
     except FileNotFoundError as e:
         results["errors"].append(f"Missing file: {str(e)}")
         return results
@@ -52,8 +53,36 @@ def validate_and_analyze_data_links() -> dict[str, list[str]]:
     product_prices = prices.get("prices", {}).get("product_prices", [])
     service_prices = prices.get("prices", {}).get("service_prices", [])
 
-    # 1. Verify lookup_method array path matches actual structure
-    lookup_array = data_links.get("global_settings", {}).get("lookup_method", {}).get("array", "")
+    # 1. Verify lookup_method configuration
+    global_settings = data_links.get("global_settings", {})
+    lookup_method = global_settings.get("lookup_method", {})
+    lookup_file = lookup_method.get("file", "")
+    lookup_array = lookup_method.get("array", "")
+    lookup_match = lookup_method.get("match", {})
+    price_source = global_settings.get("price_source", "")
+
+    # 1a. Verify lookup_method.file matches actual file
+    all_data_files = get_data_files()
+    if lookup_file == "prices.json":
+        if "prices.json" in all_data_files:
+            results["correct"].append("lookup_method.file 'prices.json' matches actual file")
+        else:
+            results["errors"].append(
+                "lookup_method.file references 'prices.json' but file doesn't exist"
+            )
+    else:
+        results["errors"].append(f"lookup_method.file '{lookup_file}' should be 'prices.json'")
+
+    # 1b. Verify price_source matches actual file
+    if price_source == "prices.json":
+        if "prices.json" in all_data_files:
+            results["correct"].append("price_source 'prices.json' matches actual file")
+        else:
+            results["errors"].append("price_source references 'prices.json' but file doesn't exist")
+    else:
+        results["errors"].append(f"price_source '{price_source}' should be 'prices.json'")
+
+    # 1c. Verify lookup_method array path matches actual structure
     if lookup_array == "prices.product_prices":
         if "prices" in prices and "product_prices" in prices["prices"]:
             results["correct"].append(
@@ -67,6 +96,27 @@ def validate_and_analyze_data_links() -> dict[str, list[str]]:
         results["warnings"].append(
             f"Lookup method array path '{lookup_array}' - verify this matches actual structure"
         )
+
+    # 1d. Verify lookup_method.match keys exist in price entries
+    if product_prices:
+        # Get keys from first price entry as reference
+        sample_price_keys = set(product_prices[0].keys())
+        expected_match_keys = set(lookup_match.keys())
+        # Remove description/metadata keys that might be in match but not in prices
+        match_keys_to_check = {k for k in expected_match_keys if k != "description"}
+
+        missing_keys = match_keys_to_check - sample_price_keys
+        if missing_keys:
+            results["errors"].append(
+                f"lookup_method.match keys {sorted(missing_keys)} do not exist in price entries. "
+                f"Available keys: {sorted(sample_price_keys)}"
+            )
+        else:
+            results["correct"].append(
+                f"lookup_method.match keys {sorted(match_keys_to_check)} exist in price entries"
+            )
+    else:
+        results["warnings"].append("No product prices found to validate lookup_method.match keys")
 
     # 2. Validate links section
     links = data_links.get("links", {})
@@ -193,8 +243,20 @@ def validate_and_analyze_data_links() -> dict[str, list[str]]:
 
     # 7. Validate dependencies section
     dependencies = data_links.get("dependencies", {})
-    all_data_files = get_data_files()
 
+    # 7a. Check if all data files are covered in dependencies
+    # data_links.json itself should not be in dependencies
+    expected_data_files = all_data_files - {"data_links.json"}
+    files_in_dependencies = {dep_data.get("file") for dep_data in dependencies.values()}
+    missing_in_dependencies = expected_data_files - files_in_dependencies
+    if missing_in_dependencies:
+        results["fixes_needed"].append(
+            f"Data files not in dependencies section: {sorted(missing_in_dependencies)}"
+        )
+    else:
+        results["correct"].append("All data files are covered in dependencies section")
+
+    # 7b. Validate individual dependency entries
     for dep_name, dep_data in dependencies.items():
         dep_file = dep_data.get("file")
         if dep_file not in all_data_files:
@@ -207,7 +269,78 @@ def validate_and_analyze_data_links() -> dict[str, list[str]]:
                     f"Dependency '{dep_file_name}' in '{dep_name}' is not a known data file"
                 )
 
-    # 8. Check for circular dependencies
+    # 8. Validate unit values consistency
+    data_links_units = data_links.get("unit", {})
+    products_units = products.get("unit", {})
+    prices_units = prices.get("unit", {})
+    dimensions_units = dimensions.get("unit", {})
+    weight_tiers_units = weight_tiers.get("unit", {})
+
+    # Check weight unit consistency
+    data_links_weight = data_links_units.get("weight")
+    products_weight = products_units.get("weight")
+    weight_tiers_weight = weight_tiers_units.get("weight")
+    if data_links_weight == products_weight == weight_tiers_weight:
+        if data_links_weight == "g":
+            results["correct"].append("Unit weight 'g' is consistent across all files")
+        else:
+            results["warnings"].append(
+                f"Unit weight '{data_links_weight}' is consistent but verify it's correct"
+            )
+    else:
+        results["errors"].append(
+            f"Weight unit mismatch: data_links={data_links_weight}, "
+            f"products={products_weight}, weight_tiers={weight_tiers_weight}"
+        )
+
+    # Check dimension unit consistency
+    data_links_dimension = data_links_units.get("dimension")
+    products_dimension = products_units.get("dimension")
+    dimensions_dimension = dimensions_units.get("dimension")
+    if data_links_dimension == products_dimension == dimensions_dimension:
+        if data_links_dimension == "mm":
+            results["correct"].append("Unit dimension 'mm' is consistent across all files")
+        else:
+            results["warnings"].append(
+                f"Unit dimension '{data_links_dimension}' is consistent but verify it's correct"
+            )
+    else:
+        results["errors"].append(
+            f"Dimension unit mismatch: data_links={data_links_dimension}, "
+            f"products={products_dimension}, dimensions={dimensions_dimension}"
+        )
+
+    # Check price unit consistency
+    data_links_price = data_links_units.get("price")
+    prices_price = prices_units.get("price")
+    if data_links_price == prices_price:
+        if data_links_price == "cents":
+            results["correct"].append("Unit price 'cents' is consistent across all files")
+        else:
+            results["warnings"].append(
+                f"Unit price '{data_links_price}' is consistent but verify it's correct"
+            )
+    else:
+        results["errors"].append(
+            f"Price unit mismatch: data_links={data_links_price}, prices={prices_price}"
+        )
+
+    # Check currency unit consistency
+    data_links_currency = data_links_units.get("currency")
+    prices_currency = prices_units.get("currency")
+    if data_links_currency == prices_currency:
+        if data_links_currency == "EUR":
+            results["correct"].append("Unit currency 'EUR' is consistent across all files")
+        else:
+            results["warnings"].append(
+                f"Unit currency '{data_links_currency}' is consistent but verify it's correct"
+            )
+    else:
+        results["errors"].append(
+            f"Currency unit mismatch: data_links={data_links_currency}, prices={prices_currency}"
+        )
+
+    # 9. Check for circular dependencies
     dep_graph: dict[str, set[str]] = {}
     for _dep_name, dep_data in dependencies.items():
         dep_file = dep_data.get("file", "").replace(".json", "")

@@ -128,13 +128,13 @@ This metadata is primarily used by SDKs for optimized data access and validation
 
 **Validation:** The `validate_data_links.py` script ensures consistency between `data_links.json` and the actual data files. It checks:
 
--   ✅ All products in links exist in `products.json`
--   ✅ All zones referenced in links exist in `zones.json`
--   ✅ All weight tiers referenced in links exist in `weight_tiers.json`
+-   ✅ All products, zones, and weight tiers in links exist in their respective files
 -   ✅ Product zones and weight tiers match between `data_links.json` and `products.json`
--   ✅ All products have corresponding entries in links
 -   ✅ Prices exist for all zone+weight_tier combinations
 -   ✅ Available services are valid and have prices
+-   ✅ Lookup method configuration matches actual file structure
+-   ✅ Unit values (weight, dimension, price, currency) are consistent across files
+-   ✅ All data files are covered in dependencies section
 -   ✅ No circular dependencies between files
 
 Run validation with:
