@@ -1,5 +1,5 @@
 .PHONY: help setup install-hooks
-.PHONY: validate-json lint-json format-json format-json-check
+.PHONY: validate-json validate-data-links lint-json format-json format-json-check
 .PHONY: format-code format-code-check lint-code type-check
 .PHONY: validate format lint quality metadata
 
@@ -18,6 +18,7 @@ help:
 	@echo ""
 	@echo "JSON Commands:"
 	@echo "  make validate-json    - Validate all JSON files against schemas"
+	@echo "  make validate-data-links - Validate data_links.json consistency with data files"
 	@echo "  make format-json        - Format and standardize JSON files (modifies files)"
 	@echo "  make lint-json        - Check JSON files for syntax errors (read-only)"
 	@echo "  make format-json-check   - Check if JSON files are properly formatted (read-only)"
@@ -67,6 +68,10 @@ validate-json:
 	@echo "Validating JSON against schemas..."
 	@. venv/bin/activate && python3 scripts/validate_schemas.py
 	@echo "Validating data_links.json..."
+	@. venv/bin/activate && python3 scripts/validate_data_links.py
+
+validate-data-links:
+	@echo "Validating data_links.json consistency..."
 	@. venv/bin/activate && python3 scripts/validate_data_links.py
 
 format-json:
