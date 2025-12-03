@@ -119,12 +119,30 @@ Restriction (e.g., "YEMEN_2015")
 
 `data_links.json` provides links about data file relationships:
 
--   **Dependencies** - Which files depend on which
--   **Links** - Product-to-zone-to-weight-tier mappings for fast lookups
+-   **Dependencies** - Which files depend on which (e.g., products depend on zones, weight_tiers, dimensions)
+-   **Links** - Product-to-zone-to-weight-tier mappings for fast lookups (e.g., which zones and weight tiers each product supports)
 -   **Lookup rules** - How to find prices, services, and resolve weights
 -   **Global settings** - Available services and price lookup configuration
 
 This metadata is primarily used by SDKs for optimized data access and validation, but is also useful for understanding the data structure.
+
+**Validation:** The `validate_data_links.py` script ensures consistency between `data_links.json` and the actual data files. It checks:
+
+-   ✅ All products, zones, and weight tiers in links exist in their respective files
+-   ✅ Product zones and weight tiers match between `data_links.json` and `products.json`
+-   ✅ Prices exist for all zone+weight_tier combinations
+-   ✅ Available services are valid and have prices
+-   ✅ Lookup method configuration matches actual file structure
+-   ✅ Unit values (weight, dimension, price, currency) are consistent across files
+-   ✅ All data files are covered in dependencies section
+-   ✅ No circular dependencies between files
+
+Run validation with:
+
+```bash
+make validate-data-links        # Quick validation (CI/CD friendly)
+python scripts/validate_data_links.py --analyze  # Detailed analysis
+```
 
 ---
 
@@ -192,7 +210,8 @@ make install-hooks  # Reinstall pre-commit hooks (usually not needed)
 
 ```bash
 # Validation
-make validate      # Validate all JSON files
+make validate          # Validate all JSON files
+make validate-data-links # Validate data_links.json consistency
 
 # Formatting
 make format        # Format JSON and Python
