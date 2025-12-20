@@ -9,6 +9,9 @@
 # Run manually: pre-commit run --all-files
 # Update hooks: pre-commit autoupdate
 
+# Stop on first failure (cleaner error messages)
+fail_fast: true
+
 repos:
     # ==========================================
     # JSON Validation (MUST RUN FIRST)
