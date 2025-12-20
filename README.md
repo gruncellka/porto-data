@@ -1,6 +1,7 @@
 # Porto Data
 
 [![porto-data-validation](https://github.com/gruncellka/porto-data/actions/workflows/porto-data-validation.yml/badge.svg)](https://github.com/gruncellka/porto-data/actions/workflows/porto-data-validation.yml)
+[![codecov](https://codecov.io/gh/gruncellka/porto-data/branch/main/graph/badge.svg)](https://codecov.io/gh/gruncellka/porto-data)
 
 **Structured JSON data for Deutsche Post shipping services**
 
@@ -26,7 +27,7 @@ This dataset is perfect for:
 -   **9 JSON schemas** ensuring data integrity
 -   **100+ countries** covered in shipping zones
 -   **5 product types** (letters, merchandise)
--   **5 service types** (registered mail, insurance)
+-   **3 active service types** (registered mail, insurance) - 2 services discontinued as of 2025-01-01
 -   **31 restrictions** with 19 compliance frameworks
 
 ---
@@ -66,9 +67,11 @@ make setup
 
 This installs:
 
+-   `porto` CLI for validation and metadata commands
 -   `jsonschema` for validation
 -   `ruff`, `mypy` for code quality (Ruff handles formatting + linting)
--   `pre-commit` framework with hooks (installed automatically - no manual step needed)
+-   `pytest`, `pytest-cov` for testing (87% coverage)
+-   `pre-commit` framework with hooks (installed automatically)
 
 **Note:** Pre-commit hooks are automatically installed during `make setup` and will run automatically on every commit.
 
@@ -126,7 +129,7 @@ Restriction (e.g., "YEMEN_2015")
 
 This metadata is primarily used by SDKs for optimized data access and validation, but is also useful for understanding the data structure.
 
-**Validation:** The `validate_data_links.py` script ensures consistency between `data_links.json` and the actual data files. It checks:
+**Validation:** The `porto validate --type links` command ensures consistency between `data_links.json` and the actual data files. It checks:
 
 -   ✅ All products, zones, and weight tiers in links exist in their respective files
 -   ✅ Product zones and weight tiers match between `data_links.json` and `products.json`
@@ -140,8 +143,8 @@ This metadata is primarily used by SDKs for optimized data access and validation
 Run validation with:
 
 ```bash
-make validate-data-links        # Quick validation (CI/CD friendly)
-python scripts/validate_data_links.py --analyze  # Detailed analysis
+porto validate --type links            # Quick validation (CI/CD friendly)
+porto validate --type links --analyze  # Detailed analysis
 ```
 
 ---
@@ -209,7 +212,13 @@ make install-hooks  # Reinstall pre-commit hooks (usually not needed)
 ### Available Commands
 
 ```bash
-# Validation
+# CLI Commands (porto)
+porto validate --type schema   # Validate JSON against schemas
+porto validate --type links    # Validate data_links.json consistency
+porto validate --type all      # Validate everything
+porto metadata                 # Generate metadata.json
+
+# Make Commands
 make validate          # Validate all JSON files
 make validate-data-links # Validate data_links.json consistency
 
@@ -225,6 +234,10 @@ make lint-code     # Lint Python only
 
 # Quality
 make quality       # Run all checks (format, lint, validate, type-check)
+
+# Testing
+make test          # Run all tests
+make test-cov      # Run tests with coverage (80% threshold)
 
 # Metadata
 make metadata      # Generate metadata.json with checksums
@@ -319,16 +332,24 @@ porto-data/
 │   ├── products.schema.json
 │   ├── services.schema.json
 │   └── ...
-├── resources/              # Original source files (PPL CSV, etc.)
-│   └── ppl/               # Deutsche Post price list files
-├── scripts/                # Python validation scripts
-│   ├── validate_schemas.py
+├── cli/                    # CLI commands (porto)
+│   ├── main.py             # Entry point
+│   └── commands/           # Subcommands (validate, metadata)
+├── scripts/                # Core validation logic
+│   ├── validators/         # Validation modules
+│   │   ├── schema.py       # JSON schema validation
+│   │   └── links.py        # Data links validation
+│   ├── data_files.py       # File mappings from mappings.json
+│   ├── utils.py            # Checksum utilities
 │   └── generate_metadata.py
+├── tests/                  # Test suite (115 tests, 87% coverage)
+├── resources/              # Original source files (PPL CSV, etc.)
+│   └── ppl/                # Deutsche Post price list files
 ├── .pre-commit-config.yaml # Pre-commit framework configuration
-├── Makefile               # Build automation
-├── pyproject.toml         # Python dependencies
-├── mappings.json          # Schema-to-data mappings (source of truth)
-└── metadata.json          # Generated checksums (auto-generated)
+├── Makefile                # Build automation
+├── pyproject.toml          # Python dependencies & config
+├── mappings.json           # Schema-to-data mappings (source of truth)
+└── metadata.json           # Generated checksums (auto-generated)
 ```
 
 ---

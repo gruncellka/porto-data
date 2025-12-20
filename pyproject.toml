@@ -15,18 +15,20 @@ dev = [
     "mypy>=1.0.0",
     "types-jsonschema>=4.0.0",
     "types-toml>=0.10.0",
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
 ]
 
 [project.scripts]
-porto-validate = "scripts.validate_schemas:main"
+porto = "cli.main:main"
 
 [build-system]
 requires = ["setuptools>=45", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
-packages = []
-package-dir = {"" = "scripts"}
+packages = ["cli", "scripts"]
+package-dir = {"" = "."}
 
 [tool.ruff]
 line-length = 100
@@ -54,9 +56,13 @@ select = [
 ignore = [
     "E501", # line too long (handled by ruff format)
 ]
+# Allow E402 (module import not at top) for files that need path setup
+[tool.ruff.lint.per-file-ignores]
+"scripts/validators/*.py" = ["E402"]  # Path setup required before imports
+"cli/**/*.py" = ["E402"]  # Path setup required before imports
 
 [tool.ruff.lint.isort]
-known-first-party = ["utils", "generate_metadata", "validate_schemas", "validate_data_links"]
+known-first-party = ["cli", "scripts", "utils", "generate_metadata", "validate_schemas", "validate_data_links"]
 
 [tool.mypy]
 python_version = "3.11"
@@ -70,3 +76,8 @@ warn_redundant_casts = true
 warn_unused_ignores = true
 show_error_codes = true
 namespace_packages = true
+
+# Ignore missing type stubs for local scripts modules
+[[tool.mypy.overrides]]
+module = ["data_files", "utils", "generate_metadata", "validators.*"]
+ignore_missing_imports = true

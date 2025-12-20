@@ -4,7 +4,7 @@
         "version": "0.0.1",
         "description": "Deutsche Post pricing and rules data with schema validation"
     },
-    "generated_at": "2025-11-30T18:05:11.811290Z",
+    "generated_at": "2025-12-20T17:54:28.826453Z",
     "entities": {
         "products": {
             "data": {

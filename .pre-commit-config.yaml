@@ -19,7 +19,7 @@ repos:
       hooks:
           - id: validate-schemas
             name: Validate schemas and generate metadata
-            entry: bash -c 'if [ -f venv/bin/activate ]; then . venv/bin/activate; fi && python3 scripts/validate_schemas.py'
+            entry: bash -c 'if [ -f venv/bin/activate ]; then . venv/bin/activate; fi && porto validate --type schema'
             language: system
             files: ^(data|schemas)/.*\.json$
             pass_filenames: false
@@ -27,7 +27,7 @@ repos:
 
           - id: validate-data-links
             name: Validate data_links.json consistency
-            entry: bash -c 'if [ -f venv/bin/activate ]; then . venv/bin/activate; fi && python3 scripts/validate_data_links.py'
+            entry: bash -c 'if [ -f venv/bin/activate ]; then . venv/bin/activate; fi && porto validate --type links'
             language: system
             files: ^data/data_links\.json$|^data/(products|zones|weight_tiers|services|prices)\.json$
             pass_filenames: false
@@ -88,18 +88,20 @@ repos:
       hooks:
           - id: ruff-format
             args: ['--line-length=100']
-            files: ^scripts/.*\.py$
+            files: ^(scripts|cli)/.*\.py$
 
           # Ruff linter with auto-fix
           - id: ruff
             args: ['--fix', '--exit-non-zero-on-fix']
-            files: ^scripts/.*\.py$
+            files: ^(scripts|cli)/.*\.py$
 
     # MyPy type checking
-    - repo: https://github.com/pre-commit/mirrors-mypy
-      rev: v1.8.0
+    - repo: local
       hooks:
           - id: mypy
-            additional_dependencies: [types-jsonschema, types-toml]
-            args: ['--config-file=pyproject.toml']
-            files: ^scripts/.*\.py$
+            name: Type check Python code
+            entry: bash -c 'if [ -f venv/bin/activate ]; then . venv/bin/activate; fi && PYTHONPATH=scripts mypy --config-file=pyproject.toml scripts/ cli/'
+            language: system
+            files: ^(scripts|cli)/.*\.py$
+            pass_filenames: false
+            always_run: false

@@ -1,7 +1,7 @@
 .PHONY: help setup install-hooks
 .PHONY: validate-json validate-data-links lint-json format-json format-json-check
 .PHONY: format-code format-code-check lint-code type-check
-.PHONY: validate format lint quality metadata
+.PHONY: validate format lint quality metadata test test-cov
 
 help:
 	@echo "Porto Data - Schema Validation & Code Quality"
@@ -28,6 +28,10 @@ help:
 	@echo "  make lint-code        - Lint Python code with ruff"
 	@echo "  make type-check       - Type check Python code with mypy"
 	@echo "  make format-code-check  - Check if Python code is properly formatted (read-only)"
+	@echo ""
+	@echo "Testing:"
+	@echo "  make test             - Run all tests"
+	@echo "  make test-cov         - Run tests with coverage report"
 	@echo ""
 	@echo "Metadata:"
 	@echo "  make metadata      - Generate metadata.json with checksums"
@@ -66,13 +70,13 @@ quality: format-json-check lint-json validate-json format-code-check lint-code t
 # ==========================================
 validate-json:
 	@echo "Validating JSON against schemas..."
-	@. venv/bin/activate && python3 scripts/validate_schemas.py
+	@. venv/bin/activate && porto validate --type schema
 	@echo "Validating data_links.json..."
-	@. venv/bin/activate && python3 scripts/validate_data_links.py
+	@. venv/bin/activate && porto validate --type links
 
 validate-data-links:
 	@echo "Validating data_links.json consistency..."
-	@. venv/bin/activate && python3 scripts/validate_data_links.py
+	@. venv/bin/activate && porto validate --type links
 
 format-json:
 	@echo "Formatting JSON files..."
@@ -146,7 +150,7 @@ lint-code:
 
 type-check:
 	@echo "Type checking Python code..."
-	@. venv/bin/activate && mypy scripts/
+	@. venv/bin/activate && PYTHONPATH=scripts mypy scripts/ cli/
 	@echo "✓ Type check complete"
 
 format-code-check:
@@ -155,10 +159,23 @@ format-code-check:
 	@echo "✓ Code formatting check complete"
 
 # ==========================================
+# Testing
+# ==========================================
+test:
+	@echo "Running tests..."
+	@venv/bin/pytest tests/ -v
+	@echo "✓ Tests complete"
+
+test-cov:
+	@echo "Running tests with coverage..."
+	@venv/bin/pytest tests/ --cov=scripts --cov=cli --cov-report=term-missing --cov-report=html --cov-report=xml --cov-fail-under=80
+	@echo "✓ Coverage report complete (see htmlcov/index.html for detailed report)"
+
+# ==========================================
 # Metadata
 # ==========================================
 metadata:
-	@. venv/bin/activate && python3 scripts/generate_metadata.py
+	@. venv/bin/activate && porto metadata
 
 # ==========================================
 # Hooks (Usually Automatic)
