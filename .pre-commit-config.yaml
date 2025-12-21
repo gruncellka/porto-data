@@ -1,6 +1,6 @@
 # Pre-commit configuration for porto-data
 #
-# Workflow when data/schema files change:
+# Workflow when data/schema files or version (pyproject.toml) changes:
 # 1. pre-commit validates and regenerates metadata.json
 # 2. If metadata changed, commit FAILS (by design)
 # 3. User reviews changes: git diff metadata.json
@@ -38,7 +38,7 @@ repos:
             name: Generate metadata.json
             entry: bash -c 'if [ -f venv/bin/activate ]; then . venv/bin/activate; fi && porto metadata'
             language: system
-            files: ^(data|schemas)/.*\.json$
+            files: ^(data|schemas)/.*\.json$|^pyproject\.toml$
             pass_filenames: false
             always_run: false
 

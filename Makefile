@@ -177,6 +177,9 @@ test-cov:
 metadata:
 	@. venv/bin/activate && porto metadata
 
+# Regenerate metadata after version change (runs automatically via pre-commit)
+# But you can also run manually: make metadata
+
 # ==========================================
 # Hooks (Usually Automatic)
 # ==========================================
