@@ -267,18 +267,24 @@ class TestHasFileChanges:
     """Test has_file_changes function."""
 
     def test_has_file_changes_with_changes(self, tmp_path, monkeypatch):
-        """Test that has_file_changes detects changes in DATA files only."""
+        """Test that has_file_changes detects changes in data or schema files."""
 
         # Mock the functions to return different checksums
-        def mock_get_data_checksums():
-            return {"data/products.json": "new_checksum"}
+        def mock_get_all_checksums():
+            return {
+                "data/products.json": "new_checksum",
+                "schemas/products.schema.json": "schema_checksum",
+            }
 
-        def mock_get_existing_data_checksums():
-            return {"data/products.json": "old_checksum"}
+        def mock_get_existing_checksums():
+            return {
+                "data/products.json": "old_checksum",
+                "schemas/products.schema.json": "schema_checksum",
+            }
 
-        monkeypatch.setattr("utils.get_data_file_checksums", mock_get_data_checksums)
+        monkeypatch.setattr("utils.get_all_file_checksums", mock_get_all_checksums)
         monkeypatch.setattr(
-            "utils.get_existing_data_checksums_from_metadata", mock_get_existing_data_checksums
+            "utils.get_existing_checksums_from_metadata", mock_get_existing_checksums
         )
 
         assert has_file_changes() is True
@@ -287,18 +293,47 @@ class TestHasFileChanges:
         """Test that has_file_changes returns False when no changes."""
 
         # Mock the functions to return same checksums
-        def mock_get_data_checksums():
-            return {"data/products.json": "same_checksum"}
+        def mock_get_all_checksums():
+            return {
+                "data/products.json": "same_checksum",
+                "schemas/products.schema.json": "schema_checksum",
+            }
 
-        def mock_get_existing_data_checksums():
-            return {"data/products.json": "same_checksum"}
+        def mock_get_existing_checksums():
+            return {
+                "data/products.json": "same_checksum",
+                "schemas/products.schema.json": "schema_checksum",
+            }
 
-        monkeypatch.setattr("utils.get_data_file_checksums", mock_get_data_checksums)
+        monkeypatch.setattr("utils.get_all_file_checksums", mock_get_all_checksums)
         monkeypatch.setattr(
-            "utils.get_existing_data_checksums_from_metadata", mock_get_existing_data_checksums
+            "utils.get_existing_checksums_from_metadata", mock_get_existing_checksums
         )
 
         assert has_file_changes() is False
+
+    def test_has_file_changes_schema_changed(self, tmp_path, monkeypatch):
+        """Test that has_file_changes detects schema file changes."""
+
+        # Mock the functions - schema changed, data unchanged
+        def mock_get_all_checksums():
+            return {
+                "data/products.json": "same_checksum",
+                "schemas/products.schema.json": "new_schema_checksum",
+            }
+
+        def mock_get_existing_checksums():
+            return {
+                "data/products.json": "same_checksum",
+                "schemas/products.schema.json": "old_schema_checksum",
+            }
+
+        monkeypatch.setattr("utils.get_all_file_checksums", mock_get_all_checksums)
+        monkeypatch.setattr(
+            "utils.get_existing_checksums_from_metadata", mock_get_existing_checksums
+        )
+
+        assert has_file_changes() is True
 
 
 class TestGetAllFileChecksums:

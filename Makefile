@@ -150,7 +150,7 @@ lint-code:
 
 type-check:
 	@echo "Type checking Python code..."
-	@. venv/bin/activate && PYTHONPATH=scripts mypy scripts/ cli/
+	@. venv/bin/activate && PYTHONPATH=. mypy scripts/ cli/
 	@echo "✓ Type check complete"
 
 format-code-check:
@@ -163,12 +163,12 @@ format-code-check:
 # ==========================================
 test:
 	@echo "Running tests..."
-	@venv/bin/pytest tests/ -v
+	@. venv/bin/activate && pytest tests/ -v
 	@echo "✓ Tests complete"
 
 test-cov:
 	@echo "Running tests with coverage..."
-	@venv/bin/pytest tests/ --cov=scripts --cov=cli --cov-report=term-missing --cov-report=html --cov-report=xml --cov-fail-under=80
+	@. venv/bin/activate && pytest tests/ --cov=scripts --cov=cli --cov-report=term-missing --cov-report=html --cov-report=xml --cov-fail-under=80
 	@echo "✓ Coverage report complete (see htmlcov/index.html for detailed report)"
 
 # ==========================================

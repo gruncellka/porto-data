@@ -692,3 +692,104 @@ class DataLinksValidator:
         self.validate_circular_dependencies()
 
         return self.results
+
+
+# ============================================================================
+# Standalone validation function (used by CLI)
+# ============================================================================
+
+
+def validate_data_links(data_dir: Path | None = None, analyze: bool = False) -> int:
+    """Validate data_links.json and print results.
+
+    Args:
+        data_dir: Path to data directory (defaults to project's data/)
+        analyze: If True, show detailed analysis. If False, CI/CD friendly output.
+
+    Returns:
+        Exit code: 0 if validation passes, 1 otherwise.
+    """
+    if data_dir is None:
+        data_dir = Path(__file__).parent.parent.parent / "data"
+
+    validator = DataLinksValidator(data_dir)
+    results = validator.validate_all()
+
+    if analyze:
+        return _print_analyze_mode(results)
+    else:
+        return _print_validate_mode(results)
+
+
+def _print_validate_mode(results: ValidationResults) -> int:
+    """Print results in validate mode (CI/CD friendly)."""
+    print("Validating data_links.json against data files...\n")
+
+    has_errors = len(results["errors"]) > 0
+
+    if results["errors"]:
+        for error in results["errors"]:
+            print(f"❌ ERROR: {error}")
+        print()
+
+    if results["fixes_needed"]:
+        for fix in results["fixes_needed"]:
+            print(f"🔧 FIX NEEDED: {fix}")
+        print()
+
+    if results["warnings"]:
+        for warning in results["warnings"]:
+            print(f"⚠️  WARNING: {warning}")
+        print()
+
+    if not has_errors:
+        print("✅ All validations passed! data_links.json is consistent with data files.")
+        return 0
+    else:
+        print("❌ ERROR: Validation failed. Please fix the errors above.")
+        return 1
+
+
+def _print_analyze_mode(results: ValidationResults) -> int:
+    """Print results in analyze mode (detailed report)."""
+    print("=" * 70)
+    print("COMPREHENSIVE DATA_LINKS.JSON ANALYSIS")
+    print("=" * 70)
+    print()
+
+    if results["correct"]:
+        print("✅ CORRECT:")
+        for item in results["correct"]:
+            print(f"   ✅ {item}")
+        print()
+
+    if results["fixes_needed"]:
+        print("🔧 FIXES NEEDED:")
+        for item in results["fixes_needed"]:
+            print(f"   🔧 {item}")
+        print()
+
+    if results["warnings"]:
+        print("⚠️  WARNINGS:")
+        for item in results["warnings"]:
+            print(f"   ⚠️  {item}")
+        print()
+
+    if results["errors"]:
+        print("❌ ERRORS:")
+        for item in results["errors"]:
+            print(f"   ❌ {item}")
+        print()
+
+    # Summary
+    total_issues = len(results["errors"]) + len(results["fixes_needed"]) + len(results["warnings"])
+    if total_issues == 0:
+        print("🎉 All checks passed! data_links.json is correct.")
+        return 0
+    else:
+        print(
+            f"📊 Summary: {len(results['errors'])} errors, "
+            f"{len(results['fixes_needed'])} fixes needed, "
+            f"{len(results['warnings'])} warnings"
+        )
+        return 1 if results["errors"] else 0

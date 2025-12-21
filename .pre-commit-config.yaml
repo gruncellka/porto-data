@@ -1,10 +1,10 @@
 # Pre-commit configuration for porto-data
 #
-# Benefits:
-# - Automatic staging of modified files (fixes the uncommitted files bug!)
-# - Only processes changed files (faster)
-# - Better caching and parallel execution
-# - Standard tool used industry-wide
+# Workflow when data/schema files change:
+# 1. pre-commit validates and regenerates metadata.json
+# 2. If metadata changed, commit FAILS (by design)
+# 3. User reviews changes: git diff metadata.json
+# 4. User stages and re-commits: git add metadata.json && git commit
 #
 # Run manually: pre-commit run --all-files
 # Update hooks: pre-commit autoupdate
@@ -16,12 +16,10 @@ repos:
     # ==========================================
     # JSON Validation (MUST RUN FIRST)
     # ==========================================
-    # Schema validation and metadata generation
-    # Note: metadata.json is automatically staged if modified
     - repo: local
       hooks:
           - id: validate-schemas
-            name: Validate schemas and generate metadata
+            name: Validate JSON schemas
             entry: bash -c 'if [ -f venv/bin/activate ]; then . venv/bin/activate; fi && porto validate --type schema'
             language: system
             files: ^(data|schemas)/.*\.json$
@@ -33,6 +31,14 @@ repos:
             entry: bash -c 'if [ -f venv/bin/activate ]; then . venv/bin/activate; fi && porto validate --type links'
             language: system
             files: ^data/data_links\.json$|^data/(products|zones|weight_tiers|services|prices)\.json$
+            pass_filenames: false
+            always_run: false
+
+          - id: generate-metadata
+            name: Generate metadata.json
+            entry: bash -c 'if [ -f venv/bin/activate ]; then . venv/bin/activate; fi && porto metadata'
+            language: system
+            files: ^(data|schemas)/.*\.json$
             pass_filenames: false
             always_run: false
 
@@ -103,7 +109,7 @@ repos:
       hooks:
           - id: mypy
             name: Type check Python code
-            entry: bash -c 'if [ -f venv/bin/activate ]; then . venv/bin/activate; fi && PYTHONPATH=scripts mypy --config-file=pyproject.toml scripts/ cli/'
+            entry: bash -c 'if [ -f venv/bin/activate ]; then . venv/bin/activate; fi && PYTHONPATH=. mypy --config-file=pyproject.toml scripts/ cli/'
             language: system
             files: ^(scripts|cli)/.*\.py$
             pass_filenames: false

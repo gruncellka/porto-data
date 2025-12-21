@@ -45,19 +45,6 @@ def get_all_file_checksums() -> Dict[str, str]:
     return checksums
 
 
-def get_data_file_checksums() -> Dict[str, str]:
-    """Get checksums for data files only (for change detection)."""
-    checksums = {}
-    mappings = get_schema_data_mappings()
-
-    # Only data files - changes here trigger metadata regeneration
-    for data_path in mappings.values():
-        if Path(data_path).exists():
-            checksums[data_path] = compute_checksum(data_path)
-
-    return checksums
-
-
 def get_existing_checksums_from_metadata(metadata_path: str = "metadata.json") -> Dict[str, str]:
     """Extract existing checksums from metadata.json."""
     if not Path(metadata_path).exists():
@@ -100,41 +87,15 @@ def get_existing_checksums_from_metadata(metadata_path: str = "metadata.json") -
 
 
 def has_file_changes() -> bool:
-    """Check if any DATA files have changed by comparing checksums.
+    """Check if any data or schema files have changed by comparing checksums.
 
-    Only checks data/*.json files, not schema files.
-    This ensures metadata is only regenerated when data changes.
+    Checks both data/*.json and schemas/*.json files.
+    Metadata is regenerated when any JSON file in mappings.json changes.
     """
-    current_checksums = get_data_file_checksums()
-    existing_checksums = get_existing_data_checksums_from_metadata()
+    current_checksums = get_all_file_checksums()
+    existing_checksums = get_existing_checksums_from_metadata()
 
     return current_checksums != existing_checksums
-
-
-def get_existing_data_checksums_from_metadata(
-    metadata_path: str = "metadata.json",
-) -> Dict[str, str]:
-    """Extract existing DATA file checksums from metadata.json."""
-    if not Path(metadata_path).exists():
-        return {}
-
-    try:
-        with open(metadata_path) as f:
-            metadata = json.load(f)
-    except (json.JSONDecodeError, FileNotFoundError):
-        return {}
-
-    existing_checksums = {}
-
-    # Handle new structure with entities - only extract data checksums
-    if "entities" in metadata:
-        for _, entity_data in metadata["entities"].items():
-            if "data" in entity_data and "path" in entity_data["data"]:
-                existing_checksums[entity_data["data"]["path"]] = entity_data["data"].get(
-                    "checksum", ""
-                )
-
-    return existing_checksums
 
 
 def load_json(filepath: Path | str) -> Dict[str, Any]:

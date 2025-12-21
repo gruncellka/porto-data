@@ -15,10 +15,35 @@ from typing import Any, Dict
 
 
 def _get_project_root() -> Path:
-    """Determine project root by finding mappings.json relative to script location."""
+    """Determine project root by finding mappings.json.
+
+    Tries multiple locations:
+    1. Relative to script location (development mode)
+    2. Current working directory (installed package, run from project root)
+
+    Returns:
+        Path to project root containing mappings.json
+
+    Raises:
+        FileNotFoundError: If mappings.json cannot be found
+    """
+    # Try 1: Relative to script location (development mode)
     script_dir = Path(__file__).parent
-    project_root = script_dir.parent
-    return project_root
+    dev_root = script_dir.parent
+    if (dev_root / "mappings.json").exists():
+        return dev_root
+
+    # Try 2: Current working directory (installed package, run from project root)
+    cwd = Path.cwd()
+    if (cwd / "mappings.json").exists():
+        return cwd
+
+    raise FileNotFoundError(
+        f"mappings.json not found. Tried:\n"
+        f"  1. {dev_root / 'mappings.json'} (relative to scripts/)\n"
+        f"  2. {cwd / 'mappings.json'} (current directory)\n"
+        "This CLI must be run from the porto-data project root."
+    )
 
 
 def load_mappings(mappings_path: str | None = None) -> Dict[str, str]:
@@ -26,7 +51,7 @@ def load_mappings(mappings_path: str | None = None) -> Dict[str, str]:
 
     Args:
         mappings_path: Optional path to mappings.json. If None, automatically
-            finds it in the project root (relative to script location).
+            finds it in the project root.
 
     Returns:
         Dictionary mapping schema paths to data file paths.
@@ -40,13 +65,6 @@ def load_mappings(mappings_path: str | None = None) -> Dict[str, str]:
         mappings_file = project_root / "mappings.json"
     else:
         mappings_file = Path(mappings_path)
-
-    if not mappings_file.exists():
-        raise FileNotFoundError(
-            f"mappings.json not found at {mappings_file}. "
-            "This file is the source of truth for schema-to-data file mappings. "
-            f"Expected location: {_get_project_root() / 'mappings.json'}"
-        )
 
     try:
         with open(mappings_file, encoding="utf-8") as f:

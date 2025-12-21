@@ -150,7 +150,7 @@ jobs:
     # Python Tests (CLI and scripts)
     # ==========================================
     test:
-        name: 🧪 Run Tests
+        name: 🧪 Run Tests with Coverage
         runs-on: ubuntu-22.04
         # Tests can run in parallel with other checks
         steps:
@@ -161,37 +161,12 @@ jobs:
                   cache: 'pip'
             - name: Install dependencies
               run: make setup
-            - name: Run tests for CLI and scripts
-              run: make test
-
-    test-coverage:
-        name: 📊 Test Coverage
-        runs-on: ubuntu-22.04
-        # Coverage can run in parallel with other checks
-        steps:
-            - uses: actions/checkout@v4
-            - uses: actions/setup-python@v5
-              with:
-                  python-version: '3.11'
-                  cache: 'pip'
-            - name: Install dependencies
-              run: make setup
             - name: Run tests with coverage
               run: make test-cov
-            - name: Upload coverage to Codecov
-              uses: codecov/codecov-action@v4
+            - name: Upload coverage reports to Codecov
+              uses: codecov/codecov-action@v5
               with:
-                  files: ./coverage.xml
-                  flags: unittests
-                  name: codecov-umbrella
-                  fail_ci_if_error: false
-            - name: Upload coverage report
-              uses: actions/upload-artifact@v4
-              if: always()
-              with:
-                  name: coverage-report
-                  path: htmlcov/
-                  retention-days: 7
+                  token: ${{ secrets.CODECOV_TOKEN }}
 
     # ==========================================
     # Final Summary (waits for all checks)
@@ -209,7 +184,6 @@ jobs:
             - lint-code
             - type-check
             - test
-            - test-coverage
         steps:
             - name: All validation checks passed
               run: echo "✅ All validation checks passed successfully!"
