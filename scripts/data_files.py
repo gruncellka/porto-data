@@ -185,6 +185,11 @@ def get_data_files() -> set[str]:
 _FILE_NAMES = get_all_data_file_names()
 
 # Required entities for data links validation
+# NOTE: This is intentionally hardcoded (not derived from mappings.json) because:
+# 1. It's a validation contract, not a source of truth
+# 2. Ensures fail-fast if critical entities are missing
+# 3. Separates business logic (requirements) from data structure (mappings.json)
+# 4. Allows type-safe constant exports (DATA_LINKS_FILE, PRODUCTS_FILE, etc.)
 _REQUIRED_ENTITIES = [
     "data_links",
     "products",
