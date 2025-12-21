@@ -5,18 +5,10 @@ corresponding JSON Schema definitions.
 """
 
 import json
-import sys
-from pathlib import Path
 
 from jsonschema import Draft7Validator, ValidationError
 
-# Setup path for imports from scripts package
-_scripts_dir = Path(__file__).parent.parent
-if str(_scripts_dir) not in sys.path:
-    sys.path.insert(0, str(_scripts_dir))
-
-# Imports from scripts package (path setup above makes these work)
-from data_files import get_schema_data_mappings
+from scripts.data_files import get_schema_data_mappings
 
 # ============================================================================
 # Schema Validation Functions

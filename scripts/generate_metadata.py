@@ -13,10 +13,8 @@ from typing import Any, Dict, List
 
 import tomllib
 
-# Both files are in scripts/ directory, so direct imports work
-from data_files import get_schema_data_mappings
-
-from utils import get_all_file_checksums
+from scripts.data_files import get_schema_data_mappings
+from scripts.utils import get_all_file_checksums
 
 
 def get_file_info(file_path: Path, base_path: Path, checksums: Dict[str, str]) -> Dict[str, Any]:

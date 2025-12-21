@@ -2,24 +2,18 @@
 """Tests for generate_metadata.py main function - comprehensive coverage."""
 
 import json
-
-# Add scripts to path
-import sys
-from pathlib import Path
 from unittest.mock import MagicMock, mock_open, patch
 
-sys.path.insert(0, str(Path(__file__).parent.parent / "scripts"))
-
-from generate_metadata import main
+from scripts.generate_metadata import main
 
 
 class TestGenerateMetadataMain:
     """Test main() function in generate_metadata.py."""
 
-    @patch("generate_metadata.Path")
-    @patch("generate_metadata.generate_metadata")
+    @patch("scripts.generate_metadata.Path")
+    @patch("scripts.generate_metadata.generate_metadata")
     @patch("builtins.open", new_callable=mock_open)
-    @patch("generate_metadata.Path.exists")
+    @patch("scripts.generate_metadata.Path.exists")
     def test_main_new_file(self, mock_exists, mock_file, mock_gen, mock_path_class):
         """Test main when metadata.json doesn't exist."""
         # Setup mocks
@@ -48,7 +42,7 @@ class TestGenerateMetadataMain:
         # Verify metadata was generated
         mock_gen.assert_called_once()
 
-    @patch("generate_metadata.generate_metadata")
+    @patch("scripts.generate_metadata.generate_metadata")
     @patch("pathlib.Path.exists")
     @patch("pathlib.Path.open", new_callable=mock_open)
     def test_main_existing_file_no_changes(self, mock_file, mock_exists, mock_gen):
@@ -73,10 +67,10 @@ class TestGenerateMetadataMain:
         # Verify metadata was generated for comparison
         mock_gen.assert_called()
 
-    @patch("generate_metadata.Path")
-    @patch("generate_metadata.generate_metadata")
+    @patch("scripts.generate_metadata.Path")
+    @patch("scripts.generate_metadata.generate_metadata")
     @patch("builtins.open", new_callable=mock_open)
-    @patch("generate_metadata.Path.exists")
+    @patch("scripts.generate_metadata.Path.exists")
     def test_main_existing_file_with_changes(
         self, mock_exists, mock_file, mock_gen, mock_path_class
     ):
@@ -115,7 +109,7 @@ class TestGenerateMetadataMain:
         # Verify metadata was written
         mock_gen.assert_called()
 
-    @patch("generate_metadata.generate_metadata")
+    @patch("scripts.generate_metadata.generate_metadata")
     @patch("pathlib.Path.exists")
     @patch("pathlib.Path.open", new_callable=mock_open, read_data="invalid json")
     def test_main_invalid_json_handling(self, mock_file, mock_exists, mock_gen):

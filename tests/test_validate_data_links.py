@@ -5,8 +5,9 @@ import json
 from pathlib import Path
 
 import pytest
-from validators.base import ValidationResults
-from validators.links import DataLinksValidator
+
+from scripts.validators.base import ValidationResults
+from scripts.validators.links import DataLinksValidator
 
 
 class TestDataLinksValidatorInitialization:
@@ -277,25 +278,21 @@ class TestServicePriceConsistency:
 
 
 class TestDataLinksValidatorBackwardCompatibility:
-    """Test backward compatibility with old import paths."""
+    """Test that imports work via scripts package."""
 
-    def test_validator_importable_from_old_location(self, minimal_data_files):
-        """Test that DataLinksValidator can be imported from old location."""
-        # This should work via the backward compat wrapper
-        # Old import removed - use validators.links.DataLinksValidator directly
-        from validators.links import DataLinksValidator as OldImport
+    def test_validator_importable_from_scripts_package(self, minimal_data_files):
+        """Test that DataLinksValidator can be imported from scripts.validators."""
+        from scripts.validators.links import DataLinksValidator as Import
 
-        validator = OldImport(minimal_data_files)
-        # Both imports should be the same class (they're just re-exported)
+        validator = Import(minimal_data_files)
         assert validator.__class__.__name__ == "DataLinksValidator"
         assert hasattr(validator, "validate_all")
 
-    def test_validation_results_importable_from_old_location(self):
-        """Test that ValidationResults can be imported from old location."""
-        # Old import removed - use validators.base.ValidationResults directly
-        from validators.base import ValidationResults as OldImport
+    def test_validation_results_importable_from_scripts_package(self):
+        """Test that ValidationResults can be imported from scripts.validators."""
+        from scripts.validators.base import ValidationResults as Import
 
-        results: OldImport = {
+        results: Import = {
             "errors": [],
             "warnings": [],
             "fixes_needed": [],

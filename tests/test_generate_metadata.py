@@ -2,14 +2,10 @@
 """Tests for generate_metadata.py"""
 
 import json
-import sys
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-# Add scripts to path
-sys.path.insert(0, str(Path(__file__).parent.parent / "scripts"))
-
-from generate_metadata import (
+from scripts.generate_metadata import (
     extract_entity_name,
     generate_metadata,
     get_file_info,
@@ -148,11 +144,11 @@ name = "test-project"
 class TestGenerateMetadata:
     """Test generate_metadata function."""
 
-    @patch("generate_metadata.get_all_file_checksums")
-    @patch("generate_metadata.get_schema_data_mappings")
-    @patch("generate_metadata.get_project_metadata")
-    @patch("generate_metadata.Path.exists")
-    @patch("generate_metadata.Path.stat")
+    @patch("scripts.generate_metadata.get_all_file_checksums")
+    @patch("scripts.generate_metadata.get_schema_data_mappings")
+    @patch("scripts.generate_metadata.get_project_metadata")
+    @patch("scripts.generate_metadata.Path.exists")
+    @patch("scripts.generate_metadata.Path.stat")
     def test_generate_metadata_structure(
         self, mock_stat, mock_exists, mock_project_meta, mock_mappings, mock_checksums
     ):
@@ -172,7 +168,7 @@ class TestGenerateMetadata:
         mock_stat.return_value.st_size = 100
 
         # Mock Path operations
-        with patch("generate_metadata.Path") as mock_path:
+        with patch("scripts.generate_metadata.Path") as mock_path:
             mock_schema_path = MagicMock()
             mock_data_path = MagicMock()
             mock_schema_path.exists.return_value = True
@@ -185,7 +181,7 @@ class TestGenerateMetadata:
 
             # Mock get_schema_url
             with patch(
-                "generate_metadata.get_schema_url", return_value="https://example.com/schema.json"
+                "scripts.generate_metadata.get_schema_url", return_value="https://example.com/schema.json"
             ):
                 metadata = generate_metadata()
 
@@ -196,9 +192,9 @@ class TestGenerateMetadata:
         assert metadata["project"]["name"] == "test-project"
         assert metadata["project"]["version"] == "1.0.0"
 
-    @patch("generate_metadata.get_all_file_checksums")
-    @patch("generate_metadata.get_schema_data_mappings")
-    @patch("generate_metadata.get_project_metadata")
+    @patch("scripts.generate_metadata.get_all_file_checksums")
+    @patch("scripts.generate_metadata.get_schema_data_mappings")
+    @patch("scripts.generate_metadata.get_project_metadata")
     def test_generate_metadata_includes_entities(
         self, mock_project_meta, mock_mappings, mock_checksums
     ):

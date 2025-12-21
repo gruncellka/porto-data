@@ -4,7 +4,8 @@
 import json
 
 import pytest
-from validators.schema import validate_all_schemas, validate_file
+
+from scripts.validators.schema import validate_all_schemas, validate_file
 
 
 class TestValidateFile:

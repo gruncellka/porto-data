@@ -13,17 +13,10 @@ This module is organized into clear sections:
 """
 
 import json
-import sys
 from pathlib import Path
 from typing import Any
 
-# Setup path for imports from scripts package
-_scripts_dir = Path(__file__).parent.parent
-if str(_scripts_dir) not in sys.path:
-    sys.path.insert(0, str(_scripts_dir))
-
-# Imports from scripts package (path setup above makes these work)
-from data_files import (
+from scripts.data_files import (
     DATA_LINKS_FILE,
     DIMENSIONS_FILE,
     PRICES_FILE,
@@ -33,10 +26,9 @@ from data_files import (
     ZONES_FILE,
     get_data_files,
 )
-from validators.base import ValidationResults
-from validators.helpers import validate_unit_consistency
-
-from utils import load_json
+from scripts.utils import load_json
+from scripts.validators.base import ValidationResults
+from scripts.validators.helpers import validate_unit_consistency
 
 # ============================================================================
 # Constants

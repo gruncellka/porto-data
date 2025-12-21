@@ -4,9 +4,10 @@
 import json
 
 import pytest
-from validators.base import ValidationResults
-from validators.links import DataLinksValidator
-from validators.schema import validate_all_schemas, validate_file
+
+from scripts.validators.base import ValidationResults
+from scripts.validators.links import DataLinksValidator
+from scripts.validators.schema import validate_all_schemas, validate_file
 
 
 class TestValidationResults:

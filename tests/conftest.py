@@ -1,16 +1,12 @@
 """Shared fixtures and utilities for all tests."""
 
 import json
-import sys
 from pathlib import Path
 
 import pytest
 
-# Setup paths
 _project_root = Path(__file__).parent.parent
 _scripts_path = _project_root / "scripts"
-sys.path.insert(0, str(_scripts_path))
-sys.path.insert(0, str(_project_root))
 
 
 @pytest.fixture

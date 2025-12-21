@@ -3,22 +3,17 @@
 
 import hashlib
 import json
-import sys
 from pathlib import Path
 
 import pytest
 
-# Add scripts to path
-sys.path.insert(0, str(Path(__file__).parent.parent / "scripts"))
-
-from data_files import (
+from scripts.data_files import (
     get_data_file_path,
     get_data_files,
     get_schema_data_mappings,
     load_mappings,
 )
-
-from utils import (
+from scripts.utils import (
     compute_checksum,
     get_all_file_checksums,
     get_existing_checksums_from_metadata,
@@ -282,9 +277,9 @@ class TestHasFileChanges:
                 "schemas/products.schema.json": "schema_checksum",
             }
 
-        monkeypatch.setattr("utils.get_all_file_checksums", mock_get_all_checksums)
+        monkeypatch.setattr("scripts.utils.get_all_file_checksums", mock_get_all_checksums)
         monkeypatch.setattr(
-            "utils.get_existing_checksums_from_metadata", mock_get_existing_checksums
+            "scripts.utils.get_existing_checksums_from_metadata", mock_get_existing_checksums
         )
 
         assert has_file_changes() is True
@@ -305,9 +300,9 @@ class TestHasFileChanges:
                 "schemas/products.schema.json": "schema_checksum",
             }
 
-        monkeypatch.setattr("utils.get_all_file_checksums", mock_get_all_checksums)
+        monkeypatch.setattr("scripts.utils.get_all_file_checksums", mock_get_all_checksums)
         monkeypatch.setattr(
-            "utils.get_existing_checksums_from_metadata", mock_get_existing_checksums
+            "scripts.utils.get_existing_checksums_from_metadata", mock_get_existing_checksums
         )
 
         assert has_file_changes() is False
@@ -328,9 +323,9 @@ class TestHasFileChanges:
                 "schemas/products.schema.json": "old_schema_checksum",
             }
 
-        monkeypatch.setattr("utils.get_all_file_checksums", mock_get_all_checksums)
+        monkeypatch.setattr("scripts.utils.get_all_file_checksums", mock_get_all_checksums)
         monkeypatch.setattr(
-            "utils.get_existing_checksums_from_metadata", mock_get_existing_checksums
+            "scripts.utils.get_existing_checksums_from_metadata", mock_get_existing_checksums
         )
 
         assert has_file_changes() is True

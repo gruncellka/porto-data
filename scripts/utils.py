@@ -16,9 +16,7 @@ import json
 from pathlib import Path
 from typing import Any, Dict
 
-# Import from data_files for checksum functions
-# Note: Both files are in scripts/ directory, so direct import works
-from data_files import get_schema_data_mappings
+from scripts.data_files import get_schema_data_mappings
 
 
 def compute_checksum(file_path: str) -> str:

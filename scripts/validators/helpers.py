@@ -1,12 +1,14 @@
 """Helper functions for validators - shared validation logic."""
 
+from scripts.validators.base import ValidationResults
+
 
 def validate_unit_consistency(
     unit_name: str,
     data_links_value: str | None,
     expected_value: str,
     file_names: list[str],
-    results: dict[str, list[str]],
+    results: ValidationResults,
     other_values: list[str | None],
 ) -> None:
     """Validate unit consistency across multiple files.
