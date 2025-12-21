@@ -80,10 +80,10 @@ repos:
       hooks:
           - id: format-json
             name: Format JSON files
-            entry: bash -c 'for file in data/*.json schemas/*.json; do [ -f "$file" ] && python3 -m json.tool "$file" "$file.tmp" && mv "$file.tmp" "$file" || true; done'
+            entry: bash -c 'for file in data/*.json schemas/*.json metadata.json; do [ -f "$file" ] && python3 -m json.tool "$file" "$file.tmp" && mv "$file.tmp" "$file" || true; done'
             language: system
             types: [json]
-            files: ^(data|schemas)/.*\.json$
+            files: ^(data|schemas)/.*\.json$|^metadata\.json$
             pass_filenames: false
             always_run: false
 
