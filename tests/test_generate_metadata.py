@@ -181,7 +181,8 @@ class TestGenerateMetadata:
 
             # Mock get_schema_url
             with patch(
-                "scripts.generate_metadata.get_schema_url", return_value="https://example.com/schema.json"
+                "scripts.generate_metadata.get_schema_url",
+                return_value="https://example.com/schema.json",
             ):
                 metadata = generate_metadata()
 
