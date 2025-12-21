@@ -97,12 +97,12 @@ repos:
       hooks:
           - id: ruff-format
             args: ['--line-length=100']
-            files: ^(scripts|cli)/.*\.py$
+            files: ^(scripts|cli|tests)/.*\.py$
 
           # Ruff linter with auto-fix
           - id: ruff
             args: ['--fix', '--exit-non-zero-on-fix']
-            files: ^(scripts|cli)/.*\.py$
+            files: ^(scripts|cli|tests)/.*\.py$
 
     # MyPy type checking
     - repo: local
