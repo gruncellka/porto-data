@@ -20,7 +20,7 @@ jobs:
               run: make setup
             - name: Validate JSON files against schemas
               run: |
-                  . venv/bin/activate && python3 scripts/validate_schemas.py
+                  . venv/bin/activate && porto validate --type schema
 
     lint-json:
         name: 🔍 Lint JSON Syntax
@@ -54,7 +54,7 @@ jobs:
               run: make setup
             - name: Validate data_links.json consistency
               run: |
-                  . venv/bin/activate && python3 scripts/validate_data_links.py
+                  . venv/bin/activate && porto validate --type links
 
     # ==========================================
     # Formatting Checks (needs valid data)
@@ -88,7 +88,7 @@ jobs:
               run: make setup
             - name: Verify metadata.json is up to date
               run: |
-                  . venv/bin/activate && python3 scripts/generate_metadata.py
+                  . venv/bin/activate && porto metadata
                   if [ -n "$(git diff metadata.json)" ]; then
                     echo "❌ metadata.json is out of date. The file must be regenerated and committed."
                     echo "Run 'make metadata' locally, then commit the updated metadata.json file."
@@ -147,6 +147,29 @@ jobs:
               run: make type-check
 
     # ==========================================
+    # Python Tests (CLI and scripts)
+    # ==========================================
+    test:
+        name: 🧪 Run Tests with Coverage
+        runs-on: ubuntu-22.04
+        # Tests can run in parallel with other checks
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-python@v5
+              with:
+                  python-version: '3.11'
+                  cache: 'pip'
+            - name: Install dependencies
+              run: make setup
+            - name: Run tests with coverage
+              run: make test-cov
+            - name: Upload coverage reports to Codecov
+              uses: codecov/codecov-action@v5
+              continue-on-error: true
+              with:
+                  token: ${{ secrets.CODECOV_TOKEN }}
+
+    # ==========================================
     # Final Summary (waits for all checks)
     # ==========================================
     porto-data-validation:
@@ -161,6 +184,7 @@ jobs:
             - format-code
             - lint-code
             - type-check
+            - test
         steps:
             - name: All validation checks passed
               run: echo "✅ All validation checks passed successfully!"
