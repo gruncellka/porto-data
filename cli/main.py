@@ -17,11 +17,11 @@ def create_parser() -> argparse.ArgumentParser:
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  porto validate schema          Validate JSON schemas
-  porto validate links           Validate data links
-  porto validate links --analyze Validate data links with detailed analysis
-  porto validate all             Validate everything
-  porto metadata                 Generate metadata.json
+  porto validate                      Validate everything (default)
+  porto validate --type schema        Validate JSON schemas
+  porto validate --type links         Validate data links
+  porto validate --type links --analyze  Detailed links analysis
+  porto metadata                      Generate metadata.json
         """,
     )
 

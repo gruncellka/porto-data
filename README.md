@@ -213,9 +213,10 @@ make install-hooks  # Reinstall pre-commit hooks (usually not needed)
 
 ```bash
 # CLI Commands (porto)
+porto validate                 # Validate everything (default)
 porto validate --type schema   # Validate JSON against schemas
 porto validate --type links    # Validate data_links.json consistency
-porto validate --type all      # Validate everything
+porto validate --type links --analyze  # Detailed links analysis
 porto metadata                 # Generate metadata.json
 
 # Make Commands
