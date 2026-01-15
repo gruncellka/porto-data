@@ -1,18 +1,13 @@
 {
     "[json]": {
-        "editor.defaultFormatter": "vscode.json-language-features",
-        "editor.formatOnSave": true,
         "editor.tabSize": 4,
         "editor.insertSpaces": true,
-        "editor.detectIndentation": false,
-        "editor.trimTrailingWhitespace": true,
-        "editor.insertFinalNewline": true
+        "editor.detectIndentation": false
     },
     "[jsonc]": {
-        "editor.defaultFormatter": "vscode.json-language-features",
-        "editor.formatOnSave": true,
         "editor.tabSize": 4,
-        "editor.insertSpaces": true
+        "editor.insertSpaces": true,
+        "editor.detectIndentation": false
     },
     "[python]": {
         "editor.tabSize": 4,
@@ -23,7 +18,5 @@
             "source.fixAll.ruff": "explicit",
             "source.organizeImports.ruff": "explicit"
         }
-    },
-    "files.insertFinalNewline": true,
-    "files.trimTrailingWhitespace": true
+    }
 }
