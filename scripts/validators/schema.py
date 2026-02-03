@@ -6,7 +6,7 @@ corresponding JSON Schema definitions.
 
 import json
 from pathlib import Path
-from typing import Dict
+from typing import Any, Dict, cast
 
 from jsonschema import Draft7Validator, RefResolver, ValidationError
 
@@ -60,7 +60,11 @@ def validate_file(schema_path: str, data_path: str) -> bool:
         schema = dict(schema)
         schema.pop("$id", None)  # avoid remote scope; use local base_uri
         store = _build_store(schema_file)
-        resolver = RefResolver(base_uri=base_uri, referrer=schema, store=store)
+        resolver = RefResolver(
+            base_uri=base_uri,
+            referrer=schema,
+            store=cast(Any, store),  # mypy: store accepts arbitrary schema objects
+        )
         validator = Draft7Validator(schema, resolver=resolver)
         validator.validate(data)
         print(f"✓ {data_path}")

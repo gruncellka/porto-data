@@ -4,7 +4,11 @@
     "title": "Products Schema",
     "description": "Schema for postal products definitions",
     "type": "object",
-    "required": ["file_type", "unit", "products"],
+    "required": [
+        "file_type",
+        "unit",
+        "products"
+    ],
     "properties": {
         "$schema": {
             "type": "string",
@@ -18,7 +22,10 @@
         },
         "unit": {
             "type": "object",
-            "required": ["dimension", "weight"],
+            "required": [
+                "dimension",
+                "weight"
+            ],
             "properties": {
                 "dimension": {
                     "type": "string",
@@ -60,7 +67,13 @@
                         "minItems": 1,
                         "items": {
                             "type": "string",
-                            "enum": ["DL", "C6", "C5", "C4", "B4"]
+                            "enum": [
+                                "DL",
+                                "C6",
+                                "C5",
+                                "C4",
+                                "B4"
+                            ]
                         },
                         "description": "Supported dimension IDs"
                     },
@@ -78,12 +91,18 @@
                         "description": "Weight tier ID"
                     },
                     "effective_from": {
-                        "type": ["string", "null"],
+                        "type": [
+                            "string",
+                            "null"
+                        ],
                         "format": "date",
                         "description": "Product effective start date"
                     },
                     "effective_to": {
-                        "type": ["string", "null"],
+                        "type": [
+                            "string",
+                            "null"
+                        ],
                         "format": "date",
                         "description": "Product effective end date"
                     }

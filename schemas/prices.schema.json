@@ -4,7 +4,11 @@
     "title": "Prices Schema",
     "description": "Schema for pricing information",
     "type": "object",
-    "required": ["file_type", "unit", "prices"],
+    "required": [
+        "file_type",
+        "unit",
+        "prices"
+    ],
     "properties": {
         "$schema": {
             "type": "string",
@@ -18,7 +22,10 @@
         },
         "unit": {
             "type": "object",
-            "required": ["price", "currency"],
+            "required": [
+                "price",
+                "currency"
+            ],
             "properties": {
                 "price": {
                     "type": "string",
@@ -33,14 +40,22 @@
         },
         "prices": {
             "type": "object",
-            "required": ["product_prices", "service_prices"],
+            "required": [
+                "product_prices",
+                "service_prices"
+            ],
             "properties": {
                 "product_prices": {
                     "type": "array",
                     "minItems": 1,
                     "items": {
                         "type": "object",
-                        "required": ["product_id", "zone", "weight_tier", "price"],
+                        "required": [
+                            "product_id",
+                            "zone",
+                            "weight_tier",
+                            "price"
+                        ],
                         "properties": {
                             "product_id": {
                                 "type": "string",
@@ -62,7 +77,10 @@
                                 "description": "Array of price entries with effective dates",
                                 "items": {
                                     "type": "object",
-                                    "required": ["price", "effective_from"],
+                                    "required": [
+                                        "price",
+                                        "effective_from"
+                                    ],
                                     "properties": {
                                         "price": {
                                             "type": "integer",
@@ -70,12 +88,18 @@
                                             "description": "Price in cents"
                                         },
                                         "effective_from": {
-                                            "type": ["string", "null"],
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ],
                                             "format": "date",
                                             "description": "Price effective start date"
                                         },
                                         "effective_to": {
-                                            "type": ["string", "null"],
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ],
                                             "format": "date",
                                             "description": "Price effective end date"
                                         }
@@ -92,7 +116,10 @@
                     "minItems": 1,
                     "items": {
                         "type": "object",
-                        "required": ["service_id", "price"],
+                        "required": [
+                            "service_id",
+                            "price"
+                        ],
                         "properties": {
                             "service_id": {
                                 "type": "string",
@@ -105,7 +132,10 @@
                                 "description": "Array of price entries with effective dates",
                                 "items": {
                                     "type": "object",
-                                    "required": ["price", "effective_from"],
+                                    "required": [
+                                        "price",
+                                        "effective_from"
+                                    ],
                                     "properties": {
                                         "price": {
                                             "type": "integer",
@@ -113,12 +143,18 @@
                                             "description": "Price in cents"
                                         },
                                         "effective_from": {
-                                            "type": ["string", "null"],
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ],
                                             "format": "date",
                                             "description": "Price effective start date"
                                         },
                                         "effective_to": {
-                                            "type": ["string", "null"],
+                                            "type": [
+                                                "string",
+                                                "null"
+                                            ],
                                             "format": "date",
                                             "description": "Price effective end date"
                                         }

@@ -12,7 +12,9 @@ def _load_json(path: Path) -> dict:
 def test_registered_mail_enum_matches_services(project_root: Path):
     """Ensure registered mail enum stays in sync with services.json."""
     services = _load_json(project_root / "data/services.json")["services"]
-    enum_values = set(_load_json(project_root / "definitions/enums/registered-mail-type.schema.json")["enum"])
+    enum_values = set(
+        _load_json(project_root / "definitions/enums/registered-mail-type.schema.json")["enum"]
+    )
 
     service_registered = {s["id"] for s in services if s["id"].startswith("registered_mail")}
 
@@ -39,7 +41,9 @@ def test_zone_enum_matches_zones_data(project_root: Path):
 def test_letter_type_enum_matches_products(project_root: Path):
     """Ensure letter type enum matches product ids (semantic product ids)."""
     products = _load_json(project_root / "data/products.json")["products"]
-    enum_values = set(_load_json(project_root / "definitions/enums/letter-type.schema.json")["enum"])
+    enum_values = set(
+        _load_json(project_root / "definitions/enums/letter-type.schema.json")["enum"]
+    )
 
     product_ids = {p["id"] for p in products}
 

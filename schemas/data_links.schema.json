@@ -31,7 +31,12 @@
         },
         "unit": {
             "type": "object",
-            "required": ["weight", "dimension", "price", "currency"],
+            "required": [
+                "weight",
+                "dimension",
+                "price",
+                "currency"
+            ],
             "properties": {
                 "weight": {
                     "type": "string",
@@ -57,7 +62,11 @@
             "patternProperties": {
                 "^[a-z_]+$": {
                     "type": "object",
-                    "required": ["file", "depends_on", "description"],
+                    "required": [
+                        "file",
+                        "depends_on",
+                        "description"
+                    ],
                     "properties": {
                         "file": {
                             "type": "string",
@@ -91,7 +100,10 @@
             "patternProperties": {
                 "^[a-z_]+$": {
                     "type": "object",
-                    "required": ["zones", "weight_tiers"],
+                    "required": [
+                        "zones",
+                        "weight_tiers"
+                    ],
                     "properties": {
                         "zones": {
                             "type": "array",
@@ -150,7 +162,11 @@
         },
         "global_settings": {
             "type": "object",
-            "required": ["price_source", "lookup_method", "available_services"],
+            "required": [
+                "price_source",
+                "lookup_method",
+                "available_services"
+            ],
             "properties": {
                 "price_source": {
                     "type": "string",
@@ -159,7 +175,12 @@
                 },
                 "lookup_method": {
                     "type": "object",
-                    "required": ["file", "array", "match", "description"],
+                    "required": [
+                        "file",
+                        "array",
+                        "match",
+                        "description"
+                    ],
                     "properties": {
                         "file": {
                             "type": "string",
