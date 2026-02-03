@@ -1,0 +1,8 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/definitions/enums/zone-id.schema.json",
+    "title": "ZoneId",
+    "description": "Shipping zone identifiers",
+    "type": "string",
+    "enum": ["domestic", "zone_1_eu", "zone_2_europe", "world"]
+}

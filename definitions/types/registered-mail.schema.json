@@ -1,0 +1,59 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/definitions/types/registered-mail.schema.json",
+    "title": "RegisteredMail",
+    "description": "Registered mail record",
+    "type": "object",
+    "required": [
+        "id",
+        "letter_id",
+        "type",
+        "tracking_number",
+        "features",
+        "coverage",
+        "status",
+        "created_at"
+    ],
+    "properties": {
+        "id": {
+            "type": "string",
+            "description": "Registered mail identifier"
+        },
+        "letter_id": {
+            "type": "string",
+            "description": "Associated letter identifier"
+        },
+        "type": {
+            "$ref": "../enums/registered-mail-type.schema.json",
+            "description": "Registered mail type"
+        },
+        "tracking_number": {
+            "type": "string",
+            "description": "Tracking number"
+        },
+        "features": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "description": "Applied features"
+        },
+        "coverage": {
+            "type": "integer",
+            "description": "Coverage amount in cents"
+        },
+        "status": {
+            "$ref": "../enums/letter-status.schema.json",
+            "description": "Current status"
+        },
+        "created_at": {
+            "type": "string",
+            "description": "ISO date string"
+        },
+        "estimated_delivery": {
+            "type": "string",
+            "description": "Estimated delivery date (ISO)"
+        }
+    },
+    "additionalProperties": false
+}

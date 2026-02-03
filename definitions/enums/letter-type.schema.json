@@ -1,0 +1,14 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/definitions/enums/letter-type.schema.json",
+    "title": "LetterType",
+    "description": "Type of postal letter (maps to Deutsche Post product categories)",
+    "type": "string",
+    "enum": [
+        "letter_standard",
+        "letter_compact",
+        "letter_large",
+        "letter_maxi",
+        "merchandise"
+    ]
+}

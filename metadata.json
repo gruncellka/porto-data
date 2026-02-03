@@ -4,7 +4,7 @@
         "version": "0.1.0",
         "description": "Deutsche Post pricing and rules data with schema validation"
     },
-    "generated_at": "2025-12-21T14:00:29.250049Z",
+    "generated_at": "2026-02-03T10:09:40.832592Z",
     "entities": {
         "products": {
             "data": {
@@ -14,8 +14,8 @@
             },
             "schema": {
                 "path": "schemas/products.schema.json",
-                "checksum": "82f7fbd471dcf6c7436ef61ed96a87028dfb126bbd1a1191c1a614243d035f48",
-                "size": 4131,
+                "checksum": "53acead404c82be6f8e17aa8c779268b3d853709544d8810a422f05bf56e9bce",
+                "size": 3496,
                 "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/schemas/products.schema.json"
             }
         },
@@ -40,8 +40,8 @@
             },
             "schema": {
                 "path": "schemas/prices.schema.json",
-                "checksum": "a56869acfd17e88091726cec637a844c9274713ea17117f7bc94c357efda23e4",
-                "size": 7635,
+                "checksum": "dc19989c3f9d33fd3144b1eec7ef7ac004393c1f1bb6107f2c1771ffcd39ac83",
+                "size": 6252,
                 "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/schemas/prices.schema.json"
             }
         },
@@ -118,8 +118,8 @@
             },
             "schema": {
                 "path": "schemas/data_links.schema.json",
-                "checksum": "cf820c36e35f9d4d2684d2c1a4ff3b175d3f51e7e8bb147addcbdcf9a986b5d5",
-                "size": 7675,
+                "checksum": "b51b5239b18866a06914aab5b0affdcb1abbe1ed4ce090bbe118271409ae2319",
+                "size": 7133,
                 "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/schemas/data_links.schema.json"
             }
         }

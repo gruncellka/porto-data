@@ -1,0 +1,35 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/definitions/types/dimensions.schema.json",
+    "title": "Dimensions",
+    "description": "Physical dimensions for a letter",
+    "type": "object",
+    "required": ["length", "width", "height"],
+    "properties": {
+        "length": {
+            "type": "integer",
+            "minimum": 90,
+            "maximum": 600,
+            "description": "Length in mm (90-600)"
+        },
+        "width": {
+            "type": "integer",
+            "minimum": 140,
+            "maximum": 300,
+            "description": "Width in mm (140-300)"
+        },
+        "height": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 60,
+            "description": "Height in mm (0-60)"
+        },
+        "thickness": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 5,
+            "description": "Thickness in mm (0-5, optional)"
+        }
+    },
+    "additionalProperties": false
+}

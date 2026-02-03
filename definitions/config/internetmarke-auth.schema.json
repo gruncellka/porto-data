@@ -1,0 +1,41 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/definitions/config/internetmarke-auth.schema.json",
+    "title": "InternetmarkeAuth",
+    "description": "Two-level authentication for Internetmarke (DHL/Deutsche Post)",
+    "type": "object",
+    "properties": {
+        "dhl_api_key": {
+            "type": "string",
+            "description": "API key from developer.dhl.com"
+        },
+        "dhl_api_secret": {
+            "type": "string",
+            "description": "API secret from developer.dhl.com"
+        },
+        "dhl_base_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Base URL for DHL Internetmarke API"
+        },
+        "username": {
+            "type": "string",
+            "description": "Portokasse email (customer)"
+        },
+        "password": {
+            "type": "string",
+            "description": "Portokasse password (customer)"
+        },
+        "base_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Legacy Internetmarke base URL"
+        },
+        "partner_id": {
+            "type": "string",
+            "description": "Legacy partner ID"
+        }
+    },
+    "required": ["username", "password"],
+    "additionalProperties": false
+}

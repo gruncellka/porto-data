@@ -1,0 +1,33 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/definitions/types/validation-result.schema.json",
+    "title": "ValidationResult",
+    "description": "Result of validation operations",
+    "type": "object",
+    "required": ["is_valid", "errors", "warnings"],
+    "properties": {
+        "is_valid": {
+            "type": "boolean",
+            "description": "True when validation passes"
+        },
+        "errors": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "description": "Validation errors"
+        },
+        "warnings": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "description": "Validation warnings"
+        },
+        "data": {
+            "type": "object",
+            "description": "Optional payload with resolved data"
+        }
+    },
+    "additionalProperties": false
+}

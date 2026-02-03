@@ -1,0 +1,57 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/definitions/types/address.schema.json",
+    "title": "Address",
+    "description": "Postal address for letter origin or destination",
+    "type": "object",
+    "required": [
+        "name",
+        "street",
+        "house_number",
+        "postal_code",
+        "city",
+        "country_code"
+    ],
+    "properties": {
+        "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "description": "Recipient/sender name"
+        },
+        "street": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "description": "Street name"
+        },
+        "house_number": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 10,
+            "description": "House number"
+        },
+        "postal_code": {
+            "type": "string",
+            "pattern": "^\\d{5}$",
+            "description": "5-digit postal code"
+        },
+        "city": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "description": "City name"
+        },
+        "country_code": {
+            "type": "string",
+            "pattern": "^[A-Z]{2}$",
+            "description": "ISO 3166-1 alpha-2 country code"
+        },
+        "region_code": {
+            "type": "string",
+            "maxLength": 10,
+            "description": "Optional region code (ISO 3166-2 format preferred)"
+        }
+    },
+    "additionalProperties": false
+}

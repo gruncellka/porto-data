@@ -1,0 +1,14 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/definitions/enums/registered-mail-type.schema.json",
+    "title": "RegisteredMailType",
+    "description": "Registered mail service variants",
+    "type": "string",
+    "enum": [
+        "registered_mail",
+        "registered_mail_mailbox",
+        "registered_mail_return_receipt",
+        "registered_mail_personal",
+        "registered_mail_personal_return_receipt"
+    ]
+}

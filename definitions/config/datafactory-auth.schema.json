@@ -1,0 +1,22 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/definitions/config/datafactory-auth.schema.json",
+    "title": "DataFactoryAuth",
+    "description": "Authentication for DHL DataFactory API",
+    "type": "object",
+    "required": ["client_id", "client_secret"],
+    "properties": {
+        "client_id": {
+            "type": "string"
+        },
+        "client_secret": {
+            "type": "string"
+        },
+        "base_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Base URL for DataFactory API"
+        }
+    },
+    "additionalProperties": false
+}

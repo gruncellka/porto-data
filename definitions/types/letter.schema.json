@@ -1,0 +1,52 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/definitions/types/letter.schema.json",
+    "title": "Letter",
+    "description": "A postal letter with dimensions and addresses",
+    "type": "object",
+    "required": ["type", "weight", "dimensions", "destination", "origin"],
+    "properties": {
+        "id": {
+            "type": "string",
+            "description": "Unique letter identifier"
+        },
+        "type": {
+            "$ref": "../enums/letter-type.schema.json",
+            "description": "Letter type (maps to Deutsche Post product categories)"
+        },
+        "weight": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 2000,
+            "description": "Weight in grams"
+        },
+        "dimensions": {
+            "$ref": "dimensions.schema.json",
+            "description": "Physical dimensions"
+        },
+        "destination": {
+            "$ref": "address.schema.json",
+            "description": "Recipient address"
+        },
+        "origin": {
+            "$ref": "address.schema.json",
+            "description": "Sender address"
+        },
+        "services": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "description": "Additional services (tracking, registered mail)"
+        },
+        "value": {
+            "type": "integer",
+            "description": "Value in cents"
+        },
+        "status": {
+            "$ref": "../enums/letter-status.schema.json",
+            "description": "Current letter status"
+        }
+    },
+    "additionalProperties": false
+}

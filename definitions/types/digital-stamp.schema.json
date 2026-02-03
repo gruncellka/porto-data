@@ -1,0 +1,75 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/definitions/types/digital-stamp.schema.json",
+    "title": "DigitalStamp",
+    "description": "Digital stamp generated via Internetmarke",
+    "type": "object",
+    "required": [
+        "id",
+        "letter_id",
+        "barcode",
+        "value",
+        "currency",
+        "valid_until",
+        "generated_at"
+    ],
+    "properties": {
+        "id": {
+            "type": "string",
+            "description": "Stamp identifier"
+        },
+        "letter_id": {
+            "type": "string",
+            "description": "Associated letter identifier"
+        },
+        "barcode": {
+            "type": "string",
+            "description": "Barcode value"
+        },
+        "qr_code": {
+            "type": "string",
+            "description": "QR code value"
+        },
+        "value": {
+            "type": "integer",
+            "description": "Final price from API (in cents)"
+        },
+        "currency": {
+            "type": "string",
+            "const": "EUR",
+            "description": "Currency code"
+        },
+        "valid_until": {
+            "type": "string",
+            "description": "ISO date string for validity"
+        },
+        "image_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL to the stamp image"
+        },
+        "print_format": {
+            "type": "string",
+            "enum": ["A4", "A6", "label"],
+            "description": "Requested print format"
+        },
+        "generated_at": {
+            "type": "string",
+            "description": "ISO date string when generated"
+        },
+        "pre_calculated_price": {
+            "type": "integer",
+            "description": "Pre-calculated price from porto-data (in cents)"
+        },
+        "price_mismatch": {
+            "type": "boolean",
+            "default": false,
+            "description": "True if API price differs from pre-calculated price"
+        },
+        "price_difference": {
+            "type": "integer",
+            "description": "Difference between API price and pre-calculated price (in cents)"
+        }
+    },
+    "additionalProperties": false
+}

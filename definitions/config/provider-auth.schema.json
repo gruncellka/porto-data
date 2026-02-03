@@ -1,0 +1,16 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/definitions/config/provider-auth.schema.json",
+    "title": "ProviderAuth",
+    "description": "Container for provider authentications",
+    "type": "object",
+    "properties": {
+        "internetmarke": {
+            "$ref": "internetmarke-auth.schema.json"
+        },
+        "datafactory": {
+            "$ref": "datafactory-auth.schema.json"
+        }
+    },
+    "additionalProperties": false
+}
