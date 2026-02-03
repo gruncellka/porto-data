@@ -1,49 +1,200 @@
 # Porto Data - Cursor Rules
 
-## Project Purpose
+## Project Type
 
-Central data repository for Deutsche Post letter products.
-Single source of truth for both Python and TypeScript SDKs.
+Data repository for Deutsche Post shipping services with JSON schema validation. This is NOT a typical application - it's a structured data repository with validation tooling.
 
-## Structure
+## Code Style
 
-```
-data/                  # Core data files (JSON)
-├── products.json      # Letter types (standard, compact, large, etc.)
-├── prices.json        # Pricing by product/zone/weight
-├── zones.json         # Geographic zones (domestic, EU, world)
-├── dimensions.json    # Size constraints per product
-├── weight_tiers.json  # Weight categories (W0020, W0050, etc.)
-├── services.json      # Additional services (registered mail, etc.)
-├── features.json      # Product features
-├── restrictions.json  # What's allowed per product/zone
-└── data_links.json    # Relationships between data files
+### Python
 
-schemas/               # JSON Schema validation files
-├── products.schema.json
-├── prices.schema.json
-└── ...
+-   **Formatter**: Ruff (line-length=100)
+-   **Linter**: Ruff with rules: E, W, F, I, N, UP, B, C4, SIM
+-   **Type checking**: MyPy (strict mode, Python 3.11+)
+-   **Import style**: Use proper package imports (`from scripts.validators import ...`)
+-   **Follow existing patterns** in `scripts/` and `cli/` directories
 
-scripts/               # Validation and generation scripts
-cli/                   # CLI for data operations
-```
+### JSON
 
-## Key Principles
+-   **Indentation**: 4 spaces (not tabs)
+-   **Key order**: Preserve original order (do NOT sort keys)
+-   **Formatting**: Use Python's `json.tool` for formatting
+-   **Arrays**: Multi-line for readability
+-   **Validation**: All JSON files MUST validate against schemas in `schemas/` directory
 
-- **Single source of truth**: Both SDKs load from this data
-- **Schema-validated**: All JSON files have corresponding schemas
-- **Linked data**: data_links.json defines relationships
-- **Version controlled**: Changes here affect both SDKs
+## Data Structure
 
-## Editing Data
+### Directory Organization
+
+-   `data/` - Main JSON data files (products, services, prices, zones, etc.)
+-   `schemas/` - JSON schemas for validation
+-   `definitions/` - Canonical SDK enums/types/config (Python/TypeScript codegen)
+-   `scripts/` - Core validation logic and utilities
+-   `cli/` - CLI commands (`porto` command)
+-   `tests/` - Test suite (87% coverage target)
+
+### Data Files
+
+-   All data files in `data/` must validate against corresponding schemas in `schemas/`
+-   `data_links.json` provides cross-references between data files
+-   `metadata.json` is auto-generated (do NOT edit manually)
+-   `mappings.json` is the source of truth for schema-to-data mappings
+-   `definitions/` are the single source for SDK-facing types/enums
+
+### Data Relationships
+
+-   Products → Prices → Zones (one-directional, no circular dependencies)
+-   Services → Features
+-   Restrictions → Compliance Frameworks
+-   All relationships validated via `data_links.json`
+
+## Workflow
+
+### Validation
+
+-   Always run `make validate` after JSON changes
+-   Pre-commit hooks auto-format and validate on commit
+-   If `metadata.json` regenerates, MUST stage it in same commit
+-   Run `make quality` before committing (format, lint, validate, type-check)
+-   Keep `definitions/` in sync with data; sync tests enforce products/zones/services enums
+
+### Commits
+
+-   Use conventional commits: `feat:`, `fix:`, `chore:`, `docs:`, `refactor:`
+-   Small config changes (like this file) can go directly to main
+-   Features and bug fixes should use feature branches + PR
+-   Release commits: ONE commit with version + changelog + metadata
+
+### Testing
+
+-   Test coverage target: 87%
+-   Tests in `tests/` directory mirror source structure
+-   Use pytest fixtures from `tests/conftest.py`
+-   Run `make test-cov` to check coverage
+
+## Standards
+
+### ISO Standards
+
+-   **Country codes**: ISO 3166-1 alpha-2 (`DE`, `US`, `FR`, `YE`)
+-   **Region codes**: ISO 3166-2 (`DE-BY`, `US-CA`, `FR-75`)
+-   **Dates**: ISO 8601 format (`2024-01-15`, `2023-06-01`)
+
+### Jurisdiction Codes
+
+-   `EU` - European Union
+-   `UN` - United Nations
+-   `DE` - Germany (national)
+-   `DP` - Deutsche Post (operational)
+
+## CLI Commands
+
+### Porto CLI
+
+-   `porto validate` - Validate everything (default)
+-   `porto validate --type schema` - Validate JSON against schemas
+-   `porto validate --type links` - Validate data_links.json consistency
+-   `porto validate --type links --analyze` - Detailed links analysis
+-   `porto metadata` - Generate metadata.json
+
+### Make Commands
+
+-   `make validate` - Validate all JSON files
+-   `make format` - Format JSON and Python
+-   `make lint` - Lint JSON and Python
+-   `make quality` - Run all checks (format, lint, validate, type-check)
+-   `make test-cov` - Run tests with coverage
+
+## Important Behaviors
+
+### Pre-commit Hooks
+
+-   Auto-format JSON and Python files
+-   Validate JSON syntax and schemas
+-   Regenerate `metadata.json` if data files changed
+-   If `metadata.json` regenerates but isn't staged, commit FAILS (by design)
+-   Must stage `metadata.json` in same commit as data changes
+
+### Metadata.json
+
+-   Auto-generated file (do NOT edit manually)
+-   Regenerated when data/schema files or version changes
+-   Includes checksums (SHA-256) for all files
+-   Version comes from `pyproject.toml`
+-   Must be committed when regenerated
+
+## Domain Knowledge
+
+### Deutsche Post Shipping Data
+
+-   Products: letters, parcels, packages
+-   Services: registered mail, insurance, etc.
+-   Zones: Geographic shipping zones
+-   Weight tiers: Pricing brackets
+-   Restrictions: Shipping restrictions and sanctions
+-   Features: Service capabilities
+
+### Data Integrity
+
+-   All data must validate against schemas
+-   Cross-references validated via `data_links.json`
+-   Checksums ensure data integrity
+-   CI/CD validates on every push/PR
+
+## Code Patterns
+
+### Validation
+
+-   Use `scripts.validators.schema` for JSON schema validation
+-   Use `scripts.validators.links` for data links validation
+-   Validation results use `ValidationResults` TypedDict
+-   Fail-fast validation of required entities at import time
+
+### File Paths
+
+-   Use `scripts.data_files` for centralized path management
+-   Use `_get_project_root()` helper for path resolution
+-   Paths relative to project root, not current directory
+
+### Error Handling
+
+-   Validation errors include context and file paths
+-   Use descriptive error messages
+-   Fail fast on validation errors
+
+## When Making Changes
+
+### JSON Data Changes
 
 1. Edit JSON file in `data/`
-2. Run validation: `make validate`
-3. Update metadata: `make metadata`
-4. Commit and push
+2. Ensure it follows schema
+3. Run `make validate`
+4. Run `make format` to auto-format
+5. Commit changes
+6. If `metadata.json` regenerates, stage it: `git add metadata.json`
 
-## Do NOT
+### Schema Changes
 
-- Add SDK-specific logic here - this is pure data
-- Break schema validation - always run `make validate`
-- Forget to update data_links.json when adding relationships
+1. Edit schema file in `schemas/`
+2. Update corresponding data in `data/`
+3. Run `make validate` to verify compatibility
+4. Update `mappings.json` if needed
+
+### Code Changes
+
+1. Follow existing patterns
+2. Add type hints (MyPy)
+3. Run `make quality` before committing
+4. Add tests for new functionality
+5. Maintain 87% coverage target
+
+## AI Assistant Guidelines
+
+-   Understand this is a DATA repository, not an application
+-   JSON files are the primary content, Python is tooling
+-   Always validate JSON against schemas
+-   Preserve JSON key order (don't sort)
+-   Use 4-space indentation for JSON
+-   Check `metadata.json` regeneration when data changes
+-   Follow existing code patterns in `scripts/` and `cli/`
+-   Use proper package imports (no `sys.path` hacks)
