@@ -1,0 +1,36 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/definitions/config/porto-config.schema.json",
+    "title": "PortoConfig",
+    "description": "Porto SDK configuration",
+    "type": "object",
+    "properties": {
+        "data_path": {
+            "type": "string",
+            "description": "Path to porto-data directory"
+        },
+        "cache": {
+            "$ref": "cache-config.schema.json"
+        },
+        "timeout_ms": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Request timeout in milliseconds"
+        },
+        "retries": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Number of retries"
+        },
+        "auth": {
+            "$ref": "provider-auth.schema.json"
+        },
+        "fallback": {
+            "$ref": "fallback-config.schema.json"
+        },
+        "features": {
+            "$ref": "features-config.schema.json"
+        }
+    },
+    "additionalProperties": false
+}

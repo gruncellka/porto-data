@@ -1,0 +1,56 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/definitions/types/stamp-request.schema.json",
+    "title": "StampRequest",
+    "description": "Request for generating a digital stamp",
+    "type": "object",
+    "required": ["letter_type", "value"],
+    "properties": {
+        "letter_type": {
+            "$ref": "../enums/letter-type.schema.json",
+            "description": "Requested letter type"
+        },
+        "destination": {
+            "$ref": "address.schema.json",
+            "description": "Destination address (required for registered mail/tracking)"
+        },
+        "origin": {
+            "$ref": "address.schema.json",
+            "description": "Origin address (required for registered mail/tracking)"
+        },
+        "value": {
+            "type": "integer",
+            "description": "Declared value in cents"
+        },
+        "letter_id": {
+            "type": "string",
+            "description": "Existing letter identifier"
+        },
+        "design": {
+            "type": "object",
+            "properties": {
+                "type": {
+                    "type": "string",
+                    "enum": ["standard", "custom"]
+                },
+                "include_qr_code": {
+                    "type": "boolean"
+                },
+                "include_barcode": {
+                    "type": "boolean"
+                }
+            },
+            "additionalProperties": false
+        },
+        "zone": {
+            "$ref": "../enums/zone-id.schema.json",
+            "description": "Explicit zone (alternative to address resolution)"
+        },
+        "destination_country_code": {
+            "type": "string",
+            "pattern": "^[A-Z]{2}$",
+            "description": "ISO country code for zone resolution"
+        }
+    },
+    "additionalProperties": false
+}

@@ -1,0 +1,22 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/definitions/config/features-config.schema.json",
+    "title": "FeaturesConfig",
+    "description": "Toggle specific SDK features",
+    "type": "object",
+    "properties": {
+        "postmarks": {
+            "type": "boolean",
+            "default": true
+        },
+        "registered_mail": {
+            "type": "boolean",
+            "default": true
+        },
+        "bulk_operations": {
+            "type": "boolean",
+            "default": true
+        }
+    },
+    "additionalProperties": false
+}

@@ -1,0 +1,24 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/definitions/types/tracking-event.schema.json",
+    "title": "TrackingEvent",
+    "description": "Individual tracking event",
+    "type": "object",
+    "required": ["timestamp", "status"],
+    "properties": {
+        "timestamp": {
+            "type": "string",
+            "description": "Event timestamp (ISO string)"
+        },
+        "status": {
+            "$ref": "../enums/letter-tracking-status.schema.json"
+        },
+        "location": {
+            "type": "string"
+        },
+        "description": {
+            "type": "string"
+        }
+    },
+    "additionalProperties": false
+}

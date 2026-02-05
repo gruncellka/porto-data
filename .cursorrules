@@ -28,6 +28,7 @@ Data repository for Deutsche Post shipping services with JSON schema validation.
 
 -   `data/` - Main JSON data files (products, services, prices, zones, etc.)
 -   `schemas/` - JSON schemas for validation
+-   `definitions/` - Canonical SDK enums/types/config (Python/TypeScript codegen)
 -   `scripts/` - Core validation logic and utilities
 -   `cli/` - CLI commands (`porto` command)
 -   `tests/` - Test suite (87% coverage target)
@@ -38,6 +39,7 @@ Data repository for Deutsche Post shipping services with JSON schema validation.
 -   `data_links.json` provides cross-references between data files
 -   `metadata.json` is auto-generated (do NOT edit manually)
 -   `mappings.json` is the source of truth for schema-to-data mappings
+-   `definitions/` are the single source for SDK-facing types/enums
 
 ### Data Relationships
 
@@ -54,6 +56,7 @@ Data repository for Deutsche Post shipping services with JSON schema validation.
 -   Pre-commit hooks auto-format and validate on commit
 -   If `metadata.json` regenerates, MUST stage it in same commit
 -   Run `make quality` before committing (format, lint, validate, type-check)
+-   Keep `definitions/` in sync with data; sync tests enforce products/zones/services enums
 
 ### Commits
 

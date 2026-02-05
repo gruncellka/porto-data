@@ -1,0 +1,40 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/definitions/types/tracking-status.schema.json",
+    "title": "TrackingStatus",
+    "description": "Tracking status with history",
+    "type": "object",
+    "required": ["tracking_number", "status", "last_update", "history"],
+    "properties": {
+        "tracking_number": {
+            "type": "string"
+        },
+        "status": {
+            "$ref": "../enums/letter-tracking-status.schema.json"
+        },
+        "last_update": {
+            "type": "string",
+            "description": "Last update timestamp (ISO string)"
+        },
+        "location": {
+            "type": "string"
+        },
+        "next_steps": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "estimated_delivery": {
+            "type": "string",
+            "description": "Estimated delivery date (ISO string)"
+        },
+        "history": {
+            "type": "array",
+            "items": {
+                "$ref": "tracking-event.schema.json"
+            }
+        }
+    },
+    "additionalProperties": false
+}

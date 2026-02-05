@@ -13,10 +13,11 @@ A comprehensive, schema-validated dataset containing Deutsche Post pricing, rest
 
 This dataset is perfect for:
 
+-   **SDK generation** - Canonical enums/types/config for Python & TypeScript
 -   **E-commerce platforms** - Calculate shipping costs and restrictions
 -   **Logistics software** - Integrate Deutsche Post pricing and rules
 -   **Compliance tools** - Check shipping restrictions and sanctions
--   **Research projects** - Analyze postal service patterns and policies
+-   **Data consistency** - Validate data ↔ schemas ↔ SDK types stay aligned
 -   **Educational purposes** - Learn about international shipping regulations
 
 ---
@@ -29,6 +30,8 @@ This dataset is perfect for:
 -   **5 product types** (letters, merchandise)
 -   **3 active service types** (registered mail, insurance) - 2 services discontinued as of 2025-01-01
 -   **31 restrictions** with 19 compliance frameworks
+-   **Canonical SDK defs** in `definitions/` for enums/types/config (shared by Python/TS)
+-   **Sync tests** ensure definitions match data (products/zones/services)
 
 ---
 

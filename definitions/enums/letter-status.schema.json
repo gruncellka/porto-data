@@ -1,0 +1,16 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/definitions/enums/letter-status.schema.json",
+    "title": "LetterStatus",
+    "description": "Status of a letter during its lifecycle",
+    "type": "string",
+    "enum": [
+        "draft",
+        "postmarked",
+        "submitted",
+        "in_transit",
+        "delivered",
+        "returned",
+        "lost"
+    ]
+}

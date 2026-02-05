@@ -54,9 +54,8 @@
                 ],
                 "properties": {
                     "id": {
-                        "type": "string",
-                        "pattern": "^[a-z_]+$",
-                        "description": "Semantic English product ID"
+                        "$ref": "../definitions/enums/letter-type.schema.json",
+                        "description": "Semantic product ID aligned with letter types"
                     },
                     "name": {
                         "type": "string",
@@ -82,13 +81,7 @@
                         "type": "array",
                         "minItems": 1,
                         "items": {
-                            "type": "string",
-                            "enum": [
-                                "domestic",
-                                "zone_1_eu",
-                                "zone_2_europe",
-                                "world"
-                            ]
+                            "$ref": "../definitions/enums/zone-id.schema.json"
                         },
                         "description": "Zones where this product is available"
                     },

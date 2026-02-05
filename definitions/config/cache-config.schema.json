@@ -1,0 +1,27 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/definitions/config/cache-config.schema.json",
+    "title": "CacheConfig",
+    "description": "Caching configuration for SDK",
+    "type": "object",
+    "properties": {
+        "enabled": {
+            "type": "boolean",
+            "default": true,
+            "description": "Enable in-memory caching"
+        },
+        "ttl_seconds": {
+            "type": "integer",
+            "minimum": 0,
+            "default": 300,
+            "description": "Time-to-live for cache entries"
+        },
+        "max_size": {
+            "type": "integer",
+            "minimum": 0,
+            "default": 1000,
+            "description": "Maximum cache entries"
+        }
+    },
+    "additionalProperties": false
+}

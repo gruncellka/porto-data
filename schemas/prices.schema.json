@@ -63,13 +63,7 @@
                                 "description": "Product ID reference"
                             },
                             "zone": {
-                                "type": "string",
-                                "enum": [
-                                    "domestic",
-                                    "zone_1_eu",
-                                    "zone_2_europe",
-                                    "world"
-                                ],
+                                "$ref": "../definitions/enums/zone-id.schema.json",
                                 "description": "Zone ID reference"
                             },
                             "weight_tier": {
