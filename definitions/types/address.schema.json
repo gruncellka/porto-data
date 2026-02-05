@@ -33,8 +33,9 @@
         },
         "postal_code": {
             "type": "string",
-            "pattern": "^\\d{5}$",
-            "description": "5-digit postal code"
+            "minLength": 1,
+            "maxLength": 12,
+            "description": "Postal code; format varies by country (e.g. DE: 5 digits, GB/CA: alphanumeric)"
         },
         "city": {
             "type": "string",
