@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Any, Dict, cast
 
 from jsonschema import Draft7Validator, RefResolver, ValidationError
+from referencing.exceptions import Unresolvable
 
 from scripts.data_files import get_schema_data_mappings
 
@@ -75,6 +76,9 @@ def validate_file(schema_path: str, data_path: str) -> bool:
         return False
     except json.JSONDecodeError as e:
         print(f"✗ {data_path}: Invalid JSON - {e}")
+        return False
+    except Unresolvable as e:
+        print(f"✗ {data_path}: Schema $ref could not be resolved - {e}")
         return False
     except ValidationError as e:
         print(f"✗ {data_path}: Validation failed")
