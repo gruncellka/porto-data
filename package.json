@@ -1,0 +1,28 @@
+{
+    "name": "@gruncellka/porto-data",
+    "version": "0.1.0",
+    "description": "Deutsche Post pricing and rules data with schema validation",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/gruncellka/porto-data.git"
+    },
+    "keywords": [
+        "deutsche-post",
+        "shipping",
+        "postal",
+        "pricing",
+        "zones",
+        "restrictions",
+        "json",
+        "schema"
+    ],
+    "files": [
+        "data",
+        "schemas",
+        "mappings.json",
+        "metadata.json",
+        "README.md",
+        "LICENSE"
+    ]
+}
