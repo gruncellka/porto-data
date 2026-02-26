@@ -57,12 +57,9 @@ def main() -> int:
             return validate_schema()
         elif args.type == "links":
             return validate_links(analyze=args.analyze)
-        elif args.type == "all":
-            # For "all", ignore --analyze flag (use default mode)
-            return validate_all()
         else:
-            parser.print_help()
-            return 1
+            # default (no --type) or --type all: validate everything
+            return validate_all()
     elif args.command == "metadata":
         return generate_metadata()
     else:
