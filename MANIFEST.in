@@ -1,0 +1,4 @@
+# Include root-level data and schemas in the source distribution (sdist).
+include mappings.json metadata.json LICENSE
+recursive-include data *.json
+recursive-include schemas *.json
