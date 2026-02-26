@@ -2,4 +2,5 @@
 
 from importlib.metadata import version
 
-__version__ = version("porto-data")
+# Must match [project] name in pyproject.toml (PyPI distribution name)
+__version__ = version("gruncellka-porto-data")

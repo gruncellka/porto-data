@@ -49,17 +49,17 @@ The package includes `data/`, `schemas/`, `mappings.json`, and `metadata.json` s
 
 ## Data overview
 
-| File                | Description                                                        |
-| ------------------- | ------------------------------------------------------------------ |
-| `products.json`     | Shipping products (letters, parcels, packages)                   |
-| `services.json`     | Additional services (registered mail, insurance, etc.)             |
-| `prices.json`       | Pricing by product, zone, and weight (with effective dates)        |
-| `zones.json`        | Geographic zones and country mappings                             |
-| `weight_tiers.json` | Weight brackets for pricing                                       |
-| `dimensions.json`   | Size limits and specifications                                    |
-| `features.json`     | Service features and capabilities                                 |
-| `restrictions.json` | Shipping restrictions, sanctions, compliance frameworks           |
-| `data_links.json`   | Cross-references between data files                                |
+| File                | Description                                                 |
+| ------------------- | ----------------------------------------------------------- |
+| `products.json`     | Shipping products (letters, parcels, packages)              |
+| `services.json`     | Additional services (registered mail, insurance, etc.)      |
+| `prices.json`       | Pricing by product, zone, and weight (with effective dates) |
+| `zones.json`        | Geographic zones and country mappings                       |
+| `weight_tiers.json` | Weight brackets for pricing                                 |
+| `dimensions.json`   | Size limits and specifications                              |
+| `features.json`     | Service features and capabilities                           |
+| `restrictions.json` | Shipping restrictions, sanctions, compliance frameworks     |
+| `data_links.json`   | Cross-references between data files                         |
 
 All data is validated against JSON schemas in `schemas/` (required fields, types, enums, ISO patterns, dates, cross-references). Schema-to-data mapping is in `mappings.json`; `metadata.json` provides checksums and canonical schema URLs.
 
@@ -117,4 +117,4 @@ Setup, validation, tests, and release details are in **[CONTRIBUTING.md](CONTRIB
 
 ---
 
-gruncellka
+🔳 gruncellka
