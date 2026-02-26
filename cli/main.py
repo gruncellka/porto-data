@@ -31,9 +31,9 @@ Examples:
     validate_parser = subparsers.add_parser("validate", help="Validate data files")
     validate_parser.add_argument(
         "--type",
-        choices=["schema", "links", "all"],
-        default="all",
-        help="Type of validation to run (default: all)",
+        choices=["schema", "links"],
+        default=None,
+        help="Type of validation to run (omit to run all)",
     )
     validate_parser.add_argument(
         "--analyze",
@@ -53,12 +53,15 @@ def main() -> int:
     args = parser.parse_args()
 
     if args.command == "validate":
+        if args.type is not None and args.type not in ("schema", "links"):
+            parser.print_help()
+            return 1
         if args.type == "schema":
             return validate_schema()
         elif args.type == "links":
             return validate_links(analyze=args.analyze)
         else:
-            # default (no --type) or --type all: validate everything
+            # no --type: validate everything
             return validate_all()
     elif args.command == "metadata":
         return generate_metadata()
