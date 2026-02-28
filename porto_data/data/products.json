@@ -1,5 +1,5 @@
 {
-    "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/schemas/products.schema.json",
+    "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/products.schema.json",
     "file_type": "products",
     "unit": {
         "dimension": "mm",

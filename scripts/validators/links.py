@@ -702,7 +702,9 @@ def validate_data_links(data_dir: Path | None = None, analyze: bool = False) -> 
         Exit code: 0 if validation passes, 1 otherwise.
     """
     if data_dir is None:
-        data_dir = Path(__file__).parent.parent.parent / "data"
+        from scripts.data_files import get_project_root
+
+        data_dir = get_project_root() / "data"
 
     validator = DataLinksValidator(data_dir)
     results = validator.validate_all()

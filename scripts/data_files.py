@@ -18,32 +18,53 @@ def _get_project_root() -> Path:
     """Determine project root by finding mappings.json.
 
     Tries multiple locations:
-    1. Relative to script location (development mode)
-    2. Current working directory (installed package, run from project root)
+    1. porto_data package (installed package; data is inside porto_data)
+    2. Relative to script location (development: repo root or porto_data subdir)
+    3. Current working directory
 
     Returns:
-        Path to project root containing mappings.json
+        Path to the directory containing mappings.json (and data/, schemas/)
 
     Raises:
         FileNotFoundError: If mappings.json cannot be found
     """
-    # Try 1: Relative to script location (development mode)
+    # Try 1: porto_data package (installed wheel: data is inside the package)
+    try:
+        import porto_data
+
+        root = Path(porto_data.__file__).parent
+        if (root / "mappings.json").exists():
+            return root
+    except ImportError:
+        pass
+
+    # Try 2: Development mode — scripts' parent (repo root) or porto_data under it
     script_dir = Path(__file__).parent
     dev_root = script_dir.parent
     if (dev_root / "mappings.json").exists():
         return dev_root
+    if (dev_root / "porto_data" / "mappings.json").exists():
+        return dev_root / "porto_data"
 
-    # Try 2: Current working directory (installed package, run from project root)
+    # Try 3: Current working directory (e.g. tests with tmp_path)
     cwd = Path.cwd()
     if (cwd / "mappings.json").exists():
         return cwd
+    if (cwd / "porto_data" / "mappings.json").exists():
+        return cwd / "porto_data"
 
     raise FileNotFoundError(
-        f"mappings.json not found. Tried:\n"
-        f"  1. {dev_root / 'mappings.json'} (relative to scripts/)\n"
-        f"  2. {cwd / 'mappings.json'} (current directory)\n"
-        "This CLI must be run from the porto-data project root."
+        "mappings.json not found. Tried:\n"
+        "  1. porto_data package (installed)\n"
+        f"  2. {dev_root} and {dev_root / 'porto_data'}\n"
+        f"  3. {cwd} and {cwd / 'porto_data'}\n"
+        "Run the CLI from the porto-data project root or install the package."
     )
+
+
+def get_project_root() -> Path:
+    """Return the project root (directory containing mappings.json and data/)."""
+    return _get_project_root()
 
 
 def load_mappings(mappings_path: str | None = None) -> Dict[str, str]:

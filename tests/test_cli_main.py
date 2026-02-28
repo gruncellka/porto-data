@@ -35,11 +35,11 @@ class TestCreateParser:
         args = parser.parse_args(["validate", "--type", "links", "--analyze"])
         assert args.analyze is True
 
-    def test_create_parser_validate_default_type_is_all(self):
-        """Test that validate defaults to 'all' type."""
+    def test_create_parser_validate_default_type_is_none(self):
+        """Test that validate with no --type has type None (run all)."""
         parser = create_parser()
         args = parser.parse_args(["validate"])
-        assert args.type == "all"
+        assert args.type is None
 
 
 class TestMainFunction:
@@ -74,9 +74,9 @@ class TestMainFunction:
 
     @patch("cli.main.validate_all")
     def test_main_validate_all(self, mock_validate_all):
-        """Test main with validate --type all."""
+        """Test main with validate and no --type runs all."""
         mock_validate_all.return_value = 0
-        with patch("sys.argv", ["porto", "validate", "--type", "all"]):
+        with patch("sys.argv", ["porto", "validate"]):
             result = main()
             assert result == 0
             mock_validate_all.assert_called_once()

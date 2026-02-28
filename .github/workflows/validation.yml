@@ -3,7 +3,7 @@ name: validation
 on: [push, pull_request]
 
 env:
-    PYTHON_VERSION: "3.11"
+    PYTHON_VERSION: '3.11'
 
 jobs:
     # ==========================================
@@ -11,7 +11,7 @@ jobs:
     # ==========================================
     # These can run in parallel - both just need valid JSON files
     validate-schemas:
-        name: 📋 Validate JSON Schemas
+        name: Validate JSON Schemas
         runs-on: ubuntu-22.04
         steps:
             - uses: actions/checkout@v4
@@ -26,7 +26,7 @@ jobs:
                   . venv/bin/activate && porto validate --type schema
 
     lint-json:
-        name: 🔍 Lint JSON Syntax
+        name: Lint JSON Syntax
         runs-on: ubuntu-22.04
         # No dependency - just checks JSON syntax, doesn't need schemas
         steps:
@@ -44,7 +44,7 @@ jobs:
     # Data Links Validation (needs valid schemas)
     # ==========================================
     validate-data-links:
-        name: 🔗 Validate Data Links
+        name: Validate Data Links
         runs-on: ubuntu-22.04
         needs: [validate-schemas]
         steps:
@@ -63,7 +63,7 @@ jobs:
     # Formatting Checks (needs valid data)
     # ==========================================
     format-json:
-        name: ✨ Check JSON Formatting
+        name: Check JSON Formatting
         runs-on: ubuntu-22.04
         needs: [validate-schemas, validate-data-links]
         steps:
@@ -75,10 +75,10 @@ jobs:
             - name: Install dependencies
               run: make setup
             - name: Check JSON formatting
-              run: make format-json-check
+              run: make format-json CHECK=1
 
     verify-metadata:
-        name: 📊 Verify Metadata
+        name: Verify Metadata
         runs-on: ubuntu-22.04
         needs: [validate-schemas, validate-data-links]
         steps:
@@ -92,10 +92,10 @@ jobs:
             - name: Verify metadata.json is up to date
               run: |
                   . venv/bin/activate && porto metadata
-                  if [ -n "$(git diff metadata.json)" ]; then
+                  if [ -n "$(git diff porto_data/metadata.json)" ]; then
                     echo "❌ metadata.json is out of date. The file must be regenerated and committed."
-                    echo "Run 'make metadata' locally, then commit the updated metadata.json file."
-                    git diff metadata.json
+                    echo "Run 'make metadata' locally, then commit the updated porto_data/metadata.json file."
+                    git diff porto_data/metadata.json
                     exit 1
                   fi
                   echo "✓ metadata.json is up to date"
@@ -105,7 +105,7 @@ jobs:
     # ==========================================
     # These can run in parallel with JSON validation - completely independent
     format-code:
-        name: 🐍 Check Python Formatting
+        name: Check Python Formatting
         runs-on: ubuntu-22.04
         # No dependency - Python code is independent of JSON validation
         steps:
@@ -117,10 +117,10 @@ jobs:
             - name: Install dependencies
               run: make setup
             - name: Check Python code formatting
-              run: make format-code-check
+              run: make format-code CHECK=1
 
     lint-code:
-        name: 🔎 Lint Python Code
+        name: Lint Python Code
         runs-on: ubuntu-22.04
         # No dependency - Python code is independent of JSON validation
         steps:
@@ -135,7 +135,7 @@ jobs:
               run: make lint-code
 
     type-check:
-        name: 📝 Type Check Python
+        name: Type Check Python
         runs-on: ubuntu-22.04
         # No dependency - Python code is independent of JSON validation
         steps:
@@ -153,7 +153,7 @@ jobs:
     # Python Tests (CLI and scripts)
     # ==========================================
     test:
-        name: 🧪 Run Tests with Coverage
+        name: Run Tests with Coverage
         runs-on: ubuntu-22.04
         # Tests can run in parallel with other checks
         steps:
