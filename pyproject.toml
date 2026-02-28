@@ -22,15 +22,13 @@ dev = [
     "pytest-cov>=4.0.0",
 ]
 
-[project.scripts]
-porto = "cli.main:main"
-
 [build-system]
 requires = ["setuptools>=45", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
-packages = ["cli", "scripts", "porto_data"]
+# PyPI package: data only (like npm). CLI/scripts stay in repo for development and CI.
+packages = ["porto_data"]
 package-dir = {"" = "."}
 
 [tool.setuptools.package-data]
