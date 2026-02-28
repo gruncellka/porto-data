@@ -38,10 +38,17 @@ def _project_meta_from_package() -> Dict[str, str]:
     from importlib.metadata import metadata as pkg_meta
 
     pkg = pkg_meta(DIST_NAME)
+
+    def _pkg(key: str, default: str) -> str:
+        try:
+            return pkg[key]
+        except KeyError:
+            return default
+
     return {
-        "name": pkg.get("Name", DIST_NAME),
-        "version": pkg.get("Version", "0.0.0"),
-        "description": pkg.get("Summary", ""),
+        "name": _pkg("Name", DIST_NAME),
+        "version": _pkg("Version", "0.0.0"),
+        "description": _pkg("Summary", ""),
     }
 
 
