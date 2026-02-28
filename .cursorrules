@@ -141,7 +141,7 @@ Data repository for Deutsche Post shipping services with JSON schema validation.
 -   Cross-references validated via `data_links.json`
 -   Checksums ensure data integrity
 -   Validation workflow (`.github/workflows/validation.yml`) runs on every push/PR (format, structure, metadata, tests, lint, type-check)
--   Publish workflow (`.github/workflows/publish.yml`) runs only JSON validation (`porto validate`) before building; no tests or lint in publish
+-   Publish workflow (`.github/workflows/publish.yml`): triggered by **tag** `v*` or **manual** (workflow_dispatch); version from packages; manual run also for re-publish same version if npm or PyPI failed; runs only `porto validate` before build, no tests/lint
 
 ## Code Patterns
 

@@ -109,7 +109,7 @@ Both packages are built from the same source in a single publish workflow, so np
 
 - Version bump commit includes: `package.json`, `pyproject.toml`, and `CHANGELOG.md`.
 - Git tag format: `vX.Y.Z`.
-- CI publishes to npm and PyPI only from tagged release commits (see `.github/workflows/publish.yml`).
+- Publish workflow (`.github/workflows/publish.yml`) runs on **tag push** `v*` or **manual trigger** (workflow_dispatch). Version is always taken from `package.json` and `pyproject.toml`. Manual run: Actions → Publish to npm and PyPI → Run workflow (choose branch). Use manual run to: test publish before merge, publish a pre-release from a branch, or **re-publish the same version** if one registry (npm or PyPI) failed—fix and run again without pushing a new tag. Do not push a tag for the same version after a manual run (would trigger again and fail).
 
 **Before you tag:** The publish workflow runs only **JSON validation** (`porto validate` — schema + data links); it does not run tests or lint (ruff). The **validation** workflow (`.github/workflows/validation.yml`) runs the full suite (format, structure, metadata, tests, lint, type-check). So **ensure the validation workflow has passed** on the commit you are about to tag; otherwise you may publish an unstable version. Manually confirm validation is green before creating the release tag.
 
@@ -117,6 +117,6 @@ Both packages are built from the same source in a single publish workflow, so np
 
 - **Version** is defined in `pyproject.toml` (Python) and `package.json` (npm). Keep them in sync for releases.
 - **Bump both at once**: `bump2version patch` (or `minor` / `major`) updates both files and optionally commits and tags. Requires `pip install bump2version` or `make setup` (dev dependency). Config: `.bumpversion.cfg`.
-- **Publishing** is done via the unified GitHub Actions workflow (tag `v*` or manual dispatch). The workflow runs JSON validation (`porto validate`) then builds both packages; publish runs only if both builds succeed. See `.github/workflows/publish.yml`.
+- **Publishing** is done via the unified GitHub Actions workflow: trigger by **pushing a tag** `v*` or by **manual run** (workflow_dispatch; choose branch in Run workflow; version from packages). The workflow runs JSON validation (`porto validate`) then builds both packages; publish runs only if both builds succeed. See `.github/workflows/publish.yml`.
 
 **CI trigger pitfall:** Multiple `on:` triggers are OR’ed. So `push: tags: ['v*']` plus `workflow_run: workflows: ['validation']` would run publish on every validation completion (main/PR), not only after tag push. We do **not** use `workflow_run` for publish; trigger is tag `v*` and workflow_dispatch only. If you add `workflow_run` later, require a hard guard that the validation run’s `head_sha` has a tag matching `v*`, else skip.

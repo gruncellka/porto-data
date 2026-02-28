@@ -4,11 +4,12 @@
 
 name: Publish to npm and PyPI
 
+# Tag push: main flow (merge to main → push tag v* → workflow runs once).
+# workflow_dispatch: (1) run from any branch before merge to test publish or pre-release; (2) re-publish same version if npm or PyPI failed (fix and run again without pushing a new tag). Choose branch in "Run workflow". Do not push a tag for the same version after a manual run (would trigger again and fail).
 on:
     push:
         tags:
             - 'v*'
-    # Manual run: publishes current ref; version comes from package.json/pyproject.toml.
     workflow_dispatch:
 
 env:
