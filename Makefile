@@ -1,6 +1,6 @@
 .PHONY: help setup install-hooks
 .PHONY: validate-json validate-data-links lint-json format-json format-code lint-code type-check
-.PHONY: validate format lint quality metadata test test-cov
+.PHONY: validate format lint metadata test test-cov
 
 help:
 	@echo "Porto Data - Schema Validation & Code Quality"
@@ -58,15 +58,6 @@ validate: validate-json
 format: format-json format-code
 
 lint: lint-json lint-code
-
-# Backward compatibility: same as running format/lint/validate/type-check with CHECK=1 (e.g. from IDE)
-quality:
-	@$(MAKE) format-json CHECK=1
-	@$(MAKE) lint-json
-	@$(MAKE) validate-json
-	@$(MAKE) format-code CHECK=1
-	@$(MAKE) lint-code
-	@$(MAKE) type-check
 
 # ==========================================
 # JSON Commands
