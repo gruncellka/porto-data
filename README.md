@@ -1,435 +1,122 @@
 # Porto Data
 
 [![validation](https://github.com/gruncellka/porto-data/actions/workflows/validation.yml/badge.svg)](https://github.com/gruncellka/porto-data/actions/workflows/validation.yml)
-[![codecov](https://codecov.io/gh/gruncellka/porto-data/branch/main/graph/badge.svg)](https://codecov.io/gh/gruncellka/porto-data)
 
 **Structured JSON data for Deutsche Post shipping services**
 
-A comprehensive, schema-validated dataset containing Deutsche Post pricing, restrictions, zones, features, services, and compliance frameworks for international postal services with complete JSON schema validation and automated quality assurance.
+A comprehensive, schema-validated dataset containing Deutsche Post pricing, restrictions, zones, features, services, and compliance frameworks for international postal services. All data is validated against JSON schemas and published as a self-contained package on **npm** and **PyPI**.
 
 ---
 
-## 🎯 Use Cases
+## Install
 
-This dataset is perfect for:
-
--   **E-commerce platforms** - Calculate shipping costs and restrictions
--   **Logistics software** - Integrate Deutsche Post pricing and rules
--   **Compliance tools** - Check shipping restrictions and sanctions
--   **Research projects** - Analyze postal service patterns and policies
--   **Educational purposes** - Learn about international shipping regulations
-
----
-
-## 📈 Data Statistics
-
--   **9 JSON files** with comprehensive postal data
--   **9 JSON schemas** ensuring data integrity
--   **100+ countries** covered in shipping zones
--   **5 product types** (letters, merchandise)
--   **3 active service types** (registered mail, insurance) - 2 services discontinued as of 2025-01-01
--   **31 restrictions** with 19 compliance frameworks
-
----
-
-## 📦 What's Inside
-
-| File                | Description                                                        |
-| ------------------- | ------------------------------------------------------------------ |
-| `products.json`     | Shipping products (letters, parcels, packages)                     |
-| `services.json`     | Additional services (registered mail, insurance, etc.)             |
-| `prices.json`       | Pricing tables by product, zone, and weight (with effective dates) |
-| `zones.json`        | Geographic zones and country mappings                              |
-| `weight_tiers.json` | Weight brackets for pricing                                        |
-| `dimensions.json`   | Size limits and specifications                                     |
-| `features.json`     | Service features and capabilities                                  |
-| `restrictions.json` | Shipping restrictions, sanctions, compliance frameworks            |
-| `data_links.json`   | Cross-references between data files                                |
-
-**All data is validated against JSON schemas** in the `schemas/` directory.
-
----
-
-## 🚀 Quick Start
-
-### Prerequisites
-
--   Python 3.11+
--   Git
-
-### Installation
+**npm** (scope: `@gruncellka`)
 
 ```bash
-git clone https://github.com/gruncellka/porto-data.git
-cd porto-data
-make setup
+npm install @gruncellka/porto-data
 ```
 
-This installs:
-
--   `porto` CLI for validation and metadata commands
--   `jsonschema` for validation
--   `ruff`, `mypy` for code quality (Ruff handles formatting + linting)
--   `pytest`, `pytest-cov` for testing (87% coverage)
--   `pre-commit` framework with hooks (installed automatically)
-
-**Note:** Pre-commit hooks are automatically installed during `make setup` and will run automatically on every commit.
-
-### Verify Installation
+**PyPI (Python)**
 
 ```bash
-make validate    # Validate all JSON files
-make quality     # Run all quality checks
+pip install gruncellka-porto-data
 ```
+
+The package includes `data/`, `schemas/`, `mappings.json`, and `metadata.json` so you can validate and use the data offline. Data files reference canonical schema URLs (GitHub); schemas are shipped in the package for local validation.
+
+- **PyPI**: After `pip install`, use the `porto` CLI or import the `porto_data` package; paths are resolved automatically.
+- **npm**: Data lives under `porto_data/` (e.g. `porto_data/data/products.json`, `porto_data/schemas/`, `porto_data/mappings.json`, `porto_data/metadata.json`). Same layout in both ecosystems; the `porto_data` folder exists so the wheel includes the files correctly.
 
 ---
 
-## 📊 Data Structure
+## Use cases
 
-### Products → Prices → Zones
-
-```
-Product (e.g., "letter_standard")
-  ├─ has dimension_ids → dimensions.json
-  ├─ has weight_tier → weight_tiers.json
-  └─ has prices in zones → prices.json
-       ├─ price array with effective_from/effective_to dates
-       └─ references zones.json
-```
-
-### Services → Features
-
-```
-Service (e.g., "einschreiben_einwurf")
-  ├─ has features → features.json
-  ├─ has coverage (in cents)
-  └─ applies to products → products.json
-```
-
-### Restrictions → Frameworks
-
-```
-Restriction (e.g., "YEMEN_2015")
-  ├─ country_code: "YE"
-  ├─ region_code: null
-  └─ framework_id → compliance_frameworks
-       └─ Legal basis (conflict zones, operational policies)
-```
-
-**All relationships are one-directional** (no circular dependencies).
-
-### Data Links (Metadata)
-
-`data_links.json` provides links about data file relationships:
-
--   **Dependencies** - Which files depend on which (e.g., products depend on zones, weight_tiers, dimensions)
--   **Links** - Product-to-zone-to-weight-tier mappings for fast lookups (e.g., which zones and weight tiers each product supports)
--   **Lookup rules** - How to find prices, services, and resolve weights
--   **Global settings** - Available services and price lookup configuration
-
-This metadata is primarily used by SDKs for optimized data access and validation, but is also useful for understanding the data structure.
-
-**Validation:** The `porto validate --type links` command ensures consistency between `data_links.json` and the actual data files. It checks:
-
--   ✅ All products, zones, and weight tiers in links exist in their respective files
--   ✅ Product zones and weight tiers match between `data_links.json` and `products.json`
--   ✅ Prices exist for all zone+weight_tier combinations
--   ✅ Available services are valid and have prices
--   ✅ Lookup method configuration matches actual file structure
--   ✅ Unit values (weight, dimension, price, currency) are consistent across files
--   ✅ All data files are covered in dependencies section
--   ✅ No circular dependencies between files
-
-Run validation with:
-
-```bash
-porto validate --type links            # Quick validation (CI/CD friendly)
-porto validate --type links --analyze  # Detailed analysis
-```
+- **E-commerce** — Calculate shipping costs and restrictions
+- **Logistics** — Integrate Deutsche Post pricing and rules
+- **Compliance** — Check shipping restrictions and sanctions
+- **Research** — Analyze postal service patterns and policies
+- **Educational** — Learn about international shipping regulations
 
 ---
 
-## 📝 Common Tasks
+## Data statistics
 
-### Viewing Data
-
-All data files are in the `data/` directory. Open any `.json` file to view the data.
-
-### Making Changes
-
-```bash
-# 1. Edit JSON files
-vim data/products.json
-
-# 2. Validate your changes
-make validate
-
-# 3. Format your changes
-make format
-
-# 4. Commit
-git add .
-git commit -m "feat: update products"
-# → Pre-commit hooks run automatically and validate everything
-# → If metadata.json is regenerated, commit will be rejected
-# → Stage metadata.json and commit again
-```
-
-### Manual Validation
-
-```bash
-make validate      # Validate JSON against schemas
-make lint-json     # Check JSON syntax only
-make format-json   # Auto-format JSON files
-```
+- **9 JSON files** with comprehensive postal data
+- **9 JSON schemas** ensuring data integrity
+- **100+ countries** covered in shipping zones
+- **5 product types** (letters, merchandise)
+- **3 active service types** (registered mail, insurance) — 2 services discontinued as of 2025-01-01
+- **31 restrictions** with 19 compliance frameworks
 
 ---
 
-## 🛠 Development
+## Data overview
 
-### Pre-Commit Hooks
+| File                | Description                                                 |
+| ------------------- | ----------------------------------------------------------- |
+| `products.json`     | Shipping products (letters, parcels, packages)              |
+| `services.json`     | Additional services (registered mail, insurance, etc.)      |
+| `prices.json`       | Pricing by product, zone, and weight (with effective dates) |
+| `zones.json`        | Geographic zones and country mappings                       |
+| `weight_tiers.json` | Weight brackets for pricing                                 |
+| `dimensions.json`   | Size limits and specifications                              |
+| `features.json`     | Service features and capabilities                           |
+| `restrictions.json` | Shipping restrictions, sanctions, compliance frameworks     |
+| `data_links.json`   | Cross-references between data files                         |
 
-The pre-commit framework **automatically** runs hooks on every commit:
-
-1. ✅ Formats all JSON and Python files (auto-staged)
-2. ✅ Validates JSON syntax
-3. ✅ Validates against schemas
-4. ✅ Runs Python linting and type checking
-5. ✅ Regenerates metadata.json if data files changed
-
-**Important behaviors:**
-
--   ✅ Modified files are automatically staged (fixes uncommitted changes bug)
--   ❌ If `metadata.json` is regenerated but not staged, commit is **rejected** - you must stage `metadata.json` in the same commit
--   ❌ If validation fails, commit is blocked until you fix the errors
-
-**Installing hooks:**
-
-```bash
-make install-hooks  # Reinstall pre-commit hooks (usually not needed)
-```
-
-### Available Commands
-
-```bash
-# CLI Commands (porto)
-porto validate                 # Validate everything (default)
-porto validate --type schema   # Validate JSON against schemas
-porto validate --type links    # Validate data_links.json consistency
-porto validate --type links --analyze  # Detailed links analysis
-porto metadata                 # Generate metadata.json
-
-# Make Commands
-make validate          # Validate all JSON files
-make validate-data-links # Validate data_links.json consistency
-
-# Formatting
-make format        # Format JSON and Python
-make format-json   # Format JSON only
-make format-code   # Format Python only
-
-# Linting
-make lint          # Lint JSON and Python
-make lint-json     # Lint JSON only
-make lint-code     # Lint Python only
-
-# Quality
-make quality       # Run all checks (format, lint, validate, type-check)
-
-# Testing
-make test          # Run all tests
-make test-cov      # Run tests with coverage (80% threshold)
-
-# Metadata
-make metadata      # Generate metadata.json with checksums
-
-# Help
-make help          # Show all commands
-```
-
-### About metadata.json
-
-The `metadata.json` file is automatically generated with checksums of all data and schema files. It's regenerated when:
-
--   Any file in `data/` or `schemas/` changes
--   Checksums don't match the current files
-
-**Structure:**
-
--   Grouped by entity name (e.g., `products`, `services`) with data and schema files linked together
--   Includes canonical schema URLs from `$id` properties
--   Each data file includes `$schema` property pointing to its schema URL
-
-**Commit behavior:**
-
--   If `metadata.json` is regenerated during commit, the commit is **rejected** if `metadata.json` is not staged
--   You must stage `metadata.json` in the same commit as your data changes: `git add metadata.json`
--   This ensures `metadata.json` stays in sync with data files in the same commit
-
-### Schema Mapping
-
-Schema-to-data file mappings are defined in `mappings.json` (source of truth). All data files include a `$schema` property with the canonical schema URL for validation and editor support.
+All data is validated against JSON schemas in `schemas/` (required fields, types, enums, ISO patterns, dates, cross-references). Schema-to-data mapping is in `mappings.json`; `metadata.json` provides checksums and canonical schema URLs.
 
 ---
 
-## 🌍 Standards & Compliance
+## Data structure (high level)
 
-### ISO Standards
+- **Products → Prices → Zones** — Products reference dimensions and weight tiers; prices are per zone and weight with effective dates.
+- **Services → Features** — Services reference features and apply to products.
+- **Restrictions → Frameworks** — Restrictions reference compliance frameworks (e.g. EU sanctions, UN resolutions).
 
--   **Country codes**: ISO 3166-1 alpha-2 (`DE`, `US`, `FR`, `YE`)
--   **Region codes**: ISO 3166-2 (`DE-BY`, `US-CA`, `FR-75`)
--   **Dates**: ISO 8601 (`2024-01-15`, `2023-06-01`)
-
-### Jurisdiction Codes
-
--   `EU` - European Union
--   `UN` - United Nations
--   `DE` - Germany (national)
--   `DP` - Deutsche Post (operational)
-
-### Restrictions Features
-
--   ✅ Tracks occupied/disputed territories
--   ✅ Links to legal frameworks (EU sanctions, UN resolutions)
--   ✅ Supports partial territory restrictions (`effective_partial`)
--   ✅ Historical effective dates (`effective_from`, `effective_to`)
+Relationships are one-directional (no circular dependencies). `data_links.json` describes dependencies, links, and lookup rules for SDKs and tooling.
 
 ---
 
-## 🔍 Schema Validation
+## Standards
 
-All JSON files are validated against schemas to ensure:
+- **Country codes**: ISO 3166-1 alpha-2 (`DE`, `US`, `FR`, `YE`)
+- **Region codes**: ISO 3166-2 (`DE-BY`, `US-CA`, `FR-75`)
+- **Dates**: ISO 8601 (`2024-01-15`, `2023-06-01`)
+- **Jurisdiction**: `EU` (European Union), `UN` (United Nations), `DE` (Germany), `DP` (Deutsche Post operational)
 
--   ✅ Required fields are present
--   ✅ Data types are correct (string, number, boolean, array)
--   ✅ Values match allowed enums
--   ✅ ISO codes follow correct patterns
--   ✅ Dates are properly formatted
--   ✅ Cross-references are valid
-
-### Example Validation Error
-
-```bash
-make validate
-```
+**Restrictions:** Tracks occupied/disputed territories, links to legal frameworks (EU sanctions, UN resolutions), supports partial territory restrictions (`effective_partial`) and historical dates (`effective_from`, `effective_to`).
 
 ---
 
-## 📂 Project Structure
+## License
 
-```
-porto-data/
-├── data/                   # Main data files (JSON)
-│   ├── products.json       # Includes $schema property
-│   ├── services.json
-│   ├── prices.json
-│   ├── zones.json
-│   ├── weight_tiers.json
-│   ├── dimensions.json
-│   ├── restrictions.json
-│   ├── features.json
-│   └── data_links.json
-├── schemas/                # JSON schemas for validation
-│   ├── products.schema.json
-│   ├── services.schema.json
-│   └── ...
-├── cli/                    # CLI commands (porto)
-│   ├── main.py             # Entry point
-│   └── commands/           # Subcommands (validate, metadata)
-├── scripts/                # Core validation logic
-│   ├── validators/         # Validation modules
-│   │   ├── schema.py       # JSON schema validation
-│   │   └── links.py        # Data links validation
-│   ├── data_files.py       # File mappings from mappings.json
-│   ├── utils.py            # Checksum utilities
-│   └── generate_metadata.py
-├── tests/                  # Test suite (115 tests, 87% coverage)
-├── resources/              # Original source files (PPL CSV, etc.)
-│   └── ppl/                # Deutsche Post price list files
-├── .pre-commit-config.yaml # Pre-commit framework configuration
-├── Makefile                # Build automation
-├── pyproject.toml          # Python dependencies & config
-├── mappings.json           # Schema-to-data mappings (source of truth)
-└── metadata.json           # Generated checksums (auto-generated)
-```
+MIT — see [LICENSE](LICENSE).
 
 ---
 
-## 🎨 Code Quality Standards
+## Disclaimer
 
-### JSON Formatting
-
--   4-space indentation
--   Keys are kept in original order (not sorted)
--   Arrays are multi-line for readability
--   Uses Python's built-in `json.tool`
-
-### Python Formatting
-
--   **Ruff** (formatting, linting, and auto-fixes - line length: 100)
--   **MyPy** (type checking)
+This is **reference data** for Deutsche Post services. Always verify current restrictions, pricing, and service availability with Deutsche Post before shipping. Data accuracy is best-effort. Official information: [Deutsche Post](https://www.deutschepost.de).
 
 ---
 
-## 🤝 Contributing
+## Related resources
 
-1. Fork the repository
-2. Run `make setup` to install dependencies and hooks
-3. Make your changes
-4. Run `make quality` to validate
-5. Commit (pre-commit hooks validate automatically)
-6. If `metadata.json` was regenerated, stage it: `git add metadata.json` and commit again
-7. Submit a pull request
-
-### Adding New Data
-
-1. Add your data to the appropriate JSON file
-2. Ensure it follows the schema
-3. Run `make validate` to check
-4. Run `make format` to auto-format
-5. Commit your changes
-6. If `metadata.json` was regenerated, stage it: `git add metadata.json` and commit again
-
-### Updating Schemas
-
-1. Edit the schema file in `schemas/`
-2. Update corresponding data in `data/`
-3. Run `make validate` to verify compatibility
+- [Deutsche Post](https://www.deutschepost.de)
+- [EU Sanctions Map](https://www.sanctionsmap.eu/)
+- [ISO 3166 Country Codes](https://www.iso.org/iso-3166-country-codes.html)
 
 ---
 
-## 📄 License
+## Contributing and development
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+Setup, validation, tests, and release details are in **[CONTRIBUTING.md](CONTRIBUTING.md)**. For full project structure and commands, see **[DEVELOPMENT.md](DEVELOPMENT.md)**.
 
----
-
-## ⚠️ Disclaimer
-
-This is **reference data** for Deutsche Post services. Always verify current restrictions, pricing, and service availability with Deutsche Post before shipping.
-
-Data accuracy is maintained on a best-effort basis. For official information, visit:
-
--   Deutsche Post: https://www.deutschepost.de
-
----
-
-## 🔗 Related Resources
-
--   [Deutsche Post Official Website](https://www.deutschepost.de)
--   [EU Sanctions Map](https://www.sanctionsmap.eu/)
--   [ISO 3166 Country Codes](https://www.iso.org/iso-3166-country-codes.html)
-
----
-
-## Support
-
-For questions, issues, or contributions:
-
--   📧 **E-Mail**: build@gruncellka.dev
--   📧 **Issues**: Open a GitHub issue
--   🔧 **Contributions**: Submit a pull request
--   📖 **Documentation**: Check this README and inline comments
+- **Issues**: [GitHub Issues](https://github.com/gruncellka/porto-data/issues)
+- **Contact**: build@gruncellka.dev
+- **Contributions**: Pull requests welcome
+- **Documentation**: CONTRIBUTING.md, DEVELOPMENT.md, and inline comments
 
 ---
 

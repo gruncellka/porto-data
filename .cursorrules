@@ -53,7 +53,7 @@ Data repository for Deutsche Post shipping services with JSON schema validation.
 -   Always run `make validate` after JSON changes
 -   Pre-commit hooks auto-format and validate on commit
 -   If `metadata.json` regenerates, MUST stage it in same commit
--   Run `make quality` before committing (format, lint, validate, type-check)
+-   Pre-commit hooks run format, lint, validate, and type-check on commit
 
 ### Commits
 
@@ -99,7 +99,7 @@ Data repository for Deutsche Post shipping services with JSON schema validation.
 -   `make validate` - Validate all JSON files
 -   `make format` - Format JSON and Python
 -   `make lint` - Lint JSON and Python
--   `make quality` - Run all checks (format, lint, validate, type-check)
+-   Use `make format`, `make lint`, `make validate`, `make type-check` (or rely on pre-commit)
 -   `make test-cov` - Run tests with coverage
 
 ## Important Behaviors
@@ -181,7 +181,7 @@ Data repository for Deutsche Post shipping services with JSON schema validation.
 
 1. Follow existing patterns
 2. Add type hints (MyPy)
-3. Run `make quality` before committing
+3. Pre-commit runs format, lint, validate, and type-check on commit
 4. Add tests for new functionality
 5. Maintain 87% coverage target
 

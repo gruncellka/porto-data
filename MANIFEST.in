@@ -1,0 +1,3 @@
+# Data and schemas are in porto_data/ and included via [tool.setuptools.package-data].
+include README.md
+include LICENSE

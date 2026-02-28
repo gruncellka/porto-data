@@ -67,7 +67,6 @@ class TestCLIValidateCommands:
         [
             (["validate", "--type", "schema"], "Validating JSON schemas"),
             (["validate", "--type", "links"], "Validating data_links.json"),
-            (["validate", "--type", "all"], "Validating JSON schemas"),
             (
                 ["validate", "--type", "links", "--analyze"],
                 "COMPREHENSIVE DATA_LINKS.JSON ANALYSIS",
@@ -87,7 +86,7 @@ class TestCLIValidateCommands:
         assert expected_output in result.stdout
 
     def test_cli_validate_default_type_is_all(self, project_root):
-        """Test that validate without --type defaults to 'all'."""
+        """Test that validate without --type runs all validations."""
         result = subprocess.run(
             [sys.executable, "-m", "cli.main", "validate"],
             capture_output=True,
