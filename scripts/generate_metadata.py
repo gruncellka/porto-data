@@ -13,7 +13,7 @@ from typing import Any, Dict, List
 
 import tomllib
 
-from scripts.data_files import get_schema_data_mappings
+from scripts.data_files import get_project_root, get_schema_data_mappings
 from scripts.utils import get_all_file_checksums
 
 
@@ -137,9 +137,8 @@ def generate_metadata() -> Dict[str, Any]:
 
 def main() -> None:
     """Main entry point."""
-    # Get project root
-    script_dir = Path(__file__).parent
-    project_root = script_dir.parent
+    # Get project root (porto_data/ when installed, repo root or porto_data in dev)
+    project_root = get_project_root()
     output_path = project_root / "metadata.json"
 
     print("Generating metadata...")

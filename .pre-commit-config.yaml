@@ -3,8 +3,8 @@
 # Workflow when data/schema files or version (pyproject.toml) changes:
 # 1. pre-commit validates and regenerates metadata.json
 # 2. If metadata changed, commit FAILS (by design)
-# 3. User reviews changes: git diff metadata.json
-# 4. User stages and re-commits: git add metadata.json && git commit
+# 3. User reviews changes: git diff porto_data/metadata.json
+# 4. User stages and re-commits: git add porto_data/metadata.json && git commit
 #
 # Run manually: pre-commit run --all-files
 # Update hooks: pre-commit autoupdate
@@ -22,7 +22,7 @@ repos:
             name: Validate JSON schemas
             entry: bash -c 'if [ -f venv/bin/activate ]; then . venv/bin/activate; fi && porto validate --type schema'
             language: system
-            files: ^(data|schemas)/.*\.json$
+            files: ^porto_data/(data|schemas)/.*\.json$
             pass_filenames: false
             always_run: false
 
@@ -30,7 +30,7 @@ repos:
             name: Validate data_links.json consistency
             entry: bash -c 'if [ -f venv/bin/activate ]; then . venv/bin/activate; fi && porto validate --type links'
             language: system
-            files: ^data/data_links\.json$|^data/(products|zones|weight_tiers|services|prices)\.json$
+            files: ^porto_data/data/data_links\.json$|^porto_data/data/(products|zones|weight_tiers|services|prices)\.json$
             pass_filenames: false
             always_run: false
 
@@ -38,7 +38,7 @@ repos:
             name: Generate metadata.json
             entry: bash -c 'if [ -f venv/bin/activate ]; then . venv/bin/activate; fi && porto metadata'
             language: system
-            files: ^(data|schemas)/.*\.json$|^pyproject\.toml$
+            files: ^porto_data/(data|schemas)/.*\.json$|^pyproject\.toml$
             pass_filenames: false
             always_run: false
 
@@ -47,10 +47,10 @@ repos:
       hooks:
           - id: lint-json
             name: Validate JSON syntax
-            entry: bash -c 'for file in data/*.json schemas/*.json; do [ -f "$file" ] && python3 -m json.tool "$file" > /dev/null || exit 1; done'
+            entry: bash -c 'for file in porto_data/data/*.json porto_data/schemas/*.json; do [ -f "$file" ] && python3 -m json.tool "$file" > /dev/null || exit 1; done'
             language: system
             types: [json]
-            files: ^(data|schemas)/.*\.json$
+            files: ^porto_data/(data|schemas)/.*\.json$
             pass_filenames: false
             always_run: false
 
@@ -80,10 +80,10 @@ repos:
       hooks:
           - id: format-json
             name: Format JSON files
-            entry: bash -c 'for file in data/*.json schemas/*.json metadata.json; do [ -f "$file" ] && python3 -m json.tool "$file" "$file.tmp" && mv "$file.tmp" "$file" || true; done'
+            entry: bash -c 'for file in porto_data/data/*.json porto_data/schemas/*.json porto_data/metadata.json; do [ -f "$file" ] && python3 -m json.tool "$file" "$file.tmp" && mv "$file.tmp" "$file" || true; done'
             language: system
             types: [json]
-            files: ^(data|schemas)/.*\.json$|^metadata\.json$
+            files: ^porto_data/(data|schemas)/.*\.json$|^porto_data/metadata\.json$
             pass_filenames: false
             always_run: false
 

@@ -16,7 +16,7 @@ import json
 from pathlib import Path
 from typing import Any, Dict
 
-from scripts.data_files import get_schema_data_mappings
+from scripts.data_files import get_project_root, get_schema_data_mappings
 
 
 def compute_checksum(file_path: str) -> str:
@@ -27,18 +27,21 @@ def compute_checksum(file_path: str) -> str:
 
 def get_all_file_checksums() -> Dict[str, str]:
     """Get checksums for all schema and data files (for metadata generation)."""
+    root = get_project_root()
     checksums = {}
     mappings = get_schema_data_mappings()
 
-    # Add schema files
+    # Add schema files (paths relative to project root)
     for schema_path in mappings:
-        if Path(schema_path).exists():
-            checksums[schema_path] = compute_checksum(schema_path)
+        full = root / schema_path
+        if full.exists():
+            checksums[schema_path] = compute_checksum(str(full))
 
     # Add data files
     for data_path in mappings.values():
-        if Path(data_path).exists():
-            checksums[data_path] = compute_checksum(data_path)
+        full = root / data_path
+        if full.exists():
+            checksums[data_path] = compute_checksum(str(full))
 
     return checksums
 

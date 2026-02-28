@@ -80,7 +80,7 @@ validate-data-links:
 
 format-json:
 	@echo "Formatting JSON files..."
-	@for file in data/*.json schemas/*.json; do \
+	@for file in porto_data/data/*.json porto_data/schemas/*.json; do \
 		if [ -f "$$file" ]; then \
 			if python3 -m json.tool "$$file" "$$file.tmp" > /dev/null 2>&1; then \
 				if ! cmp -s "$$file" "$$file.tmp"; then \
@@ -105,17 +105,17 @@ format-json:
 
 lint-json:
 	@echo "Linting JSON files for syntax errors..."
-	@for file in data/*.json; do \
+	@for file in porto_data/data/*.json; do \
 		python3 -m json.tool "$$file" > /dev/null && echo "✓ $$file" || (echo "✗ $$file: JSON syntax error" && exit 1); \
 	done
-	@for file in schemas/*.json; do \
+	@for file in porto_data/schemas/*.json; do \
 		python3 -m json.tool "$$file" > /dev/null && echo "✓ $$file" || (echo "✗ $$file: JSON syntax error" && exit 1); \
 	done
 	@echo "✓ All JSON files are valid"
 
 format-json-check:
 	@echo "Checking JSON formatting..."
-	@for file in data/*.json schemas/*.json; do \
+	@for file in porto_data/data/*.json porto_data/schemas/*.json; do \
 		if [ -f "$$file" ]; then \
 			if python3 -m json.tool "$$file" "$$file.tmp" > /dev/null 2>&1; then \
 				if ! cmp -s "$$file" "$$file.tmp"; then \

@@ -92,10 +92,10 @@ jobs:
             - name: Verify metadata.json is up to date
               run: |
                   . venv/bin/activate && porto metadata
-                  if [ -n "$(git diff metadata.json)" ]; then
+                  if [ -n "$(git diff porto_data/metadata.json)" ]; then
                     echo "❌ metadata.json is out of date. The file must be regenerated and committed."
-                    echo "Run 'make metadata' locally, then commit the updated metadata.json file."
-                    git diff metadata.json
+                    echo "Run 'make metadata' locally, then commit the updated porto_data/metadata.json file."
+                    git diff porto_data/metadata.json
                     exit 1
                   fi
                   echo "✓ metadata.json is up to date"

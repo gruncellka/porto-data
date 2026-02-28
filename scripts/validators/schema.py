@@ -8,7 +8,7 @@ import json
 
 from jsonschema import Draft7Validator, ValidationError
 
-from scripts.data_files import get_schema_data_mappings
+from scripts.data_files import get_project_root, get_schema_data_mappings
 
 # ============================================================================
 # Schema Validation Functions
@@ -58,11 +58,14 @@ def validate_all_schemas() -> int:
     print("Validating JSON schemas...")
     print("=" * 60)
 
+    root = get_project_root()
     validations = get_schema_data_mappings()
     failed = []
 
     for schema_path, data_path in validations.items():
-        if not validate_file(schema_path, data_path):
+        schema_full = root / schema_path
+        data_full = root / data_path
+        if not validate_file(str(schema_full), str(data_full)):
             failed.append(data_path)
 
     print("=" * 60)

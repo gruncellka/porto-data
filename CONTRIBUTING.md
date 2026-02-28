@@ -12,13 +12,13 @@
 
 ## Making changes
 
-Data files are in `data/`; open any `.json` to view. To edit:
+Data files are in `porto_data/data/`; open any `.json` to view. To edit:
 
-1. Edit JSON files under `data/` (and `schemas/` if needed).
+1. Edit JSON files under `porto_data/data/` (and `porto_data/schemas/` if needed).
 2. Validate: `make validate`
 3. Format: `make format`
-4. Commit. If `metadata.json` was regenerated, stage it in the same commit: `git add metadata.json`
-5. If the commit fails because `metadata.json` is out of date, run `make metadata`, then `git add metadata.json` and commit again.
+4. Commit. If `metadata.json` was regenerated, stage it in the same commit: `git add porto_data/metadata.json`
+5. If the commit fails because `metadata.json` is out of date, run `make metadata`, then `git add porto_data/metadata.json` and commit again.
 
 ## Validation
 
@@ -38,7 +38,7 @@ Hooks run on every commit and:
 - Lint and type-check Python
 - Regenerate `metadata.json` when data/schemas change
 
-If `metadata.json` is regenerated but not staged, the commit is **rejected**. Always stage `metadata.json` in the same commit as data changes.
+If `metadata.json` is regenerated but not staged, the commit is **rejected**. Always stage `porto_data/metadata.json` in the same commit as data changes.
 
 ## metadata.json
 
@@ -53,7 +53,7 @@ Schema-to-data mappings are in `mappings.json`. Data files use a `$schema` prope
 
 ## Adding or updating data
 
-- **New data**: Add to the right JSON file under `data/`, ensure it matches the schema, run `make validate` and `make format`, then commit (with `metadata.json` if it changed).
+- **New data**: Add to the right JSON file under `porto_data/data/`, ensure it matches the schema, run `make validate` and `make format`, then commit (with `porto_data/metadata.json` if it changed).
 - **Schema changes**: Edit the schema in `schemas/`, update data in `data/`, run `make validate`.
 
 ## Pull requests

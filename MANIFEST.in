@@ -1,4 +1,3 @@
-# Include root-level data and schemas in the source distribution (sdist).
-include mappings.json metadata.json LICENSE
-recursive-include data *.json
-recursive-include schemas *.json
+# Data and schemas are in porto_data/ and included via [tool.setuptools.package-data].
+include README.md
+include LICENSE

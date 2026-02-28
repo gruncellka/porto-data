@@ -61,16 +61,6 @@ jobs:
             - name: Install dependencies
               run: npm install
 
-            - name: Validate JSON (smoke)
-              run: |
-                  node -e "
-                  const fs = require('fs');
-                  const p = (f) => JSON.parse(fs.readFileSync(f, 'utf8'));
-                  p('data/products.json');
-                  p('data/data_links.json');
-                  console.log('OK: JSON readable');
-                  "
-
             - name: Build package
               run: npm pack
 

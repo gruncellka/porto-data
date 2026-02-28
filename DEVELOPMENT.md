@@ -11,20 +11,23 @@ Technical details for contributors: project structure, commands, and code qualit
 
 ```
 porto-data/
-├── data/                   # Main data files (JSON)
-│   ├── products.json
-│   ├── services.json
-│   ├── prices.json
-│   ├── zones.json
-│   ├── weight_tiers.json
-│   ├── dimensions.json
-│   ├── restrictions.json
-│   ├── features.json
-│   └── data_links.json
-├── schemas/                # JSON schemas for validation
-│   ├── products.schema.json
-│   ├── services.schema.json
-│   └── ...
+├── porto_data/             # Data package (included in wheel)
+│   ├── data/               # Main data files (JSON)
+│   │   ├── products.json
+│   │   ├── services.json
+│   │   ├── prices.json
+│   │   ├── zones.json
+│   │   ├── weight_tiers.json
+│   │   ├── dimensions.json
+│   │   ├── restrictions.json
+│   │   ├── features.json
+│   │   └── data_links.json
+│   ├── schemas/            # JSON schemas for validation
+│   │   ├── products.schema.json
+│   │   ├── services.schema.json
+│   │   └── ...
+│   ├── mappings.json
+│   └── metadata.json       # Generated (do not edit)
 ├── cli/                    # CLI (porto command)
 │   ├── main.py
 │   └── commands/
@@ -41,8 +44,6 @@ porto-data/
 ├── Makefile
 ├── pyproject.toml
 ├── package.json             # npm package manifest
-├── mappings.json            # Schema-to-data mappings (source of truth)
-└── metadata.json            # Generated (do not edit)
 ```
 
 ## Commands

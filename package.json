@@ -18,10 +18,10 @@
         "schema"
     ],
     "files": [
-        "data",
-        "schemas",
-        "mappings.json",
-        "metadata.json",
+        "porto_data/data",
+        "porto_data/schemas",
+        "porto_data/mappings.json",
+        "porto_data/metadata.json",
         "README.md",
         "LICENSE"
     ]
