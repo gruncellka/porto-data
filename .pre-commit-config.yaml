@@ -60,14 +60,6 @@ repos:
             pass_filenames: false
             always_run: false
 
-          # Block direct commits to main except version-bump (only package.json, pyproject.toml, metadata.json)
-          - id: no-commit-to-main
-            name: Block direct commits to main (allow version-bump only)
-            entry: bash -c 'branch=$(git branch --show-current); [ "$branch" != "main" ] && exit 0; for f in $(git diff --staged --name-only); do case "$f" in package.json|pyproject.toml|porto_data/metadata.json) ;; *) echo "Direct commits to main are not allowed. Use a feature branch."; exit 1 ;; esac; done; exit 0'
-            language: system
-            pass_filenames: false
-            always_run: true
-
     # JSON syntax validation
     - repo: local
       hooks:
@@ -94,6 +86,8 @@ repos:
             args: ['--maxkb=300']
           - id: check-merge-conflict
           - id: check-case-conflict
+          - id: no-commit-to-branch
+            args: ['--branch', 'main']
           - id: detect-private-key
 
     # ==========================================
