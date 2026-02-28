@@ -1,6 +1,7 @@
 # Porto Data
 
 [![validation](https://github.com/gruncellka/porto-data/actions/workflows/validation.yml/badge.svg)](https://github.com/gruncellka/porto-data/actions/workflows/validation.yml)
+[![codecov](https://codecov.io/gh/gruncellka/porto-data/branch/main/graph/badge.svg)](https://codecov.io/gh/gruncellka/porto-data)
 
 **Structured JSON data for Deutsche Post shipping services**
 
@@ -43,17 +44,17 @@ E-commerce and logistics (shipping costs, restrictions), compliance (sanctions, 
 
 ## Data overview and structure
 
-| File                | Description                                                 |
-| ------------------- | ----------------------------------------------------------- |
-| `products.json`     | Shipping products (letters, parcels, packages)              |
-| `services.json`     | Additional services (registered mail, etc.)                 |
-| `prices.json`       | Pricing by product, zone, and weight (effective dates)      |
-| `zones.json`        | Geographic zones and country mappings                       |
-| `weight_tiers.json` | Weight brackets for pricing                                 |
-| `dimensions.json`   | Size limits and specifications                              |
-| `features.json`     | Service features and capabilities                           |
-| `restrictions.json` | Shipping restrictions, sanctions, compliance frameworks      |
-| `data_links.json`   | Cross-references between data files                         |
+| File                | Description                                             |
+| ------------------- | ------------------------------------------------------- |
+| `products.json`     | Shipping products (letters, parcels, packages)          |
+| `services.json`     | Additional services (registered mail, etc.)             |
+| `prices.json`       | Pricing by product, zone, and weight (effective dates)  |
+| `zones.json`        | Geographic zones and country mappings                   |
+| `weight_tiers.json` | Weight brackets for pricing                             |
+| `dimensions.json`   | Size limits and specifications                          |
+| `features.json`     | Service features and capabilities                       |
+| `restrictions.json` | Shipping restrictions, sanctions, compliance frameworks |
+| `data_links.json`   | Cross-references between data files                     |
 
 All data is validated against JSON schemas in `schemas/`; `mappings.json` maps schemas to files; `metadata.json` has checksums and canonical URLs. **Structure:** Products → Prices → Zones (dimensions, weight tiers, effective dates); Services → Features; Restrictions → Frameworks (e.g. EU sanctions, UN resolutions). One-directional; no circular dependencies. `data_links.json` describes dependencies and lookup rules.
 
