@@ -42,6 +42,15 @@ repos:
             pass_filenames: false
             always_run: false
 
+          # On version bump: regenerate metadata and stage it so bump2version commit succeeds
+          - id: stage-metadata-on-version-bump
+            name: Regenerate and stage metadata.json on version bump
+            entry: bash -c 'if [ -f venv/bin/activate ]; then . venv/bin/activate; fi && porto metadata && git add porto_data/metadata.json'
+            language: system
+            files: ^\.bumpversion\.cfg$
+            pass_filenames: false
+            always_run: false
+
     # JSON syntax validation
     - repo: local
       hooks:
