@@ -1,6 +1,6 @@
-# Publish porto-data to npm and PyPI only when BOTH builds succeed.
+# Publish porto-data to npm and PyPI. Builds run after validate; npm and PyPI publish run in parallel.
 # Trigger: tag v* or manual dispatch only. No workflow_run (OR would run on every validation on main/PR).
-# Builds and validates each artifact once; publish step uses those artifacts (no rebuild).
+# Builds and validates each artifact once; publish jobs use those artifacts (no rebuild).
 
 name: Publish to npm and PyPI
 
@@ -14,6 +14,7 @@ on:
 
 env:
     NODE_VERSION: '20'
+    NODE_VERSION_NPM: '22'
     PYTHON_VERSION: '3.11'
     PACKAGING_MIN_VERSION: '24.2'
 
@@ -117,41 +118,43 @@ jobs:
                   path: dist/
 
     # -------------------------------------------------------------------------
-    # Publish only if BOTH build jobs succeeded. Use built artifacts only.
+    # Publish in parallel: npm and PyPI run independently after both builds succeed.
     # -------------------------------------------------------------------------
-    publish:
-        name: Publish to npm and PyPI
+    publish_npm:
+        name: Publish to npm
         runs-on: ubuntu-latest
         needs: [npm_build, pypi_build]
         permissions:
-            contents: write
+            contents: read
             id-token: write
             packages: write
         steps:
-            - name: Checkout repository
-              uses: actions/checkout@v4
-              with:
-                  fetch-depth: 0
-
             - name: Download npm artifact
               uses: actions/download-artifact@v4
               with:
                   name: npm-package
 
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: ${{ env.NODE_VERSION_NPM }}
+                  registry-url: 'https://registry.npmjs.org/'
+
+            - name: Publish to npm
+              run: npm publish --access public *.tgz
+
+    publish_pypi:
+        name: Publish to PyPI
+        runs-on: ubuntu-latest
+        needs: [npm_build, pypi_build]
+        permissions:
+            contents: read
+        steps:
             - name: Download PyPI artifact
               uses: actions/download-artifact@v4
               with:
                   name: pypi-package
                   path: dist
-
-            - name: Setup Node.js
-              uses: actions/setup-node@v4
-              with:
-                  node-version: ${{ env.NODE_VERSION }}
-                  registry-url: 'https://registry.npmjs.org/'
-
-            - name: Publish to npm
-              run: npm publish --access public *.tgz
 
             - name: Publish to PyPI
               run: |
@@ -161,8 +164,18 @@ jobs:
                   TWINE_USERNAME: __token__
                   TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
 
+    # -------------------------------------------------------------------------
+    # Create GitHub Release only when both npm and PyPI publish succeeded.
+    # -------------------------------------------------------------------------
+    release:
+        name: Create GitHub Release
+        runs-on: ubuntu-latest
+        needs: [publish_npm, publish_pypi]
+        if: startsWith(github.ref, 'refs/tags/')
+        permissions:
+            contents: write
+        steps:
             - name: Create GitHub Release
-              if: startsWith(github.ref, 'refs/tags/')
               uses: softprops/action-gh-release@v1
               with:
                   tag_name: ${{ github.ref_name }}
