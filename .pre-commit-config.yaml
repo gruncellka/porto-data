@@ -20,7 +20,7 @@ repos:
       hooks:
           - id: validate-schemas
             name: Validate JSON schemas
-            entry: bash -c 'if [ -f venv/bin/activate ]; then . venv/bin/activate; fi && porto validate --type schema'
+            entry: bash -c 'if [ -f venv/bin/activate ]; then . venv/bin/activate; fi && PYTHONPATH=. python -m cli.main validate --type schema'
             language: system
             files: ^porto_data/(data|schemas)/.*\.json$
             pass_filenames: false
@@ -28,7 +28,7 @@ repos:
 
           - id: validate-data-links
             name: Validate data_links.json consistency
-            entry: bash -c 'if [ -f venv/bin/activate ]; then . venv/bin/activate; fi && porto validate --type links'
+            entry: bash -c 'if [ -f venv/bin/activate ]; then . venv/bin/activate; fi && PYTHONPATH=. python -m cli.main validate --type links'
             language: system
             files: ^porto_data/data/data_links\.json$|^porto_data/data/(products|zones|weight_tiers|services|prices)\.json$
             pass_filenames: false
@@ -36,7 +36,7 @@ repos:
 
           - id: generate-metadata
             name: Generate metadata.json
-            entry: bash -c 'if [ -f venv/bin/activate ]; then . venv/bin/activate; fi && porto metadata'
+            entry: bash -c 'if [ -f venv/bin/activate ]; then . venv/bin/activate; fi && PYTHONPATH=. python -m cli.main metadata'
             language: system
             files: ^porto_data/(data|schemas)/.*\.json$|^pyproject\.toml$
             pass_filenames: false
@@ -45,7 +45,7 @@ repos:
           # On version bump: regenerate metadata and stage it so bump2version commit succeeds
           - id: stage-metadata-on-version-bump
             name: Regenerate and stage metadata.json on version bump
-            entry: bash -c 'if [ -f venv/bin/activate ]; then . venv/bin/activate; fi && porto metadata && git add porto_data/metadata.json'
+            entry: bash -c 'if [ -f venv/bin/activate ]; then . venv/bin/activate; fi && PYTHONPATH=. python -m cli.main metadata && git add porto_data/metadata.json'
             language: system
             files: ^\.bumpversion\.cfg$
             pass_filenames: false

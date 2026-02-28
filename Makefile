@@ -72,13 +72,13 @@ quality: validate format lint type-check
 # ==========================================
 validate-json:
 	@echo "Validating JSON against schemas..."
-	@. venv/bin/activate && porto validate --type schema
+	@. venv/bin/activate && PYTHONPATH=. python -m cli.main validate --type schema
 	@echo "Validating data_links.json..."
-	@. venv/bin/activate && porto validate --type links
+	@. venv/bin/activate && PYTHONPATH=. python -m cli.main validate --type links
 
 validate-data-links:
 	@echo "Validating data_links.json consistency..."
-	@. venv/bin/activate && porto validate --type links
+	@. venv/bin/activate && PYTHONPATH=. python -m cli.main validate --type links
 
 format-json:
 	@if [ -n "$(CHECK)" ]; then echo "Checking JSON formatting..."; else echo "Formatting JSON files..."; fi
@@ -162,7 +162,7 @@ test-cov:
 # Metadata
 # ==========================================
 metadata:
-	@. venv/bin/activate && porto metadata
+	@. venv/bin/activate && PYTHONPATH=. python -m cli.main metadata
 
 # Regenerate metadata after version change (runs automatically via pre-commit)
 # But you can also run manually: make metadata

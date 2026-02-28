@@ -23,7 +23,7 @@ jobs:
               run: make setup
             - name: Validate JSON files against schemas
               run: |
-                  . venv/bin/activate && porto validate --type schema
+                  . venv/bin/activate && PYTHONPATH=. python -m cli.main validate --type schema
 
     lint-json:
         name: Lint JSON Syntax
@@ -57,7 +57,7 @@ jobs:
               run: make setup
             - name: Validate data_links.json consistency
               run: |
-                  . venv/bin/activate && porto validate --type links
+                  . venv/bin/activate && PYTHONPATH=. python -m cli.main validate --type links
 
     # ==========================================
     # Formatting Checks (needs valid data)
@@ -91,7 +91,7 @@ jobs:
               run: make setup
             - name: Verify metadata.json is up to date
               run: |
-                  . venv/bin/activate && porto metadata
+                  . venv/bin/activate && PYTHONPATH=. python -m cli.main metadata
                   if [ -n "$(git diff porto_data/metadata.json)" ]; then
                     echo "❌ metadata.json is out of date. The file must be regenerated and committed."
                     echo "Run 'make metadata' locally, then commit the updated porto_data/metadata.json file."

@@ -50,7 +50,7 @@ jobs:
                   pip install -e ".[dev]"
 
             - name: Validate porto data
-              run: porto validate
+              run: PYTHONPATH=. python -m cli.main validate
 
     # -------------------------------------------------------------------------
     # Build npm package; produce tarball artifact.
