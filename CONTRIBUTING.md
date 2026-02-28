@@ -67,6 +67,6 @@ Schema-to-data mappings are in `mappings.json`. Data files use a `$schema` prope
 
 Before a release, bump the version in both `package.json` and `pyproject.toml`, and update `CHANGELOG.md`. Use **bump2version** so both files stay in sync: run `bump2version patch` (or `minor` / `major`) after `make setup`. See [DEVELOPMENT.md](DEVELOPMENT.md) for details and the release model.
 
-**Notice:** Before creating a release tag, ensure the **validation** workflow (`.github/workflows/validation.yml`) has passed on your branch. The publish workflow runs on tag push with fewer checks; if you tag without validation being green, you may publish an unstable version.
+**Notice:** Before creating a release tag, ensure the **validation** workflow (`.github/workflows/validation.yml`) has passed on your branch. The publish workflow runs only JSON validation (`porto validate`), not tests or lint; if you tag without validation being green, you may publish an unstable version.
 
 For the full list of make/porto commands and project structure, see [DEVELOPMENT.md](DEVELOPMENT.md).

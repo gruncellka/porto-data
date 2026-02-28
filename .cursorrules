@@ -20,24 +20,25 @@ Data repository for Deutsche Post shipping services with JSON schema validation.
 -   **Key order**: Preserve original order (do NOT sort keys)
 -   **Formatting**: Use Python's `json.tool` for formatting
 -   **Arrays**: Multi-line for readability
--   **Validation**: All JSON files MUST validate against schemas in `schemas/` directory
+-   **Validation**: All JSON files MUST validate against schemas in `porto_data/schemas/` directory
 
 ## Data Structure
 
 ### Directory Organization
 
--   `data/` - Main JSON data files (products, services, prices, zones, etc.)
--   `schemas/` - JSON schemas for validation
+-   `porto_data/` - Data package (included in wheel and npm): `data/`, `schemas/`, `mappings.json`, `metadata.json`
+-   `porto_data/data/` - Main JSON data files (products, services, prices, zones, etc.)
+-   `porto_data/schemas/` - JSON schemas for validation
 -   `scripts/` - Core validation logic and utilities
 -   `cli/` - CLI commands (`porto` command)
 -   `tests/` - Test suite (87% coverage target)
 
 ### Data Files
 
--   All data files in `data/` must validate against corresponding schemas in `schemas/`
--   `data_links.json` provides cross-references between data files
--   `metadata.json` is auto-generated (do NOT edit manually)
--   `mappings.json` is the source of truth for schema-to-data mappings
+-   All data files in `porto_data/data/` must validate against corresponding schemas in `porto_data/schemas/`
+-   `porto_data/data/data_links.json` provides cross-references between data files
+-   `porto_data/metadata.json` is auto-generated (do NOT edit manually)
+-   `porto_data/mappings.json` is the source of truth for schema-to-data mappings
 
 ### Data Relationships
 
@@ -52,7 +53,7 @@ Data repository for Deutsche Post shipping services with JSON schema validation.
 
 -   Always run `make validate` after JSON changes
 -   Pre-commit hooks auto-format and validate on commit
--   If `metadata.json` regenerates, MUST stage it in same commit
+-   If `porto_data/metadata.json` regenerates, MUST stage it in same commit
 -   Pre-commit hooks run format, lint, validate, and type-check on commit
 
 ### Commits
@@ -96,11 +97,14 @@ Data repository for Deutsche Post shipping services with JSON schema validation.
 
 ### Make Commands
 
--   `make validate` - Validate all JSON files
+-   `make validate` - Validate all JSON (schema + data_links)
+-   `make validate-data-links` - Validate data_links.json only
 -   `make format` - Format JSON and Python
 -   `make lint` - Lint JSON and Python
+-   `make metadata` - Generate porto_data/metadata.json
 -   Use `make format`, `make lint`, `make validate`, `make type-check` (or rely on pre-commit)
--   `make test-cov` - Run tests with coverage
+-   `make test` / `make test-cov` - Run tests (with coverage)
+-   `make install-hooks` - Reinstall pre-commit hooks
 
 ## Important Behaviors
 
@@ -108,13 +112,13 @@ Data repository for Deutsche Post shipping services with JSON schema validation.
 
 -   Auto-format JSON and Python files
 -   Validate JSON syntax and schemas
--   Regenerate `metadata.json` if data files changed
--   If `metadata.json` regenerates but isn't staged, commit FAILS (by design)
--   Must stage `metadata.json` in same commit as data changes
+-   Regenerate `porto_data/metadata.json` if data/schema files changed
+-   If `porto_data/metadata.json` regenerates but isn't staged, commit FAILS (by design)
+-   Must stage `porto_data/metadata.json` in same commit as data changes
 
 ### Metadata.json
 
--   Auto-generated file (do NOT edit manually)
+-   Auto-generated file at `porto_data/metadata.json` (do NOT edit manually)
 -   Regenerated when data/schema files or version changes
 -   Includes checksums (SHA-256) for all files
 -   Version comes from `pyproject.toml`
@@ -136,7 +140,8 @@ Data repository for Deutsche Post shipping services with JSON schema validation.
 -   All data must validate against schemas
 -   Cross-references validated via `data_links.json`
 -   Checksums ensure data integrity
--   CI/CD validates on every push/PR
+-   Validation workflow (`.github/workflows/validation.yml`) runs on every push/PR (format, structure, metadata, tests, lint, type-check)
+-   Publish workflow (`.github/workflows/publish.yml`) runs only JSON validation (`porto validate`) before building; no tests or lint in publish
 
 ## Code Patterns
 
@@ -163,19 +168,19 @@ Data repository for Deutsche Post shipping services with JSON schema validation.
 
 ### JSON Data Changes
 
-1. Edit JSON file in `data/`
-2. Ensure it follows schema
+1. Edit JSON file in `porto_data/data/`
+2. Ensure it follows schema in `porto_data/schemas/`
 3. Run `make validate`
 4. Run `make format` to auto-format
 5. Commit changes
-6. If `metadata.json` regenerates, stage it: `git add metadata.json`
+6. If `porto_data/metadata.json` regenerates, stage it: `git add porto_data/metadata.json`
 
 ### Schema Changes
 
-1. Edit schema file in `schemas/`
-2. Update corresponding data in `data/`
+1. Edit schema file in `porto_data/schemas/`
+2. Update corresponding data in `porto_data/data/`
 3. Run `make validate` to verify compatibility
-4. Update `mappings.json` if needed
+4. Update `porto_data/mappings.json` if needed
 
 ### Code Changes
 

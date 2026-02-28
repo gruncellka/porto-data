@@ -1,6 +1,6 @@
 .PHONY: help setup install-hooks
 .PHONY: validate-json validate-data-links lint-json format-json format-code lint-code type-check
-.PHONY: validate format lint metadata test test-cov
+.PHONY: validate format lint metadata test test-cov quality
 
 help:
 	@echo "Porto Data - Schema Validation & Code Quality"
@@ -58,6 +58,9 @@ validate: validate-json
 format: format-json format-code
 
 lint: lint-json lint-code
+
+# Backward compat: legacy pre-commit hook may call "make quality"
+quality: validate format lint type-check
 
 # ==========================================
 # JSON Commands
