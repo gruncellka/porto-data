@@ -32,9 +32,10 @@ class TestGetProjectRoot:
         no_mappings = tmp_path / "no_mappings"
         no_mappings.mkdir()
 
-        with patch.object(data_files, "__file__", str(fake_script)):
-            with patch.dict("sys.modules", {"porto_data": _fake_porto_data_module(no_mappings, False)}):
-                root = data_files.get_project_root()
+        with patch.object(data_files, "__file__", str(fake_script)), patch.dict(
+            "sys.modules", {"porto_data": _fake_porto_data_module(no_mappings, False)}
+        ):
+            root = data_files.get_project_root()
 
         assert root == tmp_path
         assert (root / "mappings.json").exists()
@@ -49,9 +50,10 @@ class TestGetProjectRoot:
         no_mappings = tmp_path / "no_mappings"
         no_mappings.mkdir()
 
-        with patch.object(data_files, "__file__", str(fake_script)):
-            with patch.dict("sys.modules", {"porto_data": _fake_porto_data_module(no_mappings, False)}):
-                root = data_files.get_project_root()
+        with patch.object(data_files, "__file__", str(fake_script)), patch.dict(
+            "sys.modules", {"porto_data": _fake_porto_data_module(no_mappings, False)}
+        ):
+            root = data_files.get_project_root()
 
         assert root == porto_data
         assert (root / "mappings.json").exists()
@@ -66,10 +68,11 @@ class TestGetProjectRoot:
         no_mappings = tmp_path / "no_mappings"
         no_mappings.mkdir()
 
-        with patch.object(data_files, "__file__", str(fake_script)):
-            with patch.dict("sys.modules", {"porto_data": _fake_porto_data_module(no_mappings, False)}):
-                with patch.object(Path, "cwd", return_value=tmp_path):
-                    root = data_files.get_project_root()
+        with patch.object(data_files, "__file__", str(fake_script)), patch.dict(
+            "sys.modules",
+            {"porto_data": _fake_porto_data_module(no_mappings, False)},
+        ), patch.object(Path, "cwd", return_value=tmp_path):
+            root = data_files.get_project_root()
 
         assert root == tmp_path
         assert (root / "mappings.json").exists()
@@ -86,10 +89,11 @@ class TestGetProjectRoot:
         no_mappings = tmp_path / "no_mappings"
         no_mappings.mkdir()
 
-        with patch.object(data_files, "__file__", str(fake_script)):
-            with patch.dict("sys.modules", {"porto_data": _fake_porto_data_module(no_mappings, False)}):
-                with patch.object(Path, "cwd", return_value=tmp_path):
-                    root = data_files.get_project_root()
+        with patch.object(data_files, "__file__", str(fake_script)), patch.dict(
+            "sys.modules",
+            {"porto_data": _fake_porto_data_module(no_mappings, False)},
+        ), patch.object(Path, "cwd", return_value=tmp_path):
+            root = data_files.get_project_root()
 
         assert root == porto_data
         assert (root / "mappings.json").exists()
@@ -101,11 +105,13 @@ class TestGetProjectRoot:
         no_mappings = tmp_path / "no_mappings"
         no_mappings.mkdir()
 
-        with patch.object(data_files, "__file__", str(fake_script)):
-            with patch.dict("sys.modules", {"porto_data": _fake_porto_data_module(no_mappings, False)}):
-                with patch.object(Path, "cwd", return_value=tmp_path):
-                    with pytest.raises(FileNotFoundError) as exc_info:
-                        data_files.get_project_root()
+        with patch.object(data_files, "__file__", str(fake_script)), patch.dict(
+            "sys.modules",
+            {"porto_data": _fake_porto_data_module(no_mappings, False)},
+        ), patch.object(Path, "cwd", return_value=tmp_path), pytest.raises(
+            FileNotFoundError
+        ) as exc_info:
+            data_files.get_project_root()
 
         msg = str(exc_info.value)
         assert "mappings.json not found" in msg
@@ -139,9 +145,10 @@ class TestLoadMappingsUsesProjectRoot:
         no_mappings = tmp_path / "no_mappings"
         no_mappings.mkdir()
 
-        with patch.object(data_files, "__file__", str(fake_script)):
-            with patch.dict("sys.modules", {"porto_data": _fake_porto_data_module(no_mappings, False)}):
-                result = data_files.load_mappings(mappings_path=None)
+        with patch.object(data_files, "__file__", str(fake_script)), patch.dict(
+            "sys.modules", {"porto_data": _fake_porto_data_module(no_mappings, False)}
+        ):
+            result = data_files.load_mappings(mappings_path=None)
 
         assert "schemas/products.schema.json" in result
         assert result["schemas/products.schema.json"] == "data/products.json"
