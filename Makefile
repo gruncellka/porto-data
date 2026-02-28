@@ -35,6 +35,9 @@ help:
 	@echo "Hooks:"
 	@echo "  make install-hooks - Install pre-commit hook (usually done by setup)"
 	@echo ""
+	@echo "Quality (validate + fix format/lint + type-check):"
+	@echo "  make quality      - Validate + format + lint + type-check (pre-commit; re-stage if it fixed files)"
+	@echo ""
 
 # ==========================================
 # Setup (First Time)
@@ -59,7 +62,9 @@ format: format-json format-code
 
 lint: lint-json lint-code
 
-# Backward compat: legacy pre-commit hook may call "make quality"
+# Backward compat: legacy pre-commit hook may call "make quality".
+# Fixes in place (format, lint); if hook modified files, re-stage and commit again.
+# For check-only (e.g. CI) use: make validate && make format CHECK=1 && make lint && make type-check
 quality: validate format lint type-check
 
 # ==========================================
