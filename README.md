@@ -89,12 +89,6 @@ Relationships are one-directional (no circular dependencies). `data_links.json` 
 
 ---
 
-## License
-
-MIT — see [LICENSE](LICENSE).
-
----
-
 ## Disclaimer
 
 This is **reference data** for Deutsche Post services. Always verify current restrictions, pricing, and service availability with Deutsche Post before shipping. Data accuracy is best-effort. Official information: [Deutsche Post](https://www.deutschepost.de).
@@ -117,6 +111,12 @@ Setup, validation, tests, and release details are in **[CONTRIBUTING.md](CONTRIB
 - **Contact**: build@gruncellka.dev
 - **Contributions**: Pull requests welcome
 - **Documentation**: CONTRIBUTING.md, DEVELOPMENT.md, and inline comments
+
+---
+
+## License
+
+MIT — see [LICENSE](LICENSE).
 
 ---
 
