@@ -2,128 +2,110 @@
 """
 Generate metadata.json with project info and file checksums.
 
-Reads project metadata from pyproject.toml and generates checksums
-for all schemas and data JSON files.
+Reads project metadata from pyproject.toml (or package metadata when installed)
+and builds checksums for all schema/data files from mappings.json.
 """
 
 import json
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict
 
 import tomllib
 
 from scripts.data_files import get_project_root, get_schema_data_mappings
 from scripts.utils import get_all_file_checksums
 
-
-def get_file_info(file_path: Path, base_path: Path, checksums: Dict[str, str]) -> Dict[str, Any]:
-    """Get file metadata with checksum."""
-    relative_path = file_path.relative_to(base_path)
-    # Use as_posix() to normalize path separators to forward slashes
-    # This matches the format in mappings.json and ensures cross-platform compatibility
-    path_str = relative_path.as_posix()
-    return {
-        "path": path_str,
-        "checksum": checksums.get(path_str, ""),
-        "size": file_path.stat().st_size,
-    }
-
-
-def extract_entity_name(file_path: Path) -> str:
-    """Extract entity name from filename (e.g., 'products' from 'products.json')."""
-    name = file_path.stem
-    # Remove .schema suffix if present
-    if name.endswith(".schema"):
-        name = name[:-7]
-    return name
-
-
-def get_schema_url(schema_path: Path) -> str:
-    """Extract $id (canonical URL) from schema file."""
-    try:
-        with open(schema_path, encoding="utf-8") as f:
-            schema: Dict[str, Any] = json.load(f)
-        schema_id = schema.get("$id")
-        if isinstance(schema_id, str):
-            return schema_id
-        return ""
-    except (json.JSONDecodeError, FileNotFoundError, KeyError):
-        return ""
+# Package distribution name for fallback metadata (when not in repo)
+DIST_NAME = "gruncellka-porto-data"
 
 
 def get_project_metadata(pyproject_path: Path) -> Dict[str, str]:
-    """Extract project metadata from pyproject.toml."""
+    """Extract project name/version/description from pyproject.toml. Public for tests."""
+    if not pyproject_path.exists():
+        return _project_meta_from_package()
     with open(pyproject_path, "rb") as f:
-        pyproject = tomllib.load(f)
-
-    project = pyproject.get("project", {})
+        project = tomllib.load(f).get("project", {})
     return {
-        "name": project.get("name", "unknown"),
+        "name": project.get("name", DIST_NAME),
         "version": project.get("version", "0.0.0"),
         "description": project.get("description", ""),
     }
 
 
-def collect_files(
-    directory: Path, pattern: str, base_path: Path, checksums: Dict[str, str]
-) -> List[Dict[str, Any]]:
-    """Collect all files matching pattern with their metadata."""
-    files = []
-    for file_path in sorted(directory.glob(pattern)):
-        if file_path.is_file():
-            files.append(get_file_info(file_path, base_path, checksums))
-    return files
+def _project_meta_from_package() -> Dict[str, str]:
+    """Read name/version/description from installed package metadata."""
+    from importlib.metadata import metadata as pkg_meta
+
+    pkg = pkg_meta(DIST_NAME)
+    return {
+        "name": pkg.get("Name", DIST_NAME),
+        "version": pkg.get("Version", "0.0.0"),
+        "description": pkg.get("Summary", ""),
+    }
+
+
+def _get_project_meta(root: Path) -> Dict[str, str]:
+    """Project metadata from pyproject.toml (repo) or package (installed)."""
+    pyproject = root.parent / "pyproject.toml"
+    return get_project_metadata(pyproject) if pyproject.exists() else _project_meta_from_package()
+
+
+def _file_info(path: Path, base: Path, checksums: Dict[str, str]) -> Dict[str, Any]:
+    """Single file entry: path (relative), checksum, size."""
+    rel = path.relative_to(base).as_posix()
+    return {
+        "path": rel,
+        "checksum": checksums.get(rel, ""),
+        "size": path.stat().st_size,
+    }
+
+
+def _schema_url(schema_path: Path) -> str:
+    """$id from schema JSON, or empty."""
+    try:
+        with open(schema_path, encoding="utf-8") as f:
+            url = json.load(f).get("$id")
+        return url if isinstance(url, str) else ""
+    except (json.JSONDecodeError, FileNotFoundError, KeyError):
+        return ""
+
+
+def _entity_name_from_path(path: Path) -> str:
+    """e.g. products.json -> products; products.schema.json -> products."""
+    name = path.stem
+    return name[:-7] if name.endswith(".schema") else name
+
+
+# Public aliases for tests
+extract_entity_name = _entity_name_from_path
+get_file_info = _file_info
+get_schema_url = _schema_url
 
 
 def generate_metadata() -> Dict[str, Any]:
-    """Generate complete metadata dictionary."""
-    # Get project root
-    script_dir = Path(__file__).parent
-    project_root = script_dir.parent
-
-    # Get project metadata
-    pyproject_path = project_root / "pyproject.toml"
-    project_meta = get_project_metadata(pyproject_path)
-
-    # Get all file checksums
+    """Build full metadata dict (project, entities, checksums, generated_at)."""
+    root = get_project_root()
     checksums = get_all_file_checksums()
-
-    # Get schema to data mappings
     mappings = get_schema_data_mappings()
+    project_meta = _get_project_meta(root)
 
-    # Build entities structure grouped by entity name
     entities: Dict[str, Dict[str, Any]] = {}
-
-    for schema_path_str, data_path_str in mappings.items():
-        schema_path = project_root / schema_path_str
-        data_path = project_root / data_path_str
-
+    for schema_rel, data_rel in mappings.items():
+        schema_path = root / schema_rel
+        data_path = root / data_rel
         if not schema_path.exists() or not data_path.exists():
             continue
-
-        # Extract entity name from data file
-        entity_name = extract_entity_name(data_path)
-
-        # Get schema URL from $id
-        schema_url = get_schema_url(schema_path)
-
-        # Build entity entry
-        entities[entity_name] = {
-            "data": get_file_info(data_path, project_root, checksums),
-            "schema": {
-                **get_file_info(schema_path, project_root, checksums),
-                "url": schema_url,
-            },
+        name = _entity_name_from_path(data_path)
+        schema_info = _file_info(schema_path, root, checksums)
+        schema_info["url"] = _schema_url(schema_path)
+        entities[name] = {
+            "data": _file_info(data_path, root, checksums),
+            "schema": schema_info,
         }
 
-    # Build metadata
-    metadata = {
-        "project": {
-            "name": project_meta["name"],
-            "version": project_meta["version"],
-            "description": project_meta["description"],
-        },
+    return {
+        "project": project_meta,
         "generated_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         "entities": entities,
         "checksums": {
@@ -132,61 +114,45 @@ def generate_metadata() -> Dict[str, Any]:
         },
     }
 
-    return metadata
+
+def _metadata_for_compare(meta: Dict[str, Any]) -> Dict[str, Any]:
+    """Copy without generated_at for equality check."""
+    out = meta.copy()
+    out.pop("generated_at", None)
+    return out
 
 
 def main() -> None:
-    """Main entry point."""
-    # Get project root (porto_data/ when installed, repo root or porto_data in dev)
-    project_root = get_project_root()
-    output_path = project_root / "metadata.json"
+    """Generate metadata.json under project root; only write if content changed."""
+    root = get_project_root()
+    out_path = root / "metadata.json"
 
     print("Generating metadata...")
-    print(f"Project root: {project_root}")
+    print(f"Project root: {root}")
 
-    # Check if metadata.json exists and if we need to regenerate
-    has_changes = True  # Default to True for new files
-    if output_path.exists():
+    new_meta = generate_metadata()
+    write = True
+    if out_path.exists():
         try:
-            with open(output_path, encoding="utf-8") as f:
-                existing_metadata = json.load(f)
-
-            # Generate new metadata for comparison
-            new_metadata = generate_metadata()
-
-            # Compare the actual metadata content (excluding timestamp)
-            existing_metadata_copy = existing_metadata.copy()
-            new_metadata_copy = new_metadata.copy()
-
-            # Remove timestamps for comparison
-            existing_metadata_copy.pop("generated_at", None)
-            new_metadata_copy.pop("generated_at", None)
-
-            if existing_metadata_copy == new_metadata_copy:
-                has_changes = False
+            with open(out_path, encoding="utf-8") as f:
+                existing = json.load(f)
+            if _metadata_for_compare(existing) == _metadata_for_compare(new_meta):
+                write = False
             else:
                 print("✓ Changes detected, updating metadata")
         except (json.JSONDecodeError, KeyError, FileNotFoundError):
             print("✓ No existing metadata found, generating new")
-            new_metadata = generate_metadata()
-            has_changes = True
     else:
         print("✓ No existing metadata found, generating new")
-        new_metadata = generate_metadata()
-        has_changes = True
 
-    # Only write metadata.json if there are changes
-    if has_changes:
-        with open(output_path, "w", encoding="utf-8") as f:
-            json.dump(new_metadata, f, indent=4, ensure_ascii=False)
+    if write:
+        with open(out_path, "w", encoding="utf-8") as f:
+            json.dump(new_meta, f, indent=4, ensure_ascii=False)
             f.write("\n")
-
-        print(f"\n✓ Generated: {output_path}")
-        print(
-            f"  - Project: {new_metadata['project']['name']} v{new_metadata['project']['version']}"
-        )
-        print(f"  - Entities: {len(new_metadata['entities'])} entities")
-        print(f"  - Generated at: {new_metadata['generated_at']}")
+        print(f"\n✓ Generated: {out_path}")
+        print(f"  - Project: {new_meta['project']['name']} v{new_meta['project']['version']}")
+        print(f"  - Entities: {len(new_meta['entities'])} entities")
+        print(f"  - Generated at: {new_meta['generated_at']}")
         print("  - Status: Updated (changes detected)")
     else:
         print("✓ No changes detected, keeping existing metadata")
