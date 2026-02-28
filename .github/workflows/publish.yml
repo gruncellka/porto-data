@@ -152,8 +152,11 @@ jobs:
               with:
                   node-version: ${{ env.NODE_VERSION_NPM }}
 
+            - name: Install latest npm (required for OIDC trusted publishing)
+              run: npm install -g npm@latest
+
             - name: Publish to npm
-              run: npm publish --access public *.tgz
+              run: npm publish --access public --provenance *.tgz
 
     publish_pypi:
         name: Publish to PyPI
