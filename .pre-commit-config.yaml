@@ -51,6 +51,15 @@ repos:
             pass_filenames: false
             always_run: false
 
+          # Ensure version files end with newline and stage them so end-of-file-fixer does not fail the commit (bump2version may write without trailing newline)
+          - id: ensure-version-files-eol
+            name: Ensure package.json and pyproject.toml end with newline
+            entry: bash -c 'n=$(printf "\\n"); for f in package.json pyproject.toml; do [ -f "$f" ] && [ "$(tail -c 1 "$f" 2>/dev/null)" != "$n" ] && printf "\\n" >> "$f" && git add "$f"; done; true'
+            language: system
+            files: ^pyproject\.toml$|^package\.json$
+            pass_filenames: false
+            always_run: false
+
     # JSON syntax validation
     - repo: local
       hooks:
@@ -84,12 +93,12 @@ repos:
     # ==========================================
     # JSON Formatting (runs after validation)
     # ==========================================
-    # JSON formatting (uses json.tool like Makefile)
+    # JSON formatting (uses json.tool like Makefile). Stage after format so commit succeeds when only whitespace/format changes.
     - repo: local
       hooks:
           - id: format-json
             name: Format JSON files
-            entry: bash -c 'for file in porto_data/data/*.json porto_data/schemas/*.json porto_data/metadata.json; do [ -f "$file" ] && python3 -m json.tool "$file" "$file.tmp" && mv "$file.tmp" "$file" || true; done'
+            entry: bash -c 'for file in porto_data/data/*.json porto_data/schemas/*.json porto_data/metadata.json; do [ -f "$file" ] && python3 -m json.tool "$file" "$file.tmp" && mv "$file.tmp" "$file" && git add "$file" || true; done'
             language: system
             types: [json]
             files: ^porto_data/(data|schemas)/.*\.json$|^porto_data/metadata\.json$
