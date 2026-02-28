@@ -75,7 +75,7 @@ jobs:
             - name: Install dependencies
               run: make setup
             - name: Check JSON formatting
-              run: make format-json-check
+              run: make format-json CHECK=1
 
     verify-metadata:
         name: Verify Metadata
@@ -117,7 +117,7 @@ jobs:
             - name: Install dependencies
               run: make setup
             - name: Check Python code formatting
-              run: make format-code-check
+              run: make format-code CHECK=1
 
     lint-code:
         name: Lint Python Code

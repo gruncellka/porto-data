@@ -1,6 +1,5 @@
 .PHONY: help setup install-hooks
-.PHONY: validate-json validate-data-links lint-json format-json format-json-check
-.PHONY: format-code format-code-check lint-code type-check
+.PHONY: validate-json validate-data-links lint-json format-json format-code lint-code type-check
 .PHONY: validate format lint quality metadata test test-cov
 
 help:
@@ -14,20 +13,17 @@ help:
 	@echo "  make validate      - Validate all JSON files against schemas (most important)"
 	@echo "  make format        - Format both JSON and Python code"
 	@echo "  make lint          - Lint both JSON and Python code"
-	@echo "  make quality       - Run all quality checks (format, lint, validate, type-check)"
 	@echo ""
 	@echo "JSON Commands:"
 	@echo "  make validate-json    - Validate all JSON files against schemas"
 	@echo "  make validate-data-links - Validate data_links.json consistency with data files"
-	@echo "  make format-json        - Format and standardize JSON files (modifies files)"
+	@echo "  make format-json        - Format JSON files (use CHECK=1 for read-only check)"
 	@echo "  make lint-json        - Check JSON files for syntax errors (read-only)"
-	@echo "  make format-json-check   - Check if JSON files are properly formatted (read-only)"
 	@echo ""
 	@echo "Code Commands:"
-	@echo "  make format-code        - Format Python code with ruff"
+	@echo "  make format-code        - Format Python code with ruff (use CHECK=1 for read-only check)"
 	@echo "  make lint-code        - Lint Python code with ruff"
 	@echo "  make type-check       - Type check Python code with mypy"
-	@echo "  make format-code-check  - Check if Python code is properly formatted (read-only)"
 	@echo ""
 	@echo "Testing:"
 	@echo "  make test             - Run all tests"
@@ -63,7 +59,14 @@ format: format-json format-code
 
 lint: lint-json lint-code
 
-quality: format-json-check lint-json validate-json format-code-check lint-code type-check
+# Backward compatibility: same as running format/lint/validate/type-check with CHECK=1 (e.g. from IDE)
+quality:
+	@$(MAKE) format-json CHECK=1
+	@$(MAKE) lint-json
+	@$(MAKE) validate-json
+	@$(MAKE) format-code CHECK=1
+	@$(MAKE) lint-code
+	@$(MAKE) type-check
 
 # ==========================================
 # JSON Commands
@@ -79,11 +82,16 @@ validate-data-links:
 	@. venv/bin/activate && porto validate --type links
 
 format-json:
-	@echo "Formatting JSON files..."
+	@if [ -n "$(CHECK)" ]; then echo "Checking JSON formatting..."; else echo "Formatting JSON files..."; fi
 	@for file in porto_data/data/*.json porto_data/schemas/*.json; do \
 		if [ -f "$$file" ]; then \
 			if python3 -m json.tool "$$file" "$$file.tmp" > /dev/null 2>&1; then \
 				if ! cmp -s "$$file" "$$file.tmp"; then \
+					if [ -n "$(CHECK)" ]; then \
+						echo "✗ $$file is not properly formatted"; \
+						rm -f "$$file.tmp"; \
+						exit 1; \
+					fi; \
 					if mv "$$file.tmp" "$$file"; then \
 						echo "✓ Formatted $$file"; \
 					else \
@@ -101,7 +109,7 @@ format-json:
 			fi; \
 		fi; \
 	done
-	@echo "✓ All JSON files formatted"
+	@if [ -n "$(CHECK)" ]; then echo "✓ All JSON files are properly formatted"; else echo "✓ All JSON files formatted"; fi
 
 lint-json:
 	@echo "Linting JSON files for syntax errors..."
@@ -113,35 +121,20 @@ lint-json:
 	done
 	@echo "✓ All JSON files are valid"
 
-format-json-check:
-	@echo "Checking JSON formatting..."
-	@for file in porto_data/data/*.json porto_data/schemas/*.json; do \
-		if [ -f "$$file" ]; then \
-			if python3 -m json.tool "$$file" "$$file.tmp" > /dev/null 2>&1; then \
-				if ! cmp -s "$$file" "$$file.tmp"; then \
-					echo "✗ $$file is not properly formatted"; \
-					rm -f "$$file.tmp"; \
-					exit 1; \
-				fi; \
-				rm -f "$$file.tmp"; \
-				echo "✓ $$file"; \
-			else \
-				echo "✗ $$file: Invalid JSON - cannot check formatting"; \
-				rm -f "$$file.tmp"; \
-				exit 1; \
-			fi; \
-		fi; \
-	done
-	@echo "✓ All JSON files are properly formatted"
-
 # ==========================================
 # Code Commands
 # ==========================================
 format-code:
-	@echo "Formatting Python code..."
-	@. venv/bin/activate && ruff format . || (echo "✗ Failed to format code with ruff" && exit 1)
-	@. venv/bin/activate && ruff check --fix . || (echo "✗ Failed to fix linting issues with ruff" && exit 1)
-	@echo "✓ Code formatted"
+	@if [ -n "$(CHECK)" ]; then \
+		echo "Checking Python code formatting..."; \
+		. venv/bin/activate && ruff format --check . || (echo "✗ Code is not properly formatted. Run 'make format-code' to fix." && exit 1); \
+		echo "✓ Code formatting check complete"; \
+	else \
+		echo "Formatting Python code..."; \
+		. venv/bin/activate && ruff format . || (echo "✗ Failed to format code with ruff" && exit 1); \
+		. venv/bin/activate && ruff check --fix . || (echo "✗ Failed to fix linting issues with ruff" && exit 1); \
+		echo "✓ Code formatted"; \
+	fi
 
 lint-code:
 	@echo "Linting Python code..."
@@ -152,11 +145,6 @@ type-check:
 	@echo "Type checking Python code..."
 	@. venv/bin/activate && PYTHONPATH=. mypy scripts/ cli/
 	@echo "✓ Type check complete"
-
-format-code-check:
-	@echo "Checking Python code formatting..."
-	@. venv/bin/activate && ruff format --check . || (echo "✗ Code is not properly formatted. Run 'make format-code' to fix." && exit 1)
-	@echo "✓ Code formatting check complete"
 
 # ==========================================
 # Testing

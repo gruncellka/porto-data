@@ -70,7 +70,6 @@ porto-data/
 | `make lint` | Lint JSON and Python |
 | `make lint-json` | Lint JSON only |
 | `make lint-code` | Lint Python only |
-| `make quality` | Format check, lint, validate, type-check |
 | `make test` | Run tests |
 | `make test-cov` | Tests with coverage (e.g. 80% threshold) |
 | `make metadata` | Generate metadata.json |
@@ -90,7 +89,7 @@ porto-data/
 
 - **Ruff**: formatting and linting (line length 100)
 - **MyPy**: type checking
-- Run `make quality` before committing
+- Pre-commit hooks run format, lint, validate, and type-check on commit
 
 ## Testing
 

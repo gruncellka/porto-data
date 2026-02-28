@@ -59,7 +59,7 @@ Schema-to-data mappings are in `mappings.json`. Data files use a `$schema` prope
 ## Pull requests
 
 1. Fork the repo and create a branch.
-2. Run `make setup` and `make quality` before pushing.
+2. Run `make setup`; pre-commit will run format, lint, and validate on commit.
 3. Ensure pre-commit passes (it runs on commit).
 4. Open a PR. CI runs validation and tests.
 
