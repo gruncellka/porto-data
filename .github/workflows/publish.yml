@@ -5,12 +5,22 @@
 name: Publish to npm and PyPI
 
 # Tag push: main flow (merge to main → push tag v* → workflow runs once).
-# workflow_dispatch: (1) run from any branch before merge to test publish or pre-release; (2) re-publish same version if npm or PyPI failed (fix and run again without pushing a new tag). Choose branch in "Run workflow". Do not push a tag for the same version after a manual run (would trigger again and fail).
+# workflow_dispatch: (1) run from any branch to test or re-publish; (2) use "Publish target" to run only npm or only pypi (e.g. re-publish PyPI after npm succeeded). Do not push a tag for the same version after a manual run (would trigger again and fail).
 on:
     push:
         tags:
             - 'v*'
     workflow_dispatch:
+        inputs:
+            publish_target:
+                description: 'Publish target (tag push always runs both)'
+                required: true
+                default: both
+                type: choice
+                options:
+                    - both
+                    - npm
+                    - pypi
 
 env:
     NODE_VERSION: '20'
@@ -49,6 +59,7 @@ jobs:
         name: Build npm package
         runs-on: ubuntu-latest
         needs: [validate]
+        if: github.event_name != 'workflow_dispatch' || github.event.inputs.publish_target != 'pypi'
         steps:
             - name: Checkout
               uses: actions/checkout@v4
@@ -87,6 +98,7 @@ jobs:
         name: Build PyPI package
         runs-on: ubuntu-latest
         needs: [validate]
+        if: github.event_name != 'workflow_dispatch' || github.event.inputs.publish_target != 'npm'
         steps:
             - name: Checkout repository
               uses: actions/checkout@v4
@@ -118,12 +130,13 @@ jobs:
                   path: dist/
 
     # -------------------------------------------------------------------------
-    # Publish in parallel: npm and PyPI run independently after both builds succeed.
+    # Publish in parallel: npm and PyPI each depend only on their build (so manual "pypi only" runs only pypi_build + publish_pypi).
     # -------------------------------------------------------------------------
     publish_npm:
         name: Publish to npm
         runs-on: ubuntu-latest
-        needs: [npm_build, pypi_build]
+        needs: [npm_build]
+        if: github.event_name != 'workflow_dispatch' || github.event.inputs.publish_target != 'pypi'
         permissions:
             contents: read
             id-token: write
@@ -138,7 +151,6 @@ jobs:
               uses: actions/setup-node@v4
               with:
                   node-version: ${{ env.NODE_VERSION_NPM }}
-                  registry-url: 'https://registry.npmjs.org/'
 
             - name: Publish to npm
               run: npm publish --access public *.tgz
@@ -146,7 +158,8 @@ jobs:
     publish_pypi:
         name: Publish to PyPI
         runs-on: ubuntu-latest
-        needs: [npm_build, pypi_build]
+        needs: [pypi_build]
+        if: github.event_name != 'workflow_dispatch' || github.event.inputs.publish_target != 'npm'
         permissions:
             contents: read
         steps:
