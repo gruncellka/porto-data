@@ -114,10 +114,4 @@ Setup, validation, tests, and release details are in **[CONTRIBUTING.md](CONTRIB
 
 ---
 
-## License
-
-MIT — see [LICENSE](LICENSE).
-
----
-
 🔳 gruncellka
