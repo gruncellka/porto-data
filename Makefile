@@ -158,7 +158,7 @@ test:
 
 test-cov:
 	@echo "Running tests with coverage..."
-	@. venv/bin/activate && pytest tests/ --cov=scripts --cov=cli --cov-report=term-missing --cov-report=html --cov-report=xml --cov-fail-under=80
+	@. venv/bin/activate && pytest tests/ --cov=scripts --cov=cli --cov-report=term-missing --cov-report=html --cov-report=xml --cov-fail-under=90
 	@echo "✓ Coverage report complete (see htmlcov/index.html for detailed report)"
 
 # ==========================================

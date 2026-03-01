@@ -2,6 +2,7 @@
 """Tests for schema validation - validators/schema.py and backward compatibility."""
 
 import json
+from unittest.mock import patch
 
 import pytest
 
@@ -126,3 +127,22 @@ class TestValidateAllSchemas:
         validate_all_schemas()
         captured = capsys.readouterr()
         assert "Validating JSON schemas" in captured.out or len(captured.out) > 0
+
+    def test_validate_all_schemas_returns_one_when_validation_fails(self, tmp_path):
+        """Test that validate_all_schemas returns 1 and prints failure when a file fails."""
+        (tmp_path / "schemas").mkdir()
+        (tmp_path / "data").mkdir()
+        schema_file = tmp_path / "schemas" / "s.schema.json"
+        data_file = tmp_path / "data" / "d.json"
+        schema_file.write_text(
+            '{"$schema":"http://json-schema.org/draft-07/schema#","type":"object","required":["x"]}'
+        )
+        data_file.write_text("{}")  # missing "x"
+
+        with patch("scripts.validators.schema.get_project_root", return_value=tmp_path), patch(
+            "scripts.validators.schema.get_schema_data_mappings",
+            return_value={"schemas/s.schema.json": "data/d.json"},
+        ):
+            result = validate_all_schemas()
+
+        assert result == 1

@@ -140,6 +140,28 @@ name = "test-project"
         assert metadata["version"] == "0.0.0"  # Default
         assert metadata["description"] == ""  # Default
 
+    def test_get_project_metadata_fallback_when_pyproject_missing(self, tmp_path):
+        """Test that package metadata is used when pyproject.toml does not exist."""
+        missing = tmp_path / "nonexistent_pyproject.toml"
+        assert not missing.exists()
+        metadata = get_project_metadata(missing)
+        assert "name" in metadata
+        assert "version" in metadata
+        assert "description" in metadata
+
+    def test_get_project_metadata_fallback_uses_defaults_when_package_metadata_incomplete(
+        self, tmp_path
+    ):
+        """Test that _project_meta_from_package uses defaults when metadata keys are missing."""
+        missing = tmp_path / "nonexistent.toml"
+        with patch("importlib.metadata.metadata", return_value={}):
+            metadata = get_project_metadata(missing)
+        assert "name" in metadata
+        assert "version" in metadata
+        assert metadata["version"] == "0.0.0"
+        assert "description" in metadata
+        assert metadata["description"] == ""
+
 
 class TestGenerateMetadata:
     """Test generate_metadata function."""
@@ -221,3 +243,27 @@ class TestGenerateMetadata:
         assert isinstance(metadata["generated_at"], str)
         # Should be ISO format with Z suffix
         assert metadata["generated_at"].endswith("Z") or "+" in metadata["generated_at"]
+
+    @patch("scripts.generate_metadata.get_all_file_checksums")
+    @patch("scripts.generate_metadata.get_schema_data_mappings")
+    @patch("scripts.generate_metadata.get_project_root")
+    @patch("scripts.generate_metadata._get_project_meta")
+    def test_generate_metadata_skips_missing_files(
+        self, mock_project_meta, mock_get_root, mock_mappings, mock_checksums, tmp_path
+    ):
+        """Test that mappings whose schema or data file does not exist are skipped."""
+        mock_get_root.return_value = tmp_path
+        mock_project_meta.return_value = {
+            "name": "test",
+            "version": "1.0.0",
+            "description": "",
+        }
+        mock_mappings.return_value = {
+            "schemas/products.schema.json": "data/products.json",
+            "schemas/nonexistent.schema.json": "data/nonexistent.json",
+        }
+        mock_checksums.return_value = {}
+        with patch("scripts.generate_metadata.Path.exists", return_value=False):
+            metadata = generate_metadata()
+        assert "entities" in metadata
+        assert metadata["entities"] == {}
