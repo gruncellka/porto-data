@@ -1,0 +1,15 @@
+# NPM: data + index.js/index.d.ts only; no Python (PyPI has porto_data/__init__.py).
+# Note: "files" in package.json is the real whitelist; entries in "files" are always
+# included and .npmignore cannot exclude them. Do NOT add "porto_data" as a whole
+# to "files" — only porto_data/data, porto_data/schemas, porto_data/*.json.
+*.py
+*.pyc
+porto_data/__init__.py
+porto_data/py.typed
+**/__pycache__/
+*.pyi
+pyproject.toml
+scripts/
+cli/
+tests/
+.cursorrules
