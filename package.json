@@ -23,6 +23,13 @@
         "porto_data/mappings.json",
         "porto_data/metadata.json",
         "README.md",
-        "LICENSE"
-    ]
+        "LICENSE",
+        "index.js",
+        "index.d.ts"
+    ],
+    "main": "index.js",
+    "types": "index.d.ts",
+    "devDependencies": {
+        "typescript": "^5.9.3"
+    }
 }

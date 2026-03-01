@@ -1,6 +1,6 @@
 .PHONY: help setup install-hooks
 .PHONY: validate-json validate-data-links lint-json format-json format-code lint-code type-check
-.PHONY: validate format lint metadata test test-cov quality
+.PHONY: validate format lint metadata test test-cov quality test-publish
 
 help:
 	@echo "Porto Data - Schema Validation & Code Quality"
@@ -37,6 +37,9 @@ help:
 	@echo ""
 	@echo "Quality (validate + fix format/lint + type-check):"
 	@echo "  make quality      - Validate + format + lint + type-check (pre-commit; re-stage if it fixed files)"
+	@echo ""
+	@echo "Publish (run before npm publish / twine upload):"
+	@echo "  make test-publish - Pack npm tarball + install and test; build wheel + install and test Python"
 	@echo ""
 
 # ==========================================
@@ -166,6 +169,12 @@ metadata:
 
 # Regenerate metadata after version change (runs automatically via pre-commit)
 # But you can also run manually: make metadata
+
+# ==========================================
+# Test before publish (npm + PyPI)
+# ==========================================
+test-publish:
+	@./tests/test_publish.sh
 
 # ==========================================
 # Hooks (Usually Automatic)
