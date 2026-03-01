@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Tests for CLI main module - comprehensive coverage."""
 
+import subprocess
+import sys
 from unittest.mock import MagicMock, patch
 
 from cli.main import create_parser, main
@@ -127,3 +129,17 @@ class TestMainFunction:
             result = main()
             assert result == 1
             mock_parser.print_help.assert_called_once()
+
+    def test_main_entry_point_exits_with_code(self):
+        """Test that running as __main__ (python -m cli.main) invokes main and exits."""
+        result = subprocess.run(
+            [sys.executable, "-m", "cli.main"],
+            capture_output=True,
+            text=True,
+            cwd=None,
+        )
+        # No command or invalid: exit 1 and help on stderr/stdout
+        assert result.returncode == 1
+        assert "usage" in (result.stdout + result.stderr).lower() or "porto" in (
+            result.stdout + result.stderr
+        )

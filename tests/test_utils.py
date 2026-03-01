@@ -8,6 +8,7 @@ from pathlib import Path
 import pytest
 
 from scripts.data_files import (
+    get_data_file_name,
     get_data_file_path,
     get_data_files,
     get_schema_data_mappings,
@@ -76,6 +77,15 @@ class TestLoadMappings:
             json.dump(mappings_data, f)
 
         with pytest.raises(ValueError, match="must be strings"):
+            load_mappings(str(mappings_file))
+
+    def test_load_mappings_mappings_not_dict(self, tmp_path):
+        """Test that ValueError is raised when mappings value is not a dict."""
+        mappings_file = tmp_path / "mappings.json"
+        with open(mappings_file, "w") as f:
+            json.dump({"mappings": ["not", "a", "dict"]}, f)
+
+        with pytest.raises(ValueError, match="must be a dictionary"):
             load_mappings(str(mappings_file))
 
 
@@ -205,6 +215,23 @@ class TestGetDataFilePath:
         """Test that FileNotFoundError is raised for invalid entity."""
         with pytest.raises(FileNotFoundError, match="No mapping found"):
             get_data_file_path("nonexistent_entity")
+
+
+class TestGetDataFileName:
+    """Test get_data_file_name function."""
+
+    def test_get_data_file_name_valid_entity(self):
+        """Test getting file name for valid entity."""
+        try:
+            name = get_data_file_name("products")
+            assert name == "products.json"
+        except FileNotFoundError:
+            pytest.skip("products entity not in mappings")
+
+    def test_get_data_file_name_invalid_entity(self):
+        """Test that FileNotFoundError is raised for invalid entity."""
+        with pytest.raises(FileNotFoundError, match="No mapping found"):
+            get_data_file_name("nonexistent_entity")
 
 
 class TestGetExistingChecksumsFromMetadata:

@@ -6,6 +6,7 @@ import json
 import pytest
 
 from scripts.validators.base import ValidationResults
+from scripts.validators.helpers import validate_unit_consistency
 from scripts.validators.links import DataLinksValidator
 from scripts.validators.schema import validate_all_schemas, validate_file
 
@@ -40,6 +41,50 @@ class TestValidationResults:
         assert len(results["warnings"]) == 1
         assert len(results["fixes_needed"]) == 1
         assert len(results["correct"]) == 2
+
+
+class TestValidateUnitConsistency:
+    """Test validate_unit_consistency helper."""
+
+    def test_unit_mismatch_adds_error(self):
+        """Test that inconsistent unit values add an error to results."""
+        results: ValidationResults = {
+            "errors": [],
+            "warnings": [],
+            "fixes_needed": [],
+            "correct": [],
+        }
+        validate_unit_consistency(
+            unit_name="weight",
+            data_links_value="g",
+            expected_value="g",
+            file_names=["data_links.json", "products.json"],
+            results=results,
+            other_values=["kg"],
+        )
+        assert len(results["errors"]) == 1
+        assert "mismatch" in results["errors"][0].lower()
+        assert "g" in results["errors"][0] and "kg" in results["errors"][0]
+
+    def test_unit_consistent_but_unexpected_adds_warning(self):
+        """Test that consistent values that differ from expected add a warning."""
+        results: ValidationResults = {
+            "errors": [],
+            "warnings": [],
+            "fixes_needed": [],
+            "correct": [],
+        }
+        validate_unit_consistency(
+            unit_name="weight",
+            data_links_value="g",
+            expected_value="kg",
+            file_names=["data_links.json", "products.json"],
+            results=results,
+            other_values=["g"],
+        )
+        assert len(results["warnings"]) == 1
+        assert "consistent" in results["warnings"][0].lower()
+        assert "Expected" in results["warnings"][0]
 
 
 class TestSchemaValidator:
