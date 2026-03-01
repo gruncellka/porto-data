@@ -2,7 +2,7 @@
 # Trigger: tag v* or manual dispatch only. No workflow_run (OR would run on every validation on main/PR).
 # Builds and validates each artifact once; publish jobs use those artifacts (no rebuild).
 
-name: Publish to npm and PyPI
+name: publish to npm and pypi
 
 # Tag push: main flow (merge to main → push tag v* → workflow runs once).
 # workflow_dispatch: (1) run from any branch to test or re-publish; (2) use "Publish target" to run only npm or only pypi (e.g. re-publish PyPI after npm succeeded). Do not push a tag for the same version after a manual run (would trigger again and fail).
