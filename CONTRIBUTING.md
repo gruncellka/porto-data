@@ -6,9 +6,9 @@ Porto Data is a data repository (JSON + schemas) with Python tooling for validat
 
 1. Clone the repository and enter the project directory.
 2. Run:
-   ```bash
-   make setup
-   ```
+    ```bash
+    make setup
+    ```
 3. Start making changes. Pre-commit hooks run automatically on every commit.
 
 `make setup` creates `venv`, installs dev dependencies, and installs pre-commit hooks.
@@ -39,28 +39,28 @@ git add porto_data/metadata.json
 
 ### Porto CLI
 
-| Command | Description |
-| --- | --- |
-| `porto validate` | Validate everything (default) |
-| `porto validate --type schema` | Validate JSON against schemas |
-| `porto validate --type links` | Validate data links consistency |
-| `porto validate --type links --analyze` | Detailed links analysis |
-| `porto metadata` | Regenerate `metadata.json` |
+| Command                                 | Description                     |
+| --------------------------------------- | ------------------------------- |
+| `porto validate`                        | Validate everything (default)   |
+| `porto validate --type schema`          | Validate JSON against schemas   |
+| `porto validate --type links`           | Validate data links consistency |
+| `porto validate --type links --analyze` | Detailed links analysis         |
+| `porto metadata`                        | Regenerate `metadata.json`      |
 
 ### Make
 
-| Command | Description |
-| --- | --- |
-| `make help` | Show all commands |
-| `make validate` | Validate schemas and links |
-| `make validate-data-links` | Validate `data_links.json` only |
-| `make format` | Format JSON and Python |
-| `make lint` | Lint JSON and Python |
-| `make type-check` | Run MyPy |
-| `make test` | Run tests |
-| `make test-cov` | Run tests with coverage |
-| `make metadata` | Regenerate `metadata.json` |
-| `make test-publish` | Build and verify npm + PyPI artifacts locally |
+| Command                    | Description                                   |
+| -------------------------- | --------------------------------------------- |
+| `make help`                | Show all commands                             |
+| `make validate`            | Validate schemas and links                    |
+| `make validate-data-links` | Validate `data_links.json` only               |
+| `make format`              | Format JSON and Python                        |
+| `make lint`                | Lint JSON and Python                          |
+| `make type-check`          | Run MyPy                                      |
+| `make test`                | Run tests                                     |
+| `make test-cov`            | Run tests with coverage                       |
+| `make metadata`            | Regenerate `metadata.json`                    |
+| `make test-publish`        | Build and verify npm + PyPI artifacts locally |
 
 ## Pre-commit behavior
 
@@ -115,4 +115,5 @@ Before tagging, make sure validation CI is green for the exact commit you will r
 ## CI links
 
 - Validation workflow: [validation](https://github.com/gruncellka/porto-data/actions/workflows/validation.yml)
+- Publish workflow: [publish](https://github.com/gruncellka/porto-data/actions/workflows/publish.yml)
 - Coverage: [codecov](https://codecov.io/gh/gruncellka/porto-data)
