@@ -31,7 +31,7 @@ Data repository for Deutsche Post shipping services with JSON schema validation.
 -   `porto_data/schemas/` - JSON schemas for validation
 -   `scripts/` - Core validation logic and utilities
 -   `cli/` - CLI commands (`porto` command)
--   `tests/` - Test suite (87% coverage target)
+-   `tests/` - Test suite (90% coverage target)
 
 ### Data Files
 
@@ -65,7 +65,7 @@ Data repository for Deutsche Post shipping services with JSON schema validation.
 
 ### Testing
 
--   Test coverage target: 87%
+-   Test coverage target: 90%
 -   Tests in `tests/` directory mirror source structure
 -   Use pytest fixtures from `tests/conftest.py`
 -   Run `make test-cov` to check coverage
@@ -188,7 +188,7 @@ Data repository for Deutsche Post shipping services with JSON schema validation.
 2. Add type hints (MyPy)
 3. Pre-commit runs format, lint, validate, and type-check on commit
 4. Add tests for new functionality
-5. Maintain 87% coverage target
+5. Maintain 90% coverage target
 
 ## AI Assistant Guidelines
 

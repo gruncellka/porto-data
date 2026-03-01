@@ -45,6 +45,20 @@ class TestDataLinksValidatorInitialization:
         assert validator.zones is not None
         assert isinstance(validator.product_dict, dict)
 
+    def test_load_data_reports_missing_file(self, tmp_path, minimal_data_links):
+        """Test that load_data adds an error when a required file is missing."""
+        data_dir = tmp_path / "data"
+        data_dir.mkdir()
+        (data_dir / "data_links.json").write_text(json.dumps(minimal_data_links))
+        # Omit products.json and others so load_json raises FileNotFoundError
+        validator = DataLinksValidator(data_dir)
+        validator.load_data()
+        assert len(validator.results["errors"]) >= 1
+        assert (
+            "Missing file" in validator.results["errors"][0]
+            or "file" in validator.results["errors"][0].lower()
+        )
+
 
 class TestDataLinksValidatorResults:
     """Test DataLinksValidator results structure and validation."""
@@ -217,12 +231,12 @@ class TestServicePriceConsistency:
         if should_pass:
             assert len(service_price_errors) == 0, f"Unexpected errors: {service_price_errors}"
         else:
-            assert len(service_price_errors) > 0, (
-                f"Should have detected service-price inconsistency. All errors: {results['errors']}"
-            )
-            assert any("test_service" in e for e in service_price_errors), (
-                "Error should mention service ID"
-            )
+            assert (
+                len(service_price_errors) > 0
+            ), f"Should have detected service-price inconsistency. All errors: {results['errors']}"
+            assert any(
+                "test_service" in e for e in service_price_errors
+            ), "Error should mention service ID"
 
     def test_missing_service_in_services_json_fails(self, tmp_path, minimal_data_links):
         """Test that price referencing non-existent service fails validation."""

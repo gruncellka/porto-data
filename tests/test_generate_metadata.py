@@ -149,6 +149,19 @@ name = "test-project"
         assert "version" in metadata
         assert "description" in metadata
 
+    def test_get_project_metadata_fallback_uses_defaults_when_package_metadata_incomplete(
+        self, tmp_path
+    ):
+        """Test that _project_meta_from_package uses defaults when metadata keys are missing."""
+        missing = tmp_path / "nonexistent.toml"
+        with patch("importlib.metadata.metadata", return_value={}):
+            metadata = get_project_metadata(missing)
+        assert "name" in metadata
+        assert "version" in metadata
+        assert metadata["version"] == "0.0.0"
+        assert "description" in metadata
+        assert metadata["description"] == ""
+
 
 class TestGenerateMetadata:
     """Test generate_metadata function."""

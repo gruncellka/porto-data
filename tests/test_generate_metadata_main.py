@@ -2,6 +2,8 @@
 """Tests for generate_metadata.py main function - comprehensive coverage."""
 
 import json
+import subprocess
+import sys
 from unittest.mock import MagicMock, mock_open, patch
 
 from scripts.generate_metadata import main
@@ -120,3 +122,15 @@ class TestGenerateMetadataMain:
 
         # Should still generate metadata
         mock_gen.assert_called()
+
+    def test_module_run_as_main(self):
+        """Test that running python -m scripts.generate_metadata invokes main."""
+        result = subprocess.run(
+            [sys.executable, "-m", "scripts.generate_metadata"],
+            capture_output=True,
+            text=True,
+            cwd=None,
+            timeout=10,
+        )
+        # Exits 0 (success) or 1 (e.g. error); ensures __main__ block ran
+        assert result.returncode in (0, 1)

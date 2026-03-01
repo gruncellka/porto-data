@@ -128,6 +128,42 @@ class TestGetProjectRoot:
         assert root == tmp_path
         assert (root / "mappings.json").exists()
 
+    def test_falls_through_to_dev_root_when_porto_data_has_no_mappings(self, tmp_path):
+        """When porto_data is importable but has no mappings.json there, use try 2 (dev root)."""
+        no_mappings = tmp_path / "no_mappings"
+        no_mappings.mkdir()
+        (tmp_path / "scripts").mkdir(parents=True, exist_ok=True)
+        (tmp_path / "mappings.json").write_text("{}")
+        fake_module = _fake_porto_data_module(no_mappings, has_mappings=False)
+
+        with patch.object(
+            data_files, "__file__", str(tmp_path / "scripts" / "data_files.py")
+        ), patch.dict("sys.modules", {"porto_data": fake_module}):
+            root = data_files.get_project_root()
+
+        assert root == tmp_path
+        assert (root / "mappings.json").exists()
+
+    def test_get_project_root_handles_import_error(self, tmp_path):
+        """When import porto_data raises ImportError, fall through to try 2 (dev root)."""
+        (tmp_path / "mappings.json").write_text("{}")
+        (tmp_path / "scripts").mkdir(parents=True, exist_ok=True)
+        import builtins
+
+        real_import = builtins.__import__
+
+        def raise_for_porto_data(name, *args, **kwargs):
+            if name == "porto_data":
+                raise ImportError("No module named 'porto_data'")
+            return real_import(name, *args, **kwargs)
+
+        with patch.object(
+            data_files, "__file__", str(tmp_path / "scripts" / "data_files.py")
+        ), patch("builtins.__import__", side_effect=raise_for_porto_data):
+            root = data_files.get_project_root()
+        assert root == tmp_path
+        assert (root / "mappings.json").exists()
+
 
 class TestLoadMappingsUsesProjectRoot:
     """Test that load_mappings(None) uses get_project_root to find mappings."""
