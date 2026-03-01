@@ -1,72 +1,118 @@
 # Contributing to Porto Data
 
-## Setup
+Porto Data is a data repository (JSON + schemas) with Python tooling for validation and packaging.
+
+## Quick start
 
 1. Clone the repository and enter the project directory.
 2. Run:
    ```bash
    make setup
    ```
-   This installs a Python venv, the `porto` CLI, dev dependencies (ruff, mypy, pytest, pre-commit), and pre-commit hooks.
-3. Pre-commit hooks run automatically on every commit.
+3. Start making changes. Pre-commit hooks run automatically on every commit.
 
-## Making changes
+`make setup` creates `venv`, installs dev dependencies, and installs pre-commit hooks.
 
-Data files are in `porto_data/data/`; open any `.json` to view. To edit:
+## What to edit
 
-1. Edit JSON files under `porto_data/data/` (and `porto_data/schemas/` if needed).
-2. Validate: `make validate`
-3. Format: `make format`
-4. Commit. If `metadata.json` was regenerated, stage it in the same commit: `git add porto_data/metadata.json`
-5. If the commit fails because `metadata.json` is out of date, run `make metadata`, then `git add porto_data/metadata.json` and commit again.
+- Data files: `porto_data/data/*.json`
+- Schemas: `porto_data/schemas/*.json`
+- Schema/data mapping: `porto_data/mappings.json`
+- Generated metadata: `porto_data/metadata.json` (do not edit by hand)
 
-## Validation
+## Daily workflow
 
-- `make validate` — Validate all JSON against schemas and `data_links.json`.
-- `porto validate --type schema` — Schema validation only.
-- `porto validate --type links` — Data links consistency.
-- `porto validate --type links --analyze` — Detailed links analysis.
+1. Edit data and/or schema files.
+2. Run `make validate`.
+3. Run `make format`.
+4. Commit changes.
+5. If `porto_data/metadata.json` changed, stage it in the same commit.
 
-**What links validation checks:** All products, zones, and weight tiers in links exist in their respective files; product zones and weight tiers match between `data_links.json` and `products.json`; prices exist for all zone+weight_tier combinations; available services are valid and have prices; lookup method configuration matches actual file structure; unit values (weight, dimension, price, currency) are consistent; all data files are covered in dependencies; no circular dependencies.
+If a commit fails because metadata is out of date, run:
 
-## Pre-commit hooks
+```bash
+make metadata
+git add porto_data/metadata.json
+```
 
-Hooks run on every commit and:
+## Most useful commands
 
-- Format JSON and Python
-- Validate JSON syntax and schemas
-- Lint and type-check Python
-- Regenerate `metadata.json` when data/schemas change
+### Porto CLI
 
-If `metadata.json` is regenerated but not staged, the commit is **rejected**. Always stage `porto_data/metadata.json` in the same commit as data changes.
+| Command | Description |
+| --- | --- |
+| `porto validate` | Validate everything (default) |
+| `porto validate --type schema` | Validate JSON against schemas |
+| `porto validate --type links` | Validate data links consistency |
+| `porto validate --type links --analyze` | Detailed links analysis |
+| `porto metadata` | Regenerate `metadata.json` |
 
-## metadata.json
+### Make
 
-- Auto-generated; do not edit by hand.
-- Contains checksums and canonical schema URLs for each entity.
-- Regenerated when files in `data/` or `schemas/` change.
-- Must be committed whenever it changes (same commit as the data/schema changes).
+| Command | Description |
+| --- | --- |
+| `make help` | Show all commands |
+| `make validate` | Validate schemas and links |
+| `make validate-data-links` | Validate `data_links.json` only |
+| `make format` | Format JSON and Python |
+| `make lint` | Lint JSON and Python |
+| `make type-check` | Run MyPy |
+| `make test` | Run tests |
+| `make test-cov` | Run tests with coverage |
+| `make metadata` | Regenerate `metadata.json` |
+| `make test-publish` | Build and verify npm + PyPI artifacts locally |
 
-## Schema mapping
+## Pre-commit behavior
 
-Schema-to-data mappings are in `mappings.json`. Data files use a `$schema` property with the canonical schema URL (GitHub). Validators can resolve schemas from the package paths using `metadata.json` or `mappings.json`.
+On commit, hooks can format files, run validation/lint/type-check, and regenerate `metadata.json`.
 
-## Adding or updating data
-
-- **New data**: Add to the right JSON file under `porto_data/data/`, ensure it matches the schema, run `make validate` and `make format`, then commit (with `porto_data/metadata.json` if it changed).
-- **Schema changes**: Edit the schema in `schemas/`, update data in `data/`, run `make validate`.
+If hooks modify files, re-stage and commit again.  
+If `metadata.json` is regenerated but not staged, the commit is rejected.
 
 ## Pull requests
 
-1. Fork the repo and create a branch.
-2. Run `make setup`; pre-commit will run format, lint, and validate on commit.
-3. Ensure pre-commit passes (it runs on commit).
-4. Open a PR. CI runs validation and tests.
+1. Create a branch.
+2. Run `make setup` once.
+3. Ensure commits pass pre-commit checks.
+4. Open a PR.
 
-## Releasing (version bump)
+CI runs:
 
-Before a release, bump the version in both `package.json` and `pyproject.toml`, and update `CHANGELOG.md`. Use **bump2version** so both files stay in sync: run `bump2version patch` (or `minor` / `major`) after `make setup`. See [DEVELOPMENT.md](DEVELOPMENT.md) for details and the release model.
+- JSON validation
+- Data links validation
+- Formatting checks
+- Metadata verification
+- Python lint + type-check
+- Tests with coverage upload
 
-**Notice:** Before creating a release tag (or running the publish workflow manually), ensure the **validation** workflow (`.github/workflows/validation.yml`) has passed on your branch. The publish workflow can be triggered by **tag push** `v*` or **manually** (Actions → Publish to npm and PyPI → Run workflow; version from `package.json`/`pyproject.toml`). Manual run is also useful to **re-publish the same version** if npm or PyPI failed (fix and run again without a new tag). It runs only JSON validation (`porto validate`), not tests or lint.
+## Releases
 
-For the full list of make/porto commands and project structure, see [DEVELOPMENT.md](DEVELOPMENT.md).
+### Version bump
+
+Before a release:
+
+1. Update `CHANGELOG.md`.
+2. Bump version in both `package.json` and `pyproject.toml` (recommended: `bump2version patch` / `minor` / `major`).
+3. Ensure `porto_data/metadata.json` is current and committed.
+
+### Publishing
+
+Publish workflow: `.github/workflows/publish.yml`
+
+- Trigger by tag push `v*` (normal release), or
+- Run manually via GitHub Actions (`workflow_dispatch`)
+
+Manual dispatch supports `publish_target` (`both`, `npm`, `pypi`) for retry scenarios.
+
+Packages:
+
+- GitHub repo: `gruncellka/porto-data`
+- npm: `@gruncellka/porto-data`
+- PyPI: `gruncellka-porto-data`
+
+Before tagging, make sure validation CI is green for the exact commit you will release.
+
+## CI links
+
+- Validation workflow: [validation](https://github.com/gruncellka/porto-data/actions/workflows/validation.yml)
+- Coverage: [codecov](https://codecov.io/gh/gruncellka/porto-data)
