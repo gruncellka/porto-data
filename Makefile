@@ -1,5 +1,5 @@
 .PHONY: help setup install-hooks
-.PHONY: validate-json validate-data-links lint-json format-json format-code lint-code type-check
+.PHONY: validate-json validate-data-links format-json lint-json format-code lint-code type-check
 .PHONY: validate format lint metadata test test-cov quality test-publish
 
 help:
@@ -64,11 +64,6 @@ validate: validate-json
 format: format-json format-code
 
 lint: lint-json lint-code
-
-# Backward compat: legacy pre-commit hook may call "make quality".
-# Fixes in place (format, lint); if hook modified files, re-stage and commit again.
-# For check-only (e.g. CI) use: make validate && make format CHECK=1 && make lint && make type-check
-quality: validate format lint type-check
 
 # ==========================================
 # JSON Commands
@@ -171,12 +166,6 @@ metadata:
 # But you can also run manually: make metadata
 
 # ==========================================
-# Test before publish (npm + PyPI)
-# ==========================================
-test-publish:
-	@./tests/test_publish.sh
-
-# ==========================================
 # Hooks (Usually Automatic)
 # ==========================================
 install-hooks:
@@ -188,3 +177,17 @@ install-hooks:
 		exit 1; \
 	fi
 	@echo "✓ Pre-commit hooks installed"
+
+# ==========================================
+# Quality (Backward Compat)
+# ==========================================
+# Backward compat: legacy pre-commit hook may call "make quality".
+# Fixes in place (format, lint); if hook modified files, re-stage and commit again.
+# For check-only (e.g. CI) use: make validate && make format CHECK=1 && make lint && make type-check
+quality: validate format lint type-check
+
+# ==========================================
+# Test before publish (npm + PyPI)
+# ==========================================
+test-publish:
+	@./tests/test_publish.sh
