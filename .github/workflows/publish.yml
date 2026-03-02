@@ -26,14 +26,13 @@ env:
     NODE_VERSION: '20'
     NODE_VERSION_NPM: '22'
     PYTHON_VERSION: '3.11'
-    PACKAGING_MIN_VERSION: '24.2'
 
 jobs:
     # -------------------------------------------------------------------------
     # Validate once (Python); both build jobs depend on this.
     # -------------------------------------------------------------------------
     validate:
-        name: Validate (porto)
+        name: Validate data and publishability
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
@@ -173,6 +172,7 @@ jobs:
         if: github.event_name != 'workflow_dispatch' || github.event.inputs.publish_target != 'npm'
         permissions:
             contents: read
+            id-token: write
         steps:
             - name: Download PyPI artifact
               uses: actions/download-artifact@v4
@@ -180,13 +180,10 @@ jobs:
                   name: pypi-package
                   path: dist
 
-            - name: Publish to PyPI
-              run: |
-                  python3 -m pip install --upgrade "packaging>=${{ env.PACKAGING_MIN_VERSION }}" twine
-                  python3 -m twine upload dist/*
-              env:
-                  TWINE_USERNAME: __token__
-                  TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
+            - name: Publish to PyPI (Trusted Publisher)
+              uses: pypa/gh-action-pypi-publish@release/v1
+              with:
+                  packages-dir: dist
 
     # -------------------------------------------------------------------------
     # Create GitHub Release only when both npm and PyPI publish succeeded.
