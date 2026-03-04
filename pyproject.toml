@@ -5,6 +5,9 @@ description = "Deutsche Post pricing and rules data with schema validation"
 readme = "README.md"
 license = {text = "MIT"}
 keywords = ["deutsche-post", "shipping", "postal", "pricing", "zones", "restrictions", "json", "schema"]
+authors = [
+    {name = "gruncellka"},
+]
 requires-python = ">=3.11"
 dependencies = [
     "jsonschema>=4.0.0",
