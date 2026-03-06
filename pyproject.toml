@@ -1,6 +1,6 @@
 [project]
 name = "gruncellka-porto-data"
-version = "0.2.1"
+version = "0.3.0"
 description = "Deutsche Post pricing and rules data with schema validation"
 readme = "README.md"
 license = {text = "MIT"}
