@@ -25,7 +25,7 @@ on:
 env:
     NODE_VERSION: '20'
     NODE_VERSION_NPM: '22'
-    PYTHON_VERSION: '3.11'
+    PYTHON_VERSION: '3.13'
 
 jobs:
     # -------------------------------------------------------------------------
