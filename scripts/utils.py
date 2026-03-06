@@ -14,7 +14,7 @@ Note: Data file mappings and related functions are in data_files.py
 import hashlib
 import json
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any
 
 from scripts.data_files import get_project_root, get_schema_data_mappings
 
@@ -25,7 +25,7 @@ def compute_checksum(file_path: str) -> str:
         return hashlib.sha256(f.read()).hexdigest()
 
 
-def get_all_file_checksums() -> Dict[str, str]:
+def get_all_file_checksums() -> dict[str, str]:
     """Get checksums for all schema and data files (for metadata generation)."""
     root = get_project_root()
     checksums = {}
@@ -46,7 +46,7 @@ def get_all_file_checksums() -> Dict[str, str]:
     return checksums
 
 
-def get_existing_checksums_from_metadata(metadata_path: str = "metadata.json") -> Dict[str, str]:
+def get_existing_checksums_from_metadata(metadata_path: str = "metadata.json") -> dict[str, str]:
     """Extract existing checksums from metadata.json."""
     if not Path(metadata_path).exists():
         return {}
@@ -99,7 +99,7 @@ def has_file_changes() -> bool:
     return current_checksums != existing_checksums
 
 
-def load_json(filepath: Path | str) -> Dict[str, Any]:
+def load_json(filepath: Path | str) -> dict[str, Any]:
     """Load and parse JSON file.
 
     Args:

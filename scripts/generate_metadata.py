@@ -7,11 +7,10 @@ and builds checksums for all schema/data files from mappings.json.
 """
 
 import json
-from datetime import datetime, timezone
-from pathlib import Path
-from typing import Any, Dict
-
 import tomllib
+from datetime import UTC, datetime
+from pathlib import Path
+from typing import Any
 
 from scripts.data_files import get_project_root, get_schema_data_mappings
 from scripts.utils import get_all_file_checksums
@@ -20,7 +19,7 @@ from scripts.utils import get_all_file_checksums
 DIST_NAME = "gruncellka-porto-data"
 
 
-def get_project_metadata(pyproject_path: Path) -> Dict[str, str]:
+def get_project_metadata(pyproject_path: Path) -> dict[str, str]:
     """Extract project name/version/description from pyproject.toml. Public for tests."""
     if not pyproject_path.exists():
         return _project_meta_from_package()
@@ -33,7 +32,7 @@ def get_project_metadata(pyproject_path: Path) -> Dict[str, str]:
     }
 
 
-def _project_meta_from_package() -> Dict[str, str]:
+def _project_meta_from_package() -> dict[str, str]:
     """Read name/version/description from installed package metadata."""
     from importlib.metadata import metadata as pkg_meta
 
@@ -52,13 +51,13 @@ def _project_meta_from_package() -> Dict[str, str]:
     }
 
 
-def _get_project_meta(root: Path) -> Dict[str, str]:
+def _get_project_meta(root: Path) -> dict[str, str]:
     """Project metadata from pyproject.toml (repo) or package (installed)."""
     pyproject = root.parent / "pyproject.toml"
     return get_project_metadata(pyproject) if pyproject.exists() else _project_meta_from_package()
 
 
-def _file_info(path: Path, base: Path, checksums: Dict[str, str]) -> Dict[str, Any]:
+def _file_info(path: Path, base: Path, checksums: dict[str, str]) -> dict[str, Any]:
     """Single file entry: path (relative), checksum, size."""
     rel = path.relative_to(base).as_posix()
     return {
@@ -90,14 +89,14 @@ get_file_info = _file_info
 get_schema_url = _schema_url
 
 
-def generate_metadata() -> Dict[str, Any]:
+def generate_metadata() -> dict[str, Any]:
     """Build full metadata dict (project, entities, checksums, generated_at)."""
     root = get_project_root()
     checksums = get_all_file_checksums()
     mappings = get_schema_data_mappings()
     project_meta = _get_project_meta(root)
 
-    entities: Dict[str, Dict[str, Any]] = {}
+    entities: dict[str, dict[str, Any]] = {}
     for schema_rel, data_rel in mappings.items():
         schema_path = root / schema_rel
         data_path = root / data_rel
@@ -113,7 +112,7 @@ def generate_metadata() -> Dict[str, Any]:
 
     return {
         "project": project_meta,
-        "generated_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+        "generated_at": datetime.now(UTC).isoformat().replace("+00:00", "Z"),
         "entities": entities,
         "checksums": {
             "algorithm": "SHA-256",
@@ -122,7 +121,7 @@ def generate_metadata() -> Dict[str, Any]:
     }
 
 
-def _metadata_for_compare(meta: Dict[str, Any]) -> Dict[str, Any]:
+def _metadata_for_compare(meta: dict[str, Any]) -> dict[str, Any]:
     """Copy without generated_at for equality check."""
     out = meta.copy()
     out.pop("generated_at", None)
