@@ -1,4 +1,10 @@
 {
+    "python.defaultInterpreterPath": "${workspaceFolder}/venv/bin/python",
+    "python.analysis.extraPaths": [
+        "${workspaceFolder}",
+        "${workspaceFolder}/venv/lib/python3.13/site-packages"
+    ],
+    "python.analysis.typeCheckingMode": "basic",
     "[json]": {
         "editor.tabSize": 4,
         "editor.insertSpaces": true,
@@ -18,5 +24,6 @@
             "source.fixAll.ruff": "explicit",
             "source.organizeImports.ruff": "explicit"
         }
-    }
+    },
+    "makefile.configureOnOpen": false
 }
