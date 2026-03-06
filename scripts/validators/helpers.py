@@ -36,7 +36,9 @@ def validate_unit_consistency(
                 f"Found in: {', '.join(file_names)} -> unit -> {unit_name}"
             )
     else:
-        value_str = ", ".join(f"{name}={val}" for name, val in zip(file_names, all_values))
+        value_str = ", ".join(
+            f"{name}={val}" for name, val in zip(file_names, all_values, strict=False)
+        )
         results["errors"].append(
             f"{unit_name.capitalize()} unit mismatch: {value_str}. Expected: '{expected_value}'"
         )

@@ -8,7 +8,7 @@ keywords = ["deutsche-post", "shipping", "postal", "pricing", "zones", "restrict
 authors = [
     {name = "gruncellka"},
 ]
-requires-python = ">=3.11"
+requires-python = ">=3.13"
 dependencies = [
     "jsonschema>=4.0.0",
 ]
@@ -39,7 +39,7 @@ porto_data = ["data/*.json", "schemas/*.json", "mappings.json", "metadata.json"]
 
 [tool.ruff]
 line-length = 100
-target-version = "py38"
+target-version = "py313"
 
 # Enable formatting (replaces Black)
 [tool.ruff.format]
@@ -68,7 +68,7 @@ ignore = [
 known-first-party = ["cli", "scripts"]
 
 [tool.mypy]
-python_version = "3.11"
+python_version = "3.13"
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = false

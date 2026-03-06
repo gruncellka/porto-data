@@ -49,7 +49,7 @@ setup:
 	@echo "Setting up porto-data..."
 	@python3 -m venv venv
 	@. venv/bin/activate && pip install -q -e ".[dev]"
-	@if [ -d .git ]; then \
+	@if git rev-parse --is-inside-work-tree > /dev/null 2>&1; then \
 		$(MAKE) install-hooks || echo "Warning: Could not install pre-commit hooks. Run 'make install-hooks' manually."; \
 	else \
 		echo "Skipping hook installation (not a git repository)"; \

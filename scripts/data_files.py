@@ -11,7 +11,7 @@ If mappings.json changes or is invalid, this module will fail at import time.
 
 import json
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any
 
 
 def _get_project_root() -> Path:
@@ -67,7 +67,7 @@ def get_project_root() -> Path:
     return _get_project_root()
 
 
-def load_mappings(mappings_path: str | None = None) -> Dict[str, str]:
+def load_mappings(mappings_path: str | None = None) -> dict[str, str]:
     """Load schema to data file mappings from mappings.json (source of truth).
 
     Args:
@@ -89,7 +89,7 @@ def load_mappings(mappings_path: str | None = None) -> Dict[str, str]:
 
     try:
         with open(mappings_file, encoding="utf-8") as f:
-            mappings_data: Dict[str, Any] = json.load(f)
+            mappings_data: dict[str, Any] = json.load(f)
         mappings_raw = mappings_data.get("mappings", {})
         if not mappings_raw:
             raise ValueError(f"No mappings found in {mappings_file}")
@@ -97,7 +97,7 @@ def load_mappings(mappings_path: str | None = None) -> Dict[str, str]:
             raise ValueError(f"mappings must be a dictionary, got {type(mappings_raw)}")
 
         # Validate all values are strings
-        mappings: Dict[str, str] = {}
+        mappings: dict[str, str] = {}
         for key, value in mappings_raw.items():
             if not isinstance(key, str) or not isinstance(value, str):
                 raise ValueError(
@@ -109,7 +109,7 @@ def load_mappings(mappings_path: str | None = None) -> Dict[str, str]:
         raise ValueError(f"Invalid JSON in {mappings_file}: {e}") from e
 
 
-def get_schema_data_mappings() -> Dict[str, str]:
+def get_schema_data_mappings() -> dict[str, str]:
     """Get the schema to data file mappings (alias for load_mappings)."""
     return load_mappings()
 

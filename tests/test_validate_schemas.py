@@ -139,9 +139,12 @@ class TestValidateAllSchemas:
         )
         data_file.write_text("{}")  # missing "x"
 
-        with patch("scripts.validators.schema.get_project_root", return_value=tmp_path), patch(
-            "scripts.validators.schema.get_schema_data_mappings",
-            return_value={"schemas/s.schema.json": "data/d.json"},
+        with (
+            patch("scripts.validators.schema.get_project_root", return_value=tmp_path),
+            patch(
+                "scripts.validators.schema.get_schema_data_mappings",
+                return_value={"schemas/s.schema.json": "data/d.json"},
+            ),
         ):
             result = validate_all_schemas()
 
