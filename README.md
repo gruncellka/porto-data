@@ -11,9 +11,11 @@ A comprehensive, schema-validated dataset containing Deutsche Post pricing, rest
 
 ## Install
 
-**npm** (scope: `@gruncellka`)
+**JavaScript (scope: `@gruncellka`)**
 
 ```bash
+pnpm add @gruncellka/porto-data
+yarn add @gruncellka/porto-data
 npm install @gruncellka/porto-data
 ```
 
