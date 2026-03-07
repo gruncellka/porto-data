@@ -9,9 +9,7 @@ authors = [
     {name = "gruncellka"},
 ]
 requires-python = ">=3.13"
-dependencies = [
-    "jsonschema>=4.0.0",
-]
+dependencies = []
 
 [project.optional-dependencies]
 dev = [
@@ -32,7 +30,6 @@ build-backend = "setuptools.build_meta"
 [tool.setuptools]
 # PyPI package: data only (like npm). CLI/scripts stay in repo for development and CI.
 packages = ["porto_data"]
-package-dir = {"" = "."}
 
 [tool.setuptools.package-data]
 porto_data = ["data/*.json", "schemas/*.json", "mappings.json", "metadata.json"]
