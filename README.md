@@ -11,7 +11,7 @@ A comprehensive, schema-validated dataset containing Deutsche Post pricing, rest
 
 ## Install
 
-**JavaScript (scope: `@gruncellka`)**
+**TypeScript / JavaScript (npm, scope: `@gruncellka`)**
 
 ```bash
 pnpm add @gruncellka/porto-data
@@ -19,7 +19,9 @@ yarn add @gruncellka/porto-data
 npm install @gruncellka/porto-data
 ```
 
-**PyPI (Python)**
+Use this npm package in both TypeScript and JavaScript projects.
+
+**Python (PyPI)**
 
 ```bash
 pip install gruncellka-porto-data
@@ -29,8 +31,8 @@ poetry add gruncellka-porto-data
 
 The package includes `data/`, `schemas/`, `mappings.json`, and `metadata.json` so you can validate and use the data offline. Data files reference canonical schema URLs (GitHub); schemas are shipped in the package for local validation.
 
-- **PyPI**: After `pip install`, use the `porto` CLI or import the `porto_data` package; paths are resolved automatically.
-- **npm**: Data lives under `porto_data/` (e.g. `porto_data/data/products.json`, `porto_data/schemas/`, `porto_data/mappings.json`, `porto_data/metadata.json`). Same layout in both ecosystems; the `porto_data` folder exists so the wheel includes the files correctly.
+- **Python (PyPI)**: import `porto_data` and access packaged files under `porto_data/` (`data/`, `schemas/`, `mappings.json`, `metadata.json`).
+- **TypeScript / JavaScript (npm)**: data lives under `porto_data/` (for example `porto_data/data/products.json`, `porto_data/schemas/`, `porto_data/mappings.json`, `porto_data/metadata.json`).
 
 ---
 
