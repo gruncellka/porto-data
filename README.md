@@ -23,6 +23,8 @@ npm install @gruncellka/porto-data
 
 ```bash
 pip install gruncellka-porto-data
+uv add gruncellka-porto-data
+poetry add gruncellka-porto-data
 ```
 
 The package includes `data/`, `schemas/`, `mappings.json`, and `metadata.json` so you can validate and use the data offline. Data files reference canonical schema URLs (GitHub); schemas are shipped in the package for local validation.
