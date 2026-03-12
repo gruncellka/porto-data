@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.3.1]]
+
+### Changed
+
+- Package metadata for PyPI/npm was expanded for better registry indexing and discoverability:
+    - PyPI: explicit `license` file mapping, MIT classifier, project URLs, and changelog URL in `pyproject.toml`.
+    - npm: added `author`, `homepage`, `bugs`, and included `CHANGELOG.md` in published `files`.
+- `bump2version` auto-tagging is disabled (`tag = False`) to avoid creating tags from release branches; tags are now intended to be created manually on `main`.
+- MIT `LICENSE` text was normalized to canonical ASCII quotes for tool/scanner compatibility.
+
 ## [0.3.0] - 2026-03-06
 
 ### Changed

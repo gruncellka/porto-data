@@ -1,15 +1,26 @@
 [project]
 name = "gruncellka-porto-data"
-version = "0.3.0"
+version = "0.3.1"
 description = "Deutsche Post pricing and rules data with schema validation"
 readme = "README.md"
-license = {text = "MIT"}
+license = {file = "LICENSE"}
 keywords = ["deutsche-post", "shipping", "postal", "pricing", "zones", "restrictions", "json", "schema"]
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+]
 authors = [
     {name = "gruncellka"},
 ]
 requires-python = ">=3.13"
 dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/gruncellka/porto-data"
+Repository = "https://github.com/gruncellka/porto-data"
+Issues = "https://github.com/gruncellka/porto-data/issues"
+Changelog = "https://github.com/gruncellka/porto-data/blob/main/CHANGELOG.md"
 
 [project.optional-dependencies]
 dev = [
