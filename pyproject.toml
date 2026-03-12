@@ -20,6 +20,7 @@ dependencies = []
 Homepage = "https://github.com/gruncellka/porto-data"
 Repository = "https://github.com/gruncellka/porto-data"
 Issues = "https://github.com/gruncellka/porto-data/issues"
+Changelog = "https://github.com/gruncellka/porto-data/blob/main/CHANGELOG.md"
 
 [project.optional-dependencies]
 dev = [

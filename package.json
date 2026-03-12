@@ -28,6 +28,7 @@
         "porto_data/mappings.json",
         "porto_data/metadata.json",
         "README.md",
+        "CHANGELOG.md",
         "LICENSE",
         "index.js",
         "index.d.ts"
