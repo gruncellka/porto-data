@@ -4,7 +4,7 @@
         "version": "0.3.1",
         "description": "Deutsche Post pricing and rules data with schema validation"
     },
-    "generated_at": "2026-03-14T21:49:28.458271Z",
+    "generated_at": "2026-03-14T21:57:27.633969Z",
     "entities": {
         "products": {
             "data": {
@@ -100,8 +100,8 @@
         "restrictions": {
             "data": {
                 "path": "data/restrictions.json",
-                "checksum": "72c0984a9e84965f8c7c2b80d98b46bd7fe97a54590d65abd71c8cdcd4f033a0",
-                "size": 29923
+                "checksum": "24ea53d272f13daef88b7baeb75c4ad3a82ca73b9ea860c7546dcc6599f8c04f",
+                "size": 31227
             },
             "schema": {
                 "path": "schemas/restrictions.schema.json",
