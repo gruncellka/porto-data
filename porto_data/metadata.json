@@ -4,7 +4,7 @@
         "version": "0.3.1",
         "description": "Deutsche Post pricing and rules data with schema validation"
     },
-    "generated_at": "2026-03-12T07:45:47.468116Z",
+    "generated_at": "2026-03-14T21:49:28.458271Z",
     "entities": {
         "products": {
             "data": {
@@ -35,13 +35,13 @@
         "prices": {
             "data": {
                 "path": "data/prices.json",
-                "checksum": "d1b35264b0b83f18d18c4d50a07400d9c08e1fabae519f21e6e2814292cbdb9f",
-                "size": 7377
+                "checksum": "86f5867363b06125e0f28d152ad195a799cead684b18f2dfa213790523685178",
+                "size": 7397
             },
             "schema": {
                 "path": "schemas/prices.schema.json",
-                "checksum": "832b0b21de5ee78c2ec48642a7adadff076f866778d51d1b44f784c98f22fb8b",
-                "size": 7646,
+                "checksum": "8464b3404c96ebba4649fc79455803af3ad8614884efc1b638b9d013e44ce1c1",
+                "size": 7650,
                 "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/prices.schema.json"
             }
         },
@@ -100,13 +100,13 @@
         "restrictions": {
             "data": {
                 "path": "data/restrictions.json",
-                "checksum": "525692444b4a7a0b1642be0c13dd6aba54885426451bae2eb7dbb2d9c751c44b",
-                "size": 31194
+                "checksum": "72c0984a9e84965f8c7c2b80d98b46bd7fe97a54590d65abd71c8cdcd4f033a0",
+                "size": 29923
             },
             "schema": {
                 "path": "schemas/restrictions.schema.json",
-                "checksum": "c2c873c1f0c0c973e5201772ef9c7831d59d0c0d150e3369c340a242352f7e0c",
-                "size": 12671,
+                "checksum": "83ceb199f4286e5bf505143aed05fe03ab2697d904b95f8c1832f2e1d2b697ab",
+                "size": 12629,
                 "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/restrictions.schema.json"
             }
         },

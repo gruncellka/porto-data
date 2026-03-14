@@ -191,7 +191,6 @@
                         "enum": [
                             "restricted",
                             "limited",
-                            "suspended",
                             "prohibited",
                             "severely_restricted",
                             "operational"
@@ -200,7 +199,7 @@
                     "reason": {
                         "type": "string"
                     },
-                    "restrictions": {
+                    "description": {
                         "type": "string"
                     },
                     "notes": {
