@@ -84,11 +84,11 @@
                                 "items": {
                                     "type": "object",
                                     "required": [
-                                        "price",
+                                        "amount",
                                         "effective_from"
                                     ],
                                     "properties": {
-                                        "price": {
+                                        "amount": {
                                             "type": "integer",
                                             "minimum": 0,
                                             "description": "Price in cents"
@@ -139,11 +139,11 @@
                                 "items": {
                                     "type": "object",
                                     "required": [
-                                        "price",
+                                        "amount",
                                         "effective_from"
                                     ],
                                     "properties": {
-                                        "price": {
+                                        "amount": {
                                             "type": "integer",
                                             "minimum": 0,
                                             "description": "Price in cents"

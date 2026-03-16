@@ -13,7 +13,7 @@
                 "weight_tier": "W0020",
                 "price": [
                     {
-                        "price": 95,
+                        "amount": 95,
                         "effective_from": null,
                         "effective_to": null
                     }
@@ -25,7 +25,7 @@
                 "weight_tier": "W0020",
                 "price": [
                     {
-                        "price": 110,
+                        "amount": 110,
                         "effective_from": null,
                         "effective_to": null
                     }
@@ -37,7 +37,7 @@
                 "weight_tier": "W0020",
                 "price": [
                     {
-                        "price": 110,
+                        "amount": 110,
                         "effective_from": null,
                         "effective_to": null
                     }
@@ -49,7 +49,7 @@
                 "weight_tier": "W0050",
                 "price": [
                     {
-                        "price": 110,
+                        "amount": 110,
                         "effective_from": null,
                         "effective_to": null
                     }
@@ -61,7 +61,7 @@
                 "weight_tier": "W0050",
                 "price": [
                     {
-                        "price": 170,
+                        "amount": 170,
                         "effective_from": null,
                         "effective_to": null
                     }
@@ -73,7 +73,7 @@
                 "weight_tier": "W0050",
                 "price": [
                     {
-                        "price": 170,
+                        "amount": 170,
                         "effective_from": null,
                         "effective_to": null
                     }
@@ -85,7 +85,7 @@
                 "weight_tier": "W0500",
                 "price": [
                     {
-                        "price": 180,
+                        "amount": 180,
                         "effective_from": null,
                         "effective_to": null
                     }
@@ -97,7 +97,7 @@
                 "weight_tier": "W0500",
                 "price": [
                     {
-                        "price": 370,
+                        "amount": 370,
                         "effective_from": null,
                         "effective_to": null
                     }
@@ -109,7 +109,7 @@
                 "weight_tier": "W0500",
                 "price": [
                     {
-                        "price": 370,
+                        "amount": 370,
                         "effective_from": null,
                         "effective_to": null
                     }
@@ -121,7 +121,7 @@
                 "weight_tier": "W1000",
                 "price": [
                     {
-                        "price": 290,
+                        "amount": 290,
                         "effective_from": null,
                         "effective_to": null
                     }
@@ -133,7 +133,7 @@
                 "weight_tier": "W1000",
                 "price": [
                     {
-                        "price": 700,
+                        "amount": 700,
                         "effective_from": null,
                         "effective_to": null
                     }
@@ -145,7 +145,7 @@
                 "weight_tier": "W1000",
                 "price": [
                     {
-                        "price": 700,
+                        "amount": 700,
                         "effective_from": null,
                         "effective_to": null
                     }
@@ -157,7 +157,7 @@
                 "weight_tier": "W1000",
                 "price": [
                     {
-                        "price": 270,
+                        "amount": 270,
                         "effective_from": null,
                         "effective_to": null
                     }
@@ -169,7 +169,7 @@
                 "weight_tier": "W2000",
                 "price": [
                     {
-                        "price": 355,
+                        "amount": 355,
                         "effective_from": null,
                         "effective_to": null
                     }
@@ -181,7 +181,7 @@
                 "service_id": "registered_mail",
                 "price": [
                     {
-                        "price": 265,
+                        "amount": 265,
                         "effective_from": null,
                         "effective_to": null
                     }
@@ -191,7 +191,7 @@
                 "service_id": "registered_mail_mailbox",
                 "price": [
                     {
-                        "price": 235,
+                        "amount": 235,
                         "effective_from": null,
                         "effective_to": null
                     }
@@ -201,7 +201,7 @@
                 "service_id": "registered_mail_return_receipt",
                 "price": [
                     {
-                        "price": 485,
+                        "amount": 485,
                         "effective_from": null,
                         "effective_to": null
                     }
@@ -211,7 +211,7 @@
                 "service_id": "registered_mail_personal",
                 "price": [
                     {
-                        "price": 470,
+                        "amount": 470,
                         "effective_from": null,
                         "effective_to": null
                     }
@@ -221,7 +221,7 @@
                 "service_id": "registered_mail_personal_return_receipt",
                 "price": [
                     {
-                        "price": 690,
+                        "amount": 690,
                         "effective_from": null,
                         "effective_to": null
                     }
@@ -231,7 +231,7 @@
                 "service_id": "additional_insurance_500",
                 "price": [
                     {
-                        "price": 250,
+                        "amount": 250,
                         "effective_from": null,
                         "effective_to": null
                     }
