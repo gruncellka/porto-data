@@ -2,8 +2,8 @@
     "name": "@gruncellka/porto-data",
     "version": "0.3.1",
     "description": "Deutsche Post pricing and rules data with schema validation",
-    "author": "gruncellka",
-    "license": "MIT",
+    "author": "Oleksandr Tsyba (gruncellka)",
+    "license": "Apache-2.0",
     "repository": {
         "type": "git",
         "url": "https://github.com/gruncellka/porto-data.git"
@@ -23,7 +23,8 @@
         "schema"
     ],
     "files": [
-        "porto_data/data",
+        "porto_data/global",
+        "porto_data/providers",
         "porto_data/schemas",
         "porto_data/mappings.json",
         "porto_data/metadata.json",

@@ -2,6 +2,6 @@
 
 /**
  * Entry point for @gruncellka/porto-data (npm).
- * Exports metadata; data files live under porto_data/ (data/, schemas/, mappings.json).
+ * Exports metadata; data under porto_data/ (global/ includes providers.json registry, providers/, schemas/, mappings.json).
  */
 module.exports = require('./porto_data/metadata.json')
