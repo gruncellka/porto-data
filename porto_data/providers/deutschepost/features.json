@@ -1,0 +1,42 @@
+{
+    "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/features.schema.json",
+    "file_type": "features",
+    "provider": "deutschepost",
+    "features": [
+        {
+            "id": "sendungsnummer",
+            "porto_id": "tracking_number",
+            "name": "Sendungsnummer",
+            "label": "Tracking number",
+            "description": "Unique tracking number (registered mail only)"
+        },
+        {
+            "id": "einliefernachweis",
+            "porto_id": "proof_of_mailing",
+            "name": "Einliefernachweis",
+            "label": "Proof of mailing",
+            "description": "Documentation that item was mailed"
+        },
+        {
+            "id": "unterschrift_empfanger",
+            "porto_id": "recipient_signature",
+            "name": "Empfängerunterschrift",
+            "label": "Recipient signature required",
+            "description": "Recipient must sign upon delivery"
+        },
+        {
+            "id": "rueckschein",
+            "porto_id": "return_receipt",
+            "name": "Rückschein",
+            "label": "Return receipt to sender",
+            "description": "Receipt returned to sender as proof of delivery"
+        },
+        {
+            "id": "zustellnachweis",
+            "porto_id": "proof_of_delivery",
+            "name": "Zustellnachweis",
+            "label": "Proof of delivery",
+            "description": "Derived from tracking status; not a separate API capability"
+        }
+    ]
+}

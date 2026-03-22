@@ -1,0 +1,17 @@
+{
+  "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/limits.schema.json",
+  "file_type": "limits",
+  "provider": "deutschepost",
+  "unit": {
+    "country_code": "ISO 3166-1 alpha-2",
+    "date": "ISO 8601"
+  },
+  "provider_context": {
+    "national_policy": {
+      "description": "Letter-send catalog only. Use global/restrictions.json for sanctions, embargoes, and legal destination regimes. Use zones.json for routable destinations. This file lists only Deutsche Post–documented operational blocks that specifically affect letter acceptance or delivery when you have a citable source.",
+      "notes": "Keep limits[] minimal: one row per destination (or region) where the operator materially restricts or suspends letters. Do not duplicate worldwide conflict inventories here—SDK letter gating should merge global/restrictions + this file + zone membership."
+    }
+  },
+  "limits": [],
+  "compliance_frameworks": {}
+}

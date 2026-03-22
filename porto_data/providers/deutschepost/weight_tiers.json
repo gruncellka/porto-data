@@ -1,0 +1,46 @@
+{
+  "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/weight_tiers.schema.json",
+  "file_type": "weight_tiers",
+  "provider": "deutschepost",
+  "unit": {
+    "weight": "g"
+  },
+  "weight_tiers": {
+    "W0020": {
+      "min": 0,
+      "max": 20
+    },
+    "W0050": {
+      "min": 21,
+      "max": 50
+    },
+    "W0500": {
+      "min": 51,
+      "max": 500
+    },
+    "W1000": {
+      "min": 501,
+      "max": 1000
+    },
+    "W2000": {
+      "min": 1001,
+      "max": 2000
+    },
+    "W5000": {
+      "min": 2001,
+      "max": 5000
+    },
+    "W10000": {
+      "min": 5001,
+      "max": 10000
+    },
+    "W20000": {
+      "min": 10001,
+      "max": 20000
+    },
+    "W31500": {
+      "min": 20001,
+      "max": 31500
+    }
+  }
+}

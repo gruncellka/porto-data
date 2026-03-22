@@ -1,0 +1,237 @@
+{
+  "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/prices.schema.json",
+  "file_type": "prices",
+  "provider": "laposte",
+  "unit": {
+    "price": "cents",
+    "currency": "EUR"
+  },
+  "prices": {
+    "product_prices": [
+      {
+        "product_id": "lettre_prioritaire_petit",
+        "zone": "domestic",
+        "weight_tier": "W0020",
+        "price": [
+          {
+            "amount": 149,
+            "effective_from": "2025-01-01",
+            "effective_to": null
+          }
+        ]
+      },
+      {
+        "product_id": "lettre_prioritaire_petit",
+        "zone": "zone_1_eu",
+        "weight_tier": "W0020",
+        "price": [
+          {
+            "amount": 219,
+            "effective_from": "2025-01-01",
+            "effective_to": null
+          }
+        ]
+      },
+      {
+        "product_id": "lettre_prioritaire_petit",
+        "zone": "zone_2_europe",
+        "weight_tier": "W0020",
+        "price": [
+          {
+            "amount": 229,
+            "effective_from": "2025-01-01",
+            "effective_to": null
+          }
+        ]
+      },
+      {
+        "product_id": "lettre_prioritaire_petit",
+        "zone": "world",
+        "weight_tier": "W0020",
+        "price": [
+          {
+            "amount": 289,
+            "effective_from": "2025-01-01",
+            "effective_to": null
+          }
+        ]
+      },
+      {
+        "product_id": "lettre_prioritaire_moyen",
+        "zone": "domestic",
+        "weight_tier": "W0050",
+        "price": [
+          {
+            "amount": 195,
+            "effective_from": "2025-01-01",
+            "effective_to": null
+          }
+        ]
+      },
+      {
+        "product_id": "lettre_prioritaire_moyen",
+        "zone": "zone_1_eu",
+        "weight_tier": "W0050",
+        "price": [
+          {
+            "amount": 340,
+            "effective_from": "2025-01-01",
+            "effective_to": null
+          }
+        ]
+      },
+      {
+        "product_id": "lettre_prioritaire_moyen",
+        "zone": "zone_2_europe",
+        "weight_tier": "W0050",
+        "price": [
+          {
+            "amount": 355,
+            "effective_from": "2025-01-01",
+            "effective_to": null
+          }
+        ]
+      },
+      {
+        "product_id": "lettre_prioritaire_moyen",
+        "zone": "world",
+        "weight_tier": "W0050",
+        "price": [
+          {
+            "amount": 425,
+            "effective_from": "2025-01-01",
+            "effective_to": null
+          }
+        ]
+      },
+      {
+        "product_id": "lettre_prioritaire_grand",
+        "zone": "domestic",
+        "weight_tier": "W0500",
+        "price": [
+          {
+            "amount": 495,
+            "effective_from": "2025-01-01",
+            "effective_to": null
+          }
+        ]
+      },
+      {
+        "product_id": "lettre_prioritaire_grand",
+        "zone": "zone_1_eu",
+        "weight_tier": "W0500",
+        "price": [
+          {
+            "amount": 1619,
+            "effective_from": "2025-01-01",
+            "effective_to": null
+          }
+        ]
+      },
+      {
+        "product_id": "lettre_prioritaire_grand",
+        "zone": "zone_2_europe",
+        "weight_tier": "W0500",
+        "price": [
+          {
+            "amount": 1650,
+            "effective_from": "2025-01-01",
+            "effective_to": null
+          }
+        ]
+      },
+      {
+        "product_id": "lettre_prioritaire_grand",
+        "zone": "world",
+        "weight_tier": "W0500",
+        "price": [
+          {
+            "amount": 1725,
+            "effective_from": "2025-01-01",
+            "effective_to": null
+          }
+        ]
+      },
+      {
+        "product_id": "lettre_prioritaire_max",
+        "zone": "domestic",
+        "weight_tier": "W1000",
+        "price": [
+          {
+            "amount": 890,
+            "effective_from": "2025-01-01",
+            "effective_to": null
+          }
+        ]
+      },
+      {
+        "product_id": "lettre_prioritaire_max",
+        "zone": "zone_1_eu",
+        "weight_tier": "W1000",
+        "price": [
+          {
+            "amount": 2479,
+            "effective_from": "2025-01-01",
+            "effective_to": null
+          }
+        ]
+      },
+      {
+        "product_id": "lettre_prioritaire_max",
+        "zone": "zone_2_europe",
+        "weight_tier": "W1000",
+        "price": [
+          {
+            "amount": 2520,
+            "effective_from": "2025-01-01",
+            "effective_to": null
+          }
+        ]
+      },
+      {
+        "product_id": "lettre_prioritaire_max",
+        "zone": "world",
+        "weight_tier": "W1000",
+        "price": [
+          {
+            "amount": 2650,
+            "effective_from": "2025-01-01",
+            "effective_to": null
+          }
+        ]
+      }
+    ],
+    "service_prices": [
+      {
+        "service_id": "suivi",
+        "price": [
+          {
+            "amount": 250,
+            "effective_from": "2025-01-01",
+            "effective_to": null
+          }
+        ]
+      },
+      {
+        "service_id": "recommande",
+        "price": [
+          {
+            "amount": 500,
+            "effective_from": "2025-01-01",
+            "effective_to": null
+          }
+        ]
+      },
+      {
+        "service_id": "recommande_ar",
+        "price": [
+          {
+            "amount": 850,
+            "effective_from": "2025-01-01",
+            "effective_to": null
+          }
+        ]
+      }
+    ]
+  }
+}

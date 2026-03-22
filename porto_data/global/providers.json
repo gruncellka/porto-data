@@ -1,0 +1,26 @@
+{
+    "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/providers.schema.json",
+    "providers": {
+        "deutschepost": {
+            "name": "Deutsche Post",
+            "country": "DE",
+            "timezone": "Europe/Berlin",
+            "mark_types": ["stamp"],
+            "tracking_model": "mixed"
+        },
+        "swisspost": {
+            "name": "Swiss Post",
+            "country": "CH",
+            "timezone": "Europe/Zurich",
+            "mark_types": ["stamp"],
+            "tracking_model": "mixed"
+        },
+        "laposte": {
+            "name": "La Poste",
+            "country": "FR",
+            "timezone": "Europe/Paris",
+            "mark_types": ["label"],
+            "tracking_model": "included"
+        }
+    }
+}

@@ -1,0 +1,109 @@
+{
+    "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/products.schema.json",
+    "file_type": "products",
+    "provider": "swisspost",
+    "unit": {
+        "weight": "g"
+    },
+    "products": [
+        {
+            "id": "a_post_standardbrief",
+            "porto_id": "letter_standard",
+            "name": "A-Post Standardbrief",
+            "dimension_ids": ["DL", "C6", "C5"],
+            "supported_zones": ["domestic"],
+            "effective_from": "2024-01-01",
+            "effective_to": null,
+            "mark_type": "stamp",
+            "tracking_mode": "optional"
+        },
+        {
+            "id": "a_post_midibrief",
+            "porto_id": "letter_compact",
+            "name": "A-Post Midibrief",
+            "dimension_ids": ["C5"],
+            "supported_zones": ["domestic"],
+            "effective_from": "2024-01-01",
+            "effective_to": null,
+            "mark_type": "stamp",
+            "tracking_mode": "optional"
+        },
+        {
+            "id": "a_post_grossbrief",
+            "porto_id": "letter_large",
+            "name": "A-Post Grossbrief",
+            "dimension_ids": ["C4", "B4"],
+            "supported_zones": ["domestic"],
+            "effective_from": "2024-01-01",
+            "effective_to": null,
+            "mark_type": "stamp",
+            "tracking_mode": "optional"
+        },
+        {
+            "id": "b_post_standardbrief",
+            "porto_id": "letter_standard",
+            "name": "B-Post Standardbrief",
+            "dimension_ids": ["DL", "C6", "C5"],
+            "supported_zones": ["domestic"],
+            "effective_from": "2024-01-01",
+            "effective_to": null,
+            "mark_type": "stamp",
+            "tracking_mode": "optional"
+        },
+        {
+            "id": "b_post_midibrief",
+            "porto_id": "letter_compact",
+            "name": "B-Post Midibrief",
+            "dimension_ids": ["C5"],
+            "supported_zones": ["domestic"],
+            "effective_from": "2024-01-01",
+            "effective_to": null,
+            "mark_type": "stamp",
+            "tracking_mode": "optional"
+        },
+        {
+            "id": "b_post_grossbrief",
+            "porto_id": "letter_large",
+            "name": "B-Post Grossbrief",
+            "dimension_ids": ["C4", "B4"],
+            "supported_zones": ["domestic"],
+            "effective_from": "2024-01-01",
+            "effective_to": null,
+            "mark_type": "stamp",
+            "tracking_mode": "optional"
+        },
+        {
+            "id": "international_standardbrief",
+            "porto_id": "letter_standard",
+            "name": "International Standardbrief",
+            "dimension_ids": ["DL", "C6", "C5"],
+            "supported_zones": ["zone_1_eu", "world"],
+            "effective_from": "2024-01-01",
+            "effective_to": null,
+            "mark_type": "stamp",
+            "tracking_mode": "none"
+        },
+        {
+            "id": "international_grossbrief",
+            "porto_id": "letter_large",
+            "name": "International Grossbrief",
+            "dimension_ids": ["C4", "B4"],
+            "supported_zones": ["zone_1_eu", "world"],
+            "effective_from": null,
+            "effective_to": null,
+            "mark_type": "stamp",
+            "tracking_mode": "none"
+        },
+        {
+            "id": "international_maxibrief",
+            "porto_id": "letter_extra_large",
+            "name": "International Maxibrief",
+            "dimension_ids": ["B4"],
+            "supported_zones": ["zone_1_eu", "world"],
+            "effective_from": "2024-01-01",
+            "effective_to": null,
+            "mark_type": "stamp",
+            "tracking_mode": "none"
+        }
+    ]
+}

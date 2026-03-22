@@ -1,0 +1,60 @@
+{
+  "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/services.schema.json",
+  "file_type": "services",
+  "provider": "laposte",
+  "services": [
+    {
+      "id": "suivi",
+      "porto_id": "letter_tracking",
+      "name": "Option Suivi",
+      "label": "Letter tracking add-on",
+      "description": "Optional tracking for eligible letter products when purchased online (e.g. Mon timbre en ligne). Not all formats or destinations support it.",
+      "features": ["tracking_number"],
+      "enables_tracking": true,
+      "online_supported": true,
+      "integration_supported": {
+        "mon_timbre_en_ligne": true
+      },
+      "supported_zones": ["domestic", "zone_1_eu", "zone_2_europe", "world"]
+    },
+    {
+      "id": "recommande",
+      "porto_id": "registered_mail",
+      "name": "Lettre recommandée",
+      "label": "Registered letter",
+      "description": "Recommandé with proof of mailing and tracking; optional avis de réception depending on purchase path. Online purchase where La Poste offers it.",
+      "features": [
+        "tracking_number",
+        "proof_of_mailing",
+        "recipient_signature",
+        "proof_of_delivery"
+      ],
+      "enables_tracking": true,
+      "online_supported": true,
+      "integration_supported": {
+        "mon_timbre_en_ligne": true
+      },
+      "supported_zones": ["domestic", "zone_1_eu", "zone_2_europe", "world"]
+    },
+    {
+      "id": "recommande_ar",
+      "porto_id": "registered_mail_return_receipt",
+      "name": "Lettre recommandée avec avis de réception",
+      "label": "Registered letter with return receipt",
+      "description": "Recommandé with return receipt (AR). Availability varies by destination; order online only when the flow exposes the option.",
+      "features": [
+        "tracking_number",
+        "proof_of_mailing",
+        "recipient_signature",
+        "return_receipt",
+        "proof_of_delivery"
+      ],
+      "enables_tracking": true,
+      "online_supported": true,
+      "integration_supported": {
+        "mon_timbre_en_ligne": true
+      },
+      "supported_zones": ["domestic", "zone_1_eu", "zone_2_europe", "world"]
+    }
+  ]
+}

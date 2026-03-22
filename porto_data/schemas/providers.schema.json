@@ -1,0 +1,72 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/providers.schema.json",
+  "title": "Provider registry",
+  "description": "Domain registry for postal providers. Folder providers/<id>/ is implementation storage only; authoritative ids and coarse metadata live here. Product-level mark_type and tracking_mode remain the execution source of truth.",
+  "type": "object",
+  "required": [
+    "providers"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "format": "uri"
+    },
+    "providers": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "name",
+          "country",
+          "mark_types",
+          "tracking_model"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Display name"
+          },
+          "country": {
+            "type": "string",
+            "pattern": "^[A-Z]{2}$",
+            "description": "Primary country (ISO 3166-1 alpha-2)"
+          },
+          "timezone": {
+            "type": "string",
+            "minLength": 3,
+            "pattern": "^[A-Za-z0-9_+-]+(/[A-Za-z0-9_+-]+)+$",
+            "description": "IANA time zone for this provider's operational calendar: product, service, and price effective_from/effective_to, and provider limits rows when no framework-level timezone applies."
+          },
+          "mark_types": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "enum": [
+                "stamp",
+                "label"
+              ]
+            },
+            "description": "Coarse overview; exact execution comes from each product"
+          },
+          "tracking_model": {
+            "type": "string",
+            "enum": [
+              "mixed",
+              "included",
+              "none",
+              "optional"
+            ],
+            "description": "Coarse provider-level tracking posture (UI/docs/policy); products define tracking_mode precisely"
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": false
+}

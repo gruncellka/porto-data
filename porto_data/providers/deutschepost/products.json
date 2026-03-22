@@ -1,0 +1,87 @@
+{
+  "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/products.schema.json",
+  "file_type": "products",
+  "provider": "deutschepost",
+    "unit": {
+        "weight": "g"
+    },
+  "products": [
+    {
+      "id": "standardbrief",
+      "porto_id": "letter_standard",
+      "name": "Standardbrief",
+      "dimension_ids": [
+        "DL",
+        "C6"
+      ],
+      "supported_zones": [
+        "domestic",
+        "zone_1_eu",
+        "zone_2_europe",
+        "world"
+      ],
+      "weight_tier": "W0020",
+      "effective_from": "2025-01-01",
+      "effective_to": null,
+      "mark_type": "stamp",
+      "tracking_mode": "optional"
+    },
+    {
+      "id": "kompaktbrief",
+      "porto_id": "letter_compact",
+      "name": "Kompaktbrief",
+      "dimension_ids": [
+        "C5"
+      ],
+      "supported_zones": [
+        "domestic",
+        "zone_1_eu",
+        "zone_2_europe",
+        "world"
+      ],
+      "weight_tier": "W0050",
+      "effective_from": "2025-01-01",
+      "effective_to": null,
+      "mark_type": "stamp",
+      "tracking_mode": "optional"
+    },
+    {
+      "id": "grossbrief",
+      "porto_id": "letter_large",
+      "name": "Gro\u00dfbrief",
+      "dimension_ids": [
+        "C4"
+      ],
+      "supported_zones": [
+        "domestic",
+        "zone_1_eu",
+        "zone_2_europe",
+        "world"
+      ],
+      "weight_tier": "W0500",
+      "effective_from": "2025-01-01",
+      "effective_to": null,
+      "mark_type": "stamp",
+      "tracking_mode": "optional"
+    },
+    {
+      "id": "maxibrief",
+      "porto_id": "letter_extra_large",
+      "name": "Maxibrief",
+      "dimension_ids": [
+        "B4"
+      ],
+      "supported_zones": [
+        "domestic",
+        "zone_1_eu",
+        "zone_2_europe",
+        "world"
+      ],
+      "weight_tier": "W1000",
+      "effective_from": "2025-01-01",
+      "effective_to": null,
+      "mark_type": "stamp",
+      "tracking_mode": "optional"
+    }
+  ]
+}

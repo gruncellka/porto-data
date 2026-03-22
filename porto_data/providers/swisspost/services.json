@@ -1,0 +1,21 @@
+{
+    "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/services.schema.json",
+    "file_type": "services",
+    "provider": "swisspost",
+    "services": [
+        {
+            "id": "a_mail_plus",
+            "porto_id": "letter_tracking",
+            "name": "A-Mail Plus",
+            "label": "Tracked letter with next-day domestic delivery (A-Mail Plus)",
+            "description": "Premium domestic letter with electronic tracking; orderable online where Swiss Post offers it (e.g. WebStamp). International letters in this catalog use untracked products unless the operator adds a supported service.",
+            "features": ["tracking_number"],
+            "enables_tracking": true,
+            "online_supported": true,
+            "integration_supported": {
+                "webstamp": true
+            },
+            "supported_zones": ["domestic"]
+        }
+    ]
+}

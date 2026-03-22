@@ -1,0 +1,78 @@
+{
+  "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/products.schema.json",
+  "file_type": "products",
+  "provider": "laposte",
+  "unit": {
+    "weight": "g"
+  },
+  "products": [
+    {
+      "id": "lettre_prioritaire_petit",
+      "porto_id": "letter_standard",
+      "name": "Lettre prioritaire — petit format (DL / C6)",
+      "dimension_ids": ["DL", "C6"],
+      "supported_zones": [
+        "domestic",
+        "zone_1_eu",
+        "zone_2_europe",
+        "world"
+      ],
+      "weight_tier": "W0020",
+      "effective_from": "2025-01-01",
+      "effective_to": null,
+      "mark_type": "label",
+      "tracking_mode": "optional"
+    },
+    {
+      "id": "lettre_prioritaire_moyen",
+      "porto_id": "letter_compact",
+      "name": "Lettre prioritaire — format moyen (C5)",
+      "dimension_ids": ["C5"],
+      "supported_zones": [
+        "domestic",
+        "zone_1_eu",
+        "zone_2_europe",
+        "world"
+      ],
+      "weight_tier": "W0050",
+      "effective_from": "2025-01-01",
+      "effective_to": null,
+      "mark_type": "label",
+      "tracking_mode": "optional"
+    },
+    {
+      "id": "lettre_prioritaire_grand",
+      "porto_id": "letter_large",
+      "name": "Lettre prioritaire — grand format (C4)",
+      "dimension_ids": ["C4"],
+      "supported_zones": [
+        "domestic",
+        "zone_1_eu",
+        "zone_2_europe",
+        "world"
+      ],
+      "weight_tier": "W0500",
+      "effective_from": "2025-01-01",
+      "effective_to": null,
+      "mark_type": "label",
+      "tracking_mode": "optional"
+    },
+    {
+      "id": "lettre_prioritaire_max",
+      "porto_id": "letter_extra_large",
+      "name": "Lettre prioritaire — très grand format (B4)",
+      "dimension_ids": ["B4"],
+      "supported_zones": [
+        "domestic",
+        "zone_1_eu",
+        "zone_2_europe",
+        "world"
+      ],
+      "weight_tier": "W1000",
+      "effective_from": "2025-01-01",
+      "effective_to": null,
+      "mark_type": "label",
+      "tracking_mode": "optional"
+    }
+  ]
+}

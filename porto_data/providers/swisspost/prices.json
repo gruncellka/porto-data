@@ -1,0 +1,409 @@
+{
+    "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/prices.schema.json",
+    "file_type": "prices",
+    "provider": "swisspost",
+    "unit": {
+        "price": "cents",
+        "currency": "CHF"
+    },
+    "prices": {
+        "product_prices": [
+            {
+                "product_id": "a_post_standardbrief",
+                "zone": "domestic",
+                "weight_tier": "W0020",
+                "price": [
+                    {
+                        "amount": 120,
+                        "effective_from": "2024-01-01",
+                        "effective_to": null
+                    }
+                ]
+            },
+            {
+                "product_id": "a_post_standardbrief",
+                "zone": "domestic",
+                "weight_tier": "W0050",
+                "price": [
+                    {
+                        "amount": 120,
+                        "effective_from": "2024-01-01",
+                        "effective_to": null
+                    }
+                ]
+            },
+            {
+                "product_id": "a_post_standardbrief",
+                "zone": "domestic",
+                "weight_tier": "W0100",
+                "price": [
+                    {
+                        "amount": 120,
+                        "effective_from": "2024-01-01",
+                        "effective_to": null
+                    }
+                ]
+            },
+            {
+                "product_id": "a_post_midibrief",
+                "zone": "domestic",
+                "weight_tier": "W0250",
+                "price": [
+                    {
+                        "amount": 170,
+                        "effective_from": "2024-01-01",
+                        "effective_to": null
+                    }
+                ]
+            },
+            {
+                "product_id": "a_post_midibrief",
+                "zone": "domestic",
+                "weight_tier": "W0500",
+                "price": [
+                    {
+                        "amount": 170,
+                        "effective_from": "2024-01-01",
+                        "effective_to": null
+                    }
+                ]
+            },
+            {
+                "product_id": "a_post_grossbrief",
+                "zone": "domestic",
+                "weight_tier": "W0250",
+                "price": [
+                    {
+                        "amount": 250,
+                        "effective_from": "2024-01-01",
+                        "effective_to": null
+                    }
+                ]
+            },
+            {
+                "product_id": "a_post_grossbrief",
+                "zone": "domestic",
+                "weight_tier": "W0500",
+                "price": [
+                    {
+                        "amount": 250,
+                        "effective_from": "2024-01-01",
+                        "effective_to": null
+                    }
+                ]
+            },
+            {
+                "product_id": "a_post_grossbrief",
+                "zone": "domestic",
+                "weight_tier": "W1000",
+                "price": [
+                    {
+                        "amount": 250,
+                        "effective_from": "2024-01-01",
+                        "effective_to": null
+                    }
+                ]
+            },
+            {
+                "product_id": "b_post_standardbrief",
+                "zone": "domestic",
+                "weight_tier": "W0020",
+                "price": [
+                    {
+                        "amount": 100,
+                        "effective_from": "2024-01-01",
+                        "effective_to": null
+                    }
+                ]
+            },
+            {
+                "product_id": "b_post_standardbrief",
+                "zone": "domestic",
+                "weight_tier": "W0050",
+                "price": [
+                    {
+                        "amount": 100,
+                        "effective_from": "2024-01-01",
+                        "effective_to": null
+                    }
+                ]
+            },
+            {
+                "product_id": "b_post_standardbrief",
+                "zone": "domestic",
+                "weight_tier": "W0100",
+                "price": [
+                    {
+                        "amount": 100,
+                        "effective_from": "2024-01-01",
+                        "effective_to": null
+                    }
+                ]
+            },
+            {
+                "product_id": "b_post_midibrief",
+                "zone": "domestic",
+                "weight_tier": "W0250",
+                "price": [
+                    {
+                        "amount": 140,
+                        "effective_from": "2024-01-01",
+                        "effective_to": null
+                    }
+                ]
+            },
+            {
+                "product_id": "b_post_midibrief",
+                "zone": "domestic",
+                "weight_tier": "W0500",
+                "price": [
+                    {
+                        "amount": 140,
+                        "effective_from": "2024-01-01",
+                        "effective_to": null
+                    }
+                ]
+            },
+            {
+                "product_id": "b_post_grossbrief",
+                "zone": "domestic",
+                "weight_tier": "W0250",
+                "price": [
+                    {
+                        "amount": 200,
+                        "effective_from": "2024-01-01",
+                        "effective_to": null
+                    }
+                ]
+            },
+            {
+                "product_id": "b_post_grossbrief",
+                "zone": "domestic",
+                "weight_tier": "W0500",
+                "price": [
+                    {
+                        "amount": 200,
+                        "effective_from": "2024-01-01",
+                        "effective_to": null
+                    }
+                ]
+            },
+            {
+                "product_id": "b_post_grossbrief",
+                "zone": "domestic",
+                "weight_tier": "W1000",
+                "price": [
+                    {
+                        "amount": 200,
+                        "effective_from": "2024-01-01",
+                        "effective_to": null
+                    }
+                ]
+            },
+            {
+                "product_id": "international_standardbrief",
+                "zone": "zone_1_eu",
+                "weight_tier": "W0020",
+                "price": [
+                    {
+                        "amount": 190,
+                        "effective_from": "2024-01-01",
+                        "effective_to": null
+                    }
+                ]
+            },
+            {
+                "product_id": "international_standardbrief",
+                "zone": "world",
+                "weight_tier": "W0020",
+                "price": [
+                    {
+                        "amount": 250,
+                        "effective_from": "2024-01-01",
+                        "effective_to": null
+                    }
+                ]
+            },
+            {
+                "product_id": "international_standardbrief",
+                "zone": "zone_1_eu",
+                "weight_tier": "W0050",
+                "price": [
+                    {
+                        "amount": 310,
+                        "effective_from": "2024-01-01",
+                        "effective_to": null
+                    }
+                ]
+            },
+            {
+                "product_id": "international_standardbrief",
+                "zone": "world",
+                "weight_tier": "W0050",
+                "price": [
+                    {
+                        "amount": 310,
+                        "effective_from": "2024-01-01",
+                        "effective_to": null
+                    }
+                ]
+            },
+            {
+                "product_id": "international_standardbrief",
+                "zone": "zone_1_eu",
+                "weight_tier": "W0100",
+                "price": [
+                    {
+                        "amount": 430,
+                        "effective_from": "2024-01-01",
+                        "effective_to": null
+                    }
+                ]
+            },
+            {
+                "product_id": "international_standardbrief",
+                "zone": "world",
+                "weight_tier": "W0100",
+                "price": [
+                    {
+                        "amount": 430,
+                        "effective_from": "2024-01-01",
+                        "effective_to": null
+                    }
+                ]
+            },
+            {
+                "product_id": "international_grossbrief",
+                "zone": "zone_1_eu",
+                "weight_tier": "W0250",
+                "price": [
+                    {
+                        "amount": 750,
+                        "effective_from": "2024-01-01",
+                        "effective_to": null
+                    }
+                ]
+            },
+            {
+                "product_id": "international_grossbrief",
+                "zone": "world",
+                "weight_tier": "W0250",
+                "price": [
+                    {
+                        "amount": 750,
+                        "effective_from": "2024-01-01",
+                        "effective_to": null
+                    }
+                ]
+            },
+            {
+                "product_id": "international_grossbrief",
+                "zone": "zone_1_eu",
+                "weight_tier": "W0500",
+                "price": [
+                    {
+                        "amount": 1200,
+                        "effective_from": "2024-01-01",
+                        "effective_to": null
+                    }
+                ]
+            },
+            {
+                "product_id": "international_grossbrief",
+                "zone": "world",
+                "weight_tier": "W0500",
+                "price": [
+                    {
+                        "amount": 1200,
+                        "effective_from": "2024-01-01",
+                        "effective_to": null
+                    }
+                ]
+            },
+            {
+                "product_id": "international_maxibrief",
+                "zone": "zone_1_eu",
+                "weight_tier": "W0500",
+                "price": [
+                    {
+                        "amount": 1300,
+                        "effective_from": "2024-01-01",
+                        "effective_to": null
+                    }
+                ]
+            },
+            {
+                "product_id": "international_maxibrief",
+                "zone": "world",
+                "weight_tier": "W0500",
+                "price": [
+                    {
+                        "amount": 1300,
+                        "effective_from": "2024-01-01",
+                        "effective_to": null
+                    }
+                ]
+            },
+            {
+                "product_id": "international_maxibrief",
+                "zone": "zone_1_eu",
+                "weight_tier": "W1000",
+                "price": [
+                    {
+                        "amount": 1900,
+                        "effective_from": "2024-01-01",
+                        "effective_to": null
+                    }
+                ]
+            },
+            {
+                "product_id": "international_maxibrief",
+                "zone": "world",
+                "weight_tier": "W1000",
+                "price": [
+                    {
+                        "amount": 1900,
+                        "effective_from": "2024-01-01",
+                        "effective_to": null
+                    }
+                ]
+            },
+            {
+                "product_id": "international_maxibrief",
+                "zone": "zone_1_eu",
+                "weight_tier": "W2000",
+                "price": [
+                    {
+                        "amount": 2600,
+                        "effective_from": "2024-01-01",
+                        "effective_to": null
+                    }
+                ]
+            },
+            {
+                "product_id": "international_maxibrief",
+                "zone": "world",
+                "weight_tier": "W2000",
+                "price": [
+                    {
+                        "amount": 2600,
+                        "effective_from": "2024-01-01",
+                        "effective_to": null
+                    }
+                ]
+            }
+        ],
+        "service_prices": [
+            {
+                "service_id": "a_mail_plus",
+                "price": [
+                    {
+                        "amount": 290,
+                        "effective_from": "2024-01-01",
+                        "effective_to": null
+                    }
+                ]
+            }
+        ]
+    }
+}

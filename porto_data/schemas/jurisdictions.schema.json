@@ -1,0 +1,71 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/jurisdictions.schema.json",
+  "title": "Jurisdictions (membership reference)",
+  "description": "EU and UN member-state lists (ISO 3166-1 alpha-2) for resolving restriction framework jurisdiction. File: global/jurisdictions.json (`file_type`: jurisdictions; required object key `jurisdictions`).",
+  "type": "object",
+  "required": ["file_type", "unit", "jurisdictions"],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "format": "uri"
+    },
+    "file_type": {
+      "type": "string",
+      "const": "jurisdictions"
+    },
+    "description": {
+      "type": "string"
+    },
+    "unit": {
+      "type": "object",
+      "description": "Human-readable encoding hints for this file and related porto-data fields. Required: country_code (alpha-2 in jurisdictions.eu / jurisdictions.un). Other keys are optional documentation (e.g. region_code, date); values are short standard names.",
+      "required": ["country_code"],
+      "properties": {
+        "country_code": {
+          "type": "string",
+          "const": "ISO 3166-1 alpha-2"
+        },
+        "region_code": {
+          "type": "string",
+          "const": "ISO 3166-2"
+        },
+        "date": {
+          "type": "string",
+          "const": "ISO 8601"
+        }
+      },
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "jurisdictions": {
+      "type": "object",
+      "description": "Per-bloc membership lists: keys `eu` and `un` match symbolic restriction jurisdictions (EU, UN).",
+      "required": ["eu", "un"],
+      "properties": {
+        "eu": {
+          "type": "array",
+          "description": "EU member states (ISO 3166-1 alpha-2); subset of `un`",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Z]{2}$"
+          }
+        },
+        "un": {
+          "type": "array",
+          "description": "UN member states (193) ISO 3166-1 alpha-2",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Z]{2}$"
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
