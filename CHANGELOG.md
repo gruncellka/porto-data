@@ -2,15 +2,61 @@
 
 All notable changes to this project will be documented in this file.
 
-## [0.3.1]
+## [Unreleased]
+
+### BREAKING
+
+- **Data layout:** The single flat bundle **`porto_data/data/*.json`** is removed. Data now lives under **`porto_data/global/`** (shared across providers) and **`porto_data/providers/<provider_id>/`** (per operator). Tooling and SDKs must resolve paths via **`mappings.json`** and **`metadata.json`**—do not assume legacy paths such as `porto_data/data/products.json`.
+- **`data_links.json` / `data_links.schema.json` removed.** Cross-file dependencies, product **links**, **lookup_rules**, and **global_settings** are defined only in each provider’s **`graph.json`**, validated by **`schemas/graph.schema.json`**, with **`file_type`: `graph`**. (Previously named **`resolution_graph`** / **`resolution_graph.schema.json`** / `file_type`: `resolution_graph`.)
+- **Provider registry:** **`global/providers.json`** is authoritative for which provider ids exist. Directory names under **`providers/`** and keys in **`mappings.json`** must match that registry.
+- **Jurisdictions reference:** **`global/jurisdictions.json`** must use **`file_type`: `jurisdictions`** and a top-level **`jurisdictions`** object with keys **`eu`** and **`un`** (ISO 3166-1 alpha-2 member lists; same tokens as symbolic **`EU`** / **`UN`** jurisdiction). Older shapes (**`countries`**, **`jurisdiction_reference`** `file_type`, top-level **`groups`**, or legacy **`eu_member_states`** / **`un_member_states`**) are not supported by current porto-data contracts or downstream loaders.
+- **Features catalog:** **`global/features.json` removed.** Feature definitions live under **`providers/<provider_id>/features.json`** (same resolution pattern as products/services). Each file lists only ids that operator supports; **`name`** is operator-native text, **`label`** is English for unified tooling. **`provider`** on the document is required. Loaders resolve via **`mappings.json`** / **`metadata.json`**—do not assume a global features path.
+
+### Added
+
+- **`global/providers.json`** + **`schemas/providers.schema.json`** — provider ids, display metadata, optional IANA **`timezone`** (operational calendar for prices/services/limits where row-level timezone is absent).
+- **`global/jurisdictions.json`** + **`schemas/jurisdictions.schema.json`** — EU/UN ISO 3166-1 alpha-2 lists under **`jurisdictions.eu`** and **`jurisdictions.un`**; **`unit`** documents encodings. Regenerate via **`scripts/generate_countries_reference.py`**.
+- **`providers/<id>/limits.json`** + **`schemas/limits.schema.json`** — operator **operational** limits (conflict, infrastructure, internal policy) and **`compliance_frameworks`** with required framework **`timezone`** (must match **`global/providers.json`** for that provider). SDKs merge limits with global **`restrictions.json`** in one restriction surface.
+- **`providers/<id>/graph.json`** + **`schemas/graph.schema.json`** — dependency DAG, **links** (product × zone × weight_tier), **lookup_rules**, **global_settings** (e.g. **available_services**). All providers in **`mappings.json`** declare **`jurisdictions.json`** and **`limits`** (may be empty) in **dependencies** so load order is consistent.
+- **Multi-provider datasets** in repo layout: **`deutschepost`**, **`swisspost`**, **`laposte`** (per **`mappings.json`**); Swiss Post and La Poste ship minimal/empty **limits** where applicable.
+- **Validation:** **`porto validate --type registry`** and **`scripts/validators/providers_registry.py`** — checks **`global/providers.json`** vs provider folders, **mappings**, and **metadata** manifest.
+- **Scripts:** **`scripts/format_json_file.py`**; **`scripts/generate_countries_reference.py`** for **jurisdictions** payloads.
+- **Tests:** provider registry, countries/jurisdictions generator, execution-semantics coverage, expanded **`test_data_files`** for mappings-driven paths.
 
 ### Changed
 
-- Package metadata for PyPI/npm was expanded for better registry indexing and discoverability:
-    - PyPI: explicit `license` file mapping, MIT classifier, project URLs, and changelog URL in `pyproject.toml`.
-    - npm: added `author`, `homepage`, `bugs`, and included `CHANGELOG.md` in published `files`.
-- `bump2version` auto-tagging is disabled (`tag = False`) to avoid creating tags from release branches; tags are now intended to be created manually on `main`.
-- MIT `LICENSE` text was normalized to canonical ASCII quotes for tool/scanner compatibility.
+- **`services.json`:** **`porto_id`** (unified semantic), **`label`**, provider **`id`**, native **`name`**. Deutsche Post **`id`** e.g. `einschreiben` / `einschreiben_einwurf` with **`porto_id`** `registered_mail` / `registered_mail_mailbox`; Swiss **`a_mail_plus`** / La Poste **`suivi`** share **`porto_id`** `letter_tracking`. **Graph `available_services`** and **`prices.service_id`** use **native `id`** only (mailbox row was aligned from legacy `registered_mail_mailbox`); SDK **`get_service_price`** accepts **`id`** or **`porto_id`**. Validation still allows either token where references are resolved.
+- **Swiss Post `products.json`:** provider **`id`** values renamed for clarity (`letter_a_post_*`, `letter_b_post_*`, `letter_international_*`); **`porto_id`** unchanged for cross-provider resolution. **`graph.json` `links`** and **`prices.json` `product_id`** updated to match.
+- **Features (`providers/*/features.json`):** provider-scoped **`id`** (e.g. `sendungsnummer`, `einliefernachweis`, `numero_suivi`) distinct from unified **`porto_id`**; **`services[].features`** may still list **`porto_id`** strings (cross-file validation accepts either).
+- **`products.json` `unit`:** **`dimension` removed**; only **`weight`** (`g`) remains. Envelope/format semantics stay on **`dimension_ids`** + **`global/dimensions.json`** (linear **mm** there). Graph **`validate_dimension_units`** compares **graph** and **dimensions** only.
+- **`limits.json`:** optional top-level **`operator_context`** renamed to **`provider_context`** (aligns with `provider` id and “provider limits” wording).
+- **Features catalog:** each feature row requires **`porto_id`** (unified Porto capability id, stable across providers) alongside **`id`** (provider-scoped key in that file). **`services[].features`** may reference either **`id`** or **`porto_id`**. SDK cross-file validation and feature lookup accept both.
+- **`products.schema.json` `porto_id` description** — documents why **`porto_id`** often matches **`id`** for some operators and differs for others.
+- **`jurisdictions` membership keys:** **`eu`** / **`un`** replace **`eu_member_states`** / **`un_member_states`** so data keys match symbolic **`EU`** / **`UN`** jurisdiction tokens for resolvers.
+- **`metadata.json`** — generated for **global** + **per-provider** entities (paths, checksums, schema URLs). Entity keys align with logical names (**`graph`**, **`jurisdictions`**, **`limits`**, …).
+- **`scripts/data_files.py`** — resolves file names and paths from **`mappings.json`**; constants such as **`GRAPH_FILE`**; provider-aware **`get_data_file_path`**; required-entity checks tied to mappings.
+- **Graph validation** — class **`GraphValidator`**, entrypoint **`validate_graph`**; Makefile target **`validate-graph`**; pre-commit hook **`validate-graph`** (triggers on **`graph.json`** and core provider data files). Deprecated aliases **`ResolutionGraphValidator`** / **`validate_resolution_graph`** remain in **`scripts.validators.links`** for one release cycle.
+- **`global/restrictions.json` / `schemas/restrictions.schema.json`** — legal/sanctions-style rows only; **`compliance_frameworks`** are metadata (**`jurisdiction`**, scope, **`legal_reference`**, optional **`timezone`** for row **effective\_\*** interpretation). **Framework-level `effective_from` / `effective_to` removed** from global restrictions (activation is **row-level** only). Removed top-level **`denied_party_screening`** and related **`sources`** noise. **`applicability`** / operator pseudo-jurisdiction **`DP`** removed; operator rules live under **`limits.json`** only. **`jurisdiction`** values use **`pattern: ^[A-Z]{2}$`** (blocs and states) instead of a closed enum.
+- **`SANCTIONS_VE` (and similar):** **`jurisdiction`** expressed as **`EU`** where EU-only; timezone on frameworks is a **calendar anchor**, not jurisdiction.
+- **Deutsche Post operational** restrictions/frameworks that previously lived under global **`applicability.providers`** moved to **`providers/deutschepost/limits.json`**.
+- **`sanctions_information`:** removed optional **`de_national_postal_law`** and framework **`POSTG_8`** (not destination-verifiable for letter checks); **`provider_context`** in **limits** (formerly `operator_context`) updated accordingly.
+- **Shared schemas** (**`dimensions`**, **`features`**, **`prices`**, **`products`**, **`services`**, **`weight_tiers`**, **`zones`**) — revised for execution fields (**`mark_type`**, **`tracking_mode`**), effective dating, and multi-provider consistency where applicable.
+- **`README.md`** — documents **global** vs **providers**, **jurisdictions**, **graph**, **limits**, registry, and standards (jurisdiction vs timezone).
+- **`LICENSE`** — full **Apache-2.0** license text.
+- **Package metadata** (PyPI/npm): expanded URLs, classifiers, and published **`CHANGELOG.md`** reference where configured.
+
+### Removed
+
+- **`porto_data/data/`** directory and its nine legacy JSON files.
+- **`data_links`** schema and data file.
+
+### Tooling
+
+- **Python** baseline remains **`>=3.13`** (see **[0.3.0]**).
+- **`bump2version`:** `tag = False` (tags created manually on **`main`**).
+- **CLI `validate`:** default run includes **schema**, **registry**, and **graph** validation.
+
+---
 
 ## [0.3.0] - 2026-03-06
 
@@ -115,7 +161,7 @@ All notable changes to this project will be documented in this file.
 - `weight_tiers.json` - Weight brackets for pricing
 - `dimensions.json` - Size limits and specifications
 - `restrictions.json` - Shipping restrictions and compliance frameworks
-- `features.json` - Service features with German/English names
+- `providers/<id>/features.json` - Supported service features (stable ids; native `name`, English `label`)
 - `data_links.json` - Cross-references between data files
 
 ### Technical
