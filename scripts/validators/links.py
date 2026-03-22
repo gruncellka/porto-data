@@ -1,4 +1,4 @@
-"""DataLinksValidator - validates data_links.json against all data files.
+"""GraphValidator - validates graph.json against all data files.
 
 This module is organized into clear sections:
 1. Constants and imports
@@ -17,14 +17,18 @@ from pathlib import Path
 from typing import Any
 
 from scripts.data_files import (
-    DATA_LINKS_FILE,
+    GRAPH_FILE,
+    DEFAULT_PROVIDER,
     DIMENSIONS_FILE,
+    GLOBAL_DIR,
+    PROVIDERS_DIR,
     PRICES_FILE,
     PRODUCTS_FILE,
     SERVICES_FILE,
     WEIGHT_TIERS_FILE,
     ZONES_FILE,
     get_data_files,
+    get_project_root,
 )
 from scripts.utils import load_json
 from scripts.validators.base import ValidationResults
@@ -43,12 +47,12 @@ EXPECTED_CURRENCY = "EUR"
 
 
 # ============================================================================
-# DataLinksValidator Class
+# GraphValidator Class
 # ============================================================================
 
 
-class DataLinksValidator:
-    """Validates data_links.json against all data files.
+class GraphValidator:
+    """Validates graph.json against all data files.
 
     The validator checks:
     - Lookup method configuration
@@ -60,22 +64,38 @@ class DataLinksValidator:
     - Circular dependencies
     """
 
-    def __init__(self, data_dir: Path) -> None:
-        """Initialize validator with data directory.
+    def __init__(
+        self,
+        data_dir: Path | None = None,
+        project_root: Path | None = None,
+        provider: str | None = None,
+    ) -> None:
+        """Initialize validator with data directory or project root + provider.
 
         Args:
-            data_dir: Path to the data directory containing JSON files.
+            data_dir: Path to directory containing all JSON files (legacy flat layout).
+            project_root: Path to porto_data root (with global/, providers/).
+            provider: Provider ID when using project_root (default: deutschepost).
 
-        Raises:
-            FileNotFoundError: If data directory does not exist.
-            ValueError: If path is not a directory.
+        When data_dir is provided, uses legacy mode (all files in one dir).
+        When project_root is provided, loads from global/ and providers/{provider}/.
         """
-        if not data_dir.exists():
-            raise FileNotFoundError(f"Data directory does not exist: {data_dir}")
-        if not data_dir.is_dir():
-            raise ValueError(f"Path is not a directory: {data_dir}")
-
-        self.data_dir = data_dir
+        if data_dir is not None:
+            if not data_dir.exists():
+                raise FileNotFoundError(f"Data directory does not exist: {data_dir}")
+            if not data_dir.is_dir():
+                raise ValueError(f"Path is not a directory: {data_dir}")
+            self.data_dir = data_dir
+            self.provider_dir = data_dir
+            self.global_dir = data_dir
+        else:
+            root = project_root or get_project_root()
+            prov = provider or DEFAULT_PROVIDER
+            self.data_dir = root / PROVIDERS_DIR / prov
+            self.provider_dir = root / PROVIDERS_DIR / prov
+            self.global_dir = root / GLOBAL_DIR
+            if not self.provider_dir.exists():
+                raise FileNotFoundError(f"Provider directory does not exist: {self.provider_dir}")
         self.results: ValidationResults = {
             "errors": [],
             "warnings": [],
@@ -84,7 +104,7 @@ class DataLinksValidator:
         }
 
         # Data files (loaded from JSON)
-        self.data_links: dict[str, Any] | None = None
+        self.graph: dict[str, Any] | None = None
         self.products: dict[str, Any] | None = None
         self.zones: dict[str, Any] | None = None
         self.weight_tiers: dict[str, Any] | None = None
@@ -108,17 +128,17 @@ class DataLinksValidator:
 
     def load_data(self) -> None:
         """Load all required JSON files and build lookup structures."""
-        if self.data_links is not None:
+        if self.graph is not None:
             return  # Already loaded
 
         try:
-            self.data_links = load_json(self.data_dir / DATA_LINKS_FILE)
-            self.products = load_json(self.data_dir / PRODUCTS_FILE)
-            self.zones = load_json(self.data_dir / ZONES_FILE)
-            self.weight_tiers = load_json(self.data_dir / WEIGHT_TIERS_FILE)
-            self.services = load_json(self.data_dir / SERVICES_FILE)
-            self.prices = load_json(self.data_dir / PRICES_FILE)
-            self.dimensions = load_json(self.data_dir / DIMENSIONS_FILE)
+            self.graph = load_json(self.provider_dir / GRAPH_FILE)
+            self.products = load_json(self.provider_dir / PRODUCTS_FILE)
+            self.zones = load_json(self.provider_dir / ZONES_FILE)
+            self.weight_tiers = load_json(self.provider_dir / WEIGHT_TIERS_FILE)
+            self.services = load_json(self.provider_dir / SERVICES_FILE)
+            self.prices = load_json(self.provider_dir / PRICES_FILE)
+            self.dimensions = load_json(self.global_dir / DIMENSIONS_FILE)
         except FileNotFoundError as e:
             self.results["errors"].append(f"Missing file: {str(e)}")
             return
@@ -153,16 +173,37 @@ class DataLinksValidator:
         )
         self.all_data_files = get_data_files()
 
+    def _service_refs_set(self) -> set[str]:
+        """Provider `id` and unified `porto_id` strings that may appear in graph/prices."""
+        if not self.services:
+            return set()
+        out: set[str] = set()
+        for s in self.services.get("services", []):
+            if s.get("id"):
+                out.add(str(s["id"]))
+            if s.get("porto_id"):
+                out.add(str(s["porto_id"]))
+        return out
+
+    def _get_service_by_ref(self, ref: str) -> dict[str, Any] | None:
+        """Resolve a service row by provider `id` or `porto_id`."""
+        if not self.services or not ref:
+            return None
+        for s in self.services.get("services", []):
+            if s.get("id") == ref or s.get("porto_id") == ref:
+                return s
+        return None
+
     # ========================================================================
     # Global Settings Validation
     # ========================================================================
 
     def validate_lookup_method(self) -> None:
         """Validate lookup_method configuration in global_settings."""
-        if self.data_links is None:
+        if self.graph is None:
             return
 
-        global_settings = self.data_links.get("global_settings", {})
+        global_settings = self.graph.get("global_settings", {})
         lookup_method = global_settings.get("lookup_method", {})
         price_source = global_settings.get("price_source", "")
 
@@ -205,12 +246,12 @@ class DataLinksValidator:
             else:
                 self.results["errors"].append(
                     f"{field_name} references '{expected}' but file doesn't exist. "
-                    f"Found in: {DATA_LINKS_FILE} -> {' -> '.join(path_parts)}"
+                    f"Found in: {GRAPH_FILE} -> {' -> '.join(path_parts)}"
                 )
         else:
             self.results["errors"].append(
                 f"{field_name} '{actual}' should be '{expected}'. "
-                f"Found in: {DATA_LINKS_FILE} -> {' -> '.join(path_parts)}"
+                f"Found in: {GRAPH_FILE} -> {' -> '.join(path_parts)}"
             )
 
     def _validate_lookup_array(self, lookup_array: str) -> None:
@@ -227,13 +268,13 @@ class DataLinksValidator:
             else:
                 self.results["errors"].append(
                     f"Lookup method references '{EXPECTED_LOOKUP_ARRAY}' but structure doesn't match. "
-                    f"Found in: {DATA_LINKS_FILE} -> global_settings -> lookup_method -> array"
+                    f"Found in: {GRAPH_FILE} -> global_settings -> lookup_method -> array"
                 )
         else:
             self.results["warnings"].append(
                 f"Lookup method array path '{lookup_array}' - verify this matches actual structure. "
                 f"Expected: '{EXPECTED_LOOKUP_ARRAY}'. "
-                f"Found in: {DATA_LINKS_FILE} -> global_settings -> lookup_method -> array"
+                f"Found in: {GRAPH_FILE} -> global_settings -> lookup_method -> array"
             )
 
     def _validate_lookup_match_keys(self, lookup_match: dict[str, Any]) -> None:
@@ -253,7 +294,7 @@ class DataLinksValidator:
             self.results["errors"].append(
                 f"lookup_method.match keys {sorted(missing_keys)} do not exist in price entries. "
                 f"Available keys: {sorted(sample_price_keys)}. "
-                f"Found in: {DATA_LINKS_FILE} -> global_settings -> lookup_method -> match"
+                f"Found in: {GRAPH_FILE} -> global_settings -> lookup_method -> match"
             )
         else:
             self.results["correct"].append(
@@ -266,10 +307,10 @@ class DataLinksValidator:
 
     def validate_links(self) -> None:
         """Validate links section - product links, zones, and weight_tiers."""
-        if self.data_links is None:
+        if self.graph is None:
             return
 
-        links = self.data_links.get("links", {})
+        links = self.graph.get("links", {})
         for product_id, link_data in links.items():
             self._validate_product_link(product_id, link_data)
 
@@ -284,7 +325,7 @@ class DataLinksValidator:
         if product_id not in self.product_dict:
             self.results["errors"].append(
                 f"Product '{product_id}' in links does not exist in {PRODUCTS_FILE}. "
-                f"Found in: {DATA_LINKS_FILE} -> links -> {product_id}"
+                f"Found in: {GRAPH_FILE} -> links -> {product_id}"
             )
             return
 
@@ -312,7 +353,7 @@ class DataLinksValidator:
             if zone not in self.zone_ids:
                 self.results["errors"].append(
                     f"Zone '{zone}' for product '{product_id}' does not exist in {ZONES_FILE}. "
-                    f"Found in: {DATA_LINKS_FILE} -> links -> {product_id} -> zones"
+                    f"Found in: {GRAPH_FILE} -> links -> {product_id} -> zones"
                 )
 
         # Check zone consistency
@@ -335,7 +376,7 @@ class DataLinksValidator:
             if wt not in self.weight_tier_ids:
                 self.results["errors"].append(
                     f"Weight tier '{wt}' for product '{product_id}' does not exist in {WEIGHT_TIERS_FILE}. "
-                    f"Found in: {DATA_LINKS_FILE} -> links -> {product_id} -> weight_tiers"
+                    f"Found in: {GRAPH_FILE} -> links -> {product_id} -> weight_tiers"
                 )
 
         # Find all weight tiers that have prices for this product
@@ -384,10 +425,10 @@ class DataLinksValidator:
 
     def validate_products_in_links(self) -> None:
         """Check for products not in links."""
-        if self.data_links is None:
+        if self.graph is None:
             return
 
-        links = self.data_links.get("links", {})
+        links = self.graph.get("links", {})
         products_in_data = set(self.product_dict.keys())
         products_in_links = set(links.keys())
         missing_products = products_in_data - products_in_links
@@ -401,10 +442,10 @@ class DataLinksValidator:
 
     def validate_zones_and_weight_tiers(self) -> None:
         """Verify all zones and weight_tiers in links exist."""
-        if self.data_links is None:
+        if self.graph is None:
             return
 
-        links = self.data_links.get("links", {})
+        links = self.graph.get("links", {})
 
         # Collect all zones and weight_tiers from links
         all_link_zones = set()
@@ -429,19 +470,30 @@ class DataLinksValidator:
 
     def validate_available_services(self) -> None:
         """Validate available_services and service-price consistency."""
-        if self.data_links is None:
+        if self.graph is None:
             return
 
-        available_services = self.data_links.get("global_settings", {}).get(
+        available_services = self.graph.get("global_settings", {}).get(
             "available_services", []
         )
 
         # Validate service existence
+        valid_refs = self._service_refs_set()
+        for sp in self.service_prices:
+            sid = sp.get("service_id")
+            if not sid:
+                continue
+            if str(sid) not in valid_refs:
+                self.results["errors"].append(
+                    f"Service '{sid}' in service_prices does not exist in {SERVICES_FILE} "
+                    f"(by id or porto_id). Found in: {PRICES_FILE} -> prices -> service_prices"
+                )
+
         for service_id in available_services:
-            if service_id not in self.service_ids:
+            if service_id not in valid_refs:
                 self.results["errors"].append(
                     f"Service '{service_id}' in available_services does not exist in {SERVICES_FILE}. "
-                    f"Found in: {DATA_LINKS_FILE} -> global_settings -> available_services"
+                    f"Found in: {GRAPH_FILE} -> global_settings -> available_services"
                 )
 
         # Check if all services have prices
@@ -473,7 +525,7 @@ class DataLinksValidator:
 
             # If price has effective_to, service must also have it
             if price_effective_to is not None:
-                service = self.services_by_id.get(service_id)
+                service = self._get_service_by_ref(str(service_id))
                 if not service:
                     self.results["errors"].append(
                         f"Service '{service_id}' has prices but service not found in services.json"
@@ -498,19 +550,81 @@ class DataLinksValidator:
                         f"Service found in: {SERVICES_FILE} -> services"
                     )
 
+    def validate_execution_semantics(self) -> None:
+        """Validate mark_type / tracking_mode and optional tracking service linkage."""
+        if self.products is None or self.services is None:
+            return
+
+        available_services = (
+            (self.graph or {}).get("global_settings", {}).get("available_services") or []
+        )
+        if not isinstance(available_services, list):
+            available_services = []
+
+        for product_id, product in self.product_dict.items():
+            mark_type = product.get("mark_type")
+            tracking_mode = product.get("tracking_mode")
+            if mark_type is None or tracking_mode is None:
+                self.results["errors"].append(
+                    f"Product '{product_id}' must define mark_type and tracking_mode "
+                    f"({PRODUCTS_FILE})"
+                )
+                continue
+
+            if mark_type == "label" and tracking_mode == "none":
+                self.results["errors"].append(
+                    f"Product '{product_id}': invalid combination label + tracking_mode none "
+                    f"(use optional or included)"
+                )
+
+            if tracking_mode != "optional":
+                continue
+
+            p_zones = set(product.get("supported_zones") or [])
+
+            def _service_covers_product(svc: dict[str, Any]) -> bool:
+                sz = svc.get("supported_zones")
+                if not sz:
+                    return True
+                return bool(p_zones & set(sz))
+
+            ok = False
+            for sid in available_services:
+                svc = self._get_service_by_ref(str(sid))
+                if not svc or not svc.get("enables_tracking"):
+                    continue
+                if _service_covers_product(svc):
+                    ok = True
+                    break
+
+            if not ok:
+                for svc in self.services_by_id.values():
+                    if not svc.get("enables_tracking"):
+                        continue
+                    if _service_covers_product(svc):
+                        ok = True
+                        break
+
+            if not ok:
+                self.results["errors"].append(
+                    f"Product '{product_id}' has tracking_mode optional but no service with "
+                    f"enables_tracking covers its zones in {SERVICES_FILE} / available_services "
+                    f"({GRAPH_FILE})"
+                )
+
     # ========================================================================
     # Dependencies Validation
     # ========================================================================
 
     def validate_dependencies(self) -> None:
         """Validate dependencies section."""
-        if self.data_links is None:
+        if self.graph is None:
             return
 
-        dependencies = self.data_links.get("dependencies", {})
+        dependencies = self.graph.get("dependencies", {})
 
         # Check if all data files are covered in dependencies
-        expected_data_files = self.all_data_files - {DATA_LINKS_FILE}
+        expected_data_files = self.all_data_files - {GRAPH_FILE}
         files_in_dependencies = {dep_data.get("file") for dep_data in dependencies.values()}
         missing_in_dependencies = expected_data_files - files_in_dependencies
 
@@ -549,14 +663,14 @@ class DataLinksValidator:
 
     def validate_weight_units(self) -> None:
         """Validate weight unit consistency."""
-        if not all([self.data_links, self.products, self.weight_tiers]):
+        if not all([self.graph, self.products, self.weight_tiers]):
             return
 
-        assert self.data_links is not None
+        assert self.graph is not None
         assert self.products is not None
         assert self.weight_tiers is not None
 
-        data_links_weight = self.data_links.get("unit", {}).get("weight")
+        data_links_weight = self.graph.get("unit", {}).get("weight")
         products_weight = self.products.get("unit", {}).get("weight")
         weight_tiers_weight = self.weight_tiers.get("unit", {}).get("weight")
 
@@ -564,69 +678,67 @@ class DataLinksValidator:
             unit_name="weight",
             data_links_value=data_links_weight,
             expected_value=EXPECTED_WEIGHT_UNIT,
-            file_names=[DATA_LINKS_FILE, PRODUCTS_FILE, WEIGHT_TIERS_FILE],
+            file_names=[GRAPH_FILE, PRODUCTS_FILE, WEIGHT_TIERS_FILE],
             results=self.results,
             other_values=[products_weight, weight_tiers_weight],
         )
 
     def validate_dimension_units(self) -> None:
-        """Validate dimension unit consistency."""
-        if not all([self.data_links, self.products, self.dimensions]):
+        """Validate dimension unit consistency (graph + global dimensions only; products.json has no linear dimension unit)."""
+        if not all([self.graph, self.dimensions]):
             return
 
-        assert self.data_links is not None
-        assert self.products is not None
+        assert self.graph is not None
         assert self.dimensions is not None
 
-        data_links_dimension = self.data_links.get("unit", {}).get("dimension")
-        products_dimension = self.products.get("unit", {}).get("dimension")
+        data_links_dimension = self.graph.get("unit", {}).get("dimension")
         dimensions_dimension = self.dimensions.get("unit", {}).get("dimension")
 
         validate_unit_consistency(
             unit_name="dimension",
             data_links_value=data_links_dimension,
             expected_value=EXPECTED_DIMENSION_UNIT,
-            file_names=[DATA_LINKS_FILE, PRODUCTS_FILE, DIMENSIONS_FILE],
+            file_names=[GRAPH_FILE, DIMENSIONS_FILE],
             results=self.results,
-            other_values=[products_dimension, dimensions_dimension],
+            other_values=[dimensions_dimension],
         )
 
     def validate_price_units(self) -> None:
         """Validate price unit consistency."""
-        if not all([self.data_links, self.prices]):
+        if not all([self.graph, self.prices]):
             return
 
-        assert self.data_links is not None
+        assert self.graph is not None
         assert self.prices is not None
 
-        data_links_price = self.data_links.get("unit", {}).get("price")
+        data_links_price = self.graph.get("unit", {}).get("price")
         prices_price = self.prices.get("unit", {}).get("price")
 
         validate_unit_consistency(
             unit_name="price",
             data_links_value=data_links_price,
             expected_value=EXPECTED_PRICE_UNIT,
-            file_names=[DATA_LINKS_FILE, PRICES_FILE],
+            file_names=[GRAPH_FILE, PRICES_FILE],
             results=self.results,
             other_values=[prices_price],
         )
 
     def validate_currency_units(self) -> None:
         """Validate currency unit consistency."""
-        if not all([self.data_links, self.prices]):
+        if not all([self.graph, self.prices]):
             return
 
-        assert self.data_links is not None
+        assert self.graph is not None
         assert self.prices is not None
 
-        data_links_currency = self.data_links.get("unit", {}).get("currency")
+        data_links_currency = self.graph.get("unit", {}).get("currency")
         prices_currency = self.prices.get("unit", {}).get("currency")
 
         validate_unit_consistency(
             unit_name="currency",
             data_links_value=data_links_currency,
             expected_value=EXPECTED_CURRENCY,
-            file_names=[DATA_LINKS_FILE, PRICES_FILE],
+            file_names=[GRAPH_FILE, PRICES_FILE],
             results=self.results,
             other_values=[prices_currency],
         )
@@ -637,10 +749,10 @@ class DataLinksValidator:
 
     def validate_circular_dependencies(self) -> None:
         """Check for circular dependencies."""
-        if self.data_links is None:
+        if self.graph is None:
             return
 
-        dependencies = self.data_links.get("dependencies", {})
+        dependencies = self.graph.get("dependencies", {})
         dep_graph: dict[str, set[str]] = {}
 
         for _dep_name, dep_data in dependencies.items():
@@ -679,6 +791,7 @@ class DataLinksValidator:
         self.validate_products_in_links()
         self.validate_zones_and_weight_tiers()
         self.validate_available_services()
+        self.validate_execution_semantics()
         self.validate_dependencies()
         self.validate_units()
         self.validate_circular_dependencies()
@@ -691,33 +804,37 @@ class DataLinksValidator:
 # ============================================================================
 
 
-def validate_data_links(data_dir: Path | None = None, analyze: bool = False) -> int:
-    """Validate data_links.json and print results.
+def validate_graph(
+    data_dir: Path | None = None,
+    project_root: Path | None = None,
+    provider: str | None = None,
+    analyze: bool = False,
+) -> int:
+    """Validate graph.json and print results.
 
     Args:
-        data_dir: Path to data directory (defaults to project's data/)
+        data_dir: Path to data directory (legacy flat layout). If None, uses project_root + provider.
+        project_root: Path to porto_data root (with global/, providers/). Defaults to get_project_root().
+        provider: Provider ID (default: deutschepost).
         analyze: If True, show detailed analysis. If False, CI/CD friendly output.
 
     Returns:
         Exit code: 0 if validation passes, 1 otherwise.
     """
-    if data_dir is None:
-        from scripts.data_files import get_project_root
-
-        data_dir = get_project_root() / "data"
-
-    validator = DataLinksValidator(data_dir)
+    prov = provider or DEFAULT_PROVIDER
+    validator = GraphValidator(data_dir=data_dir, project_root=project_root, provider=provider)
     results = validator.validate_all()
 
     if analyze:
-        return _print_analyze_mode(results)
+        return _print_analyze_mode(results, provider_label=prov)
     else:
-        return _print_validate_mode(results)
+        return _print_validate_mode(results, provider_label=prov)
 
 
-def _print_validate_mode(results: ValidationResults) -> int:
+def _print_validate_mode(results: ValidationResults, provider_label: str = "") -> int:
     """Print results in validate mode (CI/CD friendly)."""
-    print("Validating data_links.json against data files...\n")
+    label = f" ({provider_label})" if provider_label else ""
+    print(f"Validating graph.json against data files{label}...\n")
 
     has_errors = len(results["errors"]) > 0
 
@@ -737,17 +854,18 @@ def _print_validate_mode(results: ValidationResults) -> int:
         print()
 
     if not has_errors:
-        print("✅ All validations passed! data_links.json is consistent with data files.")
+        print("✅ All validations passed! graph.json is consistent with data files.")
         return 0
     else:
         print("❌ ERROR: Validation failed. Please fix the errors above.")
         return 1
 
 
-def _print_analyze_mode(results: ValidationResults) -> int:
+def _print_analyze_mode(results: ValidationResults, provider_label: str = "") -> int:
     """Print results in analyze mode (detailed report)."""
     print("=" * 70)
-    print("COMPREHENSIVE DATA_LINKS.JSON ANALYSIS")
+    suffix = f" — {provider_label}" if provider_label else ""
+    print(f"COMPREHENSIVE GRAPH.JSON ANALYSIS{suffix}")
     print("=" * 70)
     print()
 
@@ -778,7 +896,7 @@ def _print_analyze_mode(results: ValidationResults) -> int:
     # Summary
     total_issues = len(results["errors"]) + len(results["fixes_needed"]) + len(results["warnings"])
     if total_issues == 0:
-        print("🎉 All checks passed! data_links.json is correct.")
+        print("🎉 All checks passed! graph.json is correct.")
         return 0
     else:
         print(
@@ -787,3 +905,8 @@ def _print_analyze_mode(results: ValidationResults) -> int:
             f"{len(results['warnings'])} warnings"
         )
         return 1 if results["errors"] else 0
+
+
+# Backward-compatible names (deprecated)
+validate_resolution_graph = validate_graph
+ResolutionGraphValidator = GraphValidator

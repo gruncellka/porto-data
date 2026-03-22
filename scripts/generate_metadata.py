@@ -12,7 +12,12 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from scripts.data_files import get_project_root, get_schema_data_mappings
+from scripts.data_files import (
+    GLOBAL_DIR,
+    PROVIDERS_DIR,
+    get_all_schema_data_pairs,
+    get_project_root,
+)
 from scripts.utils import get_all_file_checksums
 
 # Package distribution name for fallback metadata (when not in repo)
@@ -90,14 +95,16 @@ get_schema_url = _schema_url
 
 
 def generate_metadata() -> dict[str, Any]:
-    """Build full metadata dict (project, entities, checksums, generated_at)."""
+    """Build full metadata dict (project, global, providers, checksums, generated_at)."""
     root = get_project_root()
     checksums = get_all_file_checksums()
-    mappings = get_schema_data_mappings()
+    pairs = get_all_schema_data_pairs()
     project_meta = _get_project_meta(root)
 
-    entities: dict[str, dict[str, Any]] = {}
-    for schema_rel, data_rel in mappings.items():
+    global_entities: dict[str, dict[str, Any]] = {}
+    providers_entities: dict[str, dict[str, Any]] = {}
+
+    for schema_rel, data_rel in pairs:
         schema_path = root / schema_rel
         data_path = root / data_rel
         if not schema_path.exists() or not data_path.exists():
@@ -105,15 +112,23 @@ def generate_metadata() -> dict[str, Any]:
         name = _entity_name_from_path(data_path)
         schema_info = _file_info(schema_path, root, checksums)
         schema_info["url"] = _schema_url(schema_path)
-        entities[name] = {
+        entity = {
             "data": _file_info(data_path, root, checksums),
             "schema": schema_info,
         }
+        if data_rel.startswith(f"{GLOBAL_DIR}/"):
+            global_entities[name] = entity
+        elif data_rel.startswith(f"{PROVIDERS_DIR}/"):
+            provider = data_rel.split("/")[1]
+            if provider not in providers_entities:
+                providers_entities[provider] = {}
+            providers_entities[provider][name] = entity
 
     return {
         "project": project_meta,
         "generated_at": datetime.now(UTC).isoformat().replace("+00:00", "Z"),
-        "entities": entities,
+        GLOBAL_DIR: global_entities,
+        PROVIDERS_DIR: providers_entities,
         "checksums": {
             "algorithm": "SHA-256",
             "note": "Use checksums to verify data integrity and detect changes",
@@ -155,9 +170,12 @@ def main() -> None:
         with open(out_path, "w", encoding="utf-8") as f:
             json.dump(new_meta, f, indent=4, ensure_ascii=False)
             f.write("\n")
+        entity_count = len(new_meta.get(GLOBAL_DIR, {})) + sum(
+            len(p) for p in new_meta.get(PROVIDERS_DIR, {}).values()
+        )
         print(f"\n✓ Generated: {out_path}")
         print(f"  - Project: {new_meta['project']['name']} v{new_meta['project']['version']}")
-        print(f"  - Entities: {len(new_meta['entities'])} entities")
+        print(f"  - Entities: {entity_count} entities")
         print(f"  - Generated at: {new_meta['generated_at']}")
         print("  - Status: Updated (changes detected)")
     else:

@@ -15,7 +15,7 @@ def validate_unit_consistency(
 
     Args:
         unit_name: Name of the unit being validated (e.g., "weight", "dimension").
-        data_links_value: Unit value from data_links.json.
+        data_links_value: Unit value from graph.json.
         expected_value: Expected unit value.
         file_names: List of file names for error messages.
         results: Validation results dictionary to update.
