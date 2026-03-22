@@ -36,7 +36,7 @@ Data repository for Deutsche Post shipping services with JSON schema validation.
 ### Data Files
 
 -   All data files in `porto_data/data/` must validate against corresponding schemas in `porto_data/schemas/`
--   `porto_data/data/data_links.json` provides cross-references between data files
+-   `porto_data/data/resolution graph.json` provides cross-references between data files
 -   `porto_data/metadata.json` is auto-generated (do NOT edit manually)
 -   `porto_data/mappings.json` is the source of truth for schema-to-data mappings
 
@@ -45,7 +45,7 @@ Data repository for Deutsche Post shipping services with JSON schema validation.
 -   Products → Prices → Zones (one-directional, no circular dependencies)
 -   Services → Features
 -   Restrictions → Compliance Frameworks
--   All relationships validated via `data_links.json`
+-   All relationships validated via `resolution graph.json`
 
 ## Workflow
 
@@ -91,14 +91,14 @@ Data repository for Deutsche Post shipping services with JSON schema validation.
 
 -   `porto validate` - Validate everything (default)
 -   `porto validate --type schema` - Validate JSON against schemas
--   `porto validate --type links` - Validate data_links.json consistency
+-   `porto validate --type links` - Validate resolution graph.json consistency
 -   `porto validate --type links --analyze` - Detailed links analysis
 -   `porto metadata` - Generate metadata.json
 
 ### Make Commands
 
--   `make validate` - Validate all JSON (schema + data_links)
--   `make validate-data-links` - Validate data_links.json only
+-   `make validate` - Validate all JSON (schema + graph)
+-   `make validate-graph` - Validate graph.json only
 -   `make format` - Format JSON and Python
 -   `make lint` - Lint JSON and Python
 -   `make metadata` - Generate porto_data/metadata.json
@@ -138,7 +138,7 @@ Data repository for Deutsche Post shipping services with JSON schema validation.
 ### Data Integrity
 
 -   All data must validate against schemas
--   Cross-references validated via `data_links.json`
+-   Cross-references validated via `resolution graph.json`
 -   Checksums ensure data integrity
 -   Validation workflow (`.github/workflows/validation.yml`) runs on every push/PR (format, structure, metadata, tests, lint, type-check)
 -   Publish workflow (`.github/workflows/publish.yml`): triggered by **tag** `v*` or **manual** (workflow_dispatch); version from packages; manual run also for re-publish same version if npm or PyPI failed; runs only `porto validate` before build, no tests/lint
