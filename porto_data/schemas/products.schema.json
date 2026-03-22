@@ -1,122 +1,173 @@
 {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/products.schema.json",
-    "title": "Products Schema",
-    "description": "Schema for postal products definitions",
-    "type": "object",
-    "required": [
-        "file_type",
-        "unit",
-        "products"
-    ],
-    "properties": {
-        "$schema": {
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/products.schema.json",
+  "title": "Products Schema",
+  "description": "Schema for postal products definitions",
+  "type": "object",
+  "required": [
+    "file_type",
+    "provider",
+    "unit",
+    "products"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "format": "uri",
+      "description": "JSON Schema URI reference"
+    },
+    "file_type": {
+      "type": "string",
+      "const": "products",
+      "description": "File type identifier"
+    },
+    "provider": {
+      "type": "string",
+      "pattern": "^[a-z_]+$",
+      "description": "Provider identifier (e.g. deutschepost, swisspost)"
+    },
+    "unit": {
+      "type": "object",
+      "description": "Product-level units: weight only. Envelope/format semantics are in dimension_ids + global dimensions.json (linear mm there).",
+      "required": [
+        "weight"
+      ],
+      "properties": {
+        "weight": {
+          "type": "string",
+          "const": "g"
+        }
+      },
+      "additionalProperties": false
+    },
+    "products": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "dimension_ids",
+          "supported_zones",
+          "effective_from",
+          "effective_to",
+          "mark_type",
+          "tracking_mode"
+        ],
+        "properties": {
+          "id": {
             "type": "string",
-            "format": "uri",
-            "description": "JSON Schema URI reference"
-        },
-        "file_type": {
+            "pattern": "^[a-z_]+$",
+            "description": "Semantic English product ID"
+          },
+          "name": {
             "type": "string",
-            "const": "products",
-            "description": "File type identifier"
-        },
-        "unit": {
-            "type": "object",
-            "required": [
-                "dimension",
-                "weight"
+            "minLength": 1,
+            "description": "Official product name (original language)"
+          },
+          "porto_id": {
+            "type": [
+              "string",
+              "null"
             ],
-            "properties": {
-                "dimension": {
-                    "type": "string",
-                    "const": "mm"
-                },
-                "weight": {
-                    "type": "string",
-                    "const": "g"
-                }
-            },
-            "additionalProperties": false
-        },
-        "products": {
+            "description": "Unified Porto product id for cross-provider resolution. Often equals `id` when the operator’s tariff id already matches Porto vocabulary (e.g. Deutsche Post); may differ when the native id is operator-specific (e.g. Swiss Post) while the graph/resolver still keys on one shared semantic."
+          },
+          "dimension_ids": {
             "type": "array",
             "minItems": 1,
             "items": {
-                "type": "object",
-                "required": [
-                    "id",
-                    "name",
-                    "dimension_ids",
-                    "supported_zones",
-                    "weight_tier",
-                    "effective_from",
-                    "effective_to"
-                ],
-                "properties": {
-                    "id": {
-                        "type": "string",
-                        "pattern": "^[a-z_]+$",
-                        "description": "Semantic English product ID"
-                    },
-                    "name": {
-                        "type": "string",
-                        "minLength": 1,
-                        "description": "Official German product name"
-                    },
-                    "dimension_ids": {
-                        "type": "array",
-                        "minItems": 1,
-                        "items": {
-                            "type": "string",
-                            "enum": [
-                                "DL",
-                                "C6",
-                                "C5",
-                                "C4",
-                                "B4"
-                            ]
-                        },
-                        "description": "Supported dimension IDs"
-                    },
-                    "supported_zones": {
-                        "type": "array",
-                        "minItems": 1,
-                        "items": {
-                            "type": "string",
-                            "enum": [
-                                "domestic",
-                                "zone_1_eu",
-                                "zone_2_europe",
-                                "world"
-                            ]
-                        },
-                        "description": "Zones where this product is available"
-                    },
-                    "weight_tier": {
-                        "type": "string",
-                        "pattern": "^W[0-9]+$",
-                        "description": "Weight tier ID"
-                    },
-                    "effective_from": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
-                        "format": "date",
-                        "description": "Product effective start date"
-                    },
-                    "effective_to": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
-                        "format": "date",
-                        "description": "Product effective end date"
-                    }
-                },
-                "additionalProperties": false
+              "type": "string",
+              "enum": [
+                "DL",
+                "C6",
+                "C5",
+                "C4",
+                "B4"
+              ]
+            },
+            "description": "Supported dimension IDs"
+          },
+          "supported_zones": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "enum": [
+                "domestic",
+                "zone_1_eu",
+                "zone_2_europe",
+                "world"
+              ]
+            },
+            "description": "Zones where this product is available"
+          },
+          "weight_tier": {
+            "type": "string",
+            "pattern": "^W[0-9]+$",
+            "description": "Deprecated: Weight only in weight_tiers + prices matrix. Optional for backward compat when product has single tier."
+          },
+          "effective_from": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date",
+            "description": "Product effective start date"
+          },
+          "effective_to": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date",
+            "description": "Product effective end date"
+          },
+          "mark_type": {
+            "type": "string",
+            "enum": [
+              "stamp",
+              "label"
+            ],
+            "description": "What kind of provider mark this product produces when executed (data-driven; not inferred in adapters)."
+          },
+          "tracking_mode": {
+            "type": "string",
+            "enum": [
+              "none",
+              "optional",
+              "included"
+            ],
+            "description": "Whether tracking is expected on the execution result; actual tracking numbers are runtime-only (PortoMark), never stored in porto-data."
+          }
+        },
+        "additionalProperties": false,
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "mark_type": {
+                  "const": "label"
+                }
+              },
+              "required": [
+                "mark_type"
+              ]
+            },
+            "then": {
+              "properties": {
+                "tracking_mode": {
+                  "enum": [
+                    "optional",
+                    "included"
+                  ]
+                }
+              }
             }
-        }
-    },
-    "additionalProperties": false
+          }
+        ]
+      }
+    }
+  },
+  "additionalProperties": false
 }

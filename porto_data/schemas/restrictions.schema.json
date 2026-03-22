@@ -1,368 +1,307 @@
 {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/restrictions.schema.json",
-    "title": "Restrictions Schema",
-    "description": "Schema for postal restrictions and compliance information",
-    "type": "object",
-    "required": [
-        "file_type",
-        "unit",
-        "sanctions_information",
-        "denied_party_screening",
-        "sources",
-        "disclaimer",
-        "restrictions",
-        "compliance_frameworks"
-    ],
-    "properties": {
-        "$schema": {
-            "type": "string",
-            "format": "uri",
-            "description": "JSON Schema URI reference"
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/restrictions.schema.json",
+  "title": "Restrictions Schema",
+  "description": "Global legal and sanctions-style restrictions (country, EU, UN, national law)—not a single carrier’s operational limits; those live in providers/<id>/limits.json.",
+  "type": "object",
+  "required": [
+    "file_type",
+    "unit",
+    "sanctions_information",
+    "sources",
+    "disclaimer",
+    "restrictions",
+    "compliance_frameworks"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "format": "uri",
+      "description": "JSON Schema URI reference"
+    },
+    "file_type": {
+      "type": "string",
+      "const": "restrictions",
+      "description": "File type identifier"
+    },
+    "unit": {
+      "type": "object",
+      "required": [
+        "country_code",
+        "date"
+      ],
+      "properties": {
+        "country_code": {
+          "type": "string",
+          "const": "ISO 3166-1 alpha-2"
         },
-        "file_type": {
-            "type": "string",
-            "const": "restrictions",
-            "description": "File type identifier"
-        },
-        "unit": {
-            "type": "object",
-            "required": [
-                "country_code",
-                "date"
-            ],
-            "properties": {
-                "country_code": {
-                    "type": "string",
-                    "const": "ISO 3166-1 alpha-2"
-                },
-                "date": {
-                    "type": "string",
-                    "const": "ISO 8601"
-                }
+        "date": {
+          "type": "string",
+          "const": "ISO 8601"
+        }
+      },
+      "additionalProperties": false
+    },
+    "sanctions_information": {
+      "type": "object",
+      "required": [
+        "eu_sanctions",
+        "un_sanctions"
+      ],
+      "properties": {
+        "eu_sanctions": {
+          "type": "object",
+          "required": [
+            "description",
+            "primary_targets",
+            "source",
+            "url"
+          ],
+          "properties": {
+            "description": {
+              "type": "string"
             },
-            "additionalProperties": false
+            "primary_targets": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "source": {
+              "type": "string"
+            },
+            "url": {
+              "type": "string",
+              "format": "uri"
+            }
+          },
+          "additionalProperties": false
         },
-        "sanctions_information": {
+        "un_sanctions": {
+          "type": "object",
+          "required": [
+            "description",
+            "targets"
+          ],
+          "properties": {
+            "description": {
+              "type": "string"
+            },
+            "targets": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of information sources"
+    },
+    "disclaimer": {
+      "type": "string",
+      "description": "Legal disclaimer text"
+    },
+    "restrictions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "country_code",
+          "status",
+          "reason",
+          "notes",
+          "effective_from"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "country_code": {
+            "type": "string",
+            "pattern": "^[A-Z]{2}$"
+          },
+          "region_code": {
+            "type": "string"
+          },
+          "claimed_by": {
+            "type": "string",
+            "pattern": "^[A-Z]{2}$"
+          },
+          "occupied_by": {
+            "type": "string",
+            "pattern": "^[A-Z]{2}$"
+          },
+          "disputed_by": {
+            "type": "string",
+            "pattern": "^[A-Za-z_]+$"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "restricted",
+              "limited",
+              "prohibited",
+              "severely_restricted",
+              "operational"
+            ]
+          },
+          "reason": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          },
+          "areas": {
             "type": "object",
-            "required": [
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "entity_type": {
+            "type": "string",
+            "enum": [
+              "country",
+              "territory",
+              "occupied_territory",
+              "disputed_territory"
+            ]
+          },
+          "framework_id": {
+            "type": "string"
+          },
+          "effective_from": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          },
+          "effective_to": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          },
+          "effective_partial": {
+            "type": "boolean"
+          },
+          "legal_reference": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uri"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "compliance_frameworks": {
+      "type": "object",
+      "description": "Regime metadata keyed by framework_id. Restriction row effective_from/effective_to are the only authoritative activation dates; frameworks provide jurisdiction, scope, legal_reference, and optional timezone (IANA) for calendar interpretation of row dates only. Never infer jurisdiction or legal applicability from timezone (e.g. Europe/Brussels is a conventional anchor for EU regulation dates, not a test for “EU operator”).",
+      "patternProperties": {
+        "^[A-Z0-9_]+$": {
+          "type": "object",
+          "required": [
+            "id",
+            "label",
+            "description",
+            "type",
+            "jurisdiction",
+            "applies_to"
+          ],
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "label": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
                 "eu_sanctions",
                 "un_sanctions",
-                "german_national"
-            ],
-            "properties": {
-                "eu_sanctions": {
-                    "type": "object",
-                    "required": [
-                        "description",
-                        "primary_targets",
-                        "source",
-                        "url"
-                    ],
-                    "properties": {
-                        "description": {
-                            "type": "string"
-                        },
-                        "primary_targets": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        },
-                        "source": {
-                            "type": "string"
-                        },
-                        "url": {
-                            "type": "string",
-                            "format": "uri"
-                        }
-                    },
-                    "additionalProperties": false
-                },
-                "un_sanctions": {
-                    "type": "object",
-                    "required": [
-                        "description",
-                        "targets"
-                    ],
-                    "properties": {
-                        "description": {
-                            "type": "string"
-                        },
-                        "targets": {
-                            "type": "array",
-                            "items": {
-                                "type": "string"
-                            }
-                        }
-                    },
-                    "additionalProperties": false
-                },
-                "german_national": {
-                    "type": "object",
-                    "required": [
-                        "description",
-                        "notes"
-                    ],
-                    "properties": {
-                        "description": {
-                            "type": "string"
-                        },
-                        "notes": {
-                            "type": "string"
-                        }
-                    },
-                    "additionalProperties": false
-                }
+                "operational_political",
+                "operational_infrastructure",
+                "operational_conflict",
+                "mixed_sanctions"
+              ]
             },
-            "additionalProperties": false
-        },
-        "denied_party_screening": {
-            "type": "object",
-            "required": [
-                "description",
-                "details",
-                "compliance"
-            ],
-            "properties": {
-                "description": {
-                    "type": "string"
-                },
-                "details": {
-                    "type": "string"
-                },
-                "compliance": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
+            "jurisdiction": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string",
+                "pattern": "^[A-Z]{2}$",
+                "description": "Normative source: ISO 3166-1 alpha-2 or conventional codes EU, UN (extensible; no fixed enum). Operator-specific rules use providers/<id>/limits.json instead of applicability here."
+              }
             },
-            "additionalProperties": false
-        },
-        "sources": {
-            "type": "array",
-            "items": {
-                "type": "string"
+            "applies_to": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^[A-Z]{2}$|^ALL$"
+              }
             },
-            "description": "List of information sources"
-        },
-        "disclaimer": {
-            "type": "string",
-            "description": "Legal disclaimer text"
-        },
-        "restrictions": {
-            "type": "array",
-            "items": {
+            "regions": {
+              "type": "array",
+              "items": {
                 "type": "object",
                 "required": [
-                    "id",
-                    "country_code",
-                    "status",
-                    "reason",
-                    "notes",
-                    "effective_from"
+                  "code",
+                  "name"
                 ],
                 "properties": {
-                    "id": {
-                        "type": "string"
-                    },
-                    "country_code": {
-                        "type": "string",
-                        "pattern": "^[A-Z]{2}$"
-                    },
-                    "region_code": {
-                        "type": "string"
-                    },
-                    "claimed_by": {
-                        "type": "string",
-                        "pattern": "^[A-Z]{2}$"
-                    },
-                    "occupied_by": {
-                        "type": "string",
-                        "pattern": "^[A-Z]{2}$"
-                    },
-                    "disputed_by": {
-                        "type": "string",
-                        "pattern": "^[A-Za-z_]+$"
-                    },
-                    "status": {
-                        "type": "string",
-                        "enum": [
-                            "restricted",
-                            "limited",
-                            "prohibited",
-                            "severely_restricted",
-                            "operational"
-                        ]
-                    },
-                    "reason": {
-                        "type": "string"
-                    },
-                    "description": {
-                        "type": "string"
-                    },
-                    "notes": {
-                        "type": "string"
-                    },
-                    "areas": {
-                        "type": "object",
-                        "additionalProperties": {
-                            "type": "string"
-                        }
-                    },
-                    "zone_reference": {
-                        "type": [
-                            "string",
-                            "null"
-                        ]
-                    },
-                    "entity_type": {
-                        "type": "string",
-                        "enum": [
-                            "country",
-                            "territory",
-                            "occupied_territory",
-                            "disputed_territory"
-                        ]
-                    },
-                    "framework_id": {
-                        "type": "string"
-                    },
-                    "effective_from": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
-                        "format": "date"
-                    },
-                    "effective_to": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
-                        "format": "date"
-                    },
-                    "effective_partial": {
-                        "type": "boolean"
-                    },
-                    "legal_reference": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
-                        "format": "uri"
-                    }
+                  "code": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
                 },
                 "additionalProperties": false
-            }
-        },
-        "compliance_frameworks": {
-            "type": "object",
-            "patternProperties": {
-                "^[A-Z0-9_]+$": {
-                    "type": "object",
-                    "required": [
-                        "id",
-                        "label",
-                        "description",
-                        "type",
-                        "jurisdiction",
-                        "applies_to",
-                        "effective_from",
-                        "effective_to"
-                    ],
-                    "properties": {
-                        "id": {
-                            "type": "string"
-                        },
-                        "label": {
-                            "type": "string"
-                        },
-                        "description": {
-                            "type": "string"
-                        },
-                        "type": {
-                            "type": "string",
-                            "enum": [
-                                "eu_sanctions",
-                                "un_sanctions",
-                                "operational_political",
-                                "operational_infrastructure",
-                                "operational_conflict",
-                                "mixed_sanctions",
-                                "german_law"
-                            ]
-                        },
-                        "jurisdiction": {
-                            "type": "array",
-                            "items": {
-                                "type": "string",
-                                "enum": [
-                                    "EU",
-                                    "UN",
-                                    "DP",
-                                    "DE",
-                                    "US"
-                                ]
-                            }
-                        },
-                        "applies_to": {
-                            "type": "array",
-                            "items": {
-                                "type": "string",
-                                "pattern": "^[A-Z]{2}$|^ALL$"
-                            }
-                        },
-                        "regions": {
-                            "type": "array",
-                            "items": {
-                                "type": "object",
-                                "required": [
-                                    "code",
-                                    "name"
-                                ],
-                                "properties": {
-                                    "code": {
-                                        "type": "string"
-                                    },
-                                    "name": {
-                                        "type": "string"
-                                    }
-                                },
-                                "additionalProperties": false
-                            }
-                        },
-                        "operational_note": {
-                            "type": "string"
-                        },
-                        "legal_reference": {
-                            "type": [
-                                "string",
-                                "null"
-                            ],
-                            "format": "uri"
-                        },
-                        "effective_from": {
-                            "type": [
-                                "string",
-                                "null"
-                            ],
-                            "format": "date"
-                        },
-                        "effective_to": {
-                            "type": [
-                                "string",
-                                "null"
-                            ],
-                            "format": "date"
-                        }
-                    },
-                    "additionalProperties": false
-                }
+              }
             },
-            "additionalProperties": false
+            "operational_note": {
+              "type": "string"
+            },
+            "legal_reference": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "format": "uri"
+            },
+            "timezone": {
+              "type": "string",
+              "minLength": 3,
+              "pattern": "^[A-Za-z0-9_+-]+(/[A-Za-z0-9_+-]+)+$",
+              "description": "IANA zone for interpreting restriction row effective_from/effective_to only (e.g. Europe/Brussels for EU CFSP-style calendar bounds). Not a substitute for jurisdiction; do not treat Brussels as an “EU membership” signal. Optional; SDKs fall back to provider timezone then UTC."
+            }
+          },
+          "additionalProperties": false
         }
-    },
-    "additionalProperties": false
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
 }

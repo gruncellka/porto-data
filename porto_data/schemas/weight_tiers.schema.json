@@ -1,70 +1,70 @@
 {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/weight_tiers.schema.json",
-    "title": "Weight Tiers Schema",
-    "description": "Schema for weight tier definitions",
-    "type": "object",
-    "required": [
-        "file_type",
-        "unit",
-        "weight_tiers"
-    ],
-    "properties": {
-        "$schema": {
-            "type": "string",
-            "format": "uri",
-            "description": "JSON Schema URI reference"
-        },
-        "file_type": {
-            "type": "string",
-            "const": "weight_tiers",
-            "description": "File type identifier"
-        },
-        "unit": {
-            "type": "object",
-            "required": [
-                "weight"
-            ],
-            "properties": {
-                "weight": {
-                    "type": "string",
-                    "const": "g"
-                }
-            },
-            "additionalProperties": false
-        },
-        "weight_tiers": {
-            "type": "object",
-            "patternProperties": {
-                "^W[0-9]+$": {
-                    "type": "object",
-                    "required": [
-                        "min",
-                        "max",
-                        "label"
-                    ],
-                    "properties": {
-                        "min": {
-                            "type": "integer",
-                            "minimum": 0,
-                            "description": "Minimum weight in grams"
-                        },
-                        "max": {
-                            "type": "integer",
-                            "minimum": 1,
-                            "description": "Maximum weight in grams"
-                        },
-                        "label": {
-                            "type": "string",
-                            "minLength": 1,
-                            "description": "Human-readable weight tier label"
-                        }
-                    },
-                    "additionalProperties": false
-                }
-            },
-            "additionalProperties": false
-        }
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/weight_tiers.schema.json",
+  "title": "Weight Tiers Schema",
+  "description": "Schema for weight tier definitions",
+  "type": "object",
+  "required": [
+    "file_type",
+    "provider",
+    "unit",
+    "weight_tiers"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "format": "uri",
+      "description": "JSON Schema URI reference"
     },
-    "additionalProperties": false
+    "file_type": {
+      "type": "string",
+      "const": "weight_tiers",
+      "description": "File type identifier"
+    },
+    "provider": {
+      "type": "string",
+      "pattern": "^[a-z_]+$",
+      "description": "Provider identifier (e.g. deutschepost, swisspost)"
+    },
+    "unit": {
+      "type": "object",
+      "required": [
+        "weight"
+      ],
+      "properties": {
+        "weight": {
+          "type": "string",
+          "const": "g"
+        }
+      },
+      "additionalProperties": false
+    },
+    "weight_tiers": {
+      "type": "object",
+      "patternProperties": {
+        "^W[0-9]+$": {
+          "type": "object",
+          "required": [
+            "min",
+            "max"
+          ],
+          "properties": {
+            "min": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Minimum weight in grams"
+            },
+            "max": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Maximum weight in grams"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
 }
