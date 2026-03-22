@@ -22,14 +22,20 @@ def scripts_path():
 
 
 @pytest.fixture
-def minimal_data_links():
-    """Minimal valid data_links.json structure."""
+def minimal_graph():
+    """Minimal valid graph.json structure."""
     return {
-        "file_type": "data_links",
-        "schema_version": "1.0",
+        "file_type": "graph",
+        "provider": "deutschepost",
         "unit": {"weight": "g", "dimension": "mm", "price": "cents", "currency": "EUR"},
         "dependencies": {},
         "links": {},
+        "lookup_rules": {
+            "price_lookup": "product_id+zone+weight_tier",
+            "service_lookup": "by id",
+            "weight_resolution": "min<=weight<=max",
+            "zone_validation": "zone in links",
+        },
         "global_settings": {
             "price_source": "prices.json",
             "lookup_method": {"file": "prices.json", "array": "prices.product_prices", "match": {}},
@@ -61,7 +67,7 @@ def minimal_prices():
 
 
 @pytest.fixture
-def minimal_data_files(tmp_path, minimal_services, minimal_prices, minimal_data_links):
+def minimal_data_files(tmp_path, minimal_services, minimal_prices, minimal_graph):
     """Create minimal data files structure for testing."""
     data_dir = tmp_path / "data"
     data_dir.mkdir()
@@ -70,12 +76,24 @@ def minimal_data_files(tmp_path, minimal_services, minimal_prices, minimal_data_
     files = {
         "services.json": minimal_services,
         "prices.json": minimal_prices,
-        "data_links.json": minimal_data_links,
+        "graph.json": minimal_graph,
         "products.json": {"products": [], "file_type": "products"},
         "zones.json": {"zones": [], "file_type": "zones"},
         "weight_tiers.json": {"weight_tiers": {}, "file_type": "weight_tiers"},
         "dimensions.json": {"dimensions": {}, "file_type": "dimensions"},
-        "features.json": {"features": {}, "file_type": "features"},
+        "features.json": {
+            "file_type": "features",
+            "provider": "deutschepost",
+            "features": [
+                {
+                    "id": "tracking_number",
+                    "porto_id": "tracking_number",
+                    "name": "Sendungsnummer",
+                    "label": "Tracking number",
+                    "description": "Test",
+                }
+            ],
+        },
         "restrictions.json": {"restrictions": [], "file_type": "restrictions"},
     }
 
@@ -131,7 +149,19 @@ def create_test_data_files(tmp_path, **file_data):
         "zones.json": {"zones": [], "file_type": "zones"},
         "weight_tiers.json": {"weight_tiers": {}, "file_type": "weight_tiers"},
         "dimensions.json": {"dimensions": {}, "file_type": "dimensions"},
-        "features.json": {"features": {}, "file_type": "features"},
+        "features.json": {
+            "file_type": "features",
+            "provider": "deutschepost",
+            "features": [
+                {
+                    "id": "tracking_number",
+                    "porto_id": "tracking_number",
+                    "name": "Sendungsnummer",
+                    "label": "Tracking number",
+                    "description": "Test",
+                }
+            ],
+        },
         "restrictions.json": {"restrictions": [], "file_type": "restrictions"},
     }
 

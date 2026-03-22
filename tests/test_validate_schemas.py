@@ -142,8 +142,8 @@ class TestValidateAllSchemas:
         with (
             patch("scripts.validators.schema.get_project_root", return_value=tmp_path),
             patch(
-                "scripts.validators.schema.get_schema_data_mappings",
-                return_value={"schemas/s.schema.json": "data/d.json"},
+                "scripts.validators.schema.get_all_schema_data_pairs",
+                return_value=[("schemas/s.schema.json", "data/d.json")],
             ),
         ):
             result = validate_all_schemas()

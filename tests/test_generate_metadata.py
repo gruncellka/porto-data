@@ -167,29 +167,29 @@ class TestGenerateMetadata:
     """Test generate_metadata function."""
 
     @patch("scripts.generate_metadata.get_all_file_checksums")
-    @patch("scripts.generate_metadata.get_schema_data_mappings")
+    @patch("scripts.generate_metadata.get_all_schema_data_pairs")
     @patch("scripts.generate_metadata.get_project_metadata")
     @patch("scripts.generate_metadata.Path.exists")
     @patch("scripts.generate_metadata.Path.stat")
     def test_generate_metadata_structure(
-        self, mock_stat, mock_exists, mock_project_meta, mock_mappings, mock_checksums
+        self, mock_stat, mock_exists, mock_project_meta, mock_pairs, mock_checksums
     ):
         """Test that generate_metadata returns correct structure."""
-        # Setup mocks
         mock_project_meta.return_value = {
             "name": "test-project",
             "version": "1.0.0",
             "description": "Test",
         }
-        mock_mappings.return_value = {"schemas/products.schema.json": "data/products.json"}
+        mock_pairs.return_value = [
+            ("schemas/products.schema.json", "providers/deutschepost/products.json"),
+        ]
         mock_checksums.return_value = {
             "schemas/products.schema.json": "schema_checksum",
-            "data/products.json": "data_checksum",
+            "providers/deutschepost/products.json": "data_checksum",
         }
         mock_exists.return_value = True
         mock_stat.return_value.st_size = 100
 
-        # Mock Path operations
         with patch("scripts.generate_metadata.Path") as mock_path:
             mock_schema_path = MagicMock()
             mock_data_path = MagicMock()
@@ -200,8 +200,6 @@ class TestGenerateMetadata:
             mock_path.side_effect = lambda p: (
                 mock_schema_path if "schema" in str(p) else mock_data_path
             )
-
-            # Mock get_schema_url
             with patch(
                 "scripts.generate_metadata.get_schema_url",
                 return_value="https://example.com/schema.json",
@@ -209,17 +207,18 @@ class TestGenerateMetadata:
                 metadata = generate_metadata()
 
         assert "project" in metadata
-        assert "entities" in metadata
+        assert "global" in metadata
+        assert "providers" in metadata
         assert "generated_at" in metadata
         assert "checksums" in metadata
         assert metadata["project"]["name"] == "test-project"
         assert metadata["project"]["version"] == "1.0.0"
 
     @patch("scripts.generate_metadata.get_all_file_checksums")
-    @patch("scripts.generate_metadata.get_schema_data_mappings")
+    @patch("scripts.generate_metadata.get_all_schema_data_pairs")
     @patch("scripts.generate_metadata.get_project_metadata")
     def test_generate_metadata_includes_entities(
-        self, mock_project_meta, mock_mappings, mock_checksums
+        self, mock_project_meta, mock_pairs, mock_checksums
     ):
         """Test that entities are included in metadata."""
         mock_project_meta.return_value = {
@@ -227,13 +226,15 @@ class TestGenerateMetadata:
             "version": "1.0.0",
             "description": "",
         }
-        mock_mappings.return_value = {}
+        mock_pairs.return_value = []
         mock_checksums.return_value = {}
 
         metadata = generate_metadata()
 
-        assert "entities" in metadata
-        assert isinstance(metadata["entities"], dict)
+        assert "global" in metadata
+        assert "providers" in metadata
+        assert isinstance(metadata["global"], dict)
+        assert isinstance(metadata["providers"], dict)
 
     def test_generate_metadata_has_timestamp(self):
         """Test that generated_at timestamp is included."""
@@ -245,11 +246,11 @@ class TestGenerateMetadata:
         assert metadata["generated_at"].endswith("Z") or "+" in metadata["generated_at"]
 
     @patch("scripts.generate_metadata.get_all_file_checksums")
-    @patch("scripts.generate_metadata.get_schema_data_mappings")
+    @patch("scripts.generate_metadata.get_all_schema_data_pairs")
     @patch("scripts.generate_metadata.get_project_root")
     @patch("scripts.generate_metadata._get_project_meta")
     def test_generate_metadata_skips_missing_files(
-        self, mock_project_meta, mock_get_root, mock_mappings, mock_checksums, tmp_path
+        self, mock_project_meta, mock_get_root, mock_pairs, mock_checksums, tmp_path
     ):
         """Test that mappings whose schema or data file does not exist are skipped."""
         mock_get_root.return_value = tmp_path
@@ -258,12 +259,14 @@ class TestGenerateMetadata:
             "version": "1.0.0",
             "description": "",
         }
-        mock_mappings.return_value = {
-            "schemas/products.schema.json": "data/products.json",
-            "schemas/nonexistent.schema.json": "data/nonexistent.json",
-        }
+        mock_pairs.return_value = [
+            ("schemas/products.schema.json", "providers/deutschepost/products.json"),
+            ("schemas/nonexistent.schema.json", "providers/deutschepost/nonexistent.json"),
+        ]
         mock_checksums.return_value = {}
         with patch("scripts.generate_metadata.Path.exists", return_value=False):
             metadata = generate_metadata()
-        assert "entities" in metadata
-        assert metadata["entities"] == {}
+        assert "global" in metadata
+        assert "providers" in metadata
+        assert metadata["global"] == {}
+        assert metadata["providers"] == {}

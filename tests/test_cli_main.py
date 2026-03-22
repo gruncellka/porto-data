@@ -34,7 +34,7 @@ class TestCreateParser:
     def test_create_parser_validate_has_analyze_flag(self):
         """Test that validate command has --analyze flag."""
         parser = create_parser()
-        args = parser.parse_args(["validate", "--type", "links", "--analyze"])
+        args = parser.parse_args(["validate", "--type", "graph", "--analyze"])
         assert args.analyze is True
 
     def test_create_parser_validate_default_type_is_none(self):
@@ -56,23 +56,41 @@ class TestMainFunction:
             assert result == 0
             mock_validate_schema.assert_called_once()
 
-    @patch("cli.main.validate_links")
-    def test_main_validate_links(self, mock_validate_links):
-        """Test main with validate --type links."""
-        mock_validate_links.return_value = 0
-        with patch("sys.argv", ["porto", "validate", "--type", "links"]):
+    @patch("cli.main.validate_graph")
+    def test_main_validate_graph(self, mock_validate_graph):
+        """Test main with validate --type graph."""
+        mock_validate_graph.return_value = 0
+        with patch("sys.argv", ["porto", "validate", "--type", "graph"]):
             result = main()
             assert result == 0
-            mock_validate_links.assert_called_once_with(analyze=False)
+            mock_validate_graph.assert_called_once_with(analyze=False)
 
-    @patch("cli.main.validate_links")
-    def test_main_validate_links_with_analyze(self, mock_validate_links):
-        """Test main with validate --type links --analyze."""
-        mock_validate_links.return_value = 0
-        with patch("sys.argv", ["porto", "validate", "--type", "links", "--analyze"]):
+    @patch("cli.main.validate_graph")
+    def test_main_validate_graph_with_analyze(self, mock_validate_graph):
+        """Test main with validate --type graph --analyze."""
+        mock_validate_graph.return_value = 0
+        with patch("sys.argv", ["porto", "validate", "--type", "graph", "--analyze"]):
             result = main()
             assert result == 0
-            mock_validate_links.assert_called_once_with(analyze=True)
+            mock_validate_graph.assert_called_once_with(analyze=True)
+
+    @patch("cli.main.validate_layout")
+    def test_main_validate_layout(self, mock_validate_layout):
+        """Test main with validate --type layout."""
+        mock_validate_layout.return_value = 0
+        with patch("sys.argv", ["porto", "validate", "--type", "layout"]):
+            result = main()
+            assert result == 0
+            mock_validate_layout.assert_called_once()
+
+    @patch("cli.main.validate_limits")
+    def test_main_validate_limits(self, mock_validate_limits):
+        """Test main with validate --type limits."""
+        mock_validate_limits.return_value = 0
+        with patch("sys.argv", ["porto", "validate", "--type", "limits"]):
+            result = main()
+            assert result == 0
+            mock_validate_limits.assert_called_once()
 
     @patch("cli.main.validate_all")
     def test_main_validate_all(self, mock_validate_all):

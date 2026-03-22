@@ -7,7 +7,7 @@ import pytest
 
 from scripts.validators.base import ValidationResults
 from scripts.validators.helpers import validate_unit_consistency
-from scripts.validators.links import DataLinksValidator
+from scripts.validators.links import GraphValidator
 from scripts.validators.schema import validate_all_schemas, validate_file
 
 
@@ -58,7 +58,7 @@ class TestValidateUnitConsistency:
             unit_name="weight",
             data_links_value="g",
             expected_value="g",
-            file_names=["data_links.json", "products.json"],
+            file_names=["graph.json", "products.json"],
             results=results,
             other_values=["kg"],
         )
@@ -78,7 +78,7 @@ class TestValidateUnitConsistency:
             unit_name="weight",
             data_links_value="g",
             expected_value="kg",
-            file_names=["data_links.json", "products.json"],
+            file_names=["graph.json", "products.json"],
             results=results,
             other_values=["g"],
         )
@@ -157,12 +157,12 @@ class TestSchemaValidator:
         assert isinstance(result, int)
 
 
-class TestDataLinksValidatorUnit:
-    """Unit tests for DataLinksValidator class methods."""
+class TestGraphValidatorUnit:
+    """Unit tests for GraphValidator class methods."""
 
     def test_validator_initialization(self, minimal_data_files):
         """Test validator initialization."""
-        validator = DataLinksValidator(minimal_data_files)
+        validator = GraphValidator(minimal_data_files)
         assert validator.data_dir == minimal_data_files
         assert isinstance(validator.results, dict)
         assert all(
@@ -171,10 +171,10 @@ class TestDataLinksValidatorUnit:
 
     def test_validator_loads_data(self, minimal_data_files):
         """Test that validator loads data correctly."""
-        validator = DataLinksValidator(minimal_data_files)
+        validator = GraphValidator(minimal_data_files)
         validator.load_data()
 
-        assert validator.data_links is not None
+        assert validator.graph is not None
         assert validator.products is not None
         assert isinstance(validator.product_dict, dict)
         assert isinstance(validator.zone_ids, dict)
@@ -182,7 +182,7 @@ class TestDataLinksValidatorUnit:
 
     def test_validator_validate_all_structure(self, minimal_data_files):
         """Test that validate_all returns proper structure."""
-        validator = DataLinksValidator(minimal_data_files)
+        validator = GraphValidator(minimal_data_files)
         results = validator.validate_all()
 
         assert isinstance(results, dict)
@@ -194,11 +194,11 @@ class TestDataLinksValidatorUnit:
         data_dir = tmp_path / "data"
         data_dir.mkdir()
 
-        # Create only data_links.json
-        with open(data_dir / "data_links.json", "w") as f:
-            json.dump({"file_type": "data_links", "links": {}}, f)
+        # Create only graph.json
+        with open(data_dir / "graph.json", "w") as f:
+            json.dump({"file_type": "graph", "links": {}}, f)
 
-        validator = DataLinksValidator(data_dir)
+        validator = GraphValidator(data_dir)
         results = validator.validate_all()
 
         # Should have errors about missing files

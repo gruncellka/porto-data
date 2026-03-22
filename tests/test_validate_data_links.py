@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Tests for data links validation - validators/links.py and backward compatibility."""
+"""Tests for graph validation - validators/links.py."""
 
 import json
 from pathlib import Path
@@ -7,15 +7,29 @@ from pathlib import Path
 import pytest
 
 from scripts.validators.base import ValidationResults
-from scripts.validators.links import DataLinksValidator
+from scripts.validators.links import GraphValidator
 
 
-class TestDataLinksValidatorInitialization:
-    """Test DataLinksValidator initialization and error handling."""
+class TestGraphValidatorInitialization:
+    """Test GraphValidator initialization and error handling."""
+
+    def test_validator_initialization_with_project_root(self, project_root):
+        """Test validator with project_root + provider (global/providers structure)."""
+        from scripts.data_files import GLOBAL_DIR, PROVIDERS_DIR
+
+        porto_data = project_root / "porto_data"
+        if not (porto_data / GLOBAL_DIR).exists() or not (porto_data / PROVIDERS_DIR).exists():
+            pytest.skip("porto_data with global/providers structure not found")
+        validator = GraphValidator(project_root=porto_data, provider="deutschepost")
+        assert validator.global_dir == porto_data / GLOBAL_DIR
+        assert validator.provider_dir == porto_data / PROVIDERS_DIR / "deutschepost"
+        validator.load_data()
+        assert validator.graph is not None
+        assert validator.dimensions is not None
 
     def test_validator_initialization_success(self, minimal_data_files):
         """Test that validator can be initialized with valid directory."""
-        validator = DataLinksValidator(minimal_data_files)
+        validator = GraphValidator(minimal_data_files)
         assert validator.data_dir == minimal_data_files
         assert isinstance(validator.results, dict)
         assert all(
@@ -26,32 +40,32 @@ class TestDataLinksValidatorInitialization:
         """Test that validator raises error for invalid path."""
         invalid_path = Path("/nonexistent/path")
         with pytest.raises(FileNotFoundError, match="does not exist"):
-            DataLinksValidator(invalid_path)
+            GraphValidator(invalid_path)
 
     def test_validator_initialization_fails_file_not_dir(self, tmp_path):
         """Test that validator raises error if path is a file, not directory."""
         file_path = tmp_path / "not_a_dir.txt"
         file_path.write_text("test")
         with pytest.raises(ValueError, match="not a directory"):
-            DataLinksValidator(file_path)
+            GraphValidator(file_path)
 
     def test_validator_loads_data(self, minimal_data_files):
         """Test that validator can load data files."""
-        validator = DataLinksValidator(minimal_data_files)
+        validator = GraphValidator(minimal_data_files)
         validator.load_data()
 
-        assert validator.data_links is not None
+        assert validator.graph is not None
         assert validator.products is not None
         assert validator.zones is not None
         assert isinstance(validator.product_dict, dict)
 
-    def test_load_data_reports_missing_file(self, tmp_path, minimal_data_links):
+    def test_load_data_reports_missing_file(self, tmp_path, minimal_graph):
         """Test that load_data adds an error when a required file is missing."""
         data_dir = tmp_path / "data"
         data_dir.mkdir()
-        (data_dir / "data_links.json").write_text(json.dumps(minimal_data_links))
+        (data_dir / "graph.json").write_text(json.dumps(minimal_graph))
         # Omit products.json and others so load_json raises FileNotFoundError
-        validator = DataLinksValidator(data_dir)
+        validator = GraphValidator(data_dir)
         validator.load_data()
         assert len(validator.results["errors"]) >= 1
         assert (
@@ -60,12 +74,12 @@ class TestDataLinksValidatorInitialization:
         )
 
 
-class TestDataLinksValidatorResults:
-    """Test DataLinksValidator results structure and validation."""
+class TestGraphValidatorResults:
+    """Test GraphValidator results structure and validation."""
 
     def test_validate_all_returns_validation_results(self, minimal_data_files):
         """Test that validate_all returns ValidationResults."""
-        validator = DataLinksValidator(minimal_data_files)
+        validator = GraphValidator(minimal_data_files)
         results = validator.validate_all()
 
         assert isinstance(results, dict)
@@ -74,7 +88,7 @@ class TestDataLinksValidatorResults:
 
     def test_results_structure_matches_typedict(self, minimal_data_files):
         """Test that results match ValidationResults TypedDict."""
-        validator = DataLinksValidator(minimal_data_files)
+        validator = GraphValidator(minimal_data_files)
         results = validator.validate_all()
 
         # Type check - should match ValidationResults structure
@@ -93,7 +107,9 @@ class TestServicePriceConsistency:
         """Template for service data."""
         return {
             "id": "test_service",
+            "porto_id": "test_service",
             "name": "Test Service",
+            "label": "Test service",
             "description": "A test service",
             "features": ["tracking"],
         }
@@ -125,7 +141,9 @@ class TestServicePriceConsistency:
             "services": [
                 {
                     "id": "test_service",
+                    "porto_id": "test_service",
                     "name": "Test Service",
+                    "label": "Test service",
                     "description": "A test service",
                     "features": ["tracking"],
                     **({"effective_to": service_effective_to} if service_effective_to else {}),
@@ -152,12 +170,13 @@ class TestServicePriceConsistency:
             },
         }
 
-        data_links_data = {
-            "file_type": "data_links",
-            "schema_version": "1.0",
+        graph_data = {
+            "file_type": "graph",
+            "provider": "deutschepost",
             "unit": {"weight": "g", "dimension": "mm", "price": "cents", "currency": "EUR"},
             "dependencies": {},
             "links": {},
+            "lookup_rules": {},
             "global_settings": {
                 "price_source": "prices.json",
                 "lookup_method": {
@@ -175,7 +194,19 @@ class TestServicePriceConsistency:
             "zones.json": {"zones": [], "file_type": "zones"},
             "weight_tiers.json": {"weight_tiers": {}, "file_type": "weight_tiers"},
             "dimensions.json": {"dimensions": {}, "file_type": "dimensions"},
-            "features.json": {"features": {}, "file_type": "features"},
+            "features.json": {
+                "file_type": "features",
+                "provider": "deutschepost",
+                "features": [
+                    {
+                        "id": "tracking_number",
+                        "porto_id": "tracking_number",
+                        "name": "Sendungsnummer",
+                        "label": "Tracking number",
+                        "description": "Test",
+                    }
+                ],
+            },
             "restrictions.json": {"restrictions": [], "file_type": "restrictions"},
         }
 
@@ -183,7 +214,7 @@ class TestServicePriceConsistency:
             **defaults,
             "services.json": services_data,
             "prices.json": prices_data,
-            "data_links.json": data_links_data,
+            "graph.json": graph_data,
         }
 
         for filename, data in all_files.items():
@@ -210,7 +241,7 @@ class TestServicePriceConsistency:
     ):
         """Test service-price consistency with various scenarios."""
         data_dir = self.create_test_scenario(tmp_path, service_effective_to, price_effective_to)
-        validator = DataLinksValidator(data_dir)
+        validator = GraphValidator(data_dir)
         results = validator.validate_all()
 
         # Check for service-price related errors
@@ -238,7 +269,7 @@ class TestServicePriceConsistency:
                 "Error should mention service ID"
             )
 
-    def test_missing_service_in_services_json_fails(self, tmp_path, minimal_data_links):
+    def test_missing_service_in_services_json_fails(self, tmp_path, minimal_graph):
         """Test that price referencing non-existent service fails validation."""
 
         data_dir = tmp_path / "data"
@@ -267,7 +298,19 @@ class TestServicePriceConsistency:
             "zones.json": {"zones": [], "file_type": "zones"},
             "weight_tiers.json": {"weight_tiers": {}, "file_type": "weight_tiers"},
             "dimensions.json": {"dimensions": {}, "file_type": "dimensions"},
-            "features.json": {"features": {}, "file_type": "features"},
+            "features.json": {
+                "file_type": "features",
+                "provider": "deutschepost",
+                "features": [
+                    {
+                        "id": "tracking_number",
+                        "porto_id": "tracking_number",
+                        "name": "Sendungsnummer",
+                        "label": "Tracking number",
+                        "description": "Test",
+                    }
+                ],
+            },
             "restrictions.json": {"restrictions": [], "file_type": "restrictions"},
         }
 
@@ -275,13 +318,13 @@ class TestServicePriceConsistency:
             **defaults,
             "services.json": services_data,
             "prices.json": prices_data,
-            "data_links.json": minimal_data_links,
+            "graph.json": minimal_graph,
         }
 
         for filename, data in all_files.items():
             with open(data_dir / filename, "w") as f:
                 json.dump(data, f)
-        validator = DataLinksValidator(data_dir)
+        validator = GraphValidator(data_dir)
         results = validator.validate_all()
 
         # Should have an error about missing service
@@ -291,15 +334,15 @@ class TestServicePriceConsistency:
         assert len(missing_service_errors) > 0, "Should have detected missing service"
 
 
-class TestDataLinksValidatorBackwardCompatibility:
+class TestGraphValidatorBackwardCompatibility:
     """Test that imports work via scripts package."""
 
     def test_validator_importable_from_scripts_package(self, minimal_data_files):
-        """Test that DataLinksValidator can be imported from scripts.validators."""
-        from scripts.validators.links import DataLinksValidator as Import
+        """Test that GraphValidator can be imported from scripts.validators."""
+        from scripts.validators.links import GraphValidator as Import
 
         validator = Import(minimal_data_files)
-        assert validator.__class__.__name__ == "DataLinksValidator"
+        assert validator.__class__.__name__ == "GraphValidator"
         assert hasattr(validator, "validate_all")
 
     def test_validation_results_importable_from_scripts_package(self):

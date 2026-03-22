@@ -237,8 +237,37 @@ class TestGetDataFileName:
 class TestGetExistingChecksumsFromMetadata:
     """Test get_existing_checksums_from_metadata function."""
 
-    def test_get_existing_checksums_from_metadata_new_structure(self, tmp_path):
-        """Test extracting checksums from new metadata structure."""
+    def test_get_existing_checksums_from_metadata_global_providers_structure(self, tmp_path):
+        """Test extracting checksums from global+providers metadata structure."""
+        metadata_file = tmp_path / "metadata.json"
+        metadata = {
+            "global": {
+                "dimensions": {
+                    "data": {"path": "global/dimensions.json", "checksum": "global123"},
+                    "schema": {"path": "schemas/dimensions.schema.json", "checksum": "schema456"},
+                }
+            },
+            "providers": {
+                "deutschepost": {
+                    "products": {
+                        "data": {"path": "providers/deutschepost/products.json", "checksum": "prod789"},
+                        "schema": {"path": "schemas/products.schema.json", "checksum": "prod_schema"},
+                    }
+                }
+            },
+        }
+        with open(metadata_file, "w") as f:
+            json.dump(metadata, f)
+
+        checksums = get_existing_checksums_from_metadata(str(metadata_file))
+
+        assert checksums["global/dimensions.json"] == "global123"
+        assert checksums["schemas/dimensions.schema.json"] == "schema456"
+        assert checksums["providers/deutschepost/products.json"] == "prod789"
+        assert checksums["schemas/products.schema.json"] == "prod_schema"
+
+    def test_get_existing_checksums_from_metadata_legacy_entities_structure(self, tmp_path):
+        """Test extracting checksums from legacy entities metadata structure."""
         metadata_file = tmp_path / "metadata.json"
         metadata = {
             "entities": {
