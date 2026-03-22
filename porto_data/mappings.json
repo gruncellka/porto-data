@@ -1,13 +1,42 @@
 {
-    "mappings": {
-        "schemas/products.schema.json": "data/products.json",
-        "schemas/services.schema.json": "data/services.json",
-        "schemas/prices.schema.json": "data/prices.json",
-        "schemas/zones.schema.json": "data/zones.json",
-        "schemas/weight_tiers.schema.json": "data/weight_tiers.json",
-        "schemas/dimensions.schema.json": "data/dimensions.json",
-        "schemas/features.schema.json": "data/features.json",
-        "schemas/restrictions.schema.json": "data/restrictions.json",
-        "schemas/data_links.schema.json": "data/data_links.json"
+  "mappings": {
+    "global": {
+      "schemas/dimensions.schema.json": "global/dimensions.json",
+      "schemas/restrictions.schema.json": "global/restrictions.json",
+      "schemas/providers.schema.json": "global/providers.json",
+      "schemas/jurisdictions.schema.json": "global/jurisdictions.json"
+    },
+    "providers": {
+      "deutschepost": {
+        "schemas/products.schema.json": "providers/deutschepost/products.json",
+        "schemas/features.schema.json": "providers/deutschepost/features.json",
+        "schemas/services.schema.json": "providers/deutschepost/services.json",
+        "schemas/prices.schema.json": "providers/deutschepost/prices.json",
+        "schemas/zones.schema.json": "providers/deutschepost/zones.json",
+        "schemas/weight_tiers.schema.json": "providers/deutschepost/weight_tiers.json",
+        "schemas/limits.schema.json": "providers/deutschepost/limits.json",
+        "schemas/graph.schema.json": "providers/deutschepost/graph.json"
+      },
+      "swisspost": {
+        "schemas/products.schema.json": "providers/swisspost/products.json",
+        "schemas/features.schema.json": "providers/swisspost/features.json",
+        "schemas/services.schema.json": "providers/swisspost/services.json",
+        "schemas/prices.schema.json": "providers/swisspost/prices.json",
+        "schemas/zones.schema.json": "providers/swisspost/zones.json",
+        "schemas/weight_tiers.schema.json": "providers/swisspost/weight_tiers.json",
+        "schemas/limits.schema.json": "providers/swisspost/limits.json",
+        "schemas/graph.schema.json": "providers/swisspost/graph.json"
+      },
+      "laposte": {
+        "schemas/products.schema.json": "providers/laposte/products.json",
+        "schemas/features.schema.json": "providers/laposte/features.json",
+        "schemas/services.schema.json": "providers/laposte/services.json",
+        "schemas/prices.schema.json": "providers/laposte/prices.json",
+        "schemas/zones.schema.json": "providers/laposte/zones.json",
+        "schemas/weight_tiers.schema.json": "providers/laposte/weight_tiers.json",
+        "schemas/limits.schema.json": "providers/laposte/limits.json",
+        "schemas/graph.schema.json": "providers/laposte/graph.json"
+      }
     }
+  }
 }

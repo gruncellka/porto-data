@@ -4,123 +4,378 @@
         "version": "0.3.1",
         "description": "Deutsche Post pricing and rules data with schema validation"
     },
-    "generated_at": "2026-03-14T21:57:27.633969Z",
-    "entities": {
-        "products": {
-            "data": {
-                "path": "data/products.json",
-                "checksum": "8da8c25b5f7a47214c4545d697a952e9b99a35d0f72bcf50eeaab92bad67c7c7",
-                "size": 2187
-            },
-            "schema": {
-                "path": "schemas/products.schema.json",
-                "checksum": "f51df51b3cefaea78128d5be5d4e9b46013ae84a4a725770d9b63b23034ede22",
-                "size": 4142,
-                "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/products.schema.json"
-            }
-        },
-        "services": {
-            "data": {
-                "path": "data/services.json",
-                "checksum": "465e8bdcae160ad42698e17fb900fed02c98cc9c10a262a318e5b2ded945c29e",
-                "size": 2102
-            },
-            "schema": {
-                "path": "schemas/services.schema.json",
-                "checksum": "719b066bd97be2ac1db151cf4632d72ecdee7f6bcee84b129dd11caa1f9f8644",
-                "size": 2749,
-                "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/services.schema.json"
-            }
-        },
-        "prices": {
-            "data": {
-                "path": "data/prices.json",
-                "checksum": "86f5867363b06125e0f28d152ad195a799cead684b18f2dfa213790523685178",
-                "size": 7397
-            },
-            "schema": {
-                "path": "schemas/prices.schema.json",
-                "checksum": "8464b3404c96ebba4649fc79455803af3ad8614884efc1b638b9d013e44ce1c1",
-                "size": 7650,
-                "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/prices.schema.json"
-            }
-        },
-        "zones": {
-            "data": {
-                "path": "data/zones.json",
-                "checksum": "2e0234e1b10bf0274e0df6195e02b9b466b1575d1517a06cf9fc1589567b4863",
-                "size": 5268
-            },
-            "schema": {
-                "path": "schemas/zones.schema.json",
-                "checksum": "f3bac4fe0bf3e7f1f1771ca23b5f49c56ec5eb56e9336710fc50afe6df9dcf59",
-                "size": 2542,
-                "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/zones.schema.json"
-            }
-        },
-        "weight_tiers": {
-            "data": {
-                "path": "data/weight_tiers.json",
-                "checksum": "0dcfee346b70620a2a894828bb1e55fb4ad7981726380741aa8540d22c2a3b74",
-                "size": 1276
-            },
-            "schema": {
-                "path": "schemas/weight_tiers.schema.json",
-                "checksum": "6eef72c89cabf9110c7ed4c918af4b87cb697883483a713ffaf8570011390135",
-                "size": 2247,
-                "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/weight_tiers.schema.json"
-            }
-        },
+    "generated_at": "2026-03-22T09:06:04.898493Z",
+    "global": {
         "dimensions": {
             "data": {
-                "path": "data/dimensions.json",
-                "checksum": "be93d09616265832e22cc1d04809b7ce70f55ef20d540bf9244cc8d6cc9ab644",
-                "size": 4159
+                "path": "global/dimensions.json",
+                "checksum": "2270d4b8e0575bd759b247c88764e47463ef52b294b37aa9b97a83e3b17d56c8",
+                "size": 3127
             },
             "schema": {
                 "path": "schemas/dimensions.schema.json",
-                "checksum": "895f48dbddead69d50b7c43b60a7fb43f71bb065580e0a458e4ec2e023ac4d51",
-                "size": 8365,
+                "checksum": "fc1bb6f568ee69828a3f04260111d7b761cf7c7777265e03a4550d898256524b",
+                "size": 5921,
                 "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/dimensions.schema.json"
-            }
-        },
-        "features": {
-            "data": {
-                "path": "data/features.json",
-                "checksum": "daccdb0bc22ed96106f2eb62fbd5ca4de1cc4ced0812754cb099e3cbf95434ee",
-                "size": 2377
-            },
-            "schema": {
-                "path": "schemas/features.schema.json",
-                "checksum": "b9df09aa5b3dbc4173e708e5bfef438978ba7b505bc670c08bbb10669ba27cf0",
-                "size": 1935,
-                "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/features.schema.json"
             }
         },
         "restrictions": {
             "data": {
-                "path": "data/restrictions.json",
-                "checksum": "24ea53d272f13daef88b7baeb75c4ad3a82ca73b9ea860c7546dcc6599f8c04f",
-                "size": 31227
+                "path": "global/restrictions.json",
+                "checksum": "892907da32c5db487327330f7db12c4fd1dee92d76e0d894e826db5e9a600a99",
+                "size": 12085
             },
             "schema": {
                 "path": "schemas/restrictions.schema.json",
-                "checksum": "83ceb199f4286e5bf505143aed05fe03ab2697d904b95f8c1832f2e1d2b697ab",
-                "size": 12629,
+                "checksum": "e8d01fc9cdeacc4087d54a08ceb1ff426ef1bb47b7bfe6faf83e19f25bfcab0c",
+                "size": 8471,
                 "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/restrictions.schema.json"
             }
         },
-        "data_links": {
+        "providers": {
             "data": {
-                "path": "data/data_links.json",
-                "checksum": "b9287b2b640bfabeaeb6139f3046aea31066e85a6d617d0139acf4e475cdc618",
-                "size": 4496
+                "path": "global/providers.json",
+                "checksum": "fe378c4bb4a347ba2296aa0950a9574a5e97793e972372c47172ca66c31bba6c",
+                "size": 802
             },
             "schema": {
-                "path": "schemas/data_links.schema.json",
-                "checksum": "ef1c64da2df95756f01ead6b6d421aa2ea1c10162890ab5392a94de1b88fe171",
-                "size": 7686,
-                "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/data_links.schema.json"
+                "path": "schemas/providers.schema.json",
+                "checksum": "33e5903c10be60b4a07eccea0e87b0c3d3e1597b82ec08e008c7d07ae78d8119",
+                "size": 2351,
+                "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/providers.schema.json"
+            }
+        },
+        "jurisdictions": {
+            "data": {
+                "path": "global/jurisdictions.json",
+                "checksum": "65a75c19cbff40b0d5b04d23f15e45f818863272cc468d6c71f1fd5ee0dbb235",
+                "size": 4538
+            },
+            "schema": {
+                "path": "schemas/jurisdictions.schema.json",
+                "checksum": "a65b676b8ad276e464cd4d43113f2df66ab64de45d9f31d608b392da30fd8646",
+                "size": 2339,
+                "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/jurisdictions.schema.json"
+            }
+        }
+    },
+    "providers": {
+        "deutschepost": {
+            "products": {
+                "data": {
+                    "path": "providers/deutschepost/products.json",
+                    "checksum": "ae8fc071e06089f393b27beb9be0c33194032a336cf44dac3b758f9f6e8c59d9",
+                    "size": 1984
+                },
+                "schema": {
+                    "path": "schemas/products.schema.json",
+                    "checksum": "b3db32e09fab715bd0d9b04f69e726ab0509d8e45d3cf42186d20ed7d659720a",
+                    "size": 4984,
+                    "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/products.schema.json"
+                }
+            },
+            "features": {
+                "data": {
+                    "path": "providers/deutschepost/features.json",
+                    "checksum": "9915e499fbf2ca3057ef6f3323983a019e13ec321cb1d80e24a107fdf81f128e",
+                    "size": 1525
+                },
+                "schema": {
+                    "path": "schemas/features.schema.json",
+                    "checksum": "3afa0316b30f2eb4d68b62f5e3dd82bb894000150ced2ccb953e8c99388a8788",
+                    "size": 2409,
+                    "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/features.schema.json"
+                }
+            },
+            "services": {
+                "data": {
+                    "path": "providers/deutschepost/services.json",
+                    "checksum": "4f33c085d2573271e781a984162f8c913e5110d599844e4de4cd97b851ce5fb2",
+                    "size": 2618
+                },
+                "schema": {
+                    "path": "schemas/services.schema.json",
+                    "checksum": "966ee39b2dba37ddec69272ba581b70c007f75968736828c1e024800fd380695",
+                    "size": 5206,
+                    "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/services.schema.json"
+                }
+            },
+            "prices": {
+                "data": {
+                    "path": "providers/deutschepost/prices.json",
+                    "checksum": "df2a5acecd46802f9c732a9a8c89b670c50ddb67305cb41d51e962835d4396d1",
+                    "size": 5544
+                },
+                "schema": {
+                    "path": "schemas/prices.schema.json",
+                    "checksum": "a2007830eff2625c3cfb4c522bdc1e24b7fd7e6e3977007e048dc5c86a69cd1d",
+                    "size": 5743,
+                    "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/prices.schema.json"
+                }
+            },
+            "zones": {
+                "data": {
+                    "path": "providers/deutschepost/zones.json",
+                    "checksum": "d1311657e5a2c5df308627c774ac69fbf4e4d33d150f6f919e2e43a7e29260b2",
+                    "size": 5270
+                },
+                "schema": {
+                    "path": "schemas/zones.schema.json",
+                    "checksum": "88054fa837412709d278a9270c5549bbacfc76c0d5cf03f6d9a4b507b2f1ba9f",
+                    "size": 2129,
+                    "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/zones.schema.json"
+                }
+            },
+            "weight_tiers": {
+                "data": {
+                    "path": "providers/deutschepost/weight_tiers.json",
+                    "checksum": "bf98ad6c866f6a315add786b2abed3b7c81ea7cd2850457bbdbb004bb7ec6ba2",
+                    "size": 781
+                },
+                "schema": {
+                    "path": "schemas/weight_tiers.schema.json",
+                    "checksum": "0cf4ce600feacae003f1a3eb961d97610f2e9fdd9c0bcc7136804ba61644f268",
+                    "size": 1717,
+                    "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/weight_tiers.schema.json"
+                }
+            },
+            "limits": {
+                "data": {
+                    "path": "providers/deutschepost/limits.json",
+                    "checksum": "af5db1f668519eede99c25d23269a9dc2994a0b289114ab6392c9036c091a154",
+                    "size": 979
+                },
+                "schema": {
+                    "path": "schemas/limits.schema.json",
+                    "checksum": "05462da700980f9b3c0a279ba0e7b83c0caa1552e4fd78169a37acfc13169f82",
+                    "size": 6900,
+                    "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/limits.schema.json"
+                }
+            },
+            "graph": {
+                "data": {
+                    "path": "providers/deutschepost/graph.json",
+                    "checksum": "0dddc7415b77a98ebc5f5367adb423a4a2db664b78d973646eedfa573bde2c52",
+                    "size": 4197
+                },
+                "schema": {
+                    "path": "schemas/graph.schema.json",
+                    "checksum": "959463645670480a807970d3ae73f34dc8d1f5bcf2c3b3402e0c2f8fe3f585c3",
+                    "size": 6111,
+                    "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/graph.schema.json"
+                }
+            }
+        },
+        "swisspost": {
+            "products": {
+                "data": {
+                    "path": "providers/swisspost/products.json",
+                    "checksum": "21d084e7d4cf7196359807a49e3f5bf17447d7f1c7b291ff5fba994e656e4478",
+                    "size": 3770
+                },
+                "schema": {
+                    "path": "schemas/products.schema.json",
+                    "checksum": "b3db32e09fab715bd0d9b04f69e726ab0509d8e45d3cf42186d20ed7d659720a",
+                    "size": 4984,
+                    "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/products.schema.json"
+                }
+            },
+            "features": {
+                "data": {
+                    "path": "providers/swisspost/features.json",
+                    "checksum": "2e7d603d022460018dc7da78a83eb36ed0fcff7a384315e6fe7b577bbe8b43ce",
+                    "size": 552
+                },
+                "schema": {
+                    "path": "schemas/features.schema.json",
+                    "checksum": "3afa0316b30f2eb4d68b62f5e3dd82bb894000150ced2ccb953e8c99388a8788",
+                    "size": 2409,
+                    "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/features.schema.json"
+                }
+            },
+            "services": {
+                "data": {
+                    "path": "providers/swisspost/services.json",
+                    "checksum": "937356ee1064ec8537e7c5036f51d926d84dbe492032024c67744a89636dcf62",
+                    "size": 932
+                },
+                "schema": {
+                    "path": "schemas/services.schema.json",
+                    "checksum": "966ee39b2dba37ddec69272ba581b70c007f75968736828c1e024800fd380695",
+                    "size": 5206,
+                    "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/services.schema.json"
+                }
+            },
+            "prices": {
+                "data": {
+                    "path": "providers/swisspost/prices.json",
+                    "checksum": "47bd651270977e17d3d7bf4664573fad2c9eacdf973c70043e94c4015097629d",
+                    "size": 13111
+                },
+                "schema": {
+                    "path": "schemas/prices.schema.json",
+                    "checksum": "a2007830eff2625c3cfb4c522bdc1e24b7fd7e6e3977007e048dc5c86a69cd1d",
+                    "size": 5743,
+                    "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/prices.schema.json"
+                }
+            },
+            "zones": {
+                "data": {
+                    "path": "providers/swisspost/zones.json",
+                    "checksum": "e1b6a6a21e4b8ac13244aa91cf1df3b9a02541024fcc97cdf272a90003ed113e",
+                    "size": 3628
+                },
+                "schema": {
+                    "path": "schemas/zones.schema.json",
+                    "checksum": "88054fa837412709d278a9270c5549bbacfc76c0d5cf03f6d9a4b507b2f1ba9f",
+                    "size": 2129,
+                    "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/zones.schema.json"
+                }
+            },
+            "weight_tiers": {
+                "data": {
+                    "path": "providers/swisspost/weight_tiers.json",
+                    "checksum": "653f4f7ac09aa78482bf06fe698dfb7500bc0ab032630ac140c9ac2ea72c2a4a",
+                    "size": 648
+                },
+                "schema": {
+                    "path": "schemas/weight_tiers.schema.json",
+                    "checksum": "0cf4ce600feacae003f1a3eb961d97610f2e9fdd9c0bcc7136804ba61644f268",
+                    "size": 1717,
+                    "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/weight_tiers.schema.json"
+                }
+            },
+            "limits": {
+                "data": {
+                    "path": "providers/swisspost/limits.json",
+                    "checksum": "7399d4ba815c8354467ff6fbce38ca992c31f8f8def6fe0a09f4c0b396a1eb1a",
+                    "size": 863
+                },
+                "schema": {
+                    "path": "schemas/limits.schema.json",
+                    "checksum": "05462da700980f9b3c0a279ba0e7b83c0caa1552e4fd78169a37acfc13169f82",
+                    "size": 6900,
+                    "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/limits.schema.json"
+                }
+            },
+            "graph": {
+                "data": {
+                    "path": "providers/swisspost/graph.json",
+                    "checksum": "8525cf3065ff05c61f23f3c4e8c48172a17e416e4926dc26b73a3568588e51df",
+                    "size": 4783
+                },
+                "schema": {
+                    "path": "schemas/graph.schema.json",
+                    "checksum": "959463645670480a807970d3ae73f34dc8d1f5bcf2c3b3402e0c2f8fe3f585c3",
+                    "size": 6111,
+                    "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/graph.schema.json"
+                }
+            }
+        },
+        "laposte": {
+            "products": {
+                "data": {
+                    "path": "providers/laposte/products.json",
+                    "checksum": "0c19cdbb7c8c75dd361858cc89abcf7c4329e4ac3ea355c18ca505b0012b57f7",
+                    "size": 2072
+                },
+                "schema": {
+                    "path": "schemas/products.schema.json",
+                    "checksum": "b3db32e09fab715bd0d9b04f69e726ab0509d8e45d3cf42186d20ed7d659720a",
+                    "size": 4984,
+                    "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/products.schema.json"
+                }
+            },
+            "features": {
+                "data": {
+                    "path": "providers/laposte/features.json",
+                    "checksum": "9951a330bcbb926d04a3cb294facc3c34090ddad3750934cb3f1a404a96071bb",
+                    "size": 1408
+                },
+                "schema": {
+                    "path": "schemas/features.schema.json",
+                    "checksum": "3afa0316b30f2eb4d68b62f5e3dd82bb894000150ced2ccb953e8c99388a8788",
+                    "size": 2409,
+                    "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/features.schema.json"
+                }
+            },
+            "services": {
+                "data": {
+                    "path": "providers/laposte/services.json",
+                    "checksum": "218a34a6f7a1a9859d3213deaf79d9109e78c1346e06fd36e9bcf9ae7527d138",
+                    "size": 2198
+                },
+                "schema": {
+                    "path": "schemas/services.schema.json",
+                    "checksum": "966ee39b2dba37ddec69272ba581b70c007f75968736828c1e024800fd380695",
+                    "size": 5206,
+                    "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/services.schema.json"
+                }
+            },
+            "prices": {
+                "data": {
+                    "path": "providers/laposte/prices.json",
+                    "checksum": "fa316b173e57a75c01eee8387e51a45b3fc2642791d682e5eaf989980183e10b",
+                    "size": 5500
+                },
+                "schema": {
+                    "path": "schemas/prices.schema.json",
+                    "checksum": "a2007830eff2625c3cfb4c522bdc1e24b7fd7e6e3977007e048dc5c86a69cd1d",
+                    "size": 5743,
+                    "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/prices.schema.json"
+                }
+            },
+            "zones": {
+                "data": {
+                    "path": "providers/laposte/zones.json",
+                    "checksum": "68033013efce9f01074add5401ba387fd3142fb5859bbaf4619e71bbbc47ce24",
+                    "size": 5461
+                },
+                "schema": {
+                    "path": "schemas/zones.schema.json",
+                    "checksum": "88054fa837412709d278a9270c5549bbacfc76c0d5cf03f6d9a4b507b2f1ba9f",
+                    "size": 2129,
+                    "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/zones.schema.json"
+                }
+            },
+            "weight_tiers": {
+                "data": {
+                    "path": "providers/laposte/weight_tiers.json",
+                    "checksum": "76bacf96753c8a39d2ae2fbaf7fa1b0bf0ee7460d80cfafb81241d4a0614e8c4",
+                    "size": 473
+                },
+                "schema": {
+                    "path": "schemas/weight_tiers.schema.json",
+                    "checksum": "0cf4ce600feacae003f1a3eb961d97610f2e9fdd9c0bcc7136804ba61644f268",
+                    "size": 1717,
+                    "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/weight_tiers.schema.json"
+                }
+            },
+            "limits": {
+                "data": {
+                    "path": "providers/laposte/limits.json",
+                    "checksum": "2359f4870074b8a575990564c54d8f30c51e9304a192ffcd5f6c784fb1191c88",
+                    "size": 742
+                },
+                "schema": {
+                    "path": "schemas/limits.schema.json",
+                    "checksum": "05462da700980f9b3c0a279ba0e7b83c0caa1552e4fd78169a37acfc13169f82",
+                    "size": 6900,
+                    "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/limits.schema.json"
+                }
+            },
+            "graph": {
+                "data": {
+                    "path": "providers/laposte/graph.json",
+                    "checksum": "9b78b200a1d12efab97141a4b54e160c5653588f65337a9de6b0beae34523cf4",
+                    "size": 3750
+                },
+                "schema": {
+                    "path": "schemas/graph.schema.json",
+                    "checksum": "959463645670480a807970d3ae73f34dc8d1f5bcf2c3b3402e0c2f8fe3f585c3",
+                    "size": 6111,
+                    "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/graph.schema.json"
+                }
             }
         }
     },
