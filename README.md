@@ -52,17 +52,20 @@ E-commerce and logistics (shipping costs, restrictions), compliance (sanctions, 
 
 | File                | Description                                             |
 | ------------------- | ------------------------------------------------------- |
-| `products.json`     | Shipping products (letters, parcels, packages)          |
-| `services.json`     | Additional services (registered mail, etc.)             |
+| `products.json`     | Shipping products; **`unit.weight`** only (`g`); formats via **`dimension_ids`** + global **`dimensions.json`** |
+| `services.json`     | Add-on services: **`porto_id`** (unified), provider **`id`**, native **`name`**, English **`label`** |
 | `prices.json`       | Pricing by product, zone, and weight (effective dates)  |
 | `zones.json`        | Geographic zones and country mappings                   |
 | `weight_tiers.json` | Weight brackets for pricing                             |
 | `dimensions.json`   | Size limits and specifications                          |
-| `features.json`     | Service features and capabilities                       |
+| `features.json` (per provider) | **`porto_id`**: unified Porto feature id (cross-provider); **`id`**: this provider’s catalog key (referenced from `services[].features`, often same as `porto_id`); **native `name`**, English **`label`** |
 | `restrictions.json` | Shipping restrictions, sanctions, compliance frameworks |
-| `data_links.json`   | Cross-references between data files                     |
+| `jurisdictions.json` | `jurisdictions.eu` / `jurisdictions.un` (ISO alpha-2 lists; align with symbolic `EU` / `UN` jurisdiction) |
+| `graph.json`              | Cross-references between data files                     |
 
-All data is validated against JSON schemas in `schemas/`; `mappings.json` maps schemas to files; `metadata.json` has checksums and canonical URLs. **Structure:** Products → Prices → Zones (dimensions, weight tiers, effective dates); Services → Features; Restrictions → Frameworks (e.g. EU sanctions, UN resolutions). One-directional; no circular dependencies. `data_links.json` describes dependencies and lookup rules.
+All data is validated against JSON schemas in `schemas/`; `mappings.json` maps schemas to files; `metadata.json` has checksums and canonical URLs. **Structure:** Products → Prices → Zones (dimensions, weight tiers, effective dates); Services → Features; Restrictions → Frameworks (e.g. EU sanctions, UN resolutions). One-directional; no circular dependencies. `graph.json` describes dependencies and lookup rules.
+
+**Provider identity:** `global/providers.json` is the authoritative registry (display name, country, coarse `mark_types` / `tracking_model` for UI and docs), alongside dimensions/restrictions. **Linking data (precise, within a provider):** **`graph.json` `links`** keys = **`products.json` `id`**; **`graph.global_settings.available_services`** and **`prices.json`** `product_id` / **`service_id`** = native **`id`** from products/services—not **`porto_id`**. **`porto_id`** on products, features, and services is the **cross-provider semantic helper** for resolvers and SDK logic when operators use different native ids; SDKs may resolve prices using either native **`id`** or **`porto_id`**. **Features:** **`services[].features`** may list feature **`id`** or **`porto_id`**. Native **`name`** and English **`label`** (where defined) support display. Folder names under `providers/<id>/` are implementation paths only and must match the registry; `mappings.json` provider keys must match the same set. **`metadata.json`** stays a build/runtime manifest (paths, checksums, schema URLs). Exact execution semantics remain on each product (`mark_type`, `tracking_mode`).
 
 ---
 
@@ -71,9 +74,11 @@ All data is validated against JSON schemas in `schemas/`; `mappings.json` maps s
 - **Country codes**: ISO 3166-1 alpha-2 (`DE`, `US`, `FR`, `YE`)
 - **Region codes**: ISO 3166-2 (`DE-BY`, `US-CA`, `FR-75`)
 - **Dates**: ISO 8601 (`2024-01-15`, `2023-06-01`)
-- **Jurisdiction**: `EU` (European Union), `UN` (United Nations), `DE` (Germany), `DP` (Deutsche Post operational)
+- **Jurisdiction** (global restrictions): `EU`, `UN`, national codes such as `DE` / `US` on sanction or law frameworks—not a postal operator id.
 
-**Restrictions:** Tracks occupied/disputed territories, links to legal frameworks (EU sanctions, UN resolutions), supports partial territory restrictions (`effective_partial`) and historical dates (`effective_from`, `effective_to`).
+**Global restrictions (`global/restrictions.json`):** Destination-oriented legal and sanctions regimes (**EU**, **UN**, mixed), expressed as `restrictions[]` rows you can match to a country/region. Framework metadata carries `jurisdiction`, scope, and optional IANA `timezone` (for interpreting row `effective_*` only—not a substitute for `jurisdiction` and not a signal for “EU operator”); row-level `effective_from` / `effective_to` drive activation. General national postal law that does not map to a verifiable destination row is intentionally omitted.
+
+**Provider limits (`providers/<id>/limits.json`):** This operator’s **operational execution** rules (conflicts, infrastructure, internal policy). Each `compliance_frameworks` entry documents the regime **period** and **`timezone`** (must match **`global/providers.json`** for that provider). **`limits[]`** row dates remain authoritative for SDK activation.
 
 ---
 

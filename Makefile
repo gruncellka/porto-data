@@ -1,5 +1,5 @@
 .PHONY: help setup install-hooks
-.PHONY: validate-json validate-data-links format-json lint-json format-code lint-code type-check
+.PHONY: validate-json validate-graph format-json lint-json format-code lint-code type-check
 .PHONY: validate format lint metadata test test-cov quality test-publish
 
 help:
@@ -15,8 +15,8 @@ help:
 	@echo "  make lint          - Lint both JSON and Python code"
 	@echo ""
 	@echo "JSON Commands:"
-	@echo "  make validate-json    - Validate all JSON files against schemas"
-	@echo "  make validate-data-links - Validate data_links.json consistency with data files"
+	@echo "  make validate-json    - Validate schemas, mappings layout, limits, then graph"
+	@echo "  make validate-graph - Validate graph.json consistency with data files"
 	@echo "  make format-json        - Format JSON files (use CHECK=1 for read-only check)"
 	@echo "  make lint-json        - Check JSON files for syntax errors (read-only)"
 	@echo ""
@@ -71,38 +71,25 @@ lint: lint-json lint-code
 validate-json:
 	@echo "Validating JSON against schemas..."
 	@. venv/bin/activate && PYTHONPATH=. python -m cli.main validate --type schema
-	@echo "Validating data_links.json..."
-	@. venv/bin/activate && PYTHONPATH=. python -m cli.main validate --type links
+	@echo "Validating mappings layout (mappings.json, provider field, metadata)..."
+	@. venv/bin/activate && PYTHONPATH=. python -m cli.main validate --type layout
+	@echo "Validating providers/*/limits.json..."
+	@. venv/bin/activate && PYTHONPATH=. python -m cli.main validate --type limits
+	@echo "Validating graph.json..."
+	@. venv/bin/activate && PYTHONPATH=. python -m cli.main validate --type graph
 
-validate-data-links:
-	@echo "Validating data_links.json consistency..."
-	@. venv/bin/activate && PYTHONPATH=. python -m cli.main validate --type links
+validate-graph:
+	@echo "Validating graph.json consistency..."
+	@. venv/bin/activate && PYTHONPATH=. python -m cli.main validate --type graph
 
 format-json:
 	@if [ -n "$(CHECK)" ]; then echo "Checking JSON formatting..."; else echo "Formatting JSON files..."; fi
-	@for file in porto_data/data/*.json porto_data/schemas/*.json; do \
+	@for file in porto_data/*.json porto_data/global/*.json porto_data/schemas/*.json porto_data/providers/*/*.json; do \
 		if [ -f "$$file" ]; then \
-			if python3 -m json.tool "$$file" "$$file.tmp" > /dev/null 2>&1; then \
-				if ! cmp -s "$$file" "$$file.tmp"; then \
-					if [ -n "$(CHECK)" ]; then \
-						echo "✗ $$file is not properly formatted"; \
-						rm -f "$$file.tmp"; \
-						exit 1; \
-					fi; \
-					if mv "$$file.tmp" "$$file"; then \
-						echo "✓ Formatted $$file"; \
-					else \
-						echo "✗ $$file: Failed to move formatted file (permissions issue?)"; \
-						rm -f "$$file.tmp"; \
-						exit 1; \
-					fi; \
-				else \
-					rm -f "$$file.tmp" && echo "✓ $$file (already formatted)"; \
-				fi; \
+			if [ -n "$(CHECK)" ]; then \
+				python3 scripts/format_json_file.py --check "$$file" && echo "✓ $$file (already formatted)" || (echo "✗ $$file is not properly formatted"; exit 1); \
 			else \
-				echo "✗ $$file: Invalid JSON - cannot format"; \
-				rm -f "$$file.tmp"; \
-				exit 1; \
+				python3 scripts/format_json_file.py "$$file" && echo "✓ Formatted $$file" || (echo "✗ $$file: Invalid JSON - cannot format"; exit 1); \
 			fi; \
 		fi; \
 	done
@@ -110,11 +97,10 @@ format-json:
 
 lint-json:
 	@echo "Linting JSON files for syntax errors..."
-	@for file in porto_data/data/*.json; do \
-		python3 -m json.tool "$$file" > /dev/null && echo "✓ $$file" || (echo "✗ $$file: JSON syntax error" && exit 1); \
-	done
-	@for file in porto_data/schemas/*.json; do \
-		python3 -m json.tool "$$file" > /dev/null && echo "✓ $$file" || (echo "✗ $$file: JSON syntax error" && exit 1); \
+	@for file in porto_data/*.json porto_data/global/*.json porto_data/schemas/*.json porto_data/providers/*/*.json; do \
+		if [ -f "$$file" ]; then \
+			python3 -m json.tool "$$file" > /dev/null && echo "✓ $$file" || (echo "✗ $$file: JSON syntax error" && exit 1); \
+		fi; \
 	done
 	@echo "✓ All JSON files are valid"
 
@@ -148,12 +134,12 @@ type-check:
 # ==========================================
 test:
 	@echo "Running tests..."
-	@. venv/bin/activate && pytest tests/ -v
+	@. venv/bin/activate && pytest
 	@echo "✓ Tests complete"
 
 test-cov:
 	@echo "Running tests with coverage..."
-	@. venv/bin/activate && pytest tests/ --cov=scripts --cov=cli --cov-report=term-missing --cov-report=html --cov-report=xml --cov-fail-under=90
+	@. venv/bin/activate && pytest --cov-report=html --cov-report=xml
 	@echo "✓ Coverage report complete (see htmlcov/index.html for detailed report)"
 
 # ==========================================
