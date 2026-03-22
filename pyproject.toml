@@ -6,12 +6,12 @@ readme = "README.md"
 license = {file = "LICENSE"}
 keywords = ["deutsche-post", "shipping", "postal", "pricing", "zones", "restrictions", "json", "schema"]
 classifiers = [
-    "License :: OSI Approved :: MIT License",
+    "License :: OSI Approved :: Apache Software License 2.0",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
 ]
 authors = [
-    {name = "gruncellka"},
+    {name = "Oleksandr Tsyba (gruncellka)"},
 ]
 requires-python = ">=3.13"
 dependencies = []
@@ -44,7 +44,13 @@ build-backend = "setuptools.build_meta"
 packages = ["porto_data"]
 
 [tool.setuptools.package-data]
-porto_data = ["data/*.json", "schemas/*.json", "mappings.json", "metadata.json"]
+porto_data = [
+    "mappings.json",
+    "metadata.json",
+    "global/*.json",
+    "schemas/*.json",
+    "providers/*/*.json",
+]
 
 [tool.ruff]
 line-length = 100
