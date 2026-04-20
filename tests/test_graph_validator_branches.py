@@ -1,4 +1,4 @@
-"""Branch coverage for scripts.validators.graph (prints, rules, marks, load errors)."""
+"""Branch coverage for ``scripts.validators.graph`` (prints, rules, marks, load errors)."""
 
 import json
 from pathlib import Path

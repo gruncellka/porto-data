@@ -36,7 +36,7 @@ There is **no** `porto_data/data/` bundle anymore. Cross-file dependencies and p
 - `scripts.validators.schema` — JSON Schema validation.
 - `scripts.validators.mappings_layout` — `mappings.json`, registry, stray files, metadata presence.
 - `scripts.validators.limits_scope` — `limits.json` letter-scope rules.
-- `scripts.validators.graph` — `graph.json` (dependencies, **`edges`**, units, service/price consistency, etc.).
+- `scripts/validators/graph/` — package for `graph.json` (dependencies, **`edges`**, units, service/price consistency, etc.); import as `scripts.validators.graph`.
 - Results shape: `ValidationResults` in `scripts.validators.base`.
 
 CLI / default order: **schema → mappings → limits → graph** (`porto validate`).

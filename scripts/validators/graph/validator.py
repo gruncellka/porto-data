@@ -1,16 +1,4 @@
-"""GraphValidator - validates graph.json against all data files.
-
-This module is organized into clear sections:
-1. Constants and imports
-2. Data loading and preparation
-3. Global settings validation (price_lookup)
-4. ``graph.edges`` validation (product × zones × weight_tiers in graph.json)
-5. Services validation
-6. Dependencies validation
-7. Units validation (weight, dimension, price, currency)
-8. Circular dependencies validation
-9. Main validation orchestrator
-"""
+"""GraphValidator — loads data and orchestrates graph.json validation."""
 
 import json
 from pathlib import Path
@@ -38,65 +26,25 @@ from scripts.utils import load_json
 from scripts.validators.base import ValidationResults
 from scripts.validators.helpers import validate_unit_consistency
 
-# ============================================================================
-# Constants
-# ============================================================================
-
-# Business logic constants (not file paths)
-EXPECTED_PRODUCT_PRICES_ARRAY = "product_prices"
-EXPECTED_SERVICE_PRICES_ARRAY = "service_prices"
-EXPECTED_WEIGHT_UNIT = "g"
-EXPECTED_DIMENSION_UNIT = "mm"
-EXPECTED_PRICE_UNIT = "cents"
-
-# provider_rules.json — keep in sync with schemas/rules.schema.json
-PROVIDER_RULE_KIND_METRIC_BAND_ATTACH = "metric_band_attach_service"
-PROVIDER_RULE_METRIC_THICKNESS = "thickness"
-EXPECTED_CURRENCY = "EUR"
-
-_RECT_KEYS = ("x", "y", "width", "height")
-
-
-def _envelope_rect_complete(r: Any) -> bool:
-    """True if r is a dict with integer x, y, width, height."""
-    if not isinstance(r, dict):
-        return False
-    return all(isinstance(r.get(k), int) for k in _RECT_KEYS)
-
-
-def _envelope_rect_equal(a: dict[str, Any], b: dict[str, Any]) -> bool:
-    return all(a.get(k) == b.get(k) for k in _RECT_KEYS)
-
-
-def _envelope_validation_views(env: dict[str, Any]) -> dict[str, Any]:
-    """Nested layout.* (print/stamp/address/window) or legacy top-level areas + window flags."""
-    rend = env.get("layout")
-    if isinstance(rend, dict) and isinstance(rend.get("print_area"), dict):
-        win = rend.get("window") or {}
-        sup = win.get("supported")
-        wa = win.get("area") if sup is True else None
-        return {
-            "addr": rend.get("address_area"),
-            "pa": rend.get("print_area"),
-            "wa": wa,
-            "has_w": _envelope_rect_complete(wa),
-            "no_window": sup is False,
-            "force_window": sup is True,
-        }
-    wa_legacy = env.get("window_area")
-    return {
-        "addr": env.get("address_area"),
-        "pa": env.get("print_area"),
-        "wa": wa_legacy,
-        "has_w": _envelope_rect_complete(wa_legacy),
-        "no_window": env.get("supports_window") is False,
-        "force_window": env.get("window_supported") is True,
-    }
-
-
-# ============================================================================
-# GraphValidator Class
-# ============================================================================
+from .constants import (
+    EXPECTED_CURRENCY,
+    EXPECTED_DIMENSION_UNIT,
+    EXPECTED_PRICE_UNIT,
+    EXPECTED_WEIGHT_UNIT,
+    PROVIDER_RULE_KIND_METRIC_BAND_ATTACH,
+    PROVIDER_RULE_METRIC_THICKNESS,
+)
+from .edges import (
+    run_validate_edges,
+    run_validate_products_in_edges,
+    run_validate_zones_and_weight_tiers_in_edges,
+)
+from .layouts import (
+    run_validate_envelope_address_window,
+    run_validate_envelope_layout_references,
+    run_validate_product_envelope_format_ids,
+)
+from .price_lookup import run_price_lookup_validation
 
 
 class GraphValidator:
@@ -177,10 +125,6 @@ class GraphValidator:
         self.service_prices: list[dict[str, Any]] = []
         self.all_data_files: set[str] = set()
 
-    # ========================================================================
-    # Data Loading
-    # ========================================================================
-
     def load_data(self) -> None:
         """Load all required JSON files and build lookup structures."""
         if self.graph is not None:
@@ -216,7 +160,6 @@ class GraphValidator:
             self.results["errors"].append(f"Invalid JSON: {str(e)}")
             return
 
-        # Build lookup structures for efficient validation
         self._build_lookup_structures()
 
     def _build_lookup_structures(self) -> None:
@@ -269,319 +212,56 @@ class GraphValidator:
                 return s
         return None
 
-    # ========================================================================
-    # Global Settings Validation
-    # ========================================================================
-
     def validate_lookup_method(self) -> None:
         """Validate price_lookup configuration in global_settings."""
         if self.graph is None:
             return
-
-        global_settings = self.graph.get("global_settings", {})
-        price_lookup = global_settings.get("price_lookup", {})
-        if not isinstance(price_lookup, dict):
-            return
-
-        pp = price_lookup.get("product_prices", {})
-        sp = price_lookup.get("service_prices", {})
-
-        if self.shared_bundle_subdir == self._bundle_root:
-            expected_pp = f"prices/{PRODUCT_PRICES_FILE}"
-            expected_sp = f"prices/{SERVICE_PRICES_FILE}"
-        else:
-            prov = self.provider_dir.name
-            root = self._bundle_root
-            pbase = root / PROVIDERS_DIR / prov
-            expected_pp = (
-                get_data_file_path("product_prices", prov, project_root=root)
-                .relative_to(pbase)
-                .as_posix()
-            )
-            expected_sp = (
-                get_data_file_path("service_prices", prov, project_root=root)
-                .relative_to(pbase)
-                .as_posix()
-            )
-
-        self._validate_file_reference(
-            pp.get("file", "") if isinstance(pp, dict) else "",
-            expected_pp,
-            "price_lookup.product_prices.file",
-            ["global_settings", "price_lookup", "product_prices", "file"],
+        run_price_lookup_validation(
+            self.results,
+            graph=self.graph,
+            shared_bundle_subdir=self.shared_bundle_subdir,
+            bundle_root=self._bundle_root,
+            provider_dir=self.provider_dir,
+            all_data_files=self.all_data_files,
+            product_prices_doc=self.product_prices_doc,
+            service_prices_doc=self.service_prices_doc,
+            product_prices=self.product_prices,
+            service_prices=self.service_prices,
         )
-        self._validate_file_reference(
-            sp.get("file", "") if isinstance(sp, dict) else "",
-            expected_sp,
-            "price_lookup.service_prices.file",
-            ["global_settings", "price_lookup", "service_prices", "file"],
-        )
-
-        if isinstance(pp, dict):
-            self._validate_lookup_array(
-                pp.get("array", ""),
-                EXPECTED_PRODUCT_PRICES_ARRAY,
-                "product_prices",
-                self.product_prices_doc,
-                "product_prices",
-            )
-            self._validate_lookup_match_keys(pp.get("match", {}), for_product_prices=True)
-
-        if isinstance(sp, dict):
-            self._validate_lookup_array(
-                sp.get("array", ""),
-                EXPECTED_SERVICE_PRICES_ARRAY,
-                "service_prices",
-                self.service_prices_doc,
-                "service_prices",
-            )
-            self._validate_lookup_match_keys(sp.get("match", {}), for_product_prices=False)
-
-    def _validate_file_reference(
-        self, actual: str, expected: str, field_name: str, path_parts: list[str]
-    ) -> None:
-        """Validate that a file reference matches expected value.
-
-        Args:
-            actual: Actual file name from data.
-            expected: Expected file name.
-            field_name: Name of the field being validated.
-            path_parts: Path parts for error context.
-        """
-        if actual == expected:
-            if expected in self.all_data_files:
-                self.results["correct"].append(f"{field_name} '{expected}' matches actual file")
-            else:
-                self.results["errors"].append(
-                    f"{field_name} references '{expected}' but file doesn't exist. "
-                    f"Found in: {GRAPH_FILE} -> {' -> '.join(path_parts)}"
-                )
-        else:
-            self.results["errors"].append(
-                f"{field_name} '{actual}' should be '{expected}'. "
-                f"Found in: {GRAPH_FILE} -> {' -> '.join(path_parts)}"
-            )
-
-    def _validate_lookup_array(
-        self,
-        lookup_array: str,
-        expected: str,
-        label: str,
-        doc: dict[str, Any] | None,
-        top_key: str,
-    ) -> None:
-        """Validate price_lookup.*.array matches actual JSON top-level key."""
-        path_hint = f"{GRAPH_FILE} -> global_settings -> price_lookup -> {label} -> array"
-        if lookup_array == expected:
-            if doc and top_key in doc and isinstance(doc.get(top_key), list):
-                self.results["correct"].append(
-                    f"price_lookup.{label}.array '{expected}' matches actual structure"
-                )
-            else:
-                self.results["errors"].append(
-                    f"Lookup references '{expected}' but structure doesn't match. Found in: {path_hint}"
-                )
-        else:
-            self.results["warnings"].append(
-                f"price_lookup.{label}.array path {lookup_array!r} — expected {expected!r}. {path_hint}"
-            )
-
-    def _validate_lookup_match_keys(
-        self, lookup_match: dict[str, Any], *, for_product_prices: bool
-    ) -> None:
-        """Validate price_lookup.*.match keys exist in price rows."""
-        path = (
-            f"{GRAPH_FILE} -> global_settings -> price_lookup -> "
-            f"{'product_prices' if for_product_prices else 'service_prices'} -> match"
-        )
-        if for_product_prices:
-            if not self.product_prices:
-                self.results["warnings"].append(
-                    "No product prices found to validate price_lookup.product_prices.match keys"
-                )
-                return
-            sample_keys = set(self.product_prices[0].keys())
-        else:
-            if not self.service_prices:
-                self.results["warnings"].append(
-                    "No service prices found to validate price_lookup.service_prices.match keys"
-                )
-                return
-            sample_keys = set(self.service_prices[0].keys())
-
-        expected_match_keys = set(lookup_match.keys())
-        match_keys_to_check = {k for k in expected_match_keys if k != "description"}
-        missing_keys = match_keys_to_check - sample_keys
-        if missing_keys:
-            self.results["errors"].append(
-                f"price_lookup match keys {sorted(missing_keys)} do not exist in entries. "
-                f"Available keys: {sorted(sample_keys)}. Found in: {path}"
-            )
-        else:
-            self.results["correct"].append(
-                f"price_lookup match keys {sorted(match_keys_to_check)} exist in entries ({path})"
-            )
-
-    # ========================================================================
-    # Edges validation (graph.edges)
-    # ========================================================================
 
     def validate_edges(self) -> None:
         """Validate graph.edges: per-product zones and weight_tiers."""
         if self.graph is None:
             return
-
-        edges = self.graph.get("edges", {})
-        for product_id, edge_data in edges.items():
-            self._validate_product_edge(product_id, edge_data)
-
-    def _validate_product_edge(self, product_id: str, edge_data: dict[str, Any]) -> None:
-        """Validate a single product edge (zones + weight_tiers).
-
-        Args:
-            product_id: Product id from graph.edges.
-            edge_data: zones and weight_tiers for this product.
-        """
-        # Check if product exists
-        if product_id not in self.product_dict:
-            self.results["errors"].append(
-                f"Product '{product_id}' in edges does not exist in {PRODUCTS_FILE}. "
-                f"Found in: {GRAPH_FILE} -> edges -> {product_id}"
-            )
-            return
-
-        product = self.product_dict[product_id]
-        link_zones = set(edge_data.get("zones", []))
-        link_weight_tiers = set(edge_data.get("weight_tiers", []))
-        product_zones = set(product.get("zones", []))
-        product_weight_tier = product.get("weight_tier")
-
-        # Validate zones
-        self._validate_product_zones(product_id, link_zones, product_zones)
-
-        self._validate_product_weight_tiers(product_id, link_weight_tiers, product_weight_tier)
-
-        # Check price coverage
-        self._validate_price_coverage(product_id, link_zones, link_weight_tiers)
-
-    def _validate_product_zones(
-        self, product_id: str, link_zones: set[str], product_zones: set[str]
-    ) -> None:
-        """Validate zones for a product."""
-        # Check zone existence
-        for zone in link_zones:
-            if zone not in self.zone_ids:
-                self.results["errors"].append(
-                    f"Zone '{zone}' for product '{product_id}' does not exist in {ZONES_FILE}. "
-                    f"Found in: {GRAPH_FILE} -> edges -> {product_id} -> zones"
-                )
-
-        # Check zone consistency
-        if link_zones == product_zones:
-            self.results["correct"].append(
-                f"Product '{product_id}': zones match ({sorted(link_zones)})"
-            )
-        else:
-            self.results["fixes_needed"].append(
-                f"Product '{product_id}': zones mismatch - edges: {sorted(link_zones)}, "
-                f"product: {sorted(product_zones)}"
-            )
-
-    def _validate_product_weight_tiers(
-        self, product_id: str, link_weight_tiers: set[str], product_weight_tier: str | None
-    ) -> None:
-        """Validate weight_tiers for a product."""
-        # Check weight_tier existence
-        for wt in link_weight_tiers:
-            if wt not in self.weight_tier_ids:
-                self.results["errors"].append(
-                    f"Weight tier '{wt}' for product '{product_id}' does not exist in {WEIGHTS_FILE}. "
-                    f"Found in: {GRAPH_FILE} -> edges -> {product_id} -> weight_tiers"
-                )
-
-        # Find all weight tiers that have prices for this product
-        price_weight_tiers = {
-            p["weight_tier"] for p in self.product_prices if p.get("product_id") == product_id
-        }
-
-        if product_weight_tier and product_weight_tier in link_weight_tiers:
-            self.results["correct"].append(
-                f"Product '{product_id}': weight_tier '{product_weight_tier}' is in edges"
-            )
-        elif product_weight_tier:
-            self.results["fixes_needed"].append(
-                f"Product '{product_id}': weight_tier '{product_weight_tier}' from product "
-                f"not in edges {sorted(link_weight_tiers)}"
-            )
-
-        missing_tiers = price_weight_tiers - link_weight_tiers
-        if missing_tiers:
-            self.results["fixes_needed"].append(
-                f"Product '{product_id}': prices exist for weight_tiers {sorted(missing_tiers)} but not in edges"
-            )
-        elif price_weight_tiers == link_weight_tiers:
-            self.results["correct"].append(
-                f"Product '{product_id}': all price weight_tiers match edges ({sorted(price_weight_tiers)})"
-            )
-
-    def _validate_price_coverage(
-        self, product_id: str, link_zones: set[str], link_weight_tiers: set[str]
-    ) -> None:
-        """Check if prices exist for all zone+weight_tier combinations."""
-        for zone in link_zones:
-            for weight_tier in link_weight_tiers:
-                matching_price = any(
-                    p.get("product_id") == product_id
-                    and p.get("zone") == zone
-                    and p.get("weight_tier") == weight_tier
-                    for p in self.product_prices
-                )
-                if not matching_price:
-                    self.results["warnings"].append(
-                        f"No price found for product '{product_id}', zone '{zone}', weight_tier '{weight_tier}'"
-                    )
+        run_validate_edges(
+            self.results,
+            graph=self.graph,
+            product_dict=self.product_dict,
+            zone_ids=self.zone_ids,
+            weight_tier_ids=self.weight_tier_ids,
+            product_prices=self.product_prices,
+        )
 
     def validate_products_in_edges(self) -> None:
         """Check for products not listed in graph.edges."""
         if self.graph is None:
             return
-
-        edges = self.graph.get("edges", {})
-        products_in_data = set(self.product_dict.keys())
-        products_in_edges = set(edges.keys())
-        missing_products = products_in_data - products_in_edges
-
-        if missing_products:
-            self.results["fixes_needed"].append(
-                f"Products in products.json but not in edges: {sorted(missing_products)}"
-            )
-        else:
-            self.results["correct"].append("All products are in edges")
+        run_validate_products_in_edges(
+            self.results,
+            graph=self.graph,
+            product_dict=self.product_dict,
+        )
 
     def validate_zones_and_weight_tiers(self) -> None:
         """Verify all zones and weight_tiers referenced in edges exist."""
         if self.graph is None:
             return
-
-        edges = self.graph.get("edges", {})
-
-        all_link_zones = set()
-        all_link_weight_tiers = set()
-        for edge_data in edges.values():
-            all_link_zones.update(edge_data.get("zones", []))
-            all_link_weight_tiers.update(edge_data.get("weight_tiers", []))
-
-        invalid_zones = all_link_zones - set(self.zone_ids.keys())
-        if not invalid_zones:
-            self.results["correct"].append("All zones in edges are valid")
-
-        invalid_weight_tiers = all_link_weight_tiers - self.weight_tier_ids
-        if not invalid_weight_tiers:
-            self.results["correct"].append("All weight_tiers in edges are valid")
-
-    # ========================================================================
-    # Services Validation
-    # ========================================================================
+        run_validate_zones_and_weight_tiers_in_edges(
+            self.results,
+            graph=self.graph,
+            zone_ids=self.zone_ids,
+            weight_tier_ids=self.weight_tier_ids,
+        )
 
     def validate_available_services(self) -> None:
         """Validate available_services and service-price consistency."""
@@ -590,7 +270,6 @@ class GraphValidator:
 
         available_services = self.graph.get("global_settings", {}).get("available_services", [])
 
-        # Validate service existence
         valid_refs = self._service_refs_set()
         for sp in self.service_prices:
             sid = sp.get("service_id")
@@ -609,7 +288,6 @@ class GraphValidator:
                     f"Found in: {GRAPH_FILE} -> global_settings -> available_services"
                 )
 
-        # Check if all services have prices
         service_price_ids = {sp.get("service_id") for sp in self.service_prices}
         for service_id in available_services:
             if service_id not in service_price_ids:
@@ -617,7 +295,6 @@ class GraphValidator:
                     f"Service '{service_id}' is listed as available but has no row in {SERVICE_PRICES_FILE}"
                 )
 
-        # Validate service-price effective date consistency
         self._validate_service_price_consistency()
 
     def _validate_service_price_consistency(self) -> None:
@@ -627,7 +304,6 @@ class GraphValidator:
             if not service_id:
                 continue
 
-            # Find effective_to from price entries
             price_entries = price_entry.get("price", [])
             price_effective_to = None
             for price_item in price_entries:
@@ -636,7 +312,6 @@ class GraphValidator:
                     price_effective_to = effective_to
                     break
 
-            # If price has effective_to, service must also have it
             if price_effective_to is not None:
                 service = self._get_service_by_ref(str(service_id))
                 if not service:
@@ -800,10 +475,6 @@ class GraphValidator:
                     f"marks profile {chosen!r} mark_type {pr_mark!r}"
                 )
 
-    # ========================================================================
-    # Provider rules (optional rules.json)
-    # ========================================================================
-
     def validate_provider_rules(self) -> None:
         """Validate providers/<id>/rules.json when present (refs products, zones, services, prices)."""
         doc = self.provider_rules_doc
@@ -890,10 +561,6 @@ class GraphValidator:
                 "rules.json references are consistent with catalog and prices"
             )
 
-    # ========================================================================
-    # Dependencies Validation
-    # ========================================================================
-
     def validate_dependencies(self) -> None:
         """Validate dependencies section."""
         if self.graph is None:
@@ -901,7 +568,6 @@ class GraphValidator:
 
         dependencies = self.graph.get("dependencies", {})
 
-        # Check if all data files are covered in dependencies
         expected_data_files = self.all_data_files - {GRAPH_FILE}
         files_in_dependencies = {dep_data.get("file") for dep_data in dependencies.values()}
         missing_in_dependencies = expected_data_files - files_in_dependencies
@@ -913,7 +579,6 @@ class GraphValidator:
         else:
             self.results["correct"].append("All data files are covered in dependencies section")
 
-        # Validate individual dependency entries
         for dep_name, dep_data in dependencies.items():
             dep_file = dep_data.get("file")
             if dep_file not in self.all_data_files:
@@ -927,10 +592,6 @@ class GraphValidator:
                     self.results["warnings"].append(
                         f"Dependency '{dep_file_name}' in '{dep_name}' is not a known data file"
                     )
-
-    # ========================================================================
-    # Units Validation
-    # ========================================================================
 
     def validate_units(self) -> None:
         """Validate all unit values consistency."""
@@ -985,161 +646,28 @@ class GraphValidator:
             other_values=[formats_dimension, layouts_dimension],
         )
 
-    def _resolve_envelope_layout_row(
-        self,
-        jurisdictions: dict[str, Any],
-        cc: str,
-        eid: str,
-    ) -> dict[str, Any] | None:
-        """Return row with orientation+layout or None."""
-        j = jurisdictions.get(cc)
-        if not isinstance(j, dict):
-            return None
-        envs = j.get("envelopes")
-        if not isinstance(envs, dict):
-            return None
-        row = envs.get(eid)
-        if not isinstance(row, dict):
-            return None
-        if row.get("layout") is not None and row.get("orientation") is not None:
-            return row
-        return None
-
     def validate_envelope_layout_references(self) -> None:
         """Jurisdiction keys, envelope ids, each row must define orientation+layout."""
-        if not self.envelope_layouts or not self.envelopes:
-            return
-
-        assert self.envelope_layouts is not None
-        assert self.envelopes is not None
-
-        format_ids = {
-            f["id"]
-            for f in self.envelopes.get("envelopes", [])
-            if isinstance(f, dict) and f.get("id")
-        }
-        jurisdictions = self.envelope_layouts.get("jurisdictions")
-        if not isinstance(jurisdictions, dict):
-            return
-
-        for cc, jblock in jurisdictions.items():
-            if not isinstance(jblock, dict):
-                continue
-            envs = jblock.get("envelopes")
-            if not isinstance(envs, dict):
-                continue
-            for eid, row in envs.items():
-                if eid not in format_ids:
-                    self.results["errors"].append(
-                        f"{LAYOUTS_FILE}: jurisdictions.{cc}.envelopes "
-                        f"unknown envelope id {eid!r} (not in {ENVELOPES_FILE})"
-                    )
-                if not isinstance(row, dict):
-                    continue
-                resolved = self._resolve_envelope_layout_row(jurisdictions, str(cc), str(eid))
-                if resolved is None:
-                    self.results["errors"].append(
-                        f"{LAYOUTS_FILE}: jurisdictions.{cc}.envelopes.{eid} "
-                        "must define orientation and layout"
-                    )
+        run_validate_envelope_layout_references(
+            self.results,
+            envelope_layouts=self.envelope_layouts,
+            envelopes=self.envelopes,
+        )
 
     def validate_envelope_address_window(self) -> None:
         """address_area must match window (or print_area when no window) for resolved layouts."""
-        if not self.envelope_layouts:
-            return
-        jurisdictions = self.envelope_layouts.get("jurisdictions")
-        if not isinstance(jurisdictions, dict):
-            return
-
-        for cc, jblock in jurisdictions.items():
-            if not isinstance(jblock, dict):
-                continue
-            envs = jblock.get("envelopes")
-            if not isinstance(envs, dict):
-                continue
-            for eid in envs:
-                row = self._resolve_envelope_layout_row(jurisdictions, str(cc), str(eid))
-                if not row or not isinstance(row, dict):
-                    continue
-                fid = str(eid)
-                env = {"layout": row.get("layout")}
-                path = f"{LAYOUTS_FILE} ({cc}, {fid})"
-                v = _envelope_validation_views(env)
-                addr = v["addr"]
-                pa = v["pa"]
-                wa = v["wa"]
-                has_w = v["has_w"]
-                no_window = v["no_window"]
-                force_window = v["force_window"]
-                if not _envelope_rect_complete(addr):
-                    self.results["errors"].append(
-                        f"Layout '{fid}' ({path}): address_area must have integer x, y, width, height"
-                    )
-                    continue
-                if not _envelope_rect_complete(pa):
-                    self.results["errors"].append(
-                        f"Layout '{fid}' ({path}): print_area must have integer x, y, width, height"
-                    )
-                    continue
-                if no_window and force_window:
-                    self.results["errors"].append(
-                        f"Layout '{fid}' ({path}): supports_window is false but window_supported is true"
-                    )
-                    continue
-                assert isinstance(addr, dict) and isinstance(pa, dict)
-                if no_window:
-                    if has_w:
-                        self.results["errors"].append(
-                            f"Layout '{fid}' ({path}): supports_window is false; omit window_area"
-                        )
-                    elif not _envelope_rect_equal(addr, pa):
-                        self.results["errors"].append(
-                            f"Layout '{fid}' ({path}): without window, address_area must equal print_area"
-                        )
-                elif force_window:
-                    if not has_w:
-                        self.results["errors"].append(
-                            f"Layout '{fid}' ({path}): window_supported true requires window_area"
-                        )
-                    elif not isinstance(wa, dict) or not _envelope_rect_equal(addr, wa):
-                        self.results["errors"].append(
-                            f"Layout '{fid}' ({path}): address_area must equal window_area "
-                            "(identical x,y,width,height)"
-                        )
-                elif has_w:
-                    assert isinstance(wa, dict)
-                    if not _envelope_rect_equal(addr, wa):
-                        self.results["errors"].append(
-                            f"Layout '{fid}' ({path}): address_area must equal window_area "
-                            "(identical x,y,width,height)"
-                        )
-                elif not _envelope_rect_equal(addr, pa):
-                    self.results["errors"].append(
-                        f"Layout '{fid}' ({path}): no window_area; address_area must equal print_area"
-                    )
+        run_validate_envelope_address_window(
+            self.results,
+            envelope_layouts=self.envelope_layouts,
+        )
 
     def validate_product_envelope_format_ids(self) -> None:
         """products.envelope_ids must exist in global envelopes.json."""
-        if not self.envelopes or not self.products:
-            return
-
-        assert self.envelopes is not None
-        assert self.products is not None
-
-        format_ids = {
-            f["id"]
-            for f in self.envelopes.get("envelopes", [])
-            if isinstance(f, dict) and f.get("id")
-        }
-        for p in self.products.get("products", []):
-            if not isinstance(p, dict):
-                continue
-            pid = p.get("id", "?")
-            for eid in p.get("envelope_ids") or []:
-                if eid not in format_ids:
-                    self.results["errors"].append(
-                        f"Product '{pid}': envelope_id {eid!r} not found in {ENVELOPES_FILE}"
-                    )
+        run_validate_product_envelope_format_ids(
+            self.results,
+            envelopes=self.envelopes,
+            products=self.products,
+        )
 
     def validate_price_units(self) -> None:
         """Validate price unit consistency."""
@@ -1192,10 +720,6 @@ class GraphValidator:
             other_values=[pp_currency, sp_currency],
         )
 
-    # ========================================================================
-    # Circular Dependencies Validation
-    # ========================================================================
-
     def validate_circular_dependencies(self) -> None:
         """Check for circular dependencies."""
         if self.graph is None:
@@ -1231,10 +755,6 @@ class GraphValidator:
                 "Circular dependency: products ↔ product_prices — review intentional or not."
             )
 
-    # ========================================================================
-    # Main Validation Orchestrator
-    # ========================================================================
-
     def validate_all(self) -> ValidationResults:
         """Run all validations in logical order.
 
@@ -1243,11 +763,9 @@ class GraphValidator:
         """
         self.load_data()
 
-        # If loading failed, return early
         if self.results["errors"]:
             return self.results
 
-        # Run all validation methods in logical groups
         self.validate_lookup_method()
         self.validate_edges()
         self.validate_products_in_edges()
@@ -1264,11 +782,6 @@ class GraphValidator:
         self.validate_circular_dependencies()
 
         return self.results
-
-
-# ============================================================================
-# Standalone validation function (used by CLI)
-# ============================================================================
 
 
 def validate_graph(
@@ -1294,8 +807,7 @@ def validate_graph(
 
     if analyze:
         return _print_analyze_mode(results, provider_label=prov)
-    else:
-        return _print_validate_mode(results, provider_label=prov)
+    return _print_validate_mode(results, provider_label=prov)
 
 
 def _print_validate_mode(results: ValidationResults, provider_label: str = "") -> int:
@@ -1323,9 +835,8 @@ def _print_validate_mode(results: ValidationResults, provider_label: str = "") -
     if not has_errors:
         print("✅ All validations passed! graph.json is consistent with data files.")
         return 0
-    else:
-        print("❌ ERROR: Validation failed. Please fix the errors above.")
-        return 1
+    print("❌ ERROR: Validation failed. Please fix the errors above.")
+    return 1
 
 
 def _print_analyze_mode(results: ValidationResults, provider_label: str = "") -> int:
@@ -1360,15 +871,13 @@ def _print_analyze_mode(results: ValidationResults, provider_label: str = "") ->
             print(f"   ❌ {item}")
         print()
 
-    # Summary
     total_issues = len(results["errors"]) + len(results["fixes_needed"]) + len(results["warnings"])
     if total_issues == 0:
         print("🎉 All checks passed! graph.json is correct.")
         return 0
-    else:
-        print(
-            f"📊 Summary: {len(results['errors'])} errors, "
-            f"{len(results['fixes_needed'])} fixes needed, "
-            f"{len(results['warnings'])} warnings"
-        )
-        return 1 if results["errors"] else 0
+    print(
+        f"📊 Summary: {len(results['errors'])} errors, "
+        f"{len(results['fixes_needed'])} fixes needed, "
+        f"{len(results['warnings'])} warnings"
+    )
+    return 1 if results["errors"] else 0

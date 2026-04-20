@@ -1,6 +1,6 @@
 """Validate per-provider ``limits.json`` (not ``graph.json``).
 
-For graph / ``graph.json`` consistency, use :mod:`scripts.validators.graph`.
+For graph / ``graph.json`` consistency, use package :mod:`scripts.validators.graph`.
 
 Paths come from mappings.json via ``get_data_file_path("limits", provider_id)``.
 

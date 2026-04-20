@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Tests for graph validation (scripts.validators.graph)."""
+"""Tests for graph validation (``scripts.validators.graph`` package)."""
 
 import json
 from pathlib import Path
