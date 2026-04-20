@@ -22,6 +22,30 @@
     {
       "product_id": "letter_standard",
       "zone": "domestic",
+      "weight_tier": "W0250",
+      "price": [
+        {
+          "amount": 7200,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "letter_standard",
+      "zone": "domestic",
+      "weight_tier": "W1000",
+      "price": [
+        {
+          "amount": 7200,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "letter_standard",
+      "zone": "domestic",
       "weight_tier": "W2000",
       "price": [
         {

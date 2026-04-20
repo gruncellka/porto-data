@@ -5,7 +5,7 @@
     "version": "0.3.1",
     "description": "Schema-driven postal data model for providers, pricing, services and restrictions"
   },
-  "generated_at": "2026-04-20T14:51:14.768014Z",
+  "generated_at": "2026-04-20T14:54:47.663798Z",
   "policy": {
     "jurisdictions": {
       "data": {
@@ -426,8 +426,8 @@
       "products": {
         "data": {
           "path": "providers/ukrposhta/prices/products.json",
-          "checksum": "6b2d85f5c6e11bc0cbe0975b8dab7eda0aae233de2265029e4c36524989658ee",
-          "size": 2137
+          "checksum": "327a052e56eceef6a1910928d25b5a5d8bc53a8a4baf151b665eecab6d2287de",
+          "size": 2641
         },
         "schema": {
           "path": "schemas/product_prices.schema.json",
