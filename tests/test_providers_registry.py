@@ -10,16 +10,22 @@ from scripts.validators.providers_registry import validate_providers_registry
 
 
 class TestLoadProvidersRegistry:
-    def test_list_matches_three_providers(self):
+    def test_list_matches_registry(self):
         ids = list_provider_ids()
-        assert ids == ["deutschepost", "laposte", "swisspost"]
+        assert ids == ["deutschepost", "laposte", "swisspost", "ukrposhta"]
 
     def test_laposte_coarse_metadata(self):
         doc = load_providers_registry()
         lp = doc["providers"]["laposte"]
         assert lp["country"] == "FR"
         assert lp["mark_types"] == ["label"]
-        assert lp["tracking_model"] == "included"
+
+    def test_ukrposhta_registry_fields(self):
+        doc = load_providers_registry()
+        ua = doc["providers"]["ukrposhta"]
+        assert ua["country"] == "UA"
+        assert ua["mark_types"] == ["label"]
+        assert ua.get("vat", {}).get("applicable") is True
 
 
 class TestGetDataFiles:

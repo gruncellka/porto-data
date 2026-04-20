@@ -294,6 +294,7 @@ class TestListProviderIds:
         assert "deutschepost" in ids
         assert "swisspost" in ids
         assert "laposte" in ids
+        assert "ukrposhta" in ids
 
 
 class TestLoadProvidersRegistryErrors:
@@ -319,6 +320,23 @@ class TestGetMappingsProviderIdsEdgeCases:
             json.dumps({"mappings": {"providers": []}}), encoding="utf-8"
         )
         assert data_files.get_mappings_provider_ids(str(tmp_path / "mappings.json")) == set()
+
+    def test_returns_provider_ids_from_valid_mappings_file(self, tmp_path):
+        (tmp_path / "mappings.json").write_text(
+            json.dumps(
+                {
+                    "mappings": {
+                        "providers": {
+                            "alpha": {"schemas/x.schema.json": "providers/a/p.json"},
+                            "beta": {"schemas/y.schema.json": "providers/b/p.json"},
+                        }
+                    }
+                }
+            ),
+            encoding="utf-8",
+        )
+        ids = data_files.get_mappings_provider_ids(str(tmp_path / "mappings.json"))
+        assert ids == {"alpha", "beta"}
 
 
 class TestGetDataFilePathProjectRoot:

@@ -21,7 +21,7 @@ There is **no** `porto_data/data/` bundle anymore. Cross-file dependencies and p
 
 ## JSON conventions
 
-- Indent **4 spaces**, no tab reformatting for style churn.
+- Indent **2 spaces**, no tab reformatting for style churn.
 - **Preserve key order** (do not sort keys).
 - All committed data must validate against the matching schema in `porto_data/schemas/`.
 

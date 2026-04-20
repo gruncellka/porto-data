@@ -285,6 +285,38 @@ class TestGetExistingChecksumsFromMetadata:
         assert checksums["providers/deutschepost/products.json"] == "prod789"
         assert checksums["schemas/products.schema.json"] == "prod_schema"
 
+    def test_get_existing_checksums_from_metadata_includes_bundle_entities(self, tmp_path):
+        """Optional ``bundle`` entries (data + schema) are merged into checksum map."""
+        metadata_file = tmp_path / "metadata.json"
+        metadata = {
+            "policy": {
+                "jurisdictions": {
+                    "data": {"path": "policy/jurisdictions.json", "checksum": "j1"},
+                    "schema": {"path": "schemas/jurisdictions.schema.json", "checksum": "j2"},
+                }
+            },
+            "mails": {},
+            "registry": {
+                "providers": {
+                    "data": {"path": "providers.json", "checksum": "r1"},
+                    "schema": {"path": "schemas/providers.schema.json", "checksum": "r2"},
+                }
+            },
+            "providers": {"deutschepost": {}},
+            "bundle": {
+                "mappings": {
+                    "data": {"path": "mappings.json", "checksum": "m1"},
+                    "schema": {"path": "schemas/mappings.schema.json", "checksum": "m2"},
+                }
+            },
+        }
+        with open(metadata_file, "w") as f:
+            json.dump(metadata, f)
+
+        checksums = get_existing_checksums_from_metadata(str(metadata_file))
+        assert checksums["mappings.json"] == "m1"
+        assert checksums["schemas/mappings.schema.json"] == "m2"
+
     def test_get_existing_checksums_from_metadata_flat_entities_object(self, tmp_path):
         """Checksums from metadata that uses a top-level ``entities`` object."""
         metadata_file = tmp_path / "metadata.json"

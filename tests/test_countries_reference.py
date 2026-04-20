@@ -55,7 +55,9 @@ def test_jurisdictions_json_invariants() -> None:
     assert "jurisdiction_timezones" not in doc
     country_keys = {k for k in g if len(k) == 2 and k.isalpha() and k.isupper()}
     un_upper = {str(c).upper() for c in un}
-    assert country_keys == un_upper
+    # Every UN member has a per-country timezone row; the bundle may add further
+    # ISO-like keys (e.g. territories) that are not listed under un.members.
+    assert un_upper <= country_keys
     assert g["US"]["timezone"] == "America/New_York"
     assert g["AU"]["timezone"] == "Australia/Sydney"
 

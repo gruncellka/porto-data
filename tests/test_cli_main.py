@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Tests for CLI main module - comprehensive coverage."""
 
+import os
+import runpy
 import subprocess
 import sys
 from unittest.mock import MagicMock, patch
@@ -148,16 +150,28 @@ class TestMainFunction:
             assert result == 1
             mock_parser.print_help.assert_called_once()
 
-    def test_main_entry_point_exits_with_code(self):
+    def test_main_entry_point_exits_with_code(self, project_root):
         """Test that running as __main__ (python -m cli.main) invokes main and exits."""
+        env = {**os.environ, "PYTHONPATH": str(project_root)}
         result = subprocess.run(
             [sys.executable, "-m", "cli.main"],
             capture_output=True,
             text=True,
-            cwd=None,
+            cwd=str(project_root),
+            env=env,
         )
         # No command or invalid: exit 1 and help on stderr/stdout
         assert result.returncode == 1
         assert "usage" in (result.stdout + result.stderr).lower() or "porto" in (
             result.stdout + result.stderr
         )
+
+    def test_run_module_as_main_executes_guard(self, project_root, monkeypatch):
+        """``python -m cli.main`` path: ``if __name__ == '__main__'`` calls ``sys.exit(main())``."""
+        monkeypatch.chdir(project_root)
+        monkeypatch.setenv("PYTHONPATH", str(project_root))
+        # Only drop cli.main so other tests keep their cli.commands.* imports valid.
+        sys.modules.pop("cli.main", None)
+        with patch.object(sys, "argv", ["porto"]), patch.object(sys, "exit") as mock_exit:
+            runpy.run_module("cli.main", run_name="__main__")
+        mock_exit.assert_called_once_with(1)

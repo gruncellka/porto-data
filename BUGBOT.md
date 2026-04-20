@@ -59,10 +59,10 @@ If a PR adds `sys.path` mutation under `scripts/**` or `cli/**`:
 
 ### 6) JSON formatting drift (non-blocking)
 
-If changed JSON under `porto_data/**` is minified, not 4-space indented, or keys reshuffled without need:
+If changed JSON under `porto_data/**` is minified, not 2-space indented, or keys reshuffled without need:
 
 - **Title:** `JSON formatting or key-order drift`
-- **Body:** `Keep 4 spaces, preserve key order, format with project tooling.`
+- **Body:** `Keep 2 spaces, preserve key order, format with project tooling.`
 - **Labels:** `maintainability`
 
 ### 7) User-visible contract changes → changelog (non-blocking)

@@ -29,9 +29,8 @@
         "sdk"
     ],
     "files": [
-        "porto_data/global",
-        "porto_data/restrictions",
-        "porto_data/envelopes",
+        "porto_data/policy",
+        "porto_data/mails",
         "porto_data/providers",
         "porto_data/schemas",
         "porto_data/providers.json",

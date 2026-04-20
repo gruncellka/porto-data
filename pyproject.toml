@@ -49,10 +49,11 @@ porto_data = [
     "mappings.json",
     "metadata.json",
     "providers.json",
-    "global/*.json",
-    "envelopes/*.json",
+    "policy/*.json",
+    "mails/*.json",
     "schemas/*.json",
     "providers/*/*.json",
+    "providers/*/prices/*.json",
 ]
 
 [tool.ruff]

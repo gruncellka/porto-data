@@ -610,6 +610,43 @@ def test_validate_mappings_layout_ignores_nondirectory_entries_under_providers(
     assert validate_mappings_layout() == 0
 
 
+def test_validate_mappings_layout_skips_dot_prefixed_provider_dirs(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Hidden dirs under ``providers/`` (``.…``, ``__pycache__``) are not treated as provider ids."""
+    _patch_bundle_root(monkeypatch, tmp_path)
+    (tmp_path / "policy").mkdir()
+    (tmp_path / "providers.json").write_text(
+        json.dumps({"providers": {"acme": _acme_row()}}),
+        encoding="utf-8",
+    )
+    (tmp_path / "mappings.json").write_text(
+        json.dumps(
+            {
+                "mappings": {
+                    "policy": {},
+                    "mails": {},
+                    "registry": {},
+                    "providers": {
+                        "acme": {
+                            "schemas/products.schema.json": "providers/acme/products.json",
+                        }
+                    },
+                }
+            }
+        ),
+        encoding="utf-8",
+    )
+    (tmp_path / "providers" / "acme").mkdir(parents=True)
+    (tmp_path / "providers" / "acme" / "products.json").write_text(
+        json.dumps({"provider": "acme", "products": []}),
+        encoding="utf-8",
+    )
+    (tmp_path / "providers" / ".cache").mkdir()
+    (tmp_path / "providers" / "__pycache__").mkdir()
+    assert validate_mappings_layout() == 0
+
+
 def test_validate_mappings_layout_warns_when_metadata_missing(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
 ) -> None:
