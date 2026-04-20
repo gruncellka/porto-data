@@ -47,7 +47,7 @@ class TestCreateParser:
 class TestMainFunction:
     """Test main function with all code paths."""
 
-    @patch("cli.main.validate_schema")
+    @patch("cli.commands.validate.validate_schema")
     def test_main_validate_schema(self, mock_validate_schema):
         """Test main with validate --type schema."""
         mock_validate_schema.return_value = 0
@@ -56,7 +56,7 @@ class TestMainFunction:
             assert result == 0
             mock_validate_schema.assert_called_once()
 
-    @patch("cli.main.validate_graph")
+    @patch("cli.commands.validate.validate_graph")
     def test_main_validate_graph(self, mock_validate_graph):
         """Test main with validate --type graph."""
         mock_validate_graph.return_value = 0
@@ -65,7 +65,7 @@ class TestMainFunction:
             assert result == 0
             mock_validate_graph.assert_called_once_with(analyze=False)
 
-    @patch("cli.main.validate_graph")
+    @patch("cli.commands.validate.validate_graph")
     def test_main_validate_graph_with_analyze(self, mock_validate_graph):
         """Test main with validate --type graph --analyze."""
         mock_validate_graph.return_value = 0
@@ -74,16 +74,16 @@ class TestMainFunction:
             assert result == 0
             mock_validate_graph.assert_called_once_with(analyze=True)
 
-    @patch("cli.main.validate_layout")
-    def test_main_validate_layout(self, mock_validate_layout):
-        """Test main with validate --type layout."""
-        mock_validate_layout.return_value = 0
-        with patch("sys.argv", ["porto", "validate", "--type", "layout"]):
+    @patch("cli.commands.validate.validate_mappings")
+    def test_main_validate_mappings(self, mock_validate_mappings):
+        """Test main with validate --type mappings."""
+        mock_validate_mappings.return_value = 0
+        with patch("sys.argv", ["porto", "validate", "--type", "mappings"]):
             result = main()
             assert result == 0
-            mock_validate_layout.assert_called_once()
+            mock_validate_mappings.assert_called_once()
 
-    @patch("cli.main.validate_limits")
+    @patch("cli.commands.validate.validate_limits")
     def test_main_validate_limits(self, mock_validate_limits):
         """Test main with validate --type limits."""
         mock_validate_limits.return_value = 0
@@ -92,7 +92,7 @@ class TestMainFunction:
             assert result == 0
             mock_validate_limits.assert_called_once()
 
-    @patch("cli.main.validate_all")
+    @patch("cli.commands.validate.validate_all")
     def test_main_validate_all(self, mock_validate_all):
         """Test main with validate and no --type runs all."""
         mock_validate_all.return_value = 0
@@ -101,7 +101,7 @@ class TestMainFunction:
             assert result == 0
             mock_validate_all.assert_called_once()
 
-    @patch("cli.main.validate_all")
+    @patch("cli.commands.validate.validate_all")
     def test_main_validate_default(self, mock_validate_all):
         """Test main with validate (defaults to all)."""
         mock_validate_all.return_value = 0

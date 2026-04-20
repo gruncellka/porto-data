@@ -1,0 +1,31 @@
+{
+  "provider": "swisspost",
+  "unit": {
+    "price": "cents",
+    "currency": "CHF"
+  },
+  "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/service_prices.schema.json",
+  "file_type": "service_prices",
+  "service_prices": [
+    {
+      "service_id": "a_mail_plus",
+      "price": [
+        {
+          "amount": 290,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "service_id": "brief_dicke_zuschlag",
+      "price": [
+        {
+          "amount": 200,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    }
+  ]
+}

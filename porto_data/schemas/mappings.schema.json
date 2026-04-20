@@ -1,0 +1,73 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/mappings.schema.json",
+  "title": "Porto-data schema \u2194 data mappings",
+  "description": "Maps each JSON Schema path under schemas/ to its canonical data file (policy/, mails/, providers/<id>/, or bundle root). Blocks mirror bundle layout: policy, mails, registry (e.g. providers.json), providers. Provider keys must match providers.json.",
+  "type": "object",
+  "required": [
+    "mappings"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "format": "uri"
+    },
+    "mappings": {
+      "type": "object",
+      "required": [
+        "policy",
+        "mails",
+        "registry",
+        "providers"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "policy": {
+          "type": "object",
+          "minProperties": 0,
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^(?!\\.\\./)([A-Za-z0-9_.-]+/)*[A-Za-z0-9_.-]+\\.json$"
+          },
+          "description": "Schema paths \u2192 data under policy/."
+        },
+        "mails": {
+          "type": "object",
+          "minProperties": 0,
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^(?!\\.\\./)([A-Za-z0-9_.-]+/)*[A-Za-z0-9_.-]+\\.json$"
+          },
+          "description": "Schema paths \u2192 data under mails/."
+        },
+        "registry": {
+          "type": "object",
+          "minProperties": 0,
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^(?!\\.\\./)([A-Za-z0-9_.-]+/)*[A-Za-z0-9_.-]+\\.json$"
+          },
+          "description": "Schema paths \u2192 bundle-root manifest files (e.g. providers.json)."
+        },
+        "providers": {
+          "type": "object",
+          "minProperties": 0,
+          "additionalProperties": {
+            "type": "object",
+            "minProperties": 1,
+            "additionalProperties": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "^(?!\\.\\./)([A-Za-z0-9_.-]+/)*[A-Za-z0-9_.-]+\\.json$"
+            }
+          },
+          "description": "Provider id \u2192 map of schema path \u2192 data path under providers/<id>/."
+        }
+      }
+    }
+  }
+}

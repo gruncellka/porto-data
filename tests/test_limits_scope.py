@@ -4,16 +4,24 @@ import json
 from pathlib import Path
 from typing import Any
 
-import pytest
-
 from scripts.validators.limits_scope import validate_limits_scope
 
 _ACME_REG = {
     "name": "Acme",
     "country": "XX",
-    "timezone": "Etc/UTC",
     "mark_types": ["stamp"],
     "tracking_model": "mixed",
+}
+
+_MIN_JURISDICTIONS = {
+    "file_type": "jurisdictions",
+    "unit": {"country_code": "ISO 3166-1 alpha-2"},
+    "jurisdictions": {
+        "eu": {"members": ["AT"], "timezone": "Europe/Brussels"},
+        "un": {"members": ["AD"], "timezone": "Europe/Zurich"},
+        "CH": {"timezone": "Europe/Zurich"},
+        "XX": {"timezone": "Etc/UTC"},
+    },
 }
 
 
@@ -24,14 +32,27 @@ def _write_limits_bundle(
     limits_body: dict[str, Any] | None,
     write_limits_file: bool = True,
 ) -> None:
-    (tmp_path / "global").mkdir(parents=True)
+    (tmp_path / "policy").mkdir(parents=True)
     prov_ids = list(mappings_providers.keys())
-    (tmp_path / "global" / "providers.json").write_text(
-        json.dumps({"providers": {pid: _ACME_REG for pid in prov_ids}}),
+    (tmp_path / "providers.json").write_text(
+        json.dumps({"providers": dict.fromkeys(prov_ids, _ACME_REG)}),
+        encoding="utf-8",
+    )
+    (tmp_path / "policy" / "jurisdictions.json").write_text(
+        json.dumps(_MIN_JURISDICTIONS),
         encoding="utf-8",
     )
     (tmp_path / "mappings.json").write_text(
-        json.dumps({"mappings": {"global": {}, "providers": mappings_providers}}),
+        json.dumps(
+            {
+                "mappings": {
+                    "policy": {},
+                    "mails": {},
+                    "registry": {},
+                    "providers": mappings_providers,
+                }
+            }
+        ),
         encoding="utf-8",
     )
     (tmp_path / "providers" / "acme").mkdir(parents=True)
@@ -59,9 +80,7 @@ def test_validate_limits_scope_errors_on_provider_mismatch(tmp_path: Path):
     }
     _write_limits_bundle(
         tmp_path,
-        mappings_providers={
-            "acme": {"schemas/limits.schema.json": "providers/acme/limits.json"}
-        },
+        mappings_providers={"acme": {"schemas/limits.schema.json": "providers/acme/limits.json"}},
         limits_body=good,
     )
     assert validate_limits_scope(project_root=tmp_path) == 1
@@ -89,9 +108,7 @@ def test_validate_limits_scope_errors_when_limits_mapping_missing_for_second_pro
 def test_validate_limits_scope_errors_when_mapped_file_missing(tmp_path: Path):
     _write_limits_bundle(
         tmp_path,
-        mappings_providers={
-            "acme": {"schemas/limits.schema.json": "providers/acme/limits.json"}
-        },
+        mappings_providers={"acme": {"schemas/limits.schema.json": "providers/acme/limits.json"}},
         limits_body=None,
         write_limits_file=False,
     )
@@ -101,9 +118,7 @@ def test_validate_limits_scope_errors_when_mapped_file_missing(tmp_path: Path):
 def test_validate_limits_scope_errors_on_invalid_json(tmp_path: Path):
     _write_limits_bundle(
         tmp_path,
-        mappings_providers={
-            "acme": {"schemas/limits.schema.json": "providers/acme/limits.json"}
-        },
+        mappings_providers={"acme": {"schemas/limits.schema.json": "providers/acme/limits.json"}},
         limits_body=None,
         write_limits_file=False,
     )
@@ -114,9 +129,7 @@ def test_validate_limits_scope_errors_on_invalid_json(tmp_path: Path):
 def test_validate_limits_scope_errors_on_wrong_file_type(tmp_path: Path):
     _write_limits_bundle(
         tmp_path,
-        mappings_providers={
-            "acme": {"schemas/limits.schema.json": "providers/acme/limits.json"}
-        },
+        mappings_providers={"acme": {"schemas/limits.schema.json": "providers/acme/limits.json"}},
         limits_body={
             "file_type": "other",
             "provider": "acme",
@@ -130,9 +143,7 @@ def test_validate_limits_scope_errors_on_wrong_file_type(tmp_path: Path):
 def test_validate_limits_scope_errors_when_limits_not_array(tmp_path: Path):
     _write_limits_bundle(
         tmp_path,
-        mappings_providers={
-            "acme": {"schemas/limits.schema.json": "providers/acme/limits.json"}
-        },
+        mappings_providers={"acme": {"schemas/limits.schema.json": "providers/acme/limits.json"}},
         limits_body={
             "file_type": "limits",
             "provider": "acme",
@@ -146,9 +157,7 @@ def test_validate_limits_scope_errors_when_limits_not_array(tmp_path: Path):
 def test_validate_limits_scope_errors_when_compliance_frameworks_null(tmp_path: Path):
     _write_limits_bundle(
         tmp_path,
-        mappings_providers={
-            "acme": {"schemas/limits.schema.json": "providers/acme/limits.json"}
-        },
+        mappings_providers={"acme": {"schemas/limits.schema.json": "providers/acme/limits.json"}},
         limits_body={
             "file_type": "limits",
             "provider": "acme",
@@ -164,9 +173,7 @@ def test_validate_limits_scope_errors_when_compliance_frameworks_not_object(
 ):
     _write_limits_bundle(
         tmp_path,
-        mappings_providers={
-            "acme": {"schemas/limits.schema.json": "providers/acme/limits.json"}
-        },
+        mappings_providers={"acme": {"schemas/limits.schema.json": "providers/acme/limits.json"}},
         limits_body={
             "file_type": "limits",
             "provider": "acme",
@@ -180,9 +187,7 @@ def test_validate_limits_scope_errors_when_compliance_frameworks_not_object(
 def test_validate_limits_scope_errors_on_non_object_limit_row(tmp_path: Path):
     _write_limits_bundle(
         tmp_path,
-        mappings_providers={
-            "acme": {"schemas/limits.schema.json": "providers/acme/limits.json"}
-        },
+        mappings_providers={"acme": {"schemas/limits.schema.json": "providers/acme/limits.json"}},
         limits_body={
             "file_type": "limits",
             "provider": "acme",
@@ -196,9 +201,7 @@ def test_validate_limits_scope_errors_on_non_object_limit_row(tmp_path: Path):
 def test_validate_limits_scope_errors_on_missing_row_id(tmp_path: Path):
     _write_limits_bundle(
         tmp_path,
-        mappings_providers={
-            "acme": {"schemas/limits.schema.json": "providers/acme/limits.json"}
-        },
+        mappings_providers={"acme": {"schemas/limits.schema.json": "providers/acme/limits.json"}},
         limits_body={
             "file_type": "limits",
             "provider": "acme",
@@ -210,34 +213,21 @@ def test_validate_limits_scope_errors_on_missing_row_id(tmp_path: Path):
 
 
 def test_validate_limits_scope_errors_on_duplicate_row_ids(tmp_path: Path):
+    row = {
+        "id": "x",
+        "country_code": "XX",
+        "status": "operational",
+        "reason": "r",
+        "notes": "n",
+        "effective_from": None,
+    }
     _write_limits_bundle(
         tmp_path,
-        mappings_providers={
-            "acme": {"schemas/limits.schema.json": "providers/acme/limits.json"}
-        },
+        mappings_providers={"acme": {"schemas/limits.schema.json": "providers/acme/limits.json"}},
         limits_body={
             "file_type": "limits",
             "provider": "acme",
-            "limits": [
-                {"id": "x", "framework_id": None},
-                {"id": "x", "framework_id": None},
-            ],
-            "compliance_frameworks": {},
-        },
-    )
-    assert validate_limits_scope(project_root=tmp_path) == 1
-
-
-def test_validate_limits_scope_errors_on_unknown_framework_id(tmp_path: Path):
-    _write_limits_bundle(
-        tmp_path,
-        mappings_providers={
-            "acme": {"schemas/limits.schema.json": "providers/acme/limits.json"}
-        },
-        limits_body={
-            "file_type": "limits",
-            "provider": "acme",
-            "limits": [{"id": "r1", "framework_id": "nope"}],
+            "limits": [row, dict(row)],
             "compliance_frameworks": {},
         },
     )
@@ -247,9 +237,7 @@ def test_validate_limits_scope_errors_on_unknown_framework_id(tmp_path: Path):
 def test_validate_limits_scope_errors_when_framework_entry_not_object(tmp_path: Path):
     _write_limits_bundle(
         tmp_path,
-        mappings_providers={
-            "acme": {"schemas/limits.schema.json": "providers/acme/limits.json"}
-        },
+        mappings_providers={"acme": {"schemas/limits.schema.json": "providers/acme/limits.json"}},
         limits_body={
             "file_type": "limits",
             "provider": "acme",
@@ -263,9 +251,7 @@ def test_validate_limits_scope_errors_when_framework_entry_not_object(tmp_path: 
 def test_validate_limits_scope_errors_on_framework_timezone_mismatch(tmp_path: Path):
     _write_limits_bundle(
         tmp_path,
-        mappings_providers={
-            "acme": {"schemas/limits.schema.json": "providers/acme/limits.json"}
-        },
+        mappings_providers={"acme": {"schemas/limits.schema.json": "providers/acme/limits.json"}},
         limits_body={
             "file_type": "limits",
             "provider": "acme",
@@ -278,31 +264,9 @@ def test_validate_limits_scope_errors_on_framework_timezone_mismatch(tmp_path: P
     assert validate_limits_scope(project_root=tmp_path) == 1
 
 
-def test_validate_limits_scope_warns_on_unreferenced_framework(tmp_path: Path, capsys):
-    _write_limits_bundle(
-        tmp_path,
-        mappings_providers={
-            "acme": {"schemas/limits.schema.json": "providers/acme/limits.json"}
-        },
-        limits_body={
-            "file_type": "limits",
-            "provider": "acme",
-            "limits": [{"id": "r1", "framework_id": "fw1"}],
-            "compliance_frameworks": {
-                "fw1": {"timezone": "Etc/UTC"},
-                "fw2": {"timezone": "Etc/UTC"},
-            },
-        },
-    )
-    assert validate_limits_scope(project_root=tmp_path) == 0
-    err = capsys.readouterr().out
-    assert "WARNING" in err
-    assert "fw2" in err
-
-
 def test_validate_limits_scope_passes_when_registry_providers_not_dict(tmp_path: Path):
-    (tmp_path / "global").mkdir()
-    (tmp_path / "global" / "providers.json").write_text(
+    (tmp_path / "policy").mkdir()
+    (tmp_path / "providers.json").write_text(
         json.dumps({"providers": "broken"}),
         encoding="utf-8",
     )
@@ -310,7 +274,9 @@ def test_validate_limits_scope_passes_when_registry_providers_not_dict(tmp_path:
         json.dumps(
             {
                 "mappings": {
-                    "global": {},
+                    "policy": {},
+                    "mails": {},
+                    "registry": {},
                     "providers": {
                         "acme": {
                             "schemas/limits.schema.json": "providers/acme/limits.json",

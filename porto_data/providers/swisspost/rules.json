@@ -1,0 +1,25 @@
+{
+  "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/rules.schema.json",
+  "file_type": "provider_rules",
+  "provider": "swisspost",
+  "unit": {
+    "thickness": "mm"
+  },
+  "rules": [
+    {
+      "id": "domestic_letter_thickness",
+      "kind": "metric_band_attach_service",
+      "metric": "thickness",
+      "description": "Swiss Post A/B Mail domestic letters: thickness > 2 cm and <= 5 cm incurs surcharge per post.ch footnotes (verify live tariff). Amount in prices/services.json. Zone scope follows graph.edges for each product_id.",
+      "product_ids": [
+        "a_post_standardbrief",
+        "a_post_grossbrief",
+        "b_post_standardbrief",
+        "b_post_grossbrief"
+      ],
+      "min_exclusive": 20,
+      "max_inclusive": 50,
+      "service_id": "brief_dicke_zuschlag"
+    }
+  ]
+}

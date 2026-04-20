@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 
 from scripts.data_files import get_project_root
-from scripts.validators.links import validate_graph
+from scripts.validators.graph import validate_graph
 from scripts.validators.schema import validate_file
 
 
@@ -28,8 +28,8 @@ class TestProductsSchemaExecutionSemantics:
                 {
                     "id": "prod_one",
                     "name": "P",
-                    "dimension_ids": ["C6"],
-                    "supported_zones": ["domestic"],
+                    "envelope_ids": ["C6"],
+                    "zones": ["domestic"],
                     "effective_from": None,
                     "effective_to": None,
                     "tracking_mode": "none",
@@ -50,8 +50,8 @@ class TestProductsSchemaExecutionSemantics:
                 {
                     "id": "prod_one",
                     "name": "P",
-                    "dimension_ids": ["C6"],
-                    "supported_zones": ["domestic"],
+                    "envelope_ids": ["C6"],
+                    "zones": ["domestic"],
                     "effective_from": None,
                     "effective_to": None,
                     "mark_type": "label",
@@ -73,8 +73,8 @@ class TestProductsSchemaExecutionSemantics:
                 {
                     "id": "prod_one",
                     "name": "P",
-                    "dimension_ids": ["C6"],
-                    "supported_zones": ["domestic"],
+                    "envelope_ids": ["C6"],
+                    "zones": ["domestic"],
                     "effective_from": None,
                     "effective_to": None,
                     "mark_type": "stamp",

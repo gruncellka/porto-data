@@ -1,0 +1,28 @@
+{
+  "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/features.schema.json",
+  "file_type": "features",
+  "provider": "ukrposhta",
+  "features": [
+    {
+      "id": "recipient_signature",
+      "porto_id": "recipient_signature",
+      "name": "\u041e\u0441\u043e\u0431\u0438\u0441\u0442\u0435 \u0432\u0440\u0443\u0447\u0435\u043d\u043d\u044f",
+      "label": "Recipient signature",
+      "description": "Delivery with recipient signature required."
+    },
+    {
+      "id": "return_receipt_paper",
+      "porto_id": "return_receipt",
+      "name": "\u041f\u043e\u0432\u0456\u0434\u043e\u043c\u043b\u0435\u043d\u043d\u044f \u043f\u0440\u043e \u0432\u0440\u0443\u0447\u0435\u043d\u043d\u044f (\u043f\u0430\u043f\u0435\u0440\u043e\u0432\u0435)",
+      "label": "Return receipt (paper)",
+      "description": "Paper delivery notice returned to the sender."
+    },
+    {
+      "id": "return_receipt_electronic",
+      "porto_id": "return_receipt",
+      "name": "\u041f\u043e\u0432\u0456\u0434\u043e\u043c\u043b\u0435\u043d\u043d\u044f \u043f\u0440\u043e \u0432\u0440\u0443\u0447\u0435\u043d\u043d\u044f (\u0435\u043b\u0435\u043a\u0442\u0440\u043e\u043d\u043d\u0435)",
+      "label": "Return receipt (electronic)",
+      "description": "Electronic delivery notice returned to the sender."
+    }
+  ]
+}

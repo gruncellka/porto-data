@@ -1,0 +1,104 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/rules.schema.json",
+  "title": "Provider rules",
+  "description": "Conditional letter policies evaluated after base product/price resolution. Zone scope follows the resolved product + graph.edges (no duplicate zones array on rules). Amounts for surcharges come from prices/services.json via service_id.",
+  "type": "object",
+  "required": [
+    "file_type",
+    "provider",
+    "rules"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "format": "uri"
+    },
+    "file_type": {
+      "type": "string",
+      "const": "provider_rules"
+    },
+    "provider": {
+      "type": "string",
+      "pattern": "^[a-z_]+$"
+    },
+    "unit": {
+      "type": "object",
+      "description": "Measurement units for metrics referenced in rules (same idea as products.unit). Keys align with rule.metric names.",
+      "additionalProperties": false,
+      "properties": {
+        "thickness": {
+          "type": "string",
+          "const": "mm",
+          "description": "Unit for metric `thickness`; min_exclusive/max_inclusive are in millimetres."
+        }
+      }
+    },
+    "rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "kind",
+          "metric",
+          "product_ids",
+          "min_exclusive",
+          "max_inclusive",
+          "service_id"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Stable rule id for logs and SDK line items"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "metric_band_attach_service"
+            ],
+            "description": "When the resolved metric value lies in (min_exclusive, max_inclusive], attach service_id surcharge"
+          },
+          "metric": {
+            "type": "string",
+            "enum": [
+              "thickness"
+            ],
+            "description": "Logical metric name; physical unit comes from document `unit` (e.g. unit.thickness mm). Add enum values only with SDK support."
+          },
+          "description": {
+            "type": "string",
+            "description": "Human note; verify against operator tariff"
+          },
+          "product_ids": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z_]+$"
+            },
+            "description": "Native product ids this rule applies to"
+          },
+          "min_exclusive": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Apply when metric value > this bound (e.g. 20 mm for metric thickness meaning >2 cm)"
+          },
+          "max_inclusive": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Apply when metric value <= this bound (e.g. 50 mm for metric thickness meaning <=5 cm)"
+          },
+          "service_id": {
+            "type": "string",
+            "pattern": "^[a-z_]+$",
+            "description": "Native services.json id; must have a row in prices/services.json"
+          }
+        }
+      }
+    }
+  }
+}

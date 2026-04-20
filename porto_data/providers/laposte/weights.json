@@ -1,0 +1,38 @@
+{
+  "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/weights.schema.json",
+  "file_type": "weights",
+  "provider": "laposte",
+  "unit": {
+    "weight": "g"
+  },
+  "weights": {
+    "W0020": {
+      "min": 0,
+      "max": 20
+    },
+    "W0050": {
+      "min": 21,
+      "max": 50
+    },
+    "W0100": {
+      "min": 51,
+      "max": 100
+    },
+    "W0250": {
+      "min": 101,
+      "max": 250
+    },
+    "W0500": {
+      "min": 251,
+      "max": 500
+    },
+    "W1000": {
+      "min": 501,
+      "max": 1000
+    },
+    "W2000": {
+      "min": 1001,
+      "max": 2000
+    }
+  }
+}

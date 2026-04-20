@@ -13,100 +13,245 @@
       "file": "products.json",
       "depends_on": [
         "zones.json",
-        "weight_tiers.json",
-        "dimensions.json",
+        "weights.json",
+        "mails/envelopes.json",
         "services.json",
-        "features.json"
+        "features.json",
+        "marks.json"
       ],
-      "description": "Products require zones, weight tiers, dimensions, services and features"
+      "description": "Products require zones, weight tiers, canonical envelope format ids, services, features, and mark profiles"
     },
     "services": {
       "file": "services.json",
-      "depends_on": ["features.json"],
+      "depends_on": [
+        "features.json"
+      ],
       "description": "Services require features"
     },
-    "prices": {
-      "file": "prices.json",
+    "product_prices": {
+      "file": "prices/products.json",
+      "depends_on": [
+        "products.json",
+        "zones.json",
+        "weights.json"
+      ],
+      "description": "Base postage grid; file providers/<id>/prices/products.json (file_type product_prices)"
+    },
+    "service_prices": {
+      "file": "prices/services.json",
       "depends_on": [
         "products.json",
         "services.json",
         "zones.json",
-        "weight_tiers.json"
+        "weights.json"
       ],
-      "description": "Prices reference products, services, zones, and weight tiers"
+      "description": "Service surcharge amounts; file providers/<id>/prices/services.json (file_type service_prices)"
     },
     "zones": {
       "file": "zones.json",
-      "depends_on": ["restrictions.json"],
+      "depends_on": [
+        "policy/restrictions.json"
+      ],
       "description": "Zones may have restricted destinations"
     },
-    "weight_tiers": {
-      "file": "weight_tiers.json",
+    "weights": {
+      "file": "weights.json",
       "depends_on": [],
-      "description": "Weight tiers are standalone"
+      "description": "Weight brackets (tier ids) are standalone definitions"
     },
-    "dimensions": {
-      "file": "dimensions.json",
+    "envelopes": {
+      "file": "mails/envelopes.json",
       "depends_on": [],
-      "description": "Dimensions are standalone"
+      "description": "Global envelope id catalog: physical front size (mm); international baseline (e.g. ISO 269); file mails/envelopes.json"
+    },
+    "envelope_layouts": {
+      "file": "mails/layouts.json",
+      "depends_on": [
+        "mails/envelopes.json"
+      ],
+      "description": "Jurisdiction-keyed print/window layout (DE/CH/FR); file mails/layouts.json"
     },
     "jurisdictions": {
-      "file": "jurisdictions.json",
+      "file": "policy/jurisdictions.json",
       "depends_on": [],
       "description": "UN/EU membership sets for restriction framework jurisdiction resolution"
     },
     "restrictions": {
-      "file": "restrictions.json",
-      "depends_on": ["jurisdictions.json", "zones.json", "products.json"],
-      "description": "Restrictions reference zones and products"
+      "file": "policy/restrictions.json",
+      "depends_on": [
+        "policy/jurisdictions.json",
+        "zones.json",
+        "products.json"
+      ],
+      "description": "Global destination restrictions (bundled as policy/restrictions.json); optional cross-reference to zones and products"
     },
     "limits": {
       "file": "limits.json",
-      "depends_on": ["restrictions.json"],
+      "depends_on": [
+        "policy/restrictions.json"
+      ],
       "description": "Provider operational limits extend global restrictions after load"
     },
     "features": {
       "file": "features.json",
       "depends_on": [],
       "description": "Features are standalone"
+    },
+    "marks": {
+      "file": "marks.json",
+      "depends_on": [],
+      "description": "Provider mark/stamp/label physical defaults; referenced optionally from products.mark_profile"
     }
   },
-  "links": {
-    "lettre_prioritaire_petit": {
-      "zones": ["domestic", "zone_1_eu", "zone_2_europe", "world"],
-      "weight_tiers": ["W0020"]
+  "edges": {
+    "lettre_verte": {
+      "zones": [
+        "domestic"
+      ],
+      "weight_tiers": [
+        "W0020",
+        "W0100",
+        "W0250",
+        "W0500",
+        "W1000",
+        "W2000"
+      ]
     },
-    "lettre_prioritaire_moyen": {
-      "zones": ["domestic", "zone_1_eu", "zone_2_europe", "world"],
-      "weight_tiers": ["W0050"]
+    "lettre_verte_suivie": {
+      "zones": [
+        "domestic",
+        "zone_1_eu",
+        "zone_2_europe",
+        "world"
+      ],
+      "weight_tiers": [
+        "W0020",
+        "W0100",
+        "W0250",
+        "W0500",
+        "W1000",
+        "W2000"
+      ]
     },
-    "lettre_prioritaire_grand": {
-      "zones": ["domestic", "zone_1_eu", "zone_2_europe", "world"],
-      "weight_tiers": ["W0500"]
+    "lettre_services_plus": {
+      "zones": [
+        "domestic"
+      ],
+      "weight_tiers": [
+        "W0020",
+        "W0100",
+        "W0250",
+        "W0500",
+        "W1000",
+        "W2000"
+      ]
     },
-    "lettre_prioritaire_max": {
-      "zones": ["domestic", "zone_1_eu", "zone_2_europe", "world"],
-      "weight_tiers": ["W1000"]
+    "lettre_recommandee_r_un": {
+      "zones": [
+        "domestic"
+      ],
+      "weight_tiers": [
+        "W0020",
+        "W0050",
+        "W0100",
+        "W0250",
+        "W0500",
+        "W1000",
+        "W2000"
+      ]
+    },
+    "lettre_recommandee_r_deux": {
+      "zones": [
+        "domestic"
+      ],
+      "weight_tiers": [
+        "W0020",
+        "W0050",
+        "W0100",
+        "W0250",
+        "W0500",
+        "W1000",
+        "W2000"
+      ]
+    },
+    "lettre_recommandee_r_trois": {
+      "zones": [
+        "domestic"
+      ],
+      "weight_tiers": [
+        "W0020",
+        "W0050",
+        "W0100",
+        "W0250",
+        "W0500",
+        "W1000",
+        "W2000"
+      ]
+    },
+    "lettre_recommandee_inter_r_un": {
+      "zones": [
+        "zone_1_eu",
+        "zone_2_europe",
+        "world"
+      ],
+      "weight_tiers": [
+        "W0020",
+        "W0050",
+        "W0100",
+        "W0250",
+        "W0500",
+        "W1000",
+        "W2000"
+      ]
+    },
+    "lettre_recommandee_inter_r_deux": {
+      "zones": [
+        "zone_1_eu",
+        "zone_2_europe",
+        "world"
+      ],
+      "weight_tiers": [
+        "W0020",
+        "W0050",
+        "W0100",
+        "W0250",
+        "W0500",
+        "W1000",
+        "W2000"
+      ]
     }
   },
   "lookup_rules": {
-    "price_lookup": "Find price in prices.json where product_id + zone + weight_tier match",
+    "price_lookup": "Base postage: prices/products.json (product_prices[]). Service surcharges: prices/services.json (service_prices[])",
     "service_lookup": "Find service in services.json by id",
-    "weight_resolution": "Find weight_tier in weight_tiers.json where min <= weight <= max",
+    "weight_resolution": "Resolve weight_tier id from weights.json where min <= weight <= max",
     "zone_validation": "Check if zone is in product's zones array"
   },
   "global_settings": {
-    "price_source": "prices.json",
-    "lookup_method": {
-      "file": "prices.json",
-      "array": "prices.product_prices",
-      "match": {
-        "product_id": "from products.json native id",
-        "zone": "from zones array",
-        "weight_tier": "from weight_tiers array"
+    "price_lookup": {
+      "product_prices": {
+        "file": "prices/products.json",
+        "array": "product_prices",
+        "match": {
+          "product_id": "from products.json native id",
+          "zone": "from zones array",
+          "weight_tier": "from weight_tiers array"
+        },
+        "description": "Tarifs lettre 2026 aligned with laposte.fr published tables (Lettre verte, suivie, Services Plus, recommand\u00e9e). International suivie and recommand\u00e9e inter rows use the same amounts for zone_1_eu, zone_2_europe, and world as a coarse bucket; refine per catalogue int\u00e9gral for destination-specific tariffs. effective_from 2026-01-01."
       },
-      "description": "Find prices by matching product_id, zone, and weight_tier. Letter-only catalog; product and price effective_from 2025-01-01 is the documented baseline for this bundle (verify against laposte.fr tarifs); effective_to null until a new price row is added. Not colis."
+      "service_prices": {
+        "file": "prices/services.json",
+        "array": "service_prices",
+        "match": {
+          "service_id": "from services.json native id"
+        },
+        "description": "Optional service amounts in prices/services.json."
+      }
     },
-    "available_services": ["suivi", "recommande", "recommande_ar"]
+    "available_services": [
+      "suivi_option",
+      "avis_de_reception_national",
+      "avis_de_reception_international"
+    ]
   }
 }

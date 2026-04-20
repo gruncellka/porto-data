@@ -4,57 +4,60 @@
   "provider": "laposte",
   "services": [
     {
-      "id": "suivi",
-      "porto_id": "letter_tracking",
-      "name": "Option Suivi",
-      "label": "Letter tracking add-on",
-      "description": "Optional tracking for eligible letter products when purchased online (e.g. Mon timbre en ligne). Not all formats or destinations support it.",
-      "features": ["tracking_number"],
-      "enables_tracking": true,
-      "online_supported": true,
-      "integration_supported": {
-        "mon_timbre_en_ligne": true
-      },
-      "supported_zones": ["domestic", "zone_1_eu", "zone_2_europe", "world"]
-    },
-    {
-      "id": "recommande",
-      "porto_id": "registered_mail",
-      "name": "Lettre recommandée",
-      "label": "Registered letter",
-      "description": "Recommandé with proof of mailing and tracking; optional avis de réception depending on purchase path. Online purchase where La Poste offers it.",
+      "id": "suivi_option",
+      "porto_id": "tracking",
+      "name": "Option suivi (add-on)",
+      "label": "Optional tracking add-on",
+      "description": "Optional tracking when posting Lettre verte without using Lettre verte suivie (e.g. Mon Timbre en ligne). Catalog uses a nominal add-on row; verify current fee on laposte.fr.",
       "features": [
-        "tracking_number",
-        "proof_of_mailing",
-        "recipient_signature",
-        "proof_of_delivery"
+        "numero_suivi"
       ],
       "enables_tracking": true,
       "online_supported": true,
       "integration_supported": {
         "mon_timbre_en_ligne": true
       },
-      "supported_zones": ["domestic", "zone_1_eu", "zone_2_europe", "world"]
+      "supported_zones": [
+        "domestic"
+      ]
     },
     {
-      "id": "recommande_ar",
-      "porto_id": "registered_mail_return_receipt",
-      "name": "Lettre recommandée avec avis de réception",
-      "label": "Registered letter with return receipt",
-      "description": "Recommandé with return receipt (AR). Availability varies by destination; order online only when the flow exposes the option.",
+      "id": "avis_de_reception_national",
+      "porto_id": "return_receipt",
+      "name": "Avis de r\u00e9ception (national)",
+      "label": "Return receipt add-on (France)",
+      "description": "Optional avis de r\u00e9ception papier national, priced per official Lettre recommand\u00e9e table (laposte.fr tarifs 2026). Add to a recommand\u00e9e base product when the purchase flow offers it.",
       "features": [
-        "tracking_number",
-        "proof_of_mailing",
-        "recipient_signature",
-        "return_receipt",
-        "proof_of_delivery"
+        "avis_reception"
       ],
-      "enables_tracking": true,
+      "enables_tracking": false,
       "online_supported": true,
       "integration_supported": {
         "mon_timbre_en_ligne": true
       },
-      "supported_zones": ["domestic", "zone_1_eu", "zone_2_europe", "world"]
+      "supported_zones": [
+        "domestic"
+      ]
+    },
+    {
+      "id": "avis_de_reception_international",
+      "porto_id": "return_receipt",
+      "name": "Avis de r\u00e9ception (international)",
+      "label": "Return receipt add-on (international)",
+      "description": "Optional avis de r\u00e9ception for international registered letter, per official 2026 tariff table.",
+      "features": [
+        "avis_reception"
+      ],
+      "enables_tracking": false,
+      "online_supported": true,
+      "integration_supported": {
+        "mon_timbre_en_ligne": true
+      },
+      "supported_zones": [
+        "zone_1_eu",
+        "zone_2_europe",
+        "world"
+      ]
     }
   ]
 }

@@ -10,8 +10,8 @@ import pytest
 from cli.commands.validate import (
     validate_all,
     validate_graph,
-    validate_layout,
     validate_limits,
+    validate_mappings,
     validate_schema,
 )
 
@@ -72,7 +72,7 @@ class TestCLIValidateCommands:
         "command_args,expected_output",
         [
             (["validate", "--type", "schema"], "Validating JSON schemas"),
-            (["validate", "--type", "layout"], "Validating mappings layout"),
+            (["validate", "--type", "mappings"], "Validating mappings"),
             (["validate", "--type", "limits"], "limits.json checks"),
             (["validate", "--type", "graph"], "Validating graph.json"),
             (
@@ -164,23 +164,21 @@ class TestCLICommandFunctions:
         )
         assert validate_graph() == 1
 
-    def test_validate_all_stops_on_layout_failure(self, monkeypatch):
+    def test_validate_all_stops_on_mappings_failure(self, monkeypatch):
         monkeypatch.setattr("cli.commands.validate.validate_schema", lambda: 0)
-        monkeypatch.setattr("cli.commands.validate.validate_layout", lambda: 1)
+        monkeypatch.setattr("cli.commands.validate.validate_mappings", lambda: 1)
         assert validate_all() == 1
 
     def test_validate_all_stops_on_limits_failure(self, monkeypatch):
         monkeypatch.setattr("cli.commands.validate.validate_schema", lambda: 0)
-        monkeypatch.setattr("cli.commands.validate.validate_layout", lambda: 0)
+        monkeypatch.setattr("cli.commands.validate.validate_mappings", lambda: 0)
         monkeypatch.setattr("cli.commands.validate.validate_limits", lambda: 1)
         assert validate_all() == 1
 
-    def test_validate_layout_and_limits_delegate(self, monkeypatch):
-        monkeypatch.setattr(
-            "cli.commands.validate.validate_mappings_layout", lambda: 42
-        )
+    def test_validate_mappings_and_limits_delegate(self, monkeypatch):
+        monkeypatch.setattr("cli.commands.validate.validate_mappings_layout", lambda: 42)
         monkeypatch.setattr("cli.commands.validate.validate_limits_scope", lambda: 7)
-        assert validate_layout() == 42
+        assert validate_mappings() == 42
         assert validate_limits() == 7
 
 

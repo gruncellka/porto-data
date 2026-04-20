@@ -1,0 +1,42 @@
+{
+  "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/service_prices.schema.json",
+  "file_type": "service_prices",
+  "provider": "ukrposhta",
+  "unit": {
+    "price": "cents",
+    "currency": "UAH"
+  },
+  "service_prices": [
+    {
+      "service_id": "return_receipt_paper",
+      "price": [
+        {
+          "amount": 4800,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "service_id": "return_receipt_electronic",
+      "price": [
+        {
+          "amount": 2400,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "service_id": "recommended_intl",
+      "currency": "USD",
+      "price": [
+        {
+          "amount": 350,
+          "effective_from": "2026-04-01",
+          "effective_to": null
+        }
+      ]
+    }
+  ]
+}

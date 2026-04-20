@@ -1,67 +1,88 @@
 {
-    "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/services.schema.json",
-    "file_type": "services",
-    "provider": "deutschepost",
-    "services": [
-        {
-            "id": "einschreiben",
-            "porto_id": "registered_mail",
-            "name": "Einschreiben",
-            "label": "Registered mail",
-            "description": "Tracking with proof of mailing",
-            "features": ["tracking_number", "proof_of_mailing"],
-            "enables_tracking": true,
-            "online_supported": true,
-            "integration_supported": {
-                "internetmarke": true
-            },
-            "supported_zones": ["domestic", "zone_1_eu", "world"]
-        },
-        {
-            "id": "einschreiben_einwurf",
-            "porto_id": "registered_mail_mailbox",
-            "name": "Einschreiben Einwurf",
-            "label": "Registered mail (mailbox delivery)",
-            "description": "Registered delivery into mailbox (service variant, not a feature). Internetmarke API: domestic only.",
-            "features": ["tracking_number"],
-            "enables_tracking": true,
-            "online_supported": true,
-            "integration_supported": {
-                "internetmarke": true
-            },
-            "supported_zones": ["domestic"]
-        },
-        {
-            "id": "einschreiben_rueckschein",
-            "porto_id": "registered_mail_return_receipt",
-            "name": "Einschreiben Rückschein",
-            "label": "Registered mail with return receipt",
-            "description": "Registered mail with signature and return receipt. Internetmarke API: domestic only.",
-            "features": [
-                "tracking_number",
-                "recipient_signature",
-                "return_receipt",
-                "proof_of_delivery"
-            ],
-            "enables_tracking": true,
-            "online_supported": true,
-            "integration_supported": {
-                "internetmarke": true
-            },
-            "supported_zones": ["domestic"]
-        },
-        {
-            "id": "zusatzversicherung",
-            "porto_id": "additional_insurance",
-            "name": "Zusatzversicherung 500",
-            "label": "Additional insurance (500 EUR)",
-            "description": "Additional insurance up to 500 EUR",
-            "features": ["tracking_number"],
-            "online_supported": true,
-            "integration_supported": {
-                "internetmarke": true
-            },
-            "supported_zones": ["domestic", "zone_1_eu", "world"]
-        }
-    ]
+  "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/services.schema.json",
+  "file_type": "services",
+  "provider": "deutschepost",
+  "services": [
+    {
+      "id": "einschreiben",
+      "porto_id": "registered",
+      "name": "Einschreiben",
+      "label": "Registered mail",
+      "description": "Tracking with proof of mailing",
+      "features": [
+        "tracking_number",
+        "proof_of_mailing"
+      ],
+      "enables_tracking": true,
+      "online_supported": true,
+      "integration_supported": {
+        "internetmarke": true
+      },
+      "supported_zones": [
+        "domestic",
+        "zone_1_eu",
+        "zone_2_europe",
+        "world"
+      ]
+    },
+    {
+      "id": "einschreiben_einwurf",
+      "porto_id": "registered",
+      "name": "Einschreiben Einwurf",
+      "label": "Registered mail (mailbox delivery)",
+      "description": "Registered delivery into mailbox (service variant, not a feature). Internetmarke API: domestic only.",
+      "features": [
+        "tracking_number"
+      ],
+      "enables_tracking": true,
+      "online_supported": true,
+      "integration_supported": {
+        "internetmarke": true
+      },
+      "supported_zones": [
+        "domestic"
+      ]
+    },
+    {
+      "id": "einschreiben_rueckschein",
+      "porto_id": "registered_return_receipt",
+      "name": "Einschreiben R\u00fcckschein",
+      "label": "Registered mail with return receipt",
+      "description": "Registered mail with signature and return receipt. Internetmarke API: domestic only.",
+      "features": [
+        "tracking_number",
+        "recipient_signature",
+        "return_receipt",
+        "proof_of_delivery"
+      ],
+      "enables_tracking": true,
+      "online_supported": true,
+      "integration_supported": {
+        "internetmarke": true
+      },
+      "supported_zones": [
+        "domestic"
+      ]
+    },
+    {
+      "id": "zusatzversicherung",
+      "porto_id": "insurance",
+      "name": "Zusatzversicherung 500",
+      "label": "Additional insurance (500 EUR)",
+      "description": "Additional insurance up to 500 EUR",
+      "features": [
+        "tracking_number"
+      ],
+      "online_supported": true,
+      "integration_supported": {
+        "internetmarke": true
+      },
+      "supported_zones": [
+        "domestic",
+        "zone_1_eu",
+        "zone_2_europe",
+        "world"
+      ]
+    }
+  ]
 }

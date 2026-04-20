@@ -2,14 +2,14 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/graph.schema.json",
   "title": "Graph schema",
-  "description": "Provider graph: data file dependencies, relationships, and constraint links",
+  "description": "Provider graph: data file dependencies, relationships, and product edges (zones \u00d7 weight tiers)",
   "type": "object",
   "required": [
     "file_type",
     "provider",
     "unit",
     "dependencies",
-    "links",
+    "edges",
     "lookup_rules",
     "global_settings"
   ],
@@ -54,9 +54,11 @@
           "type": "string",
           "enum": [
             "EUR",
-            "CHF"
+            "CHF",
+            "UAH",
+            "USD"
           ],
-          "description": "ISO 4217 currency code (EUR for Deutsche Post, CHF for Swiss Post)"
+          "description": "ISO 4217 currency code (EUR for Deutsche Post, CHF for Swiss Post, UAH/USD for Ukrposhta)"
         }
       },
       "additionalProperties": false
@@ -74,16 +76,16 @@
           "properties": {
             "file": {
               "type": "string",
-              "pattern": "^[a-z_]+\\.json$",
-              "description": "Data file name"
+              "pattern": "^(policy/[a-z0-9_./-]+\\.json|mails/[a-z0-9_./-]+\\.json|[a-z0-9_./-]+\\.json)$",
+              "description": "Data path: provider-relative (e.g. prices/products.json) or bundle-shared under policy/ or mails/"
             },
             "depends_on": {
               "type": "array",
               "items": {
                 "type": "string",
-                "pattern": "^[a-z_]+\\.json$"
+                "pattern": "^(policy/[a-z0-9_./-]+\\.json|mails/[a-z0-9_./-]+\\.json|[a-z0-9_./-]+\\.json)$"
               },
-              "description": "List of dependent files"
+              "description": "List of dependent files (same path convention as file)"
             },
             "description": {
               "type": "string",
@@ -96,9 +98,9 @@
       },
       "additionalProperties": false
     },
-    "links": {
+    "edges": {
       "type": "object",
-      "description": "Per-product link rows: each key must be a **product `id`** from products.json (provider-native catalog key), not `porto_id`.",
+      "description": "Per-product edges: each key must be a **product `id`** from products.json (provider-native catalog key), not `porto_id`. Maps product \u2192 allowed zones and weight tiers.",
       "patternProperties": {
         "^[a-z_]+$": {
           "type": "object",
@@ -112,14 +114,9 @@
               "minItems": 1,
               "items": {
                 "type": "string",
-                "enum": [
-                  "domestic",
-                  "zone_1_eu",
-                  "zone_2_europe",
-                  "world"
-                ]
+                "pattern": "^[a-z0-9_]+$"
               },
-              "description": "Available zones for this product"
+              "description": "Available zones for this product (provider-specific ids, e.g. domestic, zone_1_eu, zone_2, world)"
             },
             "weight_tiers": {
               "type": "array",
@@ -171,42 +168,76 @@
     "global_settings": {
       "type": "object",
       "required": [
-        "price_source",
-        "lookup_method",
+        "price_lookup",
         "available_services"
       ],
       "properties": {
-        "price_source": {
-          "type": "string",
-          "pattern": "^[a-z_]+\\.json$",
-          "description": "Source file for prices"
-        },
-        "lookup_method": {
+        "price_lookup": {
           "type": "object",
           "required": [
-            "file",
-            "array",
-            "match",
-            "description"
+            "product_prices",
+            "service_prices"
           ],
           "properties": {
-            "file": {
-              "type": "string",
-              "pattern": "^[a-z_]+\\.json$"
-            },
-            "array": {
-              "type": "string",
-              "minLength": 1
-            },
-            "match": {
+            "product_prices": {
               "type": "object",
-              "additionalProperties": {
-                "type": "string"
-              }
+              "required": [
+                "file",
+                "array",
+                "match",
+                "description"
+              ],
+              "properties": {
+                "file": {
+                  "type": "string",
+                  "pattern": "^(policy/[a-z0-9_./-]+\\.json|mails/[a-z0-9_./-]+\\.json|[a-z0-9_./-]+\\.json)$"
+                },
+                "array": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "match": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                },
+                "description": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "additionalProperties": false
             },
-            "description": {
-              "type": "string",
-              "minLength": 1
+            "service_prices": {
+              "type": "object",
+              "required": [
+                "file",
+                "array",
+                "match",
+                "description"
+              ],
+              "properties": {
+                "file": {
+                  "type": "string",
+                  "pattern": "^(policy/[a-z0-9_./-]+\\.json|mails/[a-z0-9_./-]+\\.json|[a-z0-9_./-]+\\.json)$"
+                },
+                "array": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "match": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                },
+                "description": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "additionalProperties": false
             }
           },
           "additionalProperties": false

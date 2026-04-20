@@ -7,72 +7,166 @@
   },
   "products": [
     {
-      "id": "lettre_prioritaire_petit",
-      "porto_id": "letter_standard",
-      "name": "Lettre prioritaire — petit format (DL / C6)",
-      "dimension_ids": ["DL", "C6"],
-      "supported_zones": [
-        "domestic",
-        "zone_1_eu",
-        "zone_2_europe",
-        "world"
+      "id": "lettre_verte",
+      "porto_id": "small",
+      "name": "Lettre verte",
+      "envelope_ids": [
+        "DL",
+        "C6",
+        "C5",
+        "C4",
+        "B4"
       ],
-      "weight_tier": "W0020",
-      "effective_from": "2025-01-01",
+      "zones": [
+        "domestic"
+      ],
+      "effective_from": "2026-01-01",
       "effective_to": null,
       "mark_type": "label",
       "tracking_mode": "optional"
     },
     {
-      "id": "lettre_prioritaire_moyen",
-      "porto_id": "letter_compact",
-      "name": "Lettre prioritaire — format moyen (C5)",
-      "dimension_ids": ["C5"],
-      "supported_zones": [
+      "id": "lettre_verte_suivie",
+      "porto_id": "small",
+      "name": "Lettre verte suivie",
+      "envelope_ids": [
+        "DL",
+        "C6",
+        "C5",
+        "C4",
+        "B4"
+      ],
+      "zones": [
         "domestic",
         "zone_1_eu",
         "zone_2_europe",
         "world"
       ],
-      "weight_tier": "W0050",
-      "effective_from": "2025-01-01",
+      "effective_from": "2026-01-01",
       "effective_to": null,
+      "mark_profile": "mtel_international",
       "mark_type": "label",
-      "tracking_mode": "optional"
+      "tracking_mode": "included"
     },
     {
-      "id": "lettre_prioritaire_grand",
-      "porto_id": "letter_large",
-      "name": "Lettre prioritaire — grand format (C4)",
-      "dimension_ids": ["C4"],
-      "supported_zones": [
-        "domestic",
-        "zone_1_eu",
-        "zone_2_europe",
-        "world"
+      "id": "lettre_services_plus",
+      "porto_id": "small",
+      "name": "Lettre Services Plus",
+      "envelope_ids": [
+        "DL",
+        "C6",
+        "C5",
+        "C4",
+        "B4"
       ],
-      "weight_tier": "W0500",
-      "effective_from": "2025-01-01",
+      "zones": [
+        "domestic"
+      ],
+      "effective_from": "2026-01-01",
       "effective_to": null,
       "mark_type": "label",
-      "tracking_mode": "optional"
+      "tracking_mode": "included"
     },
     {
-      "id": "lettre_prioritaire_max",
-      "porto_id": "letter_extra_large",
-      "name": "Lettre prioritaire — très grand format (B4)",
-      "dimension_ids": ["B4"],
-      "supported_zones": [
-        "domestic",
+      "id": "lettre_recommandee_r_un",
+      "porto_id": "registered",
+      "name": "Lettre recommand\u00e9e R1",
+      "envelope_ids": [
+        "DL",
+        "C6",
+        "C5",
+        "C4",
+        "B4"
+      ],
+      "zones": [
+        "domestic"
+      ],
+      "effective_from": "2026-01-01",
+      "effective_to": null,
+      "mark_type": "label",
+      "tracking_mode": "included"
+    },
+    {
+      "id": "lettre_recommandee_r_deux",
+      "porto_id": "registered",
+      "name": "Lettre recommand\u00e9e R2",
+      "envelope_ids": [
+        "DL",
+        "C6",
+        "C5",
+        "C4",
+        "B4"
+      ],
+      "zones": [
+        "domestic"
+      ],
+      "effective_from": "2026-01-01",
+      "effective_to": null,
+      "mark_type": "label",
+      "tracking_mode": "included"
+    },
+    {
+      "id": "lettre_recommandee_r_trois",
+      "porto_id": "registered",
+      "name": "Lettre recommand\u00e9e R3",
+      "envelope_ids": [
+        "DL",
+        "C6",
+        "C5",
+        "C4",
+        "B4"
+      ],
+      "zones": [
+        "domestic"
+      ],
+      "effective_from": "2026-01-01",
+      "effective_to": null,
+      "mark_type": "label",
+      "tracking_mode": "included"
+    },
+    {
+      "id": "lettre_recommandee_inter_r_un",
+      "porto_id": "registered",
+      "name": "Lettre recommand\u00e9e internationale R1",
+      "envelope_ids": [
+        "DL",
+        "C6",
+        "C5",
+        "C4",
+        "B4"
+      ],
+      "zones": [
         "zone_1_eu",
         "zone_2_europe",
         "world"
       ],
-      "weight_tier": "W1000",
-      "effective_from": "2025-01-01",
+      "effective_from": "2026-01-01",
       "effective_to": null,
+      "mark_profile": "mtel_international",
       "mark_type": "label",
-      "tracking_mode": "optional"
+      "tracking_mode": "included"
+    },
+    {
+      "id": "lettre_recommandee_inter_r_deux",
+      "porto_id": "registered",
+      "name": "Lettre recommand\u00e9e internationale R2",
+      "envelope_ids": [
+        "DL",
+        "C6",
+        "C5",
+        "C4",
+        "B4"
+      ],
+      "zones": [
+        "zone_1_eu",
+        "zone_2_europe",
+        "world"
+      ],
+      "effective_from": "2026-01-01",
+      "effective_to": null,
+      "mark_profile": "mtel_international",
+      "mark_type": "label",
+      "tracking_mode": "included"
     }
   ]
 }

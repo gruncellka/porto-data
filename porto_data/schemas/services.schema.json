@@ -108,22 +108,6 @@
             },
             "description": "Service IDs this service can be combined with in a single order."
           },
-          "deprecated": {
-            "oneOf": [
-              {
-                "type": "boolean"
-              },
-              {
-                "type": "string",
-                "format": "date"
-              }
-            ],
-            "description": "If true or date string (e.g. 2025-01-01), service is deprecated. Date indicates when it was/will be discontinued."
-          },
-          "deprecated_reason": {
-            "type": "string",
-            "description": "Human-readable reason for deprecation (e.g. low demand, provider discontinued)"
-          },
           "enables_tracking": {
             "type": "boolean",
             "description": "When true, ordering this service activates tracking on the execution result (product tracking_mode must be optional or included)."

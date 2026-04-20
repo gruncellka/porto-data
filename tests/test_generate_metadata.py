@@ -56,7 +56,7 @@ class TestGetFileInfo:
         test_file = subdir / "test.txt"
         test_file.write_text("content")
         base_path = tmp_path
-        checksums = {}
+        checksums: dict[str, str] = {}
 
         info = get_file_info(test_file, base_path, checksums)
 
@@ -183,9 +183,14 @@ class TestGenerateMetadata:
         mock_pairs.return_value = [
             ("schemas/products.schema.json", "providers/deutschepost/products.json"),
         ]
+        _h = "a" * 64
         mock_checksums.return_value = {
             "schemas/products.schema.json": "schema_checksum",
             "providers/deutschepost/products.json": "data_checksum",
+            "mappings.json": _h,
+            "schemas/mappings.schema.json": _h,
+            "providers.json": _h,
+            "schemas/providers.schema.json": _h,
         }
         mock_exists.return_value = True
         mock_stat.return_value.st_size = 100
@@ -206,13 +211,20 @@ class TestGenerateMetadata:
             ):
                 metadata = generate_metadata()
 
+        assert "$schema" in metadata
+        assert metadata["$schema"].endswith("porto_data/schemas/metadata.schema.json")
         assert "project" in metadata
-        assert "global" in metadata
+        assert "policy" in metadata
+        assert "mails" in metadata
+        assert "registry" in metadata
         assert "providers" in metadata
         assert "generated_at" in metadata
         assert "checksums" in metadata
         assert metadata["project"]["name"] == "test-project"
         assert metadata["project"]["version"] == "1.0.0"
+        assert "bundle" in metadata
+        assert "mappings" in metadata["bundle"]
+        assert "providers_registry" in metadata["bundle"]
 
     @patch("scripts.generate_metadata.get_all_file_checksums")
     @patch("scripts.generate_metadata.get_all_schema_data_pairs")
@@ -231,10 +243,17 @@ class TestGenerateMetadata:
 
         metadata = generate_metadata()
 
-        assert "global" in metadata
+        assert "policy" in metadata
+        assert "mails" in metadata
+        assert "registry" in metadata
         assert "providers" in metadata
-        assert isinstance(metadata["global"], dict)
+        assert isinstance(metadata["policy"], dict)
+        assert isinstance(metadata["mails"], dict)
+        assert isinstance(metadata["registry"], dict)
         assert isinstance(metadata["providers"], dict)
+        assert "bundle" in metadata
+        assert "mappings" in metadata["bundle"]
+        assert "providers_registry" in metadata["bundle"]
 
     def test_generate_metadata_has_timestamp(self):
         """Test that generated_at timestamp is included."""
@@ -266,7 +285,12 @@ class TestGenerateMetadata:
         mock_checksums.return_value = {}
         with patch("scripts.generate_metadata.Path.exists", return_value=False):
             metadata = generate_metadata()
-        assert "global" in metadata
+        assert "policy" in metadata
+        assert "mails" in metadata
+        assert "registry" in metadata
         assert "providers" in metadata
-        assert metadata["global"] == {}
+        assert metadata["policy"] == {}
+        assert metadata["mails"] == {}
+        assert metadata["registry"] == {}
         assert metadata["providers"] == {}
+        assert "bundle" not in metadata

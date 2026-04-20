@@ -169,11 +169,12 @@ class TestGetDataFiles:
         assert all(f.endswith(".json") for f in data_files)
 
     def test_get_data_files_includes_expected_files(self):
-        """Test that expected data files are included."""
+        """Test that expected mapping paths are included."""
         data_files = get_data_files()
 
-        # Should include common data files
-        assert "products.json" in data_files or "services.json" in data_files
+        assert any("products.json" in p for p in data_files) or any(
+            "services.json" in p for p in data_files
+        )
 
 
 class TestGetSchemaDataMappings:
@@ -237,21 +238,37 @@ class TestGetDataFileName:
 class TestGetExistingChecksumsFromMetadata:
     """Test get_existing_checksums_from_metadata function."""
 
-    def test_get_existing_checksums_from_metadata_global_providers_structure(self, tmp_path):
-        """Test extracting checksums from global+providers metadata structure."""
+    def test_get_existing_checksums_from_metadata_bundle_structure(self, tmp_path):
+        """Test extracting checksums from policy/mails/registry + providers metadata structure."""
         metadata_file = tmp_path / "metadata.json"
         metadata = {
-            "global": {
-                "dimensions": {
-                    "data": {"path": "global/dimensions.json", "checksum": "global123"},
-                    "schema": {"path": "schemas/dimensions.schema.json", "checksum": "schema456"},
+            "policy": {
+                "restrictions": {
+                    "data": {"path": "policy/restrictions.json", "checksum": "pol123"},
+                    "schema": {
+                        "path": "schemas/restrictions.schema.json",
+                        "checksum": "schema456",
+                    },
+                }
+            },
+            "mails": {},
+            "registry": {
+                "providers": {
+                    "data": {"path": "providers.json", "checksum": "reg123"},
+                    "schema": {"path": "schemas/providers.schema.json", "checksum": "regschema"},
                 }
             },
             "providers": {
                 "deutschepost": {
                     "products": {
-                        "data": {"path": "providers/deutschepost/products.json", "checksum": "prod789"},
-                        "schema": {"path": "schemas/products.schema.json", "checksum": "prod_schema"},
+                        "data": {
+                            "path": "providers/deutschepost/products.json",
+                            "checksum": "prod789",
+                        },
+                        "schema": {
+                            "path": "schemas/products.schema.json",
+                            "checksum": "prod_schema",
+                        },
                     }
                 }
             },
@@ -261,13 +278,15 @@ class TestGetExistingChecksumsFromMetadata:
 
         checksums = get_existing_checksums_from_metadata(str(metadata_file))
 
-        assert checksums["global/dimensions.json"] == "global123"
-        assert checksums["schemas/dimensions.schema.json"] == "schema456"
+        assert checksums["policy/restrictions.json"] == "pol123"
+        assert checksums["schemas/restrictions.schema.json"] == "schema456"
+        assert checksums["providers.json"] == "reg123"
+        assert checksums["schemas/providers.schema.json"] == "regschema"
         assert checksums["providers/deutschepost/products.json"] == "prod789"
         assert checksums["schemas/products.schema.json"] == "prod_schema"
 
-    def test_get_existing_checksums_from_metadata_legacy_entities_structure(self, tmp_path):
-        """Test extracting checksums from legacy entities metadata structure."""
+    def test_get_existing_checksums_from_metadata_flat_entities_object(self, tmp_path):
+        """Checksums from metadata that uses a top-level ``entities`` object."""
         metadata_file = tmp_path / "metadata.json"
         metadata = {
             "entities": {
@@ -285,8 +304,8 @@ class TestGetExistingChecksumsFromMetadata:
         assert checksums["data/products.json"] == "abc123"
         assert checksums["schemas/products.schema.json"] == "def456"
 
-    def test_get_existing_checksums_from_metadata_old_structure(self, tmp_path):
-        """Test extracting checksums from old metadata structure."""
+    def test_get_existing_checksums_from_metadata_schemas_and_data_files_arrays(self, tmp_path):
+        """Checksums from metadata using ``schemas.files`` and ``data.files`` arrays."""
         metadata_file = tmp_path / "metadata.json"
         metadata = {
             "schemas": {"files": [{"path": "schemas/products.schema.json", "checksum": "abc123"}]},

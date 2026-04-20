@@ -2,8 +2,10 @@
 """
 Generate metadata.json with project info and file checksums.
 
-Reads project metadata from pyproject.toml (or package metadata when installed)
-and builds checksums for all schema/data files from mappings.json.
+Reads project metadata from pyproject.toml (or package metadata when installed),
+builds checksums for all schema/data pairs from mappings.json, and adds a ``bundle``
+section for ``mappings.json`` and ``providers.json`` (plus their schemas) so root
+manifest files are explicit alongside the registry.
 """
 
 import json
@@ -13,8 +15,14 @@ from pathlib import Path
 from typing import Any
 
 from scripts.data_files import (
-    GLOBAL_DIR,
+    MAILS_MAPPINGS_KEY,
+    MAPPINGS_FILENAME,
+    MAPPINGS_SCHEMA_RELPATH,
+    POLICY_MAPPINGS_KEY,
     PROVIDERS_DIR,
+    PROVIDERS_REGISTRY_FILENAME,
+    PROVIDERS_SCHEMA_RELPATH,
+    REGISTRY_MAPPINGS_KEY,
     get_all_schema_data_pairs,
     get_project_root,
 )
@@ -22,6 +30,11 @@ from scripts.utils import get_all_file_checksums
 
 # Package distribution name for fallback metadata (when not in repo)
 DIST_NAME = "gruncellka-porto-data"
+
+METADATA_SCHEMA_URI = (
+    "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/"
+    "porto_data/schemas/metadata.schema.json"
+)
 
 
 def get_project_metadata(pyproject_path: Path) -> dict[str, str]:
@@ -95,13 +108,18 @@ get_schema_url = _schema_url
 
 
 def generate_metadata() -> dict[str, Any]:
-    """Build full metadata dict (project, global, providers, checksums, generated_at)."""
+    """Build full metadata dict (project, policy/mails/registry, providers, checksums, generated_at).
+
+    Top-level keys ``policy``, ``mails``, ``registry`` mirror ``mappings.json`` blocks.
+    """
     root = get_project_root()
     checksums = get_all_file_checksums()
     pairs = get_all_schema_data_pairs()
     project_meta = _get_project_meta(root)
 
-    global_entities: dict[str, dict[str, Any]] = {}
+    policy_entities: dict[str, dict[str, Any]] = {}
+    mails_entities: dict[str, dict[str, Any]] = {}
+    registry_entities: dict[str, dict[str, Any]] = {}
     providers_entities: dict[str, dict[str, Any]] = {}
 
     for schema_rel, data_rel in pairs:
@@ -116,24 +134,54 @@ def generate_metadata() -> dict[str, Any]:
             "data": _file_info(data_path, root, checksums),
             "schema": schema_info,
         }
-        if data_rel.startswith(f"{GLOBAL_DIR}/"):
-            global_entities[name] = entity
+        if data_rel.startswith("policy/"):
+            policy_entities[name] = entity
+        elif data_rel.startswith("mails/"):
+            mails_entities[name] = entity
+        elif data_rel == PROVIDERS_REGISTRY_FILENAME:
+            registry_entities[name] = entity
         elif data_rel.startswith(f"{PROVIDERS_DIR}/"):
             provider = data_rel.split("/")[1]
             if provider not in providers_entities:
                 providers_entities[provider] = {}
             providers_entities[provider][name] = entity
 
-    return {
+    bundle: dict[str, dict[str, Any]] = {}
+    mappings_data = root / MAPPINGS_FILENAME
+    mappings_schema = root / MAPPINGS_SCHEMA_RELPATH
+    if mappings_data.exists() and mappings_schema.exists():
+        ms = _file_info(mappings_schema, root, checksums)
+        ms["url"] = _schema_url(mappings_schema)
+        bundle["mappings"] = {
+            "data": _file_info(mappings_data, root, checksums),
+            "schema": ms,
+        }
+    registry_data = root / PROVIDERS_REGISTRY_FILENAME
+    registry_schema = root / PROVIDERS_SCHEMA_RELPATH
+    if registry_data.exists() and registry_schema.exists():
+        rs = _file_info(registry_schema, root, checksums)
+        rs["url"] = _schema_url(registry_schema)
+        bundle["providers_registry"] = {
+            "data": _file_info(registry_data, root, checksums),
+            "schema": rs,
+        }
+
+    meta_out: dict[str, Any] = {
+        "$schema": METADATA_SCHEMA_URI,
         "project": project_meta,
         "generated_at": datetime.now(UTC).isoformat().replace("+00:00", "Z"),
-        GLOBAL_DIR: global_entities,
+        POLICY_MAPPINGS_KEY: policy_entities,
+        MAILS_MAPPINGS_KEY: mails_entities,
+        REGISTRY_MAPPINGS_KEY: registry_entities,
         PROVIDERS_DIR: providers_entities,
         "checksums": {
             "algorithm": "SHA-256",
             "note": "Use checksums to verify data integrity and detect changes",
         },
     }
+    if "mappings" in bundle and "providers_registry" in bundle:
+        meta_out["bundle"] = bundle
+    return meta_out
 
 
 def _metadata_for_compare(meta: dict[str, Any]) -> dict[str, Any]:
@@ -170,8 +218,11 @@ def main() -> None:
         with open(out_path, "w", encoding="utf-8") as f:
             json.dump(new_meta, f, indent=4, ensure_ascii=False)
             f.write("\n")
-        entity_count = len(new_meta.get(GLOBAL_DIR, {})) + sum(
-            len(p) for p in new_meta.get(PROVIDERS_DIR, {}).values()
+        entity_count = (
+            len(new_meta.get(POLICY_MAPPINGS_KEY, {}))
+            + len(new_meta.get(MAILS_MAPPINGS_KEY, {}))
+            + len(new_meta.get(REGISTRY_MAPPINGS_KEY, {}))
+            + sum(len(p) for p in new_meta.get(PROVIDERS_DIR, {}).values())
         )
         print(f"\n✓ Generated: {out_path}")
         print(f"  - Project: {new_meta['project']['name']} v{new_meta['project']['version']}")

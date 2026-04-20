@@ -1,10 +1,10 @@
 [project]
 name = "gruncellka-porto-data"
 version = "0.3.1"
-description = "Deutsche Post pricing and rules data with schema validation"
+description = "Schema-driven postal data model for providers, pricing, services and restrictions"
 readme = "README.md"
 license = {file = "LICENSE"}
-keywords = ["deutsche-post", "shipping", "postal", "pricing", "zones", "restrictions", "json", "schema"]
+keywords = ["postal", "post", "shipping", "logistics", "deutsche post", "swiss post", "la poste", "pricing", "postal rates", "zones", "restrictions", "data model", "schema", "sdk"]
 classifiers = [
     "License :: OSI Approved :: Apache Software License 2.0",
     "Programming Language :: Python :: 3",
@@ -45,9 +45,12 @@ packages = ["porto_data"]
 
 [tool.setuptools.package-data]
 porto_data = [
+    "py.typed",
     "mappings.json",
     "metadata.json",
+    "providers.json",
     "global/*.json",
+    "envelopes/*.json",
     "schemas/*.json",
     "providers/*/*.json",
 ]
@@ -81,6 +84,11 @@ ignore = [
 
 [tool.ruff.lint.isort]
 known-first-party = ["cli", "scripts"]
+
+[tool.coverage.run]
+omit = [
+    "scripts/format_json_file.py",
+]
 
 [tool.mypy]
 python_version = "3.13"

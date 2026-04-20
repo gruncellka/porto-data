@@ -207,22 +207,28 @@ class TestLoadMappingsUsesProjectRoot:
 
 
 class TestConstantsAndHelpers:
-    """Test GLOBAL_DIR, PROVIDERS_DIR, get_global_data_paths, get_provider_data_paths."""
+    """Test bundle mapping keys, PROVIDERS_DIR, get_global_data_paths, get_provider_data_paths."""
 
-    def test_global_dir_and_providers_dir_constants(self):
-        """GLOBAL_DIR and PROVIDERS_DIR are defined and match expected values."""
-        assert data_files.GLOBAL_DIR == "global"
+    def test_bundle_mapping_keys_and_providers_dir_constants(self):
+        """Policy/mails/registry keys and PROVIDERS_DIR match mappings.json / metadata.json."""
+        assert data_files.POLICY_MAPPINGS_KEY == "policy"
+        assert data_files.MAILS_MAPPINGS_KEY == "mails"
+        assert data_files.REGISTRY_MAPPINGS_KEY == "registry"
         assert data_files.PROVIDERS_DIR == "providers"
 
     def test_get_global_data_paths_returns_dict(self):
         """get_global_data_paths returns entity name -> path mapping."""
         result = data_files.get_global_data_paths()
         assert isinstance(result, dict)
-        # With current mappings, should have dimensions, restrictions, jurisdictions, providers (not provider-scoped entities)
+        # Non-provider paths: policy/, mails/, or providers.json at bundle root
         for key, val in result.items():
             assert isinstance(key, str)
             assert isinstance(val, str)
-            assert "global/" in val
+            assert (
+                val.startswith("policy/")
+                or val.startswith("mails/")
+                or val == data_files.PROVIDERS_REGISTRY_FILENAME
+            )
 
     def test_get_provider_data_paths_returns_dict(self):
         """get_provider_data_paths returns entity name -> path for provider."""
@@ -239,30 +245,40 @@ class TestConstantsAndHelpers:
         assert result == {}
 
     def test_get_global_data_paths_with_malformed_global_returns_empty(self, tmp_path):
-        """When global mappings is not a dict, get_global_data_paths returns empty."""
+        """When a bundle block is not a dict, get_global_data_paths skips it."""
         (tmp_path / "mappings.json").write_text(
-            json.dumps({
-                "mappings": {
-                    "global": "not_a_dict",
-                    "providers": {"deutschepost": {"schemas/products.schema.json": "providers/deutschepost/products.json"}},
+            json.dumps(
+                {
+                    "mappings": {
+                        "policy": "not_a_dict",
+                        "mails": {},
+                        "registry": {},
+                        "providers": {
+                            "deutschepost": {
+                                "schemas/products.schema.json": "providers/deutschepost/products.json"
+                            }
+                        },
+                    }
                 }
-            })
+            )
         )
         with patch.object(data_files, "_get_project_root", return_value=tmp_path):
             result = data_files.get_global_data_paths()
         assert result == {}
 
-    def test_get_provider_data_paths_with_malformed_provider_mappings_returns_empty(
-        self, tmp_path
-    ):
+    def test_get_provider_data_paths_with_malformed_provider_mappings_returns_empty(self, tmp_path):
         """When provider mappings is not a dict, get_provider_data_paths returns empty."""
         (tmp_path / "mappings.json").write_text(
-            json.dumps({
-                "mappings": {
-                    "global": {},
-                    "providers": {"deutschepost": "not_a_dict"},
+            json.dumps(
+                {
+                    "mappings": {
+                        "policy": {},
+                        "mails": {},
+                        "registry": {},
+                        "providers": {"deutschepost": "not_a_dict"},
+                    }
                 }
-            })
+            )
         )
         with patch.object(data_files, "_get_project_root", return_value=tmp_path):
             result = data_files.get_provider_data_paths("deutschepost")
@@ -282,18 +298,19 @@ class TestListProviderIds:
 
 class TestLoadProvidersRegistryErrors:
     def test_raises_file_not_found_when_registry_missing(self, tmp_path):
-        with patch.object(data_files, "_get_project_root", return_value=tmp_path):
-            with pytest.raises(FileNotFoundError, match="Provider registry not found"):
-                data_files.load_providers_registry()
+        with (
+            patch.object(data_files, "_get_project_root", return_value=tmp_path),
+            pytest.raises(FileNotFoundError, match="Provider registry not found"),
+        ):
+            data_files.load_providers_registry()
 
     def test_raises_value_error_when_providers_empty(self, tmp_path):
-        (tmp_path / "global").mkdir()
-        (tmp_path / "global" / "providers.json").write_text(
-            json.dumps({"providers": {}}), encoding="utf-8"
-        )
-        with patch.object(data_files, "_get_project_root", return_value=tmp_path):
-            with pytest.raises(ValueError, match="non-empty object 'providers'"):
-                data_files.load_providers_registry()
+        (tmp_path / "providers.json").write_text(json.dumps({"providers": {}}), encoding="utf-8")
+        with (
+            patch.object(data_files, "_get_project_root", return_value=tmp_path),
+            pytest.raises(ValueError, match="non-empty object 'providers'"),
+        ):
+            data_files.load_providers_registry()
 
 
 class TestGetMappingsProviderIdsEdgeCases:
@@ -306,16 +323,29 @@ class TestGetMappingsProviderIdsEdgeCases:
 
 class TestGetDataFilePathProjectRoot:
     def test_resolves_limits_relative_to_given_root(self, tmp_path):
-        (tmp_path / "global").mkdir()
-        (tmp_path / "global" / "providers.json").write_text(
-            json.dumps({"providers": {"acme": {"timezone": "Etc/UTC"}}}),
+        (tmp_path / "policy").mkdir()
+        (tmp_path / "providers.json").write_text(
+            json.dumps(
+                {
+                    "providers": {
+                        "acme": {
+                            "name": "A",
+                            "country": "XX",
+                            "mark_types": ["stamp"],
+                            "tracking_model": "mixed",
+                        }
+                    }
+                }
+            ),
             encoding="utf-8",
         )
         (tmp_path / "mappings.json").write_text(
             json.dumps(
                 {
                     "mappings": {
-                        "global": {},
+                        "policy": {},
+                        "mails": {},
+                        "registry": {},
                         "providers": {
                             "acme": {
                                 "schemas/limits.schema.json": "providers/acme/limits.json",

@@ -1,0 +1,51 @@
+{
+  "provider": "deutschepost",
+  "unit": {
+    "price": "cents",
+    "currency": "EUR"
+  },
+  "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/service_prices.schema.json",
+  "file_type": "service_prices",
+  "service_prices": [
+    {
+      "service_id": "einschreiben",
+      "price": [
+        {
+          "amount": 265,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "service_id": "einschreiben_einwurf",
+      "price": [
+        {
+          "amount": 235,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "service_id": "einschreiben_rueckschein",
+      "price": [
+        {
+          "amount": 485,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "service_id": "zusatzversicherung",
+      "price": [
+        {
+          "amount": 250,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    }
+  ]
+}

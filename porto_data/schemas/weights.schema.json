@@ -1,0 +1,70 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/weights.schema.json",
+  "title": "Weights schema",
+  "description": "Provider weight brackets (tier ids W* \u2192 min/max g) for pricing and resolution",
+  "type": "object",
+  "required": [
+    "file_type",
+    "provider",
+    "unit",
+    "weights"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "format": "uri",
+      "description": "JSON Schema URI reference"
+    },
+    "file_type": {
+      "type": "string",
+      "const": "weights",
+      "description": "File type identifier"
+    },
+    "provider": {
+      "type": "string",
+      "pattern": "^[a-z_]+$",
+      "description": "Provider identifier (e.g. deutschepost, swisspost)"
+    },
+    "unit": {
+      "type": "object",
+      "required": [
+        "weight"
+      ],
+      "properties": {
+        "weight": {
+          "type": "string",
+          "const": "g"
+        }
+      },
+      "additionalProperties": false
+    },
+    "weights": {
+      "type": "object",
+      "patternProperties": {
+        "^W[0-9]+$": {
+          "type": "object",
+          "required": [
+            "min",
+            "max"
+          ],
+          "properties": {
+            "min": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Minimum weight in grams"
+            },
+            "max": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Maximum weight in grams"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

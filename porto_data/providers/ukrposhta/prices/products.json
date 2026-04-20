@@ -1,0 +1,99 @@
+{
+  "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/product_prices.schema.json",
+  "file_type": "product_prices",
+  "provider": "ukrposhta",
+  "unit": {
+    "price": "cents",
+    "currency": "UAH"
+  },
+  "product_prices": [
+    {
+      "product_id": "letter_standard",
+      "zone": "domestic",
+      "weight_tier": "W0050",
+      "price": [
+        {
+          "amount": 2400,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "letter_standard",
+      "zone": "domestic",
+      "weight_tier": "W2000",
+      "price": [
+        {
+          "amount": 7200,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "ukrposhta_document",
+      "zone": "domestic",
+      "weight_tier": "W1000",
+      "price": [
+        {
+          "amount": 5500,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "letter_standard",
+      "zone": "world",
+      "weight_tier": "W0050",
+      "currency": "USD",
+      "price": [
+        {
+          "amount": 250,
+          "effective_from": "2026-04-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "letter_standard",
+      "zone": "world",
+      "weight_tier": "W0250",
+      "currency": "USD",
+      "price": [
+        {
+          "amount": 400,
+          "effective_from": "2026-04-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "letter_standard",
+      "zone": "world",
+      "weight_tier": "W1000",
+      "currency": "USD",
+      "price": [
+        {
+          "amount": 1450,
+          "effective_from": "2026-04-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "letter_standard",
+      "zone": "world",
+      "weight_tier": "W2000",
+      "currency": "USD",
+      "price": [
+        {
+          "amount": 2850,
+          "effective_from": "2026-04-01",
+          "effective_to": null
+        }
+      ]
+    }
+  ]
+}

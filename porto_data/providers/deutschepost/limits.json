@@ -8,8 +8,8 @@
   },
   "provider_context": {
     "national_policy": {
-      "description": "Letter-send catalog only. Use global/restrictions.json for sanctions, embargoes, and legal destination regimes. Use zones.json for routable destinations. This file lists only Deutsche Post–documented operational blocks that specifically affect letter acceptance or delivery when you have a citable source.",
-      "notes": "Keep limits[] minimal: one row per destination (or region) where the operator materially restricts or suspends letters. Do not duplicate worldwide conflict inventories here—SDK letter gating should merge global/restrictions + this file + zone membership."
+      "description": "Volatile operator rules (strikes, temporary suspensions) and SDK overlays use the same row shape as policy/restrictions.json limits[] items when present. Sanctions and destination facts (EU/UN/CH rows) live only in policy/restrictions.json under destinations[].restrictions. This file is usually empty.",
+      "notes": "Merge order: global restrictions, then limits[] here, then any SDK operational overlay."
     }
   },
   "limits": [],

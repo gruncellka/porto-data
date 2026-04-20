@@ -1,14 +1,21 @@
 {
-    "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/features.schema.json",
-    "file_type": "features",
-    "provider": "swisspost",
-    "features": [
-        {
-            "id": "sendungsnummer",
-            "porto_id": "tracking_number",
-            "name": "Sendungsnummer",
-            "label": "Tracking number",
-            "description": "Electronic tracking for supported letter products (e.g. A-Mail Plus via WebStamp). Letter-only scope; not a parcel scan pipeline."
-        }
-    ]
+  "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/features.schema.json",
+  "file_type": "features",
+  "provider": "swisspost",
+  "features": [
+    {
+      "id": "sendungsnummer",
+      "porto_id": "tracking_number",
+      "name": "Sendungsnummer",
+      "label": "Tracking number",
+      "description": "Electronic tracking for supported letter products (e.g. A-Mail Plus via WebStamp). Letter-only scope; not a parcel scan pipeline."
+    },
+    {
+      "id": "brief_dicke_band",
+      "porto_id": "thickness_surcharge",
+      "name": "Zuschlag Dicke",
+      "label": "Thickness surcharge",
+      "description": "Automatic surcharge when thickness exceeds the standard band; amount from rules.json and prices/services.json."
+    }
+  ]
 }

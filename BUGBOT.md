@@ -2,86 +2,135 @@
 
 ## Scope
 
-- This file defines repository-level review rules for Bugbot in `porto-data`.
-- Keep findings focused on data integrity, validation correctness, and release safety.
-- Align checks with `.cursorrules` for this repository.
-- Treat `porto-data` as an independent package with its own responsibility and review boundaries.
-- Review scope is only changes inside this `porto-data` repository.
-- Do not raise findings for files, workflows, or policies in other repositories of this workspace.
+- Review rules for Bugbot in this `porto-data` tree only: data integrity, validation correctness, release safety.
+- **Consistency** means cross-file agreement: registry ↔ mappings ↔ disk, catalog JSON ↔ **`graph.json`**, units, services ↔ prices ↔ graph.
+- **Resolution** (for SDKs/loaders) is anchored in each provider’s **`graph.json`**: **`dependencies`**, **`edges`** (product × zones × weight tiers), **`global_settings`** (`lookup_method`, `price_source`, `available_services`), plus schema **`porto_data/schemas/graph.schema.json`**. Loaders must not assume removed layouts (`porto_data/data/`, `data_links.json`, top-level **`links`** on the graph).
+- Align with `.cursorrules` and `CONTRIBUTING.md`.
+- Do not flag files, workflows, or policies outside this repository.
 
-## Rule format
+## Severity
 
-- Use explicit, actionable findings.
-- Use blocking bugs for correctness, safety, or release risks.
-- Use non-blocking bugs for maintainability and coordination risks.
+- **Blocking:** correctness, safety, or release risk.
+- **Non-blocking:** maintainability, coordination, or “verify before merge” resolution risk.
 
 ## Rules
 
-### 1) Data or schema changes must have validation-facing test updates (blocking)
+### 1) Data or schema changes need test updates (blocking)
 
-If a PR changes files in `porto_data/data/**`, `porto_data/schemas/**`, `scripts/**`, or `cli/**` and has no changes in `tests/**`, then:
+If a PR changes `porto_data/policy/**`, `porto_data/mails/**`, `porto_data/providers/**`, `porto_data/schemas/**`, `porto_data/providers.json`, `porto_data/mappings.json`, `scripts/**`, or `cli/**` and has **no** changes under `tests/**`:
 
-- Add a blocking Bug titled `Core data or validation logic changed without tests`.
-- Body: `This change affects data, schema, or validation behavior but does not update tests. Add or update focused tests in tests/.`
-- Apply labels `quality`, `tests`.
+- **Title:** `Core data or validation logic changed without tests`
+- **Body:** `Add or update focused tests in tests/ for the new or changed behavior.`
+- **Labels:** `quality`, `tests`
 
-### 2) Manual edits to metadata are not allowed (blocking)
+### 2) Do not hand-edit metadata (blocking)
 
-If a PR directly edits `porto_data/metadata.json` while no related changes exist in data/schema/mappings or metadata generation paths (`porto_data/data/**`, `porto_data/schemas/**`, `porto_data/mappings.json`, `scripts/generate_metadata.py`, `cli/commands/metadata.py`), then:
+If a PR edits `porto_data/metadata.json` without related changes to data, schemas, mappings, or metadata generation (`scripts/generate_metadata.py`, `cli/commands/metadata.py`):
 
-- Add a blocking Bug titled `metadata.json appears manually edited`.
-- Body: `metadata.json is generated output and should not be hand-edited. Regenerate it from source changes instead.`
-- Apply labels `reliability`, `release`.
+- **Title:** `metadata.json appears manually edited`
+- **Body:** `Regenerate with make metadata (or porto metadata); do not edit checksums by hand.`
+- **Labels:** `reliability`, `release`
 
-### 3) Data/schema/mapping changes must include regenerated metadata (blocking)
+### 3) Data / schema / mappings changes need refreshed metadata (blocking)
 
-If a PR changes any of `porto_data/data/**`, `porto_data/schemas/**`, or `porto_data/mappings.json` and does not also change `porto_data/metadata.json`, then:
+If a PR changes `porto_data/policy/**`, `porto_data/mails/**`, `porto_data/providers/**`, `porto_data/schemas/**`, or `porto_data/mappings.json` but **not** `porto_data/metadata.json`:
 
-- Add a blocking Bug titled `Data or schema changed without metadata refresh`.
-- Body: `Changes to data/schema/mappings require regenerated porto_data/metadata.json in the same PR.`
-- Apply labels `quality`, `release`.
+- **Title:** `Data or schema changed without metadata refresh`
+- **Body:** `Run make metadata and commit porto_data/metadata.json in the same PR.`
+- **Labels:** `quality`, `release`
 
-### 4) New subprocess.run calls need explicit failure handling (blocking)
+### 4) New `subprocess.run` must not ignore failure (blocking)
 
-For new `subprocess.run(...)` calls in `scripts/**/*.py` or `cli/**/*.py`, require either:
+In `scripts/**/*.py` or `cli/**/*.py`, new calls need `check=True` or explicit non-zero `returncode` handling.
 
-- `check=True`, or
-- explicit non-zero `returncode` handling.
+Otherwise:
 
-If neither exists:
+- **Title:** `subprocess.run without clear error handling`
+- **Body:** `Use check=True or handle returncode explicitly.`
+- **Labels:** `reliability`, `python`
 
-- Add a blocking Bug titled `subprocess.run without clear error handling`.
-- Body: `New subprocess invocation can fail silently. Use check=True or explicit returncode handling with clear behavior.`
-- Apply labels `reliability`, `python`.
+### 5) No `sys.path` hacks (blocking)
 
-### 5) Python import hacks should not be introduced (blocking)
+If a PR adds `sys.path` mutation under `scripts/**` or `cli/**`:
 
-If a PR adds `sys.path` manipulation (for example `sys.path.append(...)`) in `scripts/**` or `cli/**`, then:
+- **Title:** `sys.path import hack introduced`
+- **Body:** `Use package imports (from scripts... / from cli...) per project layout.`
+- **Labels:** `python`, `maintainability`
 
-- Add a blocking Bug titled `sys.path import hack introduced`.
-- Body: `Use package-style imports and project structure conventions instead of sys.path mutation.`
-- Apply labels `python`, `maintainability`.
+### 6) JSON formatting drift (non-blocking)
 
-### 6) JSON formatting and key-order drift should be flagged (non-blocking)
+If changed JSON under `porto_data/**` is minified, not 4-space indented, or keys reshuffled without need:
 
-If changed JSON files under `porto_data/**` appear minified, use non-4-space indentation, or show obvious key reordering unrelated to behavior, then:
+- **Title:** `JSON formatting or key-order drift`
+- **Body:** `Keep 4 spaces, preserve key order, format with project tooling.`
+- **Labels:** `maintainability`
 
-- Add a non-blocking Bug titled `JSON formatting or key-order drift`.
-- Body: `Preserve JSON readability and key order. Reformat consistently and avoid unnecessary key reshuffling.`
-- Apply label `maintainability`.
+### 7) User-visible contract changes → changelog (non-blocking)
 
-### 7) Changelog should accompany user-visible data behavior changes (non-blocking)
+If a PR changes published JSON contracts under `porto_data/policy/**`, `porto_data/mails/**`, `porto_data/providers/**`, `porto_data/schemas/**`, or `mappings.json` without `CHANGELOG.md`:
 
-If a PR changes published data or schema contracts (`porto_data/data/**`, `porto_data/schemas/**`, `porto_data/mappings.json`) and does not update `CHANGELOG.md`, then:
+- **Title:** `User-visible data change without changelog update`
+- **Body:** `Document notable consumer-facing changes in CHANGELOG.md.`
+- **Labels:** `release-notes`
 
-- Add a non-blocking Bug titled `User-visible data change without changelog update`.
-- Body: `Consider documenting this data/schema behavior change in CHANGELOG.md for consumers.`
-- Apply label `release-notes`.
+### 8) TODO/FIXME needs a tracker (non-blocking)
 
-### 8) TODO/FIXME comments must be tracked (non-blocking)
+If new/changed code adds `TODO` or `FIXME` without an issue reference (`#123`, `ABC-123`):
 
-If changed code includes `TODO` or `FIXME` without an issue reference like `#123` or `ABC-123`, then:
+- **Title:** `Untracked TODO/FIXME comment`
+- **Body:** `Link to an issue or remove.`
+- **Labels:** `maintainability`
 
-- Add a non-blocking Bug titled `Untracked TODO/FIXME comment`.
-- Body: `Link TODO/FIXME to a tracked issue (for example TODO(#123): ...) or remove it.`
-- Apply label `maintainability`.
+---
+
+## Data consistency and resolution
+
+These rules align reviews with how **`GraphValidator`** (`scripts/validators/graph.py`) and **`validate_mappings_layout`** (`scripts/validators/mappings_layout.py`) protect the bundle. When in doubt, **`make validate`** (or `porto validate`) must pass for all providers.
+
+### 9) Graph uses `edges`, not legacy `links` (blocking)
+
+If a diff adds or keeps a **top-level** `"links"` key in any `porto_data/providers/**/graph.json`:
+
+- **Title:** `graph.json must use top-level edges, not links`
+- **Body:** `Resolution graphs use edges (product → zones + weight_tiers). Remove links or rename to edges per graph.schema.json.`
+- **Labels:** `data`, `resolution`
+
+### 10) Provider registry and mappings stay in lockstep (blocking)
+
+If a PR changes the set of provider ids in **`porto_data/providers.json`** (`providers` object keys) or the keys under **`porto_data/mappings.json`** → **`mappings.providers`**, but **not** the other file in the same PR:
+
+- **Title:** `Provider registry and mappings.json out of sync`
+- **Body:** `Registry ids and mappings.providers keys must match; each registry id needs a provider folder and mappings entry.`
+- **Labels:** `data`, `consistency`
+
+### 11) New provider JSON must declare `provider` (blocking)
+
+If a PR adds a new `*.json` under `porto_data/providers/<id>/` and the file is a mapped data document (not a stray file), and top-level **`provider`** is missing or not equal to **`<id>`**:
+
+- **Title:** `Provider field must match folder id`
+- **Body:** `Mapped provider JSON must include "provider": "<id>" matching the directory name (mappings validation).`
+- **Labels:** `data`, `consistency`
+
+### 12) Resolution graph edits need full validation (non-blocking)
+
+If a PR changes any of **`graph.json`** (`edges`, `global_settings`, `dependencies`, `lookup_rules`), **`products.json`**, **`prices/products.json`**, **`prices/services.json`**, **`zones.json`**, or **`weights.json`** for a provider:
+
+- **Title:** `Verify graph resolution and cross-file consistency`
+- **Body:** `Run porto validate --type graph (or make validate) for that provider. Confirm edges reference existing product_ids; zones and weight_tiers match products and price rows; global_settings lookup_method/price_source still valid; available_services and price service_ids exist in services.json.`
+- **Labels:** `resolution`, `consistency`
+
+### 13) Validator changes must keep graph/mappings guarantees (blocking)
+
+If a PR edits **`scripts/validators/graph.py`** or **`scripts/validators/mappings_layout.py`** without updates to **`tests/`** (or without clear refactor-only rationale in the description):
+
+- **Title:** `Validator change without tests`
+- **Body:** `Graph and layout validators enforce resolution and consistency; extend or adjust tests when behavior changes.`
+- **Labels:** `quality`, `tests`
+
+### 14) Schema changes for graph or catalogs need data alignment (non-blocking)
+
+If a PR changes **`porto_data/schemas/graph.schema.json`** or schemas for **`products`**, **`prices`**, **`services`**, **`zones`**, or **`weights`**:
+
+- **Title:** `Schema change — confirm all providers still validate`
+- **Body:** `Run porto validate --type schema and full porto validate; update every provider’s JSON that must satisfy the new contract.`
+- **Labels:** `data`, `consistency`

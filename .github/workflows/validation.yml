@@ -41,10 +41,10 @@ jobs:
               run: make lint-json
 
     # ==========================================
-    # Data Links Validation (needs valid schemas)
+    # Mappings (needs valid schemas)
     # ==========================================
-    validate-data-links:
-        name: Validate Data Links
+    validate-mappings:
+        name: Validate mappings
         runs-on: ubuntu-22.04
         needs: [validate-schemas]
         steps:
@@ -55,9 +55,41 @@ jobs:
                   cache: 'pip'
             - name: Install dependencies
               run: make setup
-            - name: Validate data_links.json consistency
+            - name: Validate mappings.json, providers registry, metadata alignment
               run: |
-                  . venv/bin/activate && PYTHONPATH=. python -m cli.main validate --type links
+                  . venv/bin/activate && PYTHONPATH=. python -m cli.main validate --type mappings
+
+    validate-limits:
+        name: Validate limits (letter scope)
+        runs-on: ubuntu-22.04
+        needs: [validate-mappings]
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-python@v5
+              with:
+                  python-version: ${{ env.PYTHON_VERSION }}
+                  cache: 'pip'
+            - name: Install dependencies
+              run: make setup
+            - name: Validate providers/*/limits.json
+              run: |
+                  . venv/bin/activate && PYTHONPATH=. python -m cli.main validate --type limits
+
+    validate-graph:
+        name: Validate provider graph.json
+        runs-on: ubuntu-22.04
+        needs: [validate-mappings]
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-python@v5
+              with:
+                  python-version: ${{ env.PYTHON_VERSION }}
+                  cache: 'pip'
+            - name: Install dependencies
+              run: make setup
+            - name: Validate graph consistency (dependencies, edges, cross-file refs)
+              run: |
+                  . venv/bin/activate && PYTHONPATH=. python -m cli.main validate --type graph
 
     # ==========================================
     # Formatting Checks (needs valid data)
@@ -65,7 +97,7 @@ jobs:
     format-json:
         name: Check JSON Formatting
         runs-on: ubuntu-22.04
-        needs: [validate-schemas, validate-data-links]
+        needs: [validate-schemas, validate-mappings]
         steps:
             - uses: actions/checkout@v4
             - uses: actions/setup-python@v5
@@ -80,7 +112,7 @@ jobs:
     verify-metadata:
         name: Verify Metadata
         runs-on: ubuntu-22.04
-        needs: [validate-schemas, validate-data-links]
+        needs: [validate-schemas, validate-mappings, validate-limits, validate-graph]
         steps:
             - uses: actions/checkout@v4
             - uses: actions/setup-python@v5
@@ -181,7 +213,9 @@ jobs:
         needs:
             - validate-schemas
             - lint-json
-            - validate-data-links
+            - validate-mappings
+            - validate-limits
+            - validate-graph
             - format-json
             - verify-metadata
             - format-code

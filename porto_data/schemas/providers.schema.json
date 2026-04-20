@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/providers.schema.json",
   "title": "Provider registry",
-  "description": "Domain registry for postal providers. Folder providers/<id>/ is implementation storage only; authoritative ids and coarse metadata live here. Product-level mark_type and tracking_mode remain the execution source of truth.",
+  "description": "Domain registry for postal providers. Folder providers/<id>/ is implementation storage only; authoritative ids and coarse metadata live here. IANA timezone for a provider is policy/jurisdictions.json \u2192 jurisdictions[country].timezone (not duplicated here). Product-level mark_type and tracking_mode remain the execution source of truth.",
   "type": "object",
   "required": [
     "providers"
@@ -20,8 +20,7 @@
         "required": [
           "name",
           "country",
-          "mark_types",
-          "tracking_model"
+          "mark_types"
         ],
         "properties": {
           "name": {
@@ -32,13 +31,7 @@
           "country": {
             "type": "string",
             "pattern": "^[A-Z]{2}$",
-            "description": "Primary country (ISO 3166-1 alpha-2)"
-          },
-          "timezone": {
-            "type": "string",
-            "minLength": 3,
-            "pattern": "^[A-Za-z0-9_+-]+(/[A-Za-z0-9_+-]+)+$",
-            "description": "IANA time zone for this provider's operational calendar: product, service, and price effective_from/effective_to, and provider limits rows when no framework-level timezone applies."
+            "description": "Primary country (ISO 3166-1 alpha-2). Timezone: policy/jurisdictions.json jurisdictions[this code].timezone."
           },
           "mark_types": {
             "type": "array",
@@ -61,7 +54,7 @@
               "none",
               "optional"
             ],
-            "description": "Coarse provider-level tracking posture (UI/docs/policy); products define tracking_mode precisely"
+            "description": "Optional coarse provider-level tracking posture; products define tracking_mode precisely."
           }
         },
         "additionalProperties": true

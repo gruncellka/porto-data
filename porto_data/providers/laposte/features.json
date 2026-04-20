@@ -6,16 +6,16 @@
     {
       "id": "numero_suivi",
       "porto_id": "tracking_number",
-      "name": "Numéro de suivi",
+      "name": "Num\u00e9ro de suivi",
       "label": "Tracking number",
       "description": "Suivi / Lettre suivie style tracking when the ordered service provides it"
     },
     {
       "id": "preuve_depot",
       "porto_id": "proof_of_mailing",
-      "name": "Preuve de dépôt",
+      "name": "Preuve de d\u00e9p\u00f4t",
       "label": "Proof of mailing",
-      "description": "Attestation de dépôt (recommandé and similar services)"
+      "description": "Attestation de d\u00e9p\u00f4t (recommand\u00e9 and similar services)"
     },
     {
       "id": "signature_destinataire",
@@ -27,9 +27,9 @@
     {
       "id": "avis_reception",
       "porto_id": "return_receipt",
-      "name": "Avis de réception",
+      "name": "Avis de r\u00e9ception",
       "label": "Return receipt",
-      "description": "Avis de réception returned to the sender (recommandé AR)"
+      "description": "Avis de r\u00e9ception returned to the sender (recommand\u00e9 AR)"
     },
     {
       "id": "preuve_livraison",

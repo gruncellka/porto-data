@@ -1,7 +1,7 @@
 {
     "name": "@gruncellka/porto-data",
     "version": "0.3.1",
-    "description": "Deutsche Post pricing and rules data with schema validation",
+    "description": "Schema-driven postal data model for providers, pricing, services and restrictions",
     "author": "Oleksandr Tsyba (gruncellka)",
     "license": "Apache-2.0",
     "repository": {
@@ -13,21 +13,31 @@
         "url": "https://github.com/gruncellka/porto-data/issues"
     },
     "keywords": [
-        "deutsche-post",
-        "shipping",
         "postal",
+        "post",
+        "shipping",
+        "logistics",
+        "deutsche post",
+        "swiss post",
+        "la poste",
         "pricing",
+        "postal rates",
         "zones",
         "restrictions",
-        "json",
-        "schema"
+        "data model",
+        "schema",
+        "sdk"
     ],
     "files": [
         "porto_data/global",
+        "porto_data/restrictions",
+        "porto_data/envelopes",
         "porto_data/providers",
         "porto_data/schemas",
+        "porto_data/providers.json",
         "porto_data/mappings.json",
         "porto_data/metadata.json",
+        "docs/providers",
         "README.md",
         "CHANGELOG.md",
         "LICENSE",

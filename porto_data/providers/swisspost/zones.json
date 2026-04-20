@@ -17,7 +17,7 @@
     {
       "id": "zone_1_eu",
       "name": "Zone 1 - Europe (letter tariff)",
-      "description": "Swiss Post international letter tariff group for Europe (EU, EEA, UK, and other listed European states). Switzerland (CH) is not in the EU and is not part of this zone when posting from Switzerland — domestic applies for CH destinations.",
+      "description": "Swiss Post international letter tariff group for Europe (EU, EEA, UK, and other listed European states). Switzerland (CH) is not in the EU and is not part of this zone when posting from Switzerland \u2014 domestic applies for CH destinations.",
       "country_codes": [
         "AD",
         "AL",

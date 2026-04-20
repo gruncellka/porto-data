@@ -6,6 +6,9 @@
 # 3. User reviews changes: git diff porto_data/metadata.json
 # 4. User stages and re-commits: git add porto_data/metadata.json && git commit
 #
+# Data layout: porto_data/policy/, porto_data/mails/, porto_data/providers/<id>/, porto_data/schemas/,
+# porto_data/mappings.json, porto_data/metadata.json (no legacy porto_data/data/).
+#
 # Run manually: pre-commit run --all-files
 # Update hooks: pre-commit autoupdate
 
@@ -22,7 +25,15 @@ repos:
             name: Validate JSON schemas
             entry: bash -c 'if [ -f venv/bin/activate ]; then . venv/bin/activate; fi && PYTHONPATH=. python -m cli.main validate --type schema'
             language: system
-            files: ^porto_data/(data|schemas)/.*\.json$
+            files: ^porto_data/(policy|mails|schemas)/.*\.json$|^porto_data/providers/[^/]+/.*\.json$|^porto_data/(mappings|metadata|providers)\.json$
+            pass_filenames: false
+            always_run: false
+
+          - id: validate-mappings
+            name: Validate mappings (registry, metadata, stray files)
+            entry: bash -c 'if [ -f venv/bin/activate ]; then . venv/bin/activate; fi && PYTHONPATH=. python -m cli.main validate --type mappings'
+            language: system
+            files: ^porto_data/(mappings|metadata|providers)\.json$|^porto_data/providers/[^/]+/.*\.json$|^porto_data/schemas/.*\.schema\.json$
             pass_filenames: false
             always_run: false
 
@@ -30,7 +41,7 @@ repos:
             name: Validate graph.json consistency
             entry: bash -c 'if [ -f venv/bin/activate ]; then . venv/bin/activate; fi && PYTHONPATH=. python -m cli.main validate --type graph'
             language: system
-            files: ^porto_data/providers/.*/graph\.json$|^porto_data/providers/.*/(products|zones|weight_tiers|services|prices)\.json$
+            files: ^porto_data/providers/.*/graph\.json$|^porto_data/providers/.*/(products|zones|weights|services|features|limits|marks|rules)\.json$|^porto_data/providers/.*/prices/.*\.json$|^porto_data/(policy|mails|schemas)/.*\.json$
             pass_filenames: false
             always_run: false
 
@@ -38,7 +49,8 @@ repos:
             name: Generate metadata.json
             entry: bash -c 'if [ -f venv/bin/activate ]; then . venv/bin/activate; fi && PYTHONPATH=. python -m cli.main metadata'
             language: system
-            files: ^porto_data/(data|schemas)/.*\.json$
+            # Omit metadata.json so regenerating it does not re-trigger this hook in a loop
+            files: ^porto_data/(policy|mails|schemas)/.*\.json$|^porto_data/providers/[^/]+/.*\.json$|^porto_data/mappings\.json$
             pass_filenames: false
             always_run: false
 
@@ -65,10 +77,10 @@ repos:
       hooks:
           - id: lint-json
             name: Validate JSON syntax
-            entry: bash -c 'for file in porto_data/data/*.json porto_data/schemas/*.json; do [ -f "$file" ] && python3 -m json.tool "$file" > /dev/null || exit 1; done'
+            entry: bash -c 'shopt -s nullglob; for file in porto_data/*.json porto_data/schemas/*.json porto_data/policy/*.json porto_data/mails/*.json porto_data/providers/*/*.json porto_data/providers/*/prices/*.json; do python3 -m json.tool "$file" > /dev/null || exit 1; done'
             language: system
             types: [json]
-            files: ^porto_data/(data|schemas)/.*\.json$
+            files: ^porto_data/(policy|mails|schemas)/.*\.json$|^porto_data/providers/[^/]+/.*\.json$|^porto_data/(mappings|metadata|providers)\.json$
             pass_filenames: false
             always_run: false
 
@@ -84,6 +96,8 @@ repos:
           - id: check-json
           - id: check-added-large-files
             args: ['--maxkb=300']
+            # Carrier PDF tariff/API references under docs/providers/ (not shipped in npm/PyPI packages).
+            exclude: ^docs/providers/.*\.pdf$
           - id: check-merge-conflict
           - id: check-case-conflict
           - id: no-commit-to-branch
@@ -93,15 +107,15 @@ repos:
     # ==========================================
     # JSON Formatting (runs after validation)
     # ==========================================
-    # JSON formatting (uses json.tool like Makefile). Stage after format so commit succeeds when only whitespace/format changes.
+    # Uses scripts/format_json_file.py (same as Makefile); stage after format so commit succeeds when only whitespace/format changes.
     - repo: local
       hooks:
           - id: format-json
             name: Format JSON files
-            entry: bash -c 'for file in porto_data/data/*.json porto_data/schemas/*.json porto_data/metadata.json; do [ -f "$file" ] && python3 -m json.tool "$file" "$file.tmp" && mv "$file.tmp" "$file" && git add "$file" || true; done'
+            entry: bash -c 'shopt -s nullglob; for file in porto_data/*.json porto_data/schemas/*.json porto_data/policy/*.json porto_data/mails/*.json porto_data/providers/*/*.json porto_data/providers/*/prices/*.json; do python3 scripts/format_json_file.py "$file" && git add "$file" || exit 1; done'
             language: system
             types: [json]
-            files: ^porto_data/(data|schemas)/.*\.json$|^porto_data/metadata\.json$
+            files: ^porto_data/(policy|mails|schemas)/.*\.json$|^porto_data/providers/[^/]+/.*\.json$|^porto_data/(mappings|metadata|providers)\.json$
             pass_filenames: false
             always_run: false
 

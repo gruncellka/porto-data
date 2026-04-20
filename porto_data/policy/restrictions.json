@@ -1,0 +1,668 @@
+{
+  "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/restrictions.schema.json",
+  "file_type": "restrictions",
+  "unit": {
+    "country_code": "ISO 3166-1 alpha-2",
+    "date": "ISO 8601"
+  },
+  "sources": [
+    "EU Sanctions Map",
+    "USPS International Mail Manual (reference)",
+    "Norway Posten country restrictions (reference)",
+    "Public information on international sanctions"
+  ],
+  "disclaimer": "This information is for reference only. Restrictions change frequently. Verify current rules with your postal operator and counsel before shipping. Data is grouped by ISO alpha-2 country under destinations[].country_code. Per country, destinations[].restrictions includes only non-empty EU, UN, and/or CH arrays; each item is country-wide or regional (optional region_code, ISO 3166-2) with status, reference (URL or null), effective_from / effective_to. Sender blocs: policy/jurisdictions.json. Operator overlays: providers/<id>/limits.json.",
+  "destinations": [
+    {
+      "restrictions": {
+        "UN": [
+          {
+            "id": "AF_2021_TALIBAN",
+            "reason": "Conflict-related disruption",
+            "description": "Postal services may be severely limited or suspended",
+            "notes": "Verify current operator acceptance and security situation",
+            "entity_type": "country",
+            "status": "severely_restricted",
+            "reference": "https://www.un.org/securitycouncil/sanctions/1988",
+            "effective_from": "2021-08-15",
+            "effective_to": null
+          }
+        ]
+      },
+      "country_code": "AF"
+    },
+    {
+      "restrictions": {
+        "EU": [
+          {
+            "id": "BY_SANCTIONS_2022",
+            "reason": "EU restrictive measures",
+            "description": "Parcel services may be suspended; letter services may be limited",
+            "notes": "Verify current EUR-Lex and carrier rules",
+            "entity_type": "country",
+            "status": "severely_restricted",
+            "reference": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32014R0833",
+            "effective_from": "2022-03-01",
+            "effective_to": null
+          }
+        ]
+      },
+      "country_code": "BY"
+    },
+    {
+      "restrictions": {
+        "UN": [
+          {
+            "id": "CF_CONFLICT",
+            "reason": "Conflict-related disruption",
+            "description": "Postal services may be limited",
+            "notes": "Verify current operator acceptance",
+            "entity_type": "country",
+            "status": "restricted",
+            "reference": "https://www.un.org/securitycouncil/sanctions/2127",
+            "effective_from": "2012-12-10",
+            "effective_to": null
+          }
+        ]
+      },
+      "country_code": "CF"
+    },
+    {
+      "restrictions": {
+        "UN": [
+          {
+            "id": "CY_NORTH_1974",
+            "reason": "Recognition and routing constraints",
+            "description": "Routing may use Turkish postal conventions; addressing may differ from the Republic of Cyprus",
+            "notes": "Verify current operator rules and addressing for this corridor",
+            "entity_type": "disputed_territory",
+            "effective_partial": true,
+            "status": "restricted",
+            "reference": "https://peacekeeping.un.org/en/mission/unficyp",
+            "effective_from": "1974-07-20",
+            "effective_to": null
+          }
+        ]
+      },
+      "country_code": "CY"
+    },
+    {
+      "restrictions": {
+        "UN": [
+          {
+            "id": "EH_TERRITORY",
+            "reason": "Recognition and routing constraints",
+            "description": "Services may be routed via the Moroccan postal system",
+            "notes": "Verify current addressing and operator acceptance",
+            "entity_type": "disputed_territory",
+            "effective_partial": false,
+            "status": "limited",
+            "reference": "https://www.un.org/dppa/decolonization/en/nsgt/western-sahara",
+            "effective_from": "1975-11-14",
+            "effective_to": null
+          }
+        ]
+      },
+      "country_code": "EH"
+    },
+    {
+      "restrictions": {
+        "EU": [
+          {
+            "id": "GE_ABKHAZIA",
+            "reason": "Recognition and routing constraints",
+            "description": "Postal routing via the internationally recognised postal administration may be limited",
+            "notes": "Addressing conventions may vary; verify current operator acceptance",
+            "entity_type": "territory",
+            "effective_partial": true,
+            "status": "restricted",
+            "reference": "https://www.sanctionsmap.eu/",
+            "effective_from": "1992-09-01",
+            "effective_to": null,
+            "region_code": "GE-AB"
+          },
+          {
+            "id": "GE_SOUTH_OSSETIA",
+            "reason": "Recognition and routing constraints",
+            "description": "Postal routing via the internationally recognised postal administration may be limited",
+            "notes": "Addressing conventions may vary; verify current operator acceptance",
+            "entity_type": "territory",
+            "effective_partial": true,
+            "status": "restricted",
+            "reference": "https://www.sanctionsmap.eu/",
+            "effective_from": "1991-11-28",
+            "effective_to": null,
+            "region_code": "GE-SZ"
+          }
+        ],
+        "CH": [
+          {
+            "id": "GE_ABKHAZIA",
+            "reason": "Recognition and routing constraints",
+            "description": "Postal routing via the internationally recognised postal administration may be limited",
+            "notes": "Addressing conventions may vary; verify current operator acceptance",
+            "entity_type": "territory",
+            "effective_partial": true,
+            "status": "restricted",
+            "reference": "https://www.seco.admin.ch/seco/en/home/Aussenwirtschaftspolitik_Wirtschaftliche_Zusammenarbeit/Wirtschaftsbeziehungen/exportkontrollen-und-sanktionen/sanktionen-embargos.html",
+            "effective_from": "1992-09-01",
+            "effective_to": null,
+            "region_code": "GE-AB"
+          },
+          {
+            "id": "GE_SOUTH_OSSETIA",
+            "reason": "Recognition and routing constraints",
+            "description": "Postal routing via the internationally recognised postal administration may be limited",
+            "notes": "Addressing conventions may vary; verify current operator acceptance",
+            "entity_type": "territory",
+            "effective_partial": true,
+            "status": "restricted",
+            "reference": "https://www.seco.admin.ch/seco/en/home/Aussenwirtschaftspolitik_Wirtschaftliche_Zusammenarbeit/Wirtschaftsbeziehungen/exportkontrollen-und-sanktionen/sanktionen-embargos.html",
+            "effective_from": "1991-11-28",
+            "effective_to": null,
+            "region_code": "GE-SZ"
+          }
+        ]
+      },
+      "country_code": "GE"
+    },
+    {
+      "restrictions": {
+        "UN": [
+          {
+            "id": "HT_INSTABILITY",
+            "reason": "Operational limitations",
+            "description": "Postal services may be severely disrupted",
+            "notes": "Verify current operator acceptance and security situation",
+            "entity_type": "country",
+            "status": "restricted",
+            "reference": "https://www.un.org/securitycouncil/sanctions/2653",
+            "effective_from": "2024-03-01",
+            "effective_to": null
+          }
+        ]
+      },
+      "country_code": "HT"
+    },
+    {
+      "restrictions": {
+        "UN": [
+          {
+            "id": "IR_SANCTIONS_2006",
+            "reason": "UN and related restrictive measures",
+            "description": "Severe limitations on postal services and payments may apply",
+            "notes": "Verify current UN and national implementation",
+            "entity_type": "country",
+            "status": "severely_restricted",
+            "reference": "https://main.un.org/securitycouncil/en/content/2231/background",
+            "effective_from": "2006-07-31",
+            "effective_to": null
+          }
+        ]
+      },
+      "country_code": "IR"
+    },
+    {
+      "restrictions": {
+        "UN": [
+          {
+            "id": "KM_LIMITED",
+            "reason": "Limited postal infrastructure",
+            "notes": "Small island nation with limited postal services",
+            "entity_type": "territory",
+            "status": "limited",
+            "reference": null,
+            "effective_from": null,
+            "effective_to": null
+          }
+        ]
+      },
+      "country_code": "KM"
+    },
+    {
+      "restrictions": {
+        "UN": [
+          {
+            "id": "KP_SANCTIONS_2006",
+            "reason": "UN and applicable national restrictive measures",
+            "description": "Merchandise often prohibited; letters and postcards may face severe limitations",
+            "notes": "Verify current operator rules and sanctions lists",
+            "entity_type": "country",
+            "status": "prohibited",
+            "reference": "https://www.un.org/securitycouncil/sanctions/1718",
+            "effective_from": "2006-10-09",
+            "effective_to": null
+          }
+        ]
+      },
+      "country_code": "KP"
+    },
+    {
+      "restrictions": {
+        "UN": [
+          {
+            "id": "LY_CONFLICT",
+            "reason": "Conflict-related disruption",
+            "description": "Parcel services may be suspended; letter services may be limited",
+            "notes": "Verify current operator acceptance",
+            "entity_type": "country",
+            "status": "severely_restricted",
+            "reference": "https://www.un.org/securitycouncil/sanctions/1970",
+            "effective_from": "2011-02-17",
+            "effective_to": null
+          }
+        ]
+      },
+      "country_code": "LY"
+    },
+    {
+      "restrictions": {
+        "EU": [
+          {
+            "id": "MD_TRANSNISTRIA",
+            "reason": "Recognition and routing constraints",
+            "description": "Postal routing via the internationally recognised postal administration may be limited",
+            "notes": "Addressing conventions may vary; verify current operator acceptance",
+            "entity_type": "territory",
+            "effective_partial": true,
+            "status": "restricted",
+            "reference": "https://www.sanctionsmap.eu/",
+            "effective_from": "1992-03-02",
+            "effective_to": null,
+            "region_code": "MD-SN"
+          }
+        ],
+        "CH": [
+          {
+            "id": "MD_TRANSNISTRIA",
+            "reason": "Recognition and routing constraints",
+            "description": "Postal routing via the internationally recognised postal administration may be limited",
+            "notes": "Addressing conventions may vary; verify current operator acceptance",
+            "entity_type": "territory",
+            "effective_partial": true,
+            "status": "restricted",
+            "reference": "https://www.seco.admin.ch/seco/en/home/Aussenwirtschaftspolitik_Wirtschaftliche_Zusammenarbeit/Wirtschaftsbeziehungen/exportkontrollen-und-sanktionen/sanktionen-embargos.html",
+            "effective_from": "1992-03-02",
+            "effective_to": null,
+            "region_code": "MD-SN"
+          }
+        ]
+      },
+      "country_code": "MD"
+    },
+    {
+      "restrictions": {
+        "UN": [
+          {
+            "id": "MS_LIMITED",
+            "reason": "Small Caribbean island, limited infrastructure",
+            "notes": "British overseas territory",
+            "entity_type": "territory",
+            "status": "limited",
+            "reference": null,
+            "effective_from": null,
+            "effective_to": null
+          }
+        ]
+      },
+      "country_code": "MS"
+    },
+    {
+      "restrictions": {
+        "UN": [
+          {
+            "id": "PS_TERRITORY",
+            "reason": "Operational limitations",
+            "description": "Routing may be via Israeli postal channels; access may vary by area",
+            "notes": "Addressing conventions may vary; verify current operator acceptance",
+            "areas": {
+              "west_bank": "Limited or routed via Israeli postal channels; verify operator",
+              "gaza": "May be severely limited or unavailable; verify operator"
+            },
+            "entity_type": "disputed_territory",
+            "effective_partial": true,
+            "status": "limited",
+            "reference": null,
+            "effective_from": null,
+            "effective_to": null
+          }
+        ]
+      },
+      "country_code": "PS"
+    },
+    {
+      "restrictions": {
+        "EU": [
+          {
+            "id": "RU_SANCTIONS_2022",
+            "reason": "EU restrictive measures",
+            "description": "Parcel services may be suspended; letters and payment channels may be restricted",
+            "notes": "Verify current EUR-Lex and operator acceptance from your jurisdiction",
+            "entity_type": "country",
+            "status": "severely_restricted",
+            "reference": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32014R0833",
+            "effective_from": "2022-02-24",
+            "effective_to": null
+          }
+        ]
+      },
+      "country_code": "RU"
+    },
+    {
+      "restrictions": {
+        "UN": [
+          {
+            "id": "SD_2023_CONFLICT",
+            "reason": "Conflict-related disruption",
+            "description": "Postal services may be severely disrupted",
+            "notes": "Verify current operator acceptance",
+            "entity_type": "country",
+            "status": "severely_restricted",
+            "reference": "https://www.un.org/securitycouncil/sanctions/1591",
+            "effective_from": "2023-04-15",
+            "effective_to": null
+          }
+        ]
+      },
+      "country_code": "SD"
+    },
+    {
+      "restrictions": {
+        "UN": [
+          {
+            "id": "SO_CONFLICT",
+            "reason": "Conflict-related disruption and infrastructure limitations",
+            "description": "Postal services may be limited",
+            "notes": "Coverage may vary by area; verify operator",
+            "entity_type": "country",
+            "status": "restricted",
+            "reference": "https://www.un.org/securitycouncil/sanctions/751",
+            "effective_from": "1991-01-26",
+            "effective_to": null
+          }
+        ]
+      },
+      "country_code": "SO"
+    },
+    {
+      "restrictions": {
+        "UN": [
+          {
+            "id": "SS_INFRASTRUCTURE",
+            "reason": "Conflict-related disruption and infrastructure limitations",
+            "description": "Postal services may be severely limited",
+            "notes": "Verify current operator acceptance",
+            "entity_type": "country",
+            "status": "severely_restricted",
+            "reference": "https://www.un.org/securitycouncil/sanctions/2206",
+            "effective_from": "2013-12-15",
+            "effective_to": null
+          }
+        ]
+      },
+      "country_code": "SS"
+    },
+    {
+      "restrictions": {
+        "EU": [
+          {
+            "id": "SY_SANCTIONS_2011",
+            "reason": "Conflict-related disruption and EU restrictive measures",
+            "description": "Most postal services may be suspended or limited",
+            "notes": "Verify current legal and operator rules",
+            "entity_type": "country",
+            "status": "prohibited",
+            "reference": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32012R0036",
+            "effective_from": "2011-05-09",
+            "effective_to": null
+          }
+        ]
+      },
+      "country_code": "SY"
+    },
+    {
+      "restrictions": {
+        "UN": [
+          {
+            "id": "TC_LIMITED",
+            "reason": "Small Caribbean islands",
+            "notes": "British overseas territory",
+            "entity_type": "territory",
+            "status": "limited",
+            "reference": null,
+            "effective_from": null,
+            "effective_to": null
+          }
+        ]
+      },
+      "country_code": "TC"
+    },
+    {
+      "restrictions": {
+        "UN": [
+          {
+            "id": "TL_LIMITED",
+            "reason": "Limited postal infrastructure",
+            "notes": "Young nation with developing postal system",
+            "entity_type": "territory",
+            "status": "limited",
+            "reference": null,
+            "effective_from": null,
+            "effective_to": null
+          }
+        ]
+      },
+      "country_code": "TL"
+    },
+    {
+      "restrictions": {
+        "UN": [
+          {
+            "id": "TW_TERRITORY",
+            "reason": "Politically sensitive routing and addressing context",
+            "description": "Postal services are often operational; verify product and addressing requirements",
+            "notes": "Addressing and designation rules may differ by carrier and corridor",
+            "entity_type": "disputed_territory",
+            "status": "operational",
+            "reference": null,
+            "effective_from": null,
+            "effective_to": null
+          }
+        ]
+      },
+      "country_code": "TW"
+    },
+    {
+      "restrictions": {
+        "EU": [
+          {
+            "id": "UA_LUHANSK_2014",
+            "reason": "EU restrictive measures under listed frameworks may apply to this region",
+            "description": "Postal acceptance or routing may be prohibited for senders subject to this framework",
+            "notes": "Verify current legal and operator rules for this territory and sender jurisdiction",
+            "entity_type": "territory",
+            "effective_partial": true,
+            "status": "prohibited",
+            "reference": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32022R1903",
+            "effective_from": "2014-04-27",
+            "effective_to": null,
+            "region_code": "UA-09"
+          },
+          {
+            "id": "UA_DONETSK_2014",
+            "reason": "EU restrictive measures under listed frameworks may apply to this region",
+            "description": "Postal acceptance or routing may be prohibited for senders subject to this framework",
+            "notes": "Verify current legal and operator rules for this territory and sender jurisdiction",
+            "entity_type": "territory",
+            "effective_partial": true,
+            "status": "prohibited",
+            "reference": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32022R1903",
+            "effective_from": "2014-04-07",
+            "effective_to": null,
+            "region_code": "UA-14"
+          },
+          {
+            "id": "UA_ZAPORIZHZHIA_2022",
+            "reason": "EU restrictive measures under listed frameworks may apply to this region",
+            "description": "Postal acceptance or routing may be prohibited for senders subject to this framework",
+            "notes": "Operational coverage may vary by sub-area; verify current operator acceptance and addressing",
+            "entity_type": "territory",
+            "effective_partial": true,
+            "status": "prohibited",
+            "reference": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32022R1903",
+            "effective_from": "2022-02-24",
+            "effective_to": null,
+            "region_code": "UA-23"
+          },
+          {
+            "id": "UA_CRIMEA_2014",
+            "reason": "EU restrictive measures under listed frameworks may apply to this region",
+            "description": "Postal acceptance or routing may be prohibited for senders subject to this framework",
+            "notes": "Verify current legal and operator rules for this territory and sender jurisdiction",
+            "entity_type": "territory",
+            "effective_partial": false,
+            "status": "prohibited",
+            "reference": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32022R1903",
+            "effective_from": "2014-03-18",
+            "effective_to": null,
+            "region_code": "UA-43"
+          },
+          {
+            "id": "UA_KHERSON_2022",
+            "reason": "EU restrictive measures under listed frameworks may apply to this region",
+            "description": "Postal acceptance or routing may be prohibited for senders subject to this framework",
+            "notes": "Operational coverage may vary by sub-area; verify current operator acceptance and addressing",
+            "entity_type": "territory",
+            "effective_partial": true,
+            "status": "prohibited",
+            "reference": "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32022R1903",
+            "effective_from": "2022-02-24",
+            "effective_to": null,
+            "region_code": "UA-65"
+          }
+        ],
+        "CH": [
+          {
+            "id": "UA_LUHANSK_2014",
+            "reason": "EU restrictive measures under listed frameworks may apply to this region",
+            "description": "Postal acceptance or routing may be prohibited for senders subject to this framework",
+            "notes": "Verify current legal and operator rules for this territory and sender jurisdiction",
+            "entity_type": "territory",
+            "effective_partial": true,
+            "status": "prohibited",
+            "reference": "https://www.seco.admin.ch/seco/en/home/Aussenwirtschaftspolitik_Wirtschaftliche_Zusammenarbeit/Wirtschaftsbeziehungen/exportkontrollen-und-sanktionen/sanktionen-embargos.html",
+            "effective_from": "2014-04-27",
+            "effective_to": null,
+            "region_code": "UA-09"
+          },
+          {
+            "id": "UA_DONETSK_2014",
+            "reason": "EU restrictive measures under listed frameworks may apply to this region",
+            "description": "Postal acceptance or routing may be prohibited for senders subject to this framework",
+            "notes": "Verify current legal and operator rules for this territory and sender jurisdiction",
+            "entity_type": "territory",
+            "effective_partial": true,
+            "status": "prohibited",
+            "reference": "https://www.seco.admin.ch/seco/en/home/Aussenwirtschaftspolitik_Wirtschaftliche_Zusammenarbeit/Wirtschaftsbeziehungen/exportkontrollen-und-sanktionen/sanktionen-embargos.html",
+            "effective_from": "2014-04-07",
+            "effective_to": null,
+            "region_code": "UA-14"
+          },
+          {
+            "id": "UA_ZAPORIZHZHIA_2022",
+            "reason": "EU restrictive measures under listed frameworks may apply to this region",
+            "description": "Postal acceptance or routing may be prohibited for senders subject to this framework",
+            "notes": "Operational coverage may vary by sub-area; verify current operator acceptance and addressing",
+            "entity_type": "territory",
+            "effective_partial": true,
+            "status": "prohibited",
+            "reference": "https://www.seco.admin.ch/seco/en/home/Aussenwirtschaftspolitik_Wirtschaftliche_Zusammenarbeit/Wirtschaftsbeziehungen/exportkontrollen-und-sanktionen/sanktionen-embargos.html",
+            "effective_from": "2022-02-24",
+            "effective_to": null,
+            "region_code": "UA-23"
+          },
+          {
+            "id": "UA_CRIMEA_2014",
+            "reason": "EU restrictive measures under listed frameworks may apply to this region",
+            "description": "Postal acceptance or routing may be prohibited for senders subject to this framework",
+            "notes": "Verify current legal and operator rules for this territory and sender jurisdiction",
+            "entity_type": "territory",
+            "effective_partial": false,
+            "status": "prohibited",
+            "reference": "https://www.seco.admin.ch/seco/en/home/Aussenwirtschaftspolitik_Wirtschaftliche_Zusammenarbeit/Wirtschaftsbeziehungen/exportkontrollen-und-sanktionen/sanktionen-embargos.html",
+            "effective_from": "2014-03-18",
+            "effective_to": null,
+            "region_code": "UA-43"
+          },
+          {
+            "id": "UA_KHERSON_2022",
+            "reason": "EU restrictive measures under listed frameworks may apply to this region",
+            "description": "Postal acceptance or routing may be prohibited for senders subject to this framework",
+            "notes": "Operational coverage may vary by sub-area; verify current operator acceptance and addressing",
+            "entity_type": "territory",
+            "effective_partial": true,
+            "status": "prohibited",
+            "reference": "https://www.seco.admin.ch/seco/en/home/Aussenwirtschaftspolitik_Wirtschaftliche_Zusammenarbeit/Wirtschaftsbeziehungen/exportkontrollen-und-sanktionen/sanktionen-embargos.html",
+            "effective_from": "2022-02-24",
+            "effective_to": null,
+            "region_code": "UA-65"
+          }
+        ]
+      },
+      "country_code": "UA"
+    },
+    {
+      "restrictions": {
+        "EU": [
+          {
+            "id": "VE_CRISIS",
+            "reason": "EU restrictive measures and economic stress",
+            "description": "Postal services and payment channels may be disrupted",
+            "notes": "Verify current legal and operator rules for your sender jurisdiction",
+            "entity_type": "country",
+            "status": "restricted",
+            "reference": "https://www.sanctionsmap.eu/",
+            "effective_from": "2019-01-23",
+            "effective_to": null
+          }
+        ]
+      },
+      "country_code": "VE"
+    },
+    {
+      "restrictions": {
+        "UN": [
+          {
+            "id": "YE_CONFLICT",
+            "reason": "Conflict-related disruption",
+            "description": "Postal services may be severely limited or suspended",
+            "notes": "Verify current operator acceptance",
+            "entity_type": "country",
+            "status": "prohibited",
+            "reference": "https://www.un.org/securitycouncil/sanctions/2140",
+            "effective_from": "2015-03-26",
+            "effective_to": null
+          }
+        ]
+      },
+      "country_code": "YE"
+    },
+    {
+      "restrictions": {
+        "UN": [
+          {
+            "id": "YT_LIMITED",
+            "reason": "French territory with limited direct services",
+            "notes": "Services via France",
+            "entity_type": "territory",
+            "status": "limited",
+            "reference": null,
+            "effective_from": null,
+            "effective_to": null
+          }
+        ]
+      },
+      "country_code": "YT"
+    }
+  ]
+}

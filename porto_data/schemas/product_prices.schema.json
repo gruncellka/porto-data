@@ -1,0 +1,125 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/product_prices.schema.json",
+  "title": "Product postage prices",
+  "description": "Base letter/postage grid: product_id \u00d7 zone \u00d7 weight_tier. Amounts in cents. Convention: price[].effective_from uses the catalog baseline date (currently 2026-01-01) as bundle snapshot start, not carrier historical introduction dates.",
+  "type": "object",
+  "required": [
+    "file_type",
+    "provider",
+    "unit",
+    "product_prices"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "format": "uri"
+    },
+    "file_type": {
+      "type": "string",
+      "const": "product_prices"
+    },
+    "provider": {
+      "type": "string",
+      "pattern": "^[a-z_]+$",
+      "description": "Provider identifier"
+    },
+    "unit": {
+      "type": "object",
+      "required": [
+        "price",
+        "currency"
+      ],
+      "properties": {
+        "price": {
+          "type": "string",
+          "const": "cents"
+        },
+        "currency": {
+          "type": "string",
+          "enum": [
+            "EUR",
+            "CHF",
+            "UAH",
+            "USD"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "product_prices": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "product_id",
+          "zone",
+          "weight_tier",
+          "price"
+        ],
+        "properties": {
+          "product_id": {
+            "type": "string",
+            "pattern": "^[a-z_]+$",
+            "description": "Must match products.json id"
+          },
+          "zone": {
+            "type": "string",
+            "pattern": "^[a-z0-9_]+$"
+          },
+          "weight_tier": {
+            "type": "string",
+            "pattern": "^W[0-9]+$"
+          },
+          "currency": {
+            "type": "string",
+            "enum": [
+              "EUR",
+              "CHF",
+              "UAH",
+              "USD"
+            ],
+            "description": "Optional override; when omitted, defaults to unit.currency"
+          },
+          "price": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": [
+                "amount",
+                "effective_from"
+              ],
+              "properties": {
+                "amount": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "effective_from": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "format": "date",
+                  "description": "Row valid from this date (ISO 8601). Provider bundles use the catalog baseline (e.g. 2026-01-01) unless superseding rows exist."
+                },
+                "effective_to": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "format": "date",
+                  "description": "Null while current; set when a newer price row replaces this amount."
+                }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

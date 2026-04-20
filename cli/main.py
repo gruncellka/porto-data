@@ -4,15 +4,7 @@
 import argparse
 import sys
 
-# Import commands
 from cli.commands.metadata import generate_metadata
-from cli.commands.validate import (
-    validate_all,
-    validate_graph,
-    validate_layout,
-    validate_limits,
-    validate_schema,
-)
 
 
 def create_parser() -> argparse.ArgumentParser:
@@ -25,7 +17,7 @@ def create_parser() -> argparse.ArgumentParser:
 Examples:
   porto validate                      Validate everything (default)
   porto validate --type schema        Validate JSON schemas
-  porto validate --type layout       Mappings.json vs files, provider field, registry, metadata
+  porto validate --type mappings     mappings.json vs disk, providers.json registry, metadata alignment
   porto validate --type limits       Validate providers/*/limits.json (letter scope)
   porto validate --type graph        Validate provider graph.json
   porto validate --type graph --analyze  Detailed graph analysis
@@ -39,7 +31,7 @@ Examples:
     validate_parser = subparsers.add_parser("validate", help="Validate data files")
     validate_parser.add_argument(
         "--type",
-        choices=["schema", "layout", "limits", "graph"],
+        choices=["schema", "mappings", "limits", "graph"],
         default=None,
         help="Type of validation to run (omit to run all)",
     )
@@ -61,13 +53,26 @@ def main() -> int:
     args = parser.parse_args()
 
     if args.command == "validate":
-        if args.type is not None and args.type not in ("schema", "layout", "limits", "graph"):
+        from cli.commands.validate import (
+            validate_all,
+            validate_graph,
+            validate_limits,
+            validate_mappings,
+            validate_schema,
+        )
+
+        if args.type is not None and args.type not in (
+            "schema",
+            "mappings",
+            "limits",
+            "graph",
+        ):
             parser.print_help()
             return 1
         if args.type == "schema":
             return validate_schema()
-        if args.type == "layout":
-            return validate_layout()
+        if args.type == "mappings":
+            return validate_mappings()
         if args.type == "limits":
             return validate_limits()
         if args.type == "graph":

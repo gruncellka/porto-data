@@ -28,7 +28,7 @@
     },
     "unit": {
       "type": "object",
-      "description": "Product-level units: weight only. Envelope/format semantics are in dimension_ids + global dimensions.json (linear mm there).",
+      "description": "Product-level units: weight only. Envelope formats: envelope_ids reference mails/envelopes.json; print layout via mails/layouts.json by jurisdiction.",
       "required": [
         "weight"
       ],
@@ -48,8 +48,8 @@
         "required": [
           "id",
           "name",
-          "dimension_ids",
-          "supported_zones",
+          "envelope_ids",
+          "zones",
           "effective_from",
           "effective_to",
           "mark_type",
@@ -66,46 +66,64 @@
             "minLength": 1,
             "description": "Official product name (original language)"
           },
+          "native_id": {
+            "description": "Carrier API product identifier for this row (contract catalog / ordering). Not the bundle `id` and not unified `porto_id`. Examples: DHL Internetmarke REST `productCode` (integer). Values must match the operator\u2019s live catalog (e.g. `/app/catalog` contract products).",
+            "oneOf": [
+              {
+                "type": "integer",
+                "minimum": 1
+              },
+              {
+                "type": "string",
+                "minLength": 1
+              }
+            ]
+          },
           "porto_id": {
             "type": [
               "string",
               "null"
             ],
-            "description": "Unified Porto product id for cross-provider resolution. Often equals `id` when the operator’s tariff id already matches Porto vocabulary (e.g. Deutsche Post); may differ when the native id is operator-specific (e.g. Swiss Post) while the graph/resolver still keys on one shared semantic."
+            "description": "Unified Porto product id for cross-provider resolution. Often equals `id` when the operator\u2019s tariff id already matches Porto vocabulary (e.g. Deutsche Post); may differ when the native id is operator-specific (e.g. Swiss Post) while the graph/resolver still keys on one shared semantic."
           },
-          "dimension_ids": {
+          "envelope_ids": {
             "type": "array",
             "minItems": 1,
             "items": {
               "type": "string",
               "enum": [
-                "DL",
+                "C8",
+                "C7",
                 "C6",
+                "DL",
                 "C5",
+                "B6",
+                "B5",
                 "C4",
+                "C3",
                 "B4"
               ]
             },
-            "description": "Supported dimension IDs"
+            "description": "Supported envelope format ids (global envelopes.json)"
           },
-          "supported_zones": {
+          "zones": {
             "type": "array",
             "minItems": 1,
             "items": {
               "type": "string",
-              "enum": [
-                "domestic",
-                "zone_1_eu",
-                "zone_2_europe",
-                "world"
-              ]
+              "pattern": "^[a-z0-9_]+$"
             },
-            "description": "Zones where this product is available"
+            "description": "Zones where this product is available (must align with graph.edges for this product_id)"
+          },
+          "mark_profile": {
+            "type": "string",
+            "pattern": "^[a-z0-9_]+$",
+            "description": "Optional id of a profile in providers/<provider>/marks.json; when omitted, marks.default_profile applies."
           },
           "weight_tier": {
             "type": "string",
             "pattern": "^W[0-9]+$",
-            "description": "Deprecated: Weight only in weight_tiers + prices matrix. Optional for backward compat when product has single tier."
+            "description": "Optional single weight tier id when the product maps to one step; full matrix is graph.edges + weights + prices."
           },
           "effective_from": {
             "type": [
@@ -113,7 +131,7 @@
               "null"
             ],
             "format": "date",
-            "description": "Product effective start date"
+            "description": "Catalog baseline for this product row (e.g. 2026-01-01); not a claim about carrier real-world introduction."
           },
           "effective_to": {
             "type": [
@@ -121,7 +139,7 @@
               "null"
             ],
             "format": "date",
-            "description": "Product effective end date"
+            "description": "Null while modeled; set when the product row is retired in the bundle."
           },
           "mark_type": {
             "type": "string",

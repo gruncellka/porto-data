@@ -1,8 +1,8 @@
 """Validate command for porto CLI - thin wrapper around validators."""
 
 from scripts.data_files import list_provider_ids
+from scripts.validators.graph import validate_graph as _validate_provider_graph
 from scripts.validators.limits_scope import validate_limits_scope
-from scripts.validators.links import validate_graph as _validate_provider_graph
 from scripts.validators.mappings_layout import validate_mappings_layout
 from scripts.validators.schema import validate_all_schemas
 
@@ -18,8 +18,8 @@ def validate_schema() -> int:
     return result
 
 
-def validate_layout() -> int:
-    """Validate mappings.json vs provider files, top-level provider field, no stray JSON."""
+def validate_mappings() -> int:
+    """Validate mappings.json vs provider files, registry, metadata, no stray JSON."""
     return validate_mappings_layout()
 
 
@@ -36,13 +36,13 @@ def validate_graph(analyze: bool = False, provider: str | None = None) -> int:
 
 
 def validate_all() -> int:
-    """Validate data bundle: schema → mappings layout → limits → graph per provider."""
+    """Validate data bundle: schema → mappings → limits → graph per provider."""
     schema_result = validate_schema()
     if schema_result != 0:
         return schema_result
-    layout_result = validate_layout()
-    if layout_result != 0:
-        return layout_result
+    mappings_result = validate_mappings()
+    if mappings_result != 0:
+        return mappings_result
     limits_result = validate_limits()
     if limits_result != 0:
         return limits_result

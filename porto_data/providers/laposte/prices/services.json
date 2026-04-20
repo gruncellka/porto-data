@@ -1,0 +1,41 @@
+{
+  "provider": "laposte",
+  "unit": {
+    "price": "cents",
+    "currency": "EUR"
+  },
+  "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/service_prices.schema.json",
+  "file_type": "service_prices",
+  "service_prices": [
+    {
+      "service_id": "suivi_option",
+      "price": [
+        {
+          "amount": 50,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "service_id": "avis_de_reception_national",
+      "price": [
+        {
+          "amount": 145,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "service_id": "avis_de_reception_international",
+      "price": [
+        {
+          "amount": 150,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    }
+  ]
+}

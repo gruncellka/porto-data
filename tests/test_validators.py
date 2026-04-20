@@ -6,8 +6,8 @@ import json
 import pytest
 
 from scripts.validators.base import ValidationResults
+from scripts.validators.graph import GraphValidator
 from scripts.validators.helpers import validate_unit_consistency
-from scripts.validators.links import GraphValidator
 from scripts.validators.schema import validate_all_schemas, validate_file
 
 
@@ -56,7 +56,7 @@ class TestValidateUnitConsistency:
         }
         validate_unit_consistency(
             unit_name="weight",
-            data_links_value="g",
+            graph_unit_value="g",
             expected_value="g",
             file_names=["graph.json", "products.json"],
             results=results,
@@ -76,7 +76,7 @@ class TestValidateUnitConsistency:
         }
         validate_unit_consistency(
             unit_name="weight",
-            data_links_value="g",
+            graph_unit_value="g",
             expected_value="kg",
             file_names=["graph.json", "products.json"],
             results=results,
@@ -196,7 +196,7 @@ class TestGraphValidatorUnit:
 
         # Create only graph.json
         with open(data_dir / "graph.json", "w") as f:
-            json.dump({"file_type": "graph", "links": {}}, f)
+            json.dump({"file_type": "graph", "edges": {}}, f)
 
         validator = GraphValidator(data_dir)
         results = validator.validate_all()

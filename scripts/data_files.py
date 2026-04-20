@@ -5,23 +5,50 @@ This module provides:
 - Functions to work with data files and mappings
 - Validation of required entities at import time
 
-Schema→data paths come from mappings.json. Provider ids come from global/providers.json;
-mappings.providers keys must match that registry. Layout: global/ and providers/{id}/.
+Schema→data paths come from mappings.json. Provider ids come from providers.json (bundle root);
+mappings.providers keys must match that registry. Layout: policy/, mails/, providers/{id}/.
 """
 
 import json
 from pathlib import Path
-from typing import Any
+from typing import Any, Final, cast
 
-# Directory names for porto-data layout (mappings.json keys match these)
-GLOBAL_DIR = "global"
 PROVIDERS_DIR = "providers"
 
-# Provider domain registry (same data layer as dimensions/features/restrictions)
-PROVIDERS_REGISTRY_FILENAME = "providers.json"
-PROVIDERS_REGISTRY_DATA_PATH = f"{GLOBAL_DIR}/{PROVIDERS_REGISTRY_FILENAME}"
+# Non-provider schema→data blocks in mappings.json / metadata.json (mirror bundle layout).
+POLICY_MAPPINGS_KEY = "policy"
+MAILS_MAPPINGS_KEY = "mails"
+REGISTRY_MAPPINGS_KEY = "registry"
+BUNDLE_MAPPINGS_KEYS: Final[tuple[str, ...]] = (
+    POLICY_MAPPINGS_KEY,
+    MAILS_MAPPINGS_KEY,
+    REGISTRY_MAPPINGS_KEY,
+)
 
-# Default provider for backward compatibility (SDK loads this by default)
+# Bundle-relative prefixes for policy/mails data (not providers/<id>/ or root registry).
+SHARED_BUNDLE_PATH_PREFIXES: Final[tuple[str, ...]] = ("policy/", "mails/")
+
+
+def is_shared_bundle_data_path(data_path: str) -> bool:
+    """True if ``data_path`` is under ``policy/`` or ``mails/`` (not registry or provider)."""
+    return any(data_path.startswith(p) for p in SHARED_BUNDLE_PATH_PREFIXES)
+
+
+def _has_structured_mappings(mappings: dict[str, Any]) -> bool:
+    """True if mappings use policy/mails/registry/providers blocks (not flat schema→data)."""
+    return any(k in mappings for k in (*BUNDLE_MAPPINGS_KEYS, PROVIDERS_DIR))
+
+
+# Provider domain registry (same data layer as envelopes/features/restrictions)
+PROVIDERS_REGISTRY_FILENAME = "providers.json"
+PROVIDERS_REGISTRY_DATA_PATH = PROVIDERS_REGISTRY_FILENAME
+
+# Bundle root (not listed as a schema→data pair in mappings.json)
+MAPPINGS_FILENAME = "mappings.json"
+MAPPINGS_SCHEMA_RELPATH = "schemas/mappings.schema.json"
+PROVIDERS_SCHEMA_RELPATH = "schemas/providers.schema.json"
+
+# Default provider id when none is supplied to resolution helpers
 DEFAULT_PROVIDER = "deutschepost"
 
 
@@ -34,7 +61,7 @@ def _get_project_root() -> Path:
     3. Current working directory
 
     Returns:
-        Path to the directory containing mappings.json (and global/, providers/)
+        Path to the directory containing mappings.json (and policy/, mails/, providers/)
 
     Raises:
         FileNotFoundError: If mappings.json cannot be found
@@ -79,7 +106,7 @@ def get_project_root() -> Path:
 
 
 def _load_mappings_raw(mappings_path: str | None = None) -> dict[str, Any]:
-    """Load raw mappings from mappings.json (supports global + providers structure)."""
+    """Load raw mappings from mappings.json (policy/mails/registry + providers)."""
     if mappings_path is None:
         project_root = _get_project_root()
         mappings_file = project_root / "mappings.json"
@@ -96,24 +123,21 @@ def _load_mappings_raw(mappings_path: str | None = None) -> dict[str, Any]:
     if not mappings:
         raise ValueError(f"No mappings found in {mappings_file}")
     if not isinstance(mappings, dict):
-        raise ValueError(
-            f"mappings must be a dictionary, got {type(mappings).__name__}"
-        )
+        raise ValueError(f"mappings must be a dictionary, got {type(mappings).__name__}")
     return mappings
 
 
 def _expand_mappings_to_pairs(mappings: dict[str, Any]) -> list[tuple[str, str]]:
-    """Expand global + providers structure to flat list of (schema_path, data_path) pairs."""
+    """Expand policy/mails/registry + providers to flat (schema_path, data_path) pairs."""
     pairs: list[tuple[str, str]] = []
 
-    # Global mappings
-    global_mappings = mappings.get(GLOBAL_DIR, {})
-    if isinstance(global_mappings, dict):
-        for schema_path, data_path in global_mappings.items():
-            if isinstance(schema_path, str) and isinstance(data_path, str):
-                pairs.append((schema_path, data_path))
+    for key in BUNDLE_MAPPINGS_KEYS:
+        block = mappings.get(key, {})
+        if isinstance(block, dict):
+            for schema_path, data_path in block.items():
+                if isinstance(schema_path, str) and isinstance(data_path, str):
+                    pairs.append((schema_path, data_path))
 
-    # Provider mappings (legacy flat format also supported)
     providers = mappings.get(PROVIDERS_DIR, {})
     if isinstance(providers, dict):
         for _provider_id, provider_mappings in providers.items():
@@ -122,8 +146,8 @@ def _expand_mappings_to_pairs(mappings: dict[str, Any]) -> list[tuple[str, str]]
                     if isinstance(schema_path, str) and isinstance(data_path, str):
                         pairs.append((schema_path, data_path))
 
-    # Legacy flat format: mappings is {schema: data} directly
-    if not pairs and GLOBAL_DIR not in mappings and PROVIDERS_DIR not in mappings:
+    # Flat schema→data only when mappings omit structured blocks (tests / legacy fixtures).
+    if not pairs and not _has_structured_mappings(mappings):
         for schema_path, data_path in mappings.items():
             if not isinstance(schema_path, str) or not isinstance(data_path, str):
                 raise ValueError(
@@ -202,9 +226,7 @@ def get_data_file_name(
     Returns:
         Data file name (e.g., "products.json", "graph.json")
     """
-    return Path(
-        get_data_file_path(entity_name, provider, project_root=project_root)
-    ).name
+    return Path(get_data_file_path(entity_name, provider, project_root=project_root)).name
 
 
 def get_data_file_path(
@@ -232,9 +254,10 @@ def get_data_file_path(
     schema_key = f"schemas/{entity_name}.schema.json"
     effective_provider = provider if provider is not None else DEFAULT_PROVIDER
 
-    # Global entities: dimensions, restrictions, features, providers (registry)
+    # Non-provider entities (paths from mappings: policy/, mails/, root registry)
     global_entities = {
-        "dimensions",
+        "envelopes",
+        "layouts",
         "restrictions",
         "features",
         "providers",
@@ -242,12 +265,18 @@ def get_data_file_path(
     }
     if entity_name in global_entities:
         for schema_path, data_path in pairs:
-            if schema_path == schema_key and data_path.startswith(f"{GLOBAL_DIR}/"):
+            if schema_path != schema_key:
+                continue
+            if is_shared_bundle_data_path(data_path):
+                return root / data_path
+            if data_path == PROVIDERS_REGISTRY_FILENAME:
                 return root / data_path
 
     # Provider entities: use specified or default provider
     for schema_path, data_path in pairs:
-        if schema_path == schema_key and data_path.startswith(f"{PROVIDERS_DIR}/{effective_provider}/"):
+        if schema_path == schema_key and data_path.startswith(
+            f"{PROVIDERS_DIR}/{effective_provider}/"
+        ):
             return root / data_path
 
     raise FileNotFoundError(
@@ -258,28 +287,51 @@ def get_data_file_path(
 
 
 def get_data_files() -> set[str]:
-    """Get set of data file names from mappings.json (for dependency validation).
+    """Get set of bundle-relative data paths from mappings.json.
 
-    Returns unique basenames for global/ and providers/* data files.
-    ``providers.json`` (global provider registry) is excluded — it is not part of
-    per-provider graph dependencies.
+    Values match ``mappings`` targets (e.g. ``mails/envelopes.json``,
+    ``providers/deutschepost/prices/products.json``). Excludes the root
+    ``providers.json`` registry (not a graph dependency).
     """
     pairs = get_all_schema_data_pairs()
-    names = {Path(data_path).name for _schema_path, data_path in pairs}
-    names.discard(PROVIDERS_REGISTRY_FILENAME)
-    return names
+    paths = {data_path for _schema_path, data_path in pairs}
+    paths.discard(PROVIDERS_REGISTRY_FILENAME)
+    return paths
+
+
+def get_graph_dependency_file_refs(provider: str) -> set[str]:
+    """Paths as referenced from ``graph.json`` for this provider.
+
+    Provider files use paths relative to ``providers/<id>/`` (e.g.
+    ``prices/products.json``, ``products.json``). Shared bundle paths use
+    ``policy/`` and ``mails/``. Aligns with ``mappings.json``
+    after stripping the provider prefix.
+    """
+    prefix = f"{PROVIDERS_DIR}/{provider}/"
+    out: set[str] = set()
+    for _schema_path, data_path in get_all_schema_data_pairs():
+        if data_path == PROVIDERS_REGISTRY_FILENAME:
+            continue
+        if data_path.startswith(prefix):
+            out.add(data_path[len(prefix) :])
+        elif is_shared_bundle_data_path(data_path):
+            out.add(data_path)
+    return out
 
 
 def get_global_data_paths() -> dict[str, str]:
-    """Get global entity name -> data path mapping."""
+    """Map entity name → data path for policy, mails, and root registry (non-provider blocks)."""
     mappings = _load_mappings_raw()
-    global_mappings = mappings.get(GLOBAL_DIR, {})
-    if not isinstance(global_mappings, dict):
-        return {}
-    return {
-        Path(schema_path).stem.replace(".schema", ""): data_path
-        for schema_path, data_path in global_mappings.items()
-    }
+    out: dict[str, str] = {}
+    for key in BUNDLE_MAPPINGS_KEYS:
+        block = mappings.get(key, {})
+        if not isinstance(block, dict):
+            continue
+        for schema_path, data_path in block.items():
+            if isinstance(schema_path, str) and isinstance(data_path, str):
+                ent = Path(schema_path).stem.replace(".schema", "")
+                out[ent] = data_path
+    return out
 
 
 def get_provider_data_paths(provider: str) -> dict[str, str]:
@@ -303,11 +355,11 @@ def load_providers_registry() -> dict[str, Any]:
         ValueError: If structure is invalid.
     """
     root = _get_project_root()
-    path = root / GLOBAL_DIR / PROVIDERS_REGISTRY_FILENAME
+    path = root / PROVIDERS_REGISTRY_FILENAME
     if not path.exists():
         raise FileNotFoundError(
             f"Provider registry not found: {path}. "
-            f"Add {PROVIDERS_REGISTRY_DATA_PATH} (see schemas/providers.schema.json)."
+            f"Add {PROVIDERS_REGISTRY_DATA_PATH} at porto_data root (see schemas/providers.schema.json)."
         )
     with open(path, encoding="utf-8") as f:
         data: Any = json.load(f)
@@ -316,7 +368,7 @@ def load_providers_registry() -> dict[str, Any]:
         raise ValueError(
             f"{PROVIDERS_REGISTRY_DATA_PATH} must contain a non-empty object 'providers'"
         )
-    return data
+    return cast(dict[str, Any], data)
 
 
 def list_provider_ids() -> list[str]:
@@ -344,21 +396,24 @@ def get_mappings_provider_ids(mappings_path: str | None = None) -> set[str]:
 _FILE_NAMES = get_all_data_file_names()
 
 # Minimum schema→data entity keys that must appear in mappings.json at import time.
-# Covers graph resolution files, per-provider catalog surface, and shared globals
-# (dimensions, restrictions, provider registry, jurisdictions). Basenames for
+# Covers graph resolution files, per-provider catalog surface, and bundle-shared files
+# (policy/, mails/, provider registry, jurisdictions). Basenames for
 # provider-scoped rows come from the first matching mapping when names differ.
 _REQUIRED_ENTITIES = [
-    "dimensions",
+    "envelopes",
+    "layouts",
     "jurisdictions",
     "providers",
     "restrictions",
     "features",
     "graph",
     "limits",
-    "prices",
+    "marks",
+    "product_prices",
+    "service_prices",
     "products",
     "services",
-    "weight_tiers",
+    "weights",
     "zones",
 ]
 
@@ -375,10 +430,13 @@ if _missing:
 GRAPH_FILE = _FILE_NAMES["graph"]
 PRODUCTS_FILE = _FILE_NAMES["products"]
 ZONES_FILE = _FILE_NAMES["zones"]
-WEIGHT_TIERS_FILE = _FILE_NAMES["weight_tiers"]
+WEIGHTS_FILE = _FILE_NAMES["weights"]
 SERVICES_FILE = _FILE_NAMES["services"]
-PRICES_FILE = _FILE_NAMES["prices"]
-DIMENSIONS_FILE = _FILE_NAMES["dimensions"]
+PRODUCT_PRICES_FILE = _FILE_NAMES["product_prices"]
+SERVICE_PRICES_FILE = _FILE_NAMES["service_prices"]
+ENVELOPES_FILE = _FILE_NAMES["envelopes"]
+LAYOUTS_FILE = _FILE_NAMES["layouts"]
 FEATURES_FILE = _FILE_NAMES["features"]
+MARKS_FILE = _FILE_NAMES["marks"]
 RESTRICTIONS_FILE = _FILE_NAMES["restrictions"]
 LIMITS_FILE = _FILE_NAMES["limits"]

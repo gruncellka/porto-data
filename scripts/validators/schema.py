@@ -10,6 +10,12 @@ from jsonschema import Draft7Validator, ValidationError
 
 from scripts.data_files import get_all_schema_data_pairs, get_project_root
 
+# Schema + data at bundle root (not listed in mappings.json to avoid self-reference).
+BUNDLE_ROOT_SCHEMA_PAIRS: tuple[tuple[str, str], ...] = (
+    ("schemas/mappings.schema.json", "mappings.json"),
+    ("schemas/metadata.schema.json", "metadata.json"),
+)
+
 # ============================================================================
 # Schema Validation Functions
 # ============================================================================
@@ -68,12 +74,19 @@ def validate_all_schemas() -> int:
         if not validate_file(str(schema_full), str(data_full)):
             failed.append(data_path)
 
+    for schema_path, data_path in BUNDLE_ROOT_SCHEMA_PAIRS:
+        schema_full = root / schema_path
+        data_full = root / data_path
+        if not validate_file(str(schema_full), str(data_full)):
+            failed.append(data_path)
+
     print("=" * 60)
+    total_ok = len(pairs) + len(BUNDLE_ROOT_SCHEMA_PAIRS)
     if failed:
         print(f"✗ {len(failed)} file(s) failed validation:")
         for f in failed:
             print(f"  - {f}")
         return 1
     else:
-        print(f"✓ All {len(pairs)} files valid!")
+        print(f"✓ All {total_ok} files valid!")
         return 0

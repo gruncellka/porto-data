@@ -1,0 +1,239 @@
+{
+  "provider": "deutschepost",
+  "unit": {
+    "price": "cents",
+    "currency": "EUR"
+  },
+  "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/product_prices.schema.json",
+  "file_type": "product_prices",
+  "product_prices": [
+    {
+      "product_id": "standardbrief",
+      "zone": "domestic",
+      "weight_tier": "W0020",
+      "price": [
+        {
+          "amount": 95,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "standardbrief",
+      "zone": "zone_1_eu",
+      "weight_tier": "W0020",
+      "price": [
+        {
+          "amount": 125,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "standardbrief",
+      "zone": "zone_2_europe",
+      "weight_tier": "W0020",
+      "price": [
+        {
+          "amount": 125,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "standardbrief",
+      "zone": "world",
+      "weight_tier": "W0020",
+      "price": [
+        {
+          "amount": 125,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "kompaktbrief",
+      "zone": "domestic",
+      "weight_tier": "W0050",
+      "price": [
+        {
+          "amount": 110,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "kompaktbrief",
+      "zone": "zone_1_eu",
+      "weight_tier": "W0050",
+      "price": [
+        {
+          "amount": 180,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "kompaktbrief",
+      "zone": "zone_2_europe",
+      "weight_tier": "W0050",
+      "price": [
+        {
+          "amount": 180,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "kompaktbrief",
+      "zone": "world",
+      "weight_tier": "W0050",
+      "price": [
+        {
+          "amount": 180,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "grossbrief",
+      "zone": "domestic",
+      "weight_tier": "W0500",
+      "price": [
+        {
+          "amount": 180,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "grossbrief",
+      "zone": "zone_1_eu",
+      "weight_tier": "W0500",
+      "price": [
+        {
+          "amount": 330,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "grossbrief",
+      "zone": "zone_2_europe",
+      "weight_tier": "W0500",
+      "price": [
+        {
+          "amount": 330,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "grossbrief",
+      "zone": "world",
+      "weight_tier": "W0500",
+      "price": [
+        {
+          "amount": 330,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "maxibrief",
+      "zone": "domestic",
+      "weight_tier": "W1000",
+      "price": [
+        {
+          "amount": 290,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "maxibrief",
+      "zone": "zone_1_eu",
+      "weight_tier": "W1000",
+      "price": [
+        {
+          "amount": 650,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "maxibrief",
+      "zone": "zone_2_europe",
+      "weight_tier": "W1000",
+      "price": [
+        {
+          "amount": 650,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "maxibrief",
+      "zone": "world",
+      "weight_tier": "W1000",
+      "price": [
+        {
+          "amount": 650,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "maxibrief_international_heavy",
+      "zone": "zone_1_eu",
+      "weight_tier": "W2000",
+      "price": [
+        {
+          "amount": 1700,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "maxibrief_international_heavy",
+      "zone": "zone_2_europe",
+      "weight_tier": "W2000",
+      "price": [
+        {
+          "amount": 1700,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "maxibrief_international_heavy",
+      "zone": "world",
+      "weight_tier": "W2000",
+      "price": [
+        {
+          "amount": 1700,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    }
+  ]
+}

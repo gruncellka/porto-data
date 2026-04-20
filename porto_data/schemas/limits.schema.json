@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/limits.schema.json",
   "title": "Provider limits schema",
-  "description": "Provider-scoped operational limits: how this operator applies service (conflicts, infrastructure, internal policy). Not global legal sanctions—those live in global/restrictions.json (country / EU / UN regimes, independent of any single carrier). Each limits file is keyed by provider; regime periods and calendar use the provider operational timezone (see compliance_frameworks.timezone, aligned with global/providers.json for the same provider id).",
+  "description": "Provider-scoped operational limits: how this operator applies service (conflicts, infrastructure, internal policy). Not shared legal sanctions\u2014those live in policy/restrictions.json (country / EU / UN regimes, independent of any single carrier). Each limits file is keyed by provider; regime periods and calendar use the provider operational timezone (see compliance_frameworks.timezone, aligned with providers.json for the same provider id).",
   "type": "object",
   "required": [
     "file_type",
@@ -58,12 +58,16 @@
           "effective_from"
         ],
         "properties": {
-          "id": { "type": "string" },
-          "country_code": { "type": "string", "pattern": "^[A-Z]{2}$" },
-          "region_code": { "type": "string" },
-          "claimed_by": { "type": "string", "pattern": "^[A-Z]{2}$" },
-          "occupied_by": { "type": "string", "pattern": "^[A-Z]{2}$" },
-          "disputed_by": { "type": "string", "pattern": "^[A-Za-z_]+$" },
+          "id": {
+            "type": "string"
+          },
+          "country_code": {
+            "type": "string",
+            "pattern": "^[A-Z]{2}$"
+          },
+          "region_code": {
+            "type": "string"
+          },
           "status": {
             "type": "string",
             "enum": [
@@ -74,35 +78,51 @@
               "operational"
             ]
           },
-          "reason": { "type": "string" },
-          "description": { "type": "string" },
-          "notes": { "type": "string" },
+          "reason": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          },
           "areas": {
             "type": "object",
-            "additionalProperties": { "type": "string" }
+            "additionalProperties": {
+              "type": "string"
+            }
           },
-          "zone_reference": { "type": ["string", "null"] },
           "entity_type": {
             "type": "string",
             "enum": [
               "country",
               "territory",
-              "occupied_territory",
               "disputed_territory"
             ]
           },
-          "framework_id": { "type": "string" },
           "effective_from": {
-            "type": ["string", "null"],
+            "type": [
+              "string",
+              "null"
+            ],
             "format": "date"
           },
           "effective_to": {
-            "type": ["string", "null"],
+            "type": [
+              "string",
+              "null"
+            ],
             "format": "date"
           },
-          "effective_partial": { "type": "boolean" },
+          "effective_partial": {
+            "type": "boolean"
+          },
           "legal_reference": {
-            "type": ["string", "null"],
+            "type": [
+              "string",
+              "null"
+            ],
             "format": "uri"
           }
         },
@@ -111,14 +131,21 @@
     },
     "provider_context": {
       "type": "object",
-      "description": "Provider-facing narrative only (this limits file’s carrier). Do not use this object to stand in for legal regimes; global/restrictions.json holds verifiable destination rows and EU/UN-style frameworks.",
+      "description": "Provider-facing narrative only (this limits file\u2019s carrier). Do not use this object to stand in for legal regimes; policy/restrictions.json holds verifiable destination rows and EU/UN-style frameworks.",
       "properties": {
         "national_policy": {
           "type": "object",
-          "required": ["description", "notes"],
+          "required": [
+            "description",
+            "notes"
+          ],
           "properties": {
-            "description": { "type": "string" },
-            "notes": { "type": "string" }
+            "description": {
+              "type": "string"
+            },
+            "notes": {
+              "type": "string"
+            }
           },
           "additionalProperties": false
         }
@@ -127,7 +154,7 @@
     },
     "compliance_frameworks": {
       "type": "object",
-      "description": "Operational regime metadata for this provider. Each framework documents the regime time window (effective_from / effective_to, nullable) interpreted in timezone (provider operational calendar—must match providers.<id>.timezone). limits[] row effective_from/effective_to remain authoritative for SDK activation; framework dates are the documented span, usually aligned with the primary limit row.",
+      "description": "Operational regime metadata for this provider. Each framework documents the regime time window (effective_from / effective_to, nullable) interpreted in timezone (provider operational calendar\u2014must match providers.<id>.timezone). limits[] row effective_from/effective_to remain authoritative for SDK activation; framework dates are the documented span, usually aligned with the primary limit row.",
       "patternProperties": {
         "^[A-Z0-9_]+$": {
           "type": "object",
@@ -142,9 +169,15 @@
             "timezone"
           ],
           "properties": {
-            "id": { "type": "string" },
-            "label": { "type": "string" },
-            "description": { "type": "string" },
+            "id": {
+              "type": "string"
+            },
+            "label": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
             "type": {
               "type": "string",
               "enum": [
@@ -164,32 +197,50 @@
               "type": "array",
               "items": {
                 "type": "object",
-                "required": ["code", "name"],
+                "required": [
+                  "code",
+                  "name"
+                ],
                 "properties": {
-                  "code": { "type": "string" },
-                  "name": { "type": "string" }
+                  "code": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  }
                 },
                 "additionalProperties": false
               }
             },
-            "operational_note": { "type": "string" },
+            "operational_note": {
+              "type": "string"
+            },
             "legal_reference": {
-              "type": ["string", "null"],
+              "type": [
+                "string",
+                "null"
+              ],
               "format": "uri"
             },
             "effective_from": {
-              "type": ["string", "null"],
+              "type": [
+                "string",
+                "null"
+              ],
               "format": "date"
             },
             "effective_to": {
-              "type": ["string", "null"],
+              "type": [
+                "string",
+                "null"
+              ],
               "format": "date"
             },
             "timezone": {
               "type": "string",
               "minLength": 3,
               "pattern": "^[A-Za-z0-9_+-]+(/[A-Za-z0-9_+-]+)+$",
-              "description": "IANA zone for this provider’s operational calendar (must match global/providers.json → providers.<id>.timezone for the limits file’s provider). Used when interpreting framework and limits row effective_* dates."
+              "description": "IANA zone for this provider\u2019s operational calendar (must match providers.json \u2192 providers.<id>.timezone for the limits file\u2019s provider). Used when interpreting framework and limits row effective_* dates."
             }
           },
           "additionalProperties": false

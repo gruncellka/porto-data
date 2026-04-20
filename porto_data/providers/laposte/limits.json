@@ -8,7 +8,7 @@
   },
   "provider_context": {
     "national_policy": {
-      "description": "Letter-format products only (no colis). Letter destination gating: global/restrictions.json + zones.json. limits[] only for La Poste–documented operational blocks on letters (citable source).",
+      "description": "Letter-format products only (no colis). Letter destination gating: policy/restrictions.json + zones.json. limits[] only for La Poste\u2013documented operational blocks on letters (citable source).",
       "notes": "Do not mirror broad conflict lists here; add a row only when it changes letter acceptance or delivery for a destination you can reference."
     }
   },

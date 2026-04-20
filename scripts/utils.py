@@ -16,7 +16,12 @@ import json
 from pathlib import Path
 from typing import Any
 
-from scripts.data_files import get_all_schema_data_pairs, get_project_root
+from scripts.data_files import (
+    MAPPINGS_FILENAME,
+    MAPPINGS_SCHEMA_RELPATH,
+    get_all_schema_data_pairs,
+    get_project_root,
+)
 
 
 def compute_checksum(file_path: str) -> str:
@@ -42,20 +47,43 @@ def get_all_file_checksums() -> dict[str, str]:
         if data_full.exists():
             checksums[data_path] = compute_checksum(str(data_full))
 
+    mappings_data = root / MAPPINGS_FILENAME
+    if mappings_data.exists():
+        checksums[MAPPINGS_FILENAME] = compute_checksum(str(mappings_data))
+    mappings_schema = root / MAPPINGS_SCHEMA_RELPATH
+    if mappings_schema.exists():
+        checksums[MAPPINGS_SCHEMA_RELPATH] = compute_checksum(str(mappings_schema))
+
     return checksums
 
 
 def _iter_metadata_entities(metadata: dict) -> list[dict]:
-    """Yield entity dicts from metadata. Supports global+providers and legacy entities structure."""
-    from scripts.data_files import GLOBAL_DIR, PROVIDERS_DIR
+    """Yield entity dicts from metadata (policy/mails/registry + providers or flat ``entities``)."""
+    from scripts.data_files import (
+        MAILS_MAPPINGS_KEY,
+        POLICY_MAPPINGS_KEY,
+        PROVIDERS_DIR,
+        REGISTRY_MAPPINGS_KEY,
+    )
 
     entities = []
-    if GLOBAL_DIR in metadata and PROVIDERS_DIR in metadata:
-        for entity in metadata[GLOBAL_DIR].values():
-            entities.append(entity)
+    if (
+        POLICY_MAPPINGS_KEY in metadata
+        and MAILS_MAPPINGS_KEY in metadata
+        and REGISTRY_MAPPINGS_KEY in metadata
+        and PROVIDERS_DIR in metadata
+    ):
+        for key in (POLICY_MAPPINGS_KEY, MAILS_MAPPINGS_KEY, REGISTRY_MAPPINGS_KEY):
+            for entity in metadata[key].values():
+                entities.append(entity)
         for provider_entities in metadata[PROVIDERS_DIR].values():
             for entity in provider_entities.values():
                 entities.append(entity)
+        bundle = metadata.get("bundle")
+        if isinstance(bundle, dict):
+            for entity in bundle.values():
+                if isinstance(entity, dict) and "data" in entity and "schema" in entity:
+                    entities.append(entity)
     elif "entities" in metadata:
         for entity in metadata["entities"].values():
             entities.append(entity)
@@ -84,7 +112,6 @@ def get_existing_checksums_from_metadata(metadata_path: str = "metadata.json") -
                 "checksum", ""
             )
 
-    # Fallback to old structure for backward compatibility
     if "schemas" in metadata and "files" in metadata["schemas"]:
         for file_info in metadata["schemas"]["files"]:
             existing_checksums[file_info["path"]] = file_info["checksum"]

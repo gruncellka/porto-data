@@ -1,7 +1,7 @@
 """Validate bundle layout: mappings.json (source of truth) vs disk, registry, metadata.
 
 Checks:
-  - ``mappings.providers`` keys match ``global/providers.json`` keys.
+  - ``mappings.providers`` keys match ``providers.json`` (bundle root) keys.
   - Each mapped data file under ``providers/<id>/`` exists.
   - Each mapped provider JSON has top-level ``provider`` equal to ``<id>`` (folder name).
   - No extra ``*.json`` files under ``providers/<id>/`` beyond what mappings list (letter bundle).
@@ -17,16 +17,16 @@ from pathlib import Path
 from scripts.data_files import (
     PROVIDERS_DIR,
     PROVIDERS_REGISTRY_DATA_PATH,
+    _load_mappings_raw,
     get_project_root,
     load_providers_registry,
-    _load_mappings_raw,
 )
 
 
 def validate_mappings_layout() -> int:
     """Run layout checks. Returns 0 if ok, 1 if errors."""
     root = get_project_root()
-    print("Validating mappings layout (mappings.json ↔ providers ↔ metadata)...\n")
+    print("Validating mappings (mappings.json ↔ providers ↔ metadata)...\n")
 
     errors: list[str] = []
     warnings: list[str] = []
@@ -58,7 +58,7 @@ def validate_mappings_layout() -> int:
 
     if registry_ids != mapping_ids:
         errors.append(
-            f"mappings.json provider keys must match {PROVIDERS_REGISTRY_DATA_PATH}.\n"
+            f"mappings.json provider keys must match provider registry {PROVIDERS_REGISTRY_DATA_PATH}.\n"
             f"  registry only: {sorted(registry_ids - mapping_ids)}\n"
             f"  mappings only: {sorted(mapping_ids - registry_ids)}"
         )
@@ -77,7 +77,9 @@ def validate_mappings_layout() -> int:
         mapped_rel: set[str] = set()
         for _schema, data_rel in pmap.items():
             if not isinstance(data_rel, str):
-                errors.append(f"mappings.providers.{pid}: data path must be string, got {type(data_rel)}")
+                errors.append(
+                    f"mappings.providers.{pid}: data path must be string, got {type(data_rel)}"
+                )
                 continue
             mapped_rel.add(data_rel)
             data_path = root / data_rel
@@ -161,8 +163,8 @@ def validate_mappings_layout() -> int:
         print(f"❌ ERROR: {err}")
     if errors:
         print()
-        print("❌ Mappings layout validation failed.")
+        print("❌ Mappings validation failed.")
         return 1
 
-    print(f"✅ Mappings layout OK ({len(registry_ids)} providers, files + provider field aligned).\n")
+    print(f"✅ Mappings OK ({len(registry_ids)} providers, files + provider field aligned).\n")
     return 0
