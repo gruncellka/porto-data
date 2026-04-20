@@ -46,21 +46,21 @@ E-commerce and logistics (multi-carrier quotes, letters), compliance (sanctions,
 
 ## Logical files (per operator unless noted)
 
-| File                          | Description                                                                                                                                          |
-| ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `products.json`               | Letter (and related) products; **`unit.weight`** only (`g`); physical sizes via **`envelope_ids`** + global **`envelopes.json`** (`envelopes[]`: **`id`**, **`width`/`height`** mm) |
-| `services.json`               | Add-on services: **`porto_id`** (unified), provider **`id`**, native **`name`**, English **`label`**                                                 |
-| `prices/products.json`       | Base letter postage grid (`file_type` **`product_prices`**): **`product_id`** × **`zone`** × **`weight_tier`** (effective-dated **`amount`** in cents) |
-| `prices/services.json`       | Add-on service amounts (`file_type` **`service_prices`**) keyed by **`service_id`** (matches catalog **`services.json`** **`id`**)                      |
-| `zones.json`                  | Geographic zones and country mappings                                                                                                                |
-| `weights.json`                | Weight brackets for pricing                                                                                                                          |
-| `features.json`               | Operator-scoped **`id`**, unified **`porto_id`**, native **`name`**, English **`label`**                                                             |
-| `limits.json`                 | Operational limits and compliance framework metadata                                                                                                 |
-| `graph.json`                  | **`dependencies`** (file load order), **`edges`** (per product: allowed zones + weight tiers), **`lookup_rules`**, **`global_settings`**, **`unit`** |
-| `mails/layouts.json` | Jurisdiction-keyed print/window geometry (**DE / CH / FR**) per envelope **`id`** (`file_type` **`layouts`**); optional **`standard`** (norm token, e.g. **DIN678**, **SN010130**, **NFEN13850**); physical sizes remain in **`mails/envelopes.json`** |
-| `mails/envelopes.json`     | Physical envelope catalog: **`envelopes[]`** with **`id`**, **`width`/`height`**, **`standard`** `ISO269`, **`sheets[]`** (ISO 216 **`sheet`** + **`fold`**) |
-| `policy/restrictions.json`  | Sanctions-style restrictions and compliance frameworks                                                                                               |
-| `policy/jurisdictions.json` | `jurisdictions.eu` / `jurisdictions.un` (ISO alpha-2; align with symbolic `EU` / `UN`)                                                               |
+| File                        | Description                                                                                                                                                                                                                                            |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `products.json`             | Letter (and related) products; **`unit.weight`** only (`g`); physical sizes via **`envelope_ids`** + global **`envelopes.json`** (`envelopes[]`: **`id`**, **`width`/`height`** mm)                                                                    |
+| `services.json`             | Add-on services: **`porto_id`** (unified), provider **`id`**, native **`name`**, English **`label`**                                                                                                                                                   |
+| `prices/products.json`      | Base letter postage grid (`file_type` **`product_prices`**): **`product_id`** × **`zone`** × **`weight_tier`** (effective-dated **`amount`** in cents)                                                                                                 |
+| `prices/services.json`      | Add-on service amounts (`file_type` **`service_prices`**) keyed by **`service_id`** (matches catalog **`services.json`** **`id`**)                                                                                                                     |
+| `zones.json`                | Geographic zones and country mappings                                                                                                                                                                                                                  |
+| `weights.json`              | Weight brackets for pricing                                                                                                                                                                                                                            |
+| `features.json`             | Operator-scoped **`id`**, unified **`porto_id`**, native **`name`**, English **`label`**                                                                                                                                                               |
+| `limits.json`               | Operational limits and compliance framework metadata                                                                                                                                                                                                   |
+| `graph.json`                | **`dependencies`** (file load order), **`edges`** (per product: allowed zones + weight tiers), **`lookup_rules`**, **`global_settings`**, **`unit`**                                                                                                   |
+| `mails/layouts.json`        | Jurisdiction-keyed print/window geometry (**DE / CH / FR**) per envelope **`id`** (`file_type` **`layouts`**); optional **`standard`** (norm token, e.g. **DIN678**, **SN010130**, **NFEN13850**); physical sizes remain in **`mails/envelopes.json`** |
+| `mails/envelopes.json`      | Physical envelope catalog: **`envelopes[]`** with **`id`**, **`width`/`height`**, **`standard`** `ISO269`, **`sheets[]`** (ISO 216 **`sheet`** + **`fold`**)                                                                                           |
+| `policy/restrictions.json`  | Sanctions-style restrictions and compliance frameworks                                                                                                                                                                                                 |
+| `policy/jurisdictions.json` | `jurisdictions.eu` / `jurisdictions.un` (ISO alpha-2; align with symbolic `EU` / `UN`)                                                                                                                                                                 |
 
 All JSON validates against **`schemas/`**; **`mappings.json`** maps entities to paths; **`metadata.json`** has checksums and schema URLs.
 
@@ -96,6 +96,7 @@ All JSON validates against **`schemas/`**; **`mappings.json`** maps entities to 
 - [Deutsche Post](https://www.deutschepost.de)
 - [Swiss Post](https://www.post.ch)
 - [La Poste](https://www.laposte.fr)
+- [Ukrposhta](https://ukrposhta.ua/)
 - [EU Sanctions Map](https://www.sanctionsmap.eu/)
 - [ISO 3166 Country Codes](https://www.iso.org/iso-3166-country-codes.html)
 

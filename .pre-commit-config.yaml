@@ -6,6 +6,12 @@
 # 3. User reviews changes: git diff porto_data/metadata.json
 # 4. User stages and re-commits: git add porto_data/metadata.json && git commit
 #
+# If commit fails with "Stashed changes conflicted" / "patch does not apply" on
+# porto_data/metadata.json: you had the same file both staged and unstaged (or
+# hooks rewrote it while unstaged edits existed). Fix: `git add porto_data/metadata.json`
+# (and any other porto_data JSON you intend to commit), or `git stash` everything,
+# then commit. Prefer a clean index for files hooks modify.
+#
 # Data layout: porto_data/policy/, porto_data/mails/, porto_data/providers/<id>/, porto_data/schemas/,
 # porto_data/mappings.json, porto_data/metadata.json (no legacy porto_data/data/).
 #
@@ -47,7 +53,7 @@ repos:
 
           - id: generate-metadata
             name: Generate metadata.json
-            entry: bash -c 'if [ -f venv/bin/activate ]; then . venv/bin/activate; fi && PYTHONPATH=. python -m cli.main metadata'
+            entry: bash -c 'if [ -f venv/bin/activate ]; then . venv/bin/activate; fi && PYTHONPATH=. python -m cli.main metadata && git add porto_data/metadata.json'
             language: system
             # Omit metadata.json so regenerating it does not re-trigger this hook in a loop
             files: ^porto_data/(policy|mails|schemas)/.*\.json$|^porto_data/providers/[^/]+/.*\.json$|^porto_data/mappings\.json$
@@ -112,11 +118,11 @@ repos:
       hooks:
           - id: format-json
             name: Format JSON files
-            entry: bash -c 'shopt -s nullglob; for file in porto_data/*.json porto_data/schemas/*.json porto_data/policy/*.json porto_data/mails/*.json porto_data/providers/*/*.json porto_data/providers/*/prices/*.json; do python3 scripts/format_json_file.py "$file" && git add "$file" || exit 1; done'
+            entry: bash -c 'for f in "$@"; do python3 scripts/format_json_file.py "$f" && git add "$f" || exit 1; done' bash
             language: system
             types: [json]
             files: ^porto_data/(policy|mails|schemas)/.*\.json$|^porto_data/providers/[^/]+/.*\.json$|^porto_data/(mappings|metadata|providers)\.json$
-            pass_filenames: false
+            pass_filenames: true
             always_run: false
 
     # ==========================================
