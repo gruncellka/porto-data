@@ -198,8 +198,9 @@ jobs:
               run: make setup
             - name: Run tests with coverage
               run: make test-cov
+            # Pin minor: @v5 floated to v5.5.4 whose actions/github-script SHA tarball 404s on GitHub.
             - name: Upload coverage reports to Codecov
-              uses: codecov/codecov-action@v5
+              uses: codecov/codecov-action@v6.0.0
               continue-on-error: true
               with:
                   token: ${{ secrets.CODECOV_TOKEN }}
