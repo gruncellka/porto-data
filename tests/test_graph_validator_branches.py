@@ -3,12 +3,16 @@
 import json
 from pathlib import Path
 
+import pytest
+
 from scripts.validators.graph import (
     PROVIDER_RULE_KIND_METRIC_BAND_ATTACH,
     PROVIDER_RULE_METRIC_THICKNESS,
     GraphValidator,
+    _envelope_validation_views,
     _print_analyze_mode,
     _print_validate_mode,
+    validate_graph,
 )
 from tests.minimal_fixtures import minimal_restrictions_document
 
@@ -134,9 +138,9 @@ def _write_bundle(data_dir: Path, graph: dict, docs: dict[str, dict]) -> None:
 
 def _minimal_extras(overrides: dict[str, dict] | None = None) -> dict[str, dict]:
     base: dict[str, dict] = {
-        "products.json": {"file_type": "products", "products": []},
+        "products.json": {"file_type": "products", "unit": {"weight": "g"}, "products": []},
         "zones.json": {"file_type": "zones", "zones": []},
-        "weights.json": {"file_type": "weights", "weights": {}},
+        "weights.json": {"file_type": "weights", "unit": {"weight": "g"}, "weights": {}},
         "services.json": {"file_type": "services", "services": []},
         "prices/products.json": {
             "file_type": "product_prices",
@@ -215,6 +219,7 @@ class TestGraphExecutionSemantics:
         data_dir = tmp_path / "d"
         products = {
             "file_type": "products",
+            "unit": {"weight": "g"},
             "products": [
                 {
                     "id": "p1",
@@ -232,7 +237,11 @@ class TestGraphExecutionSemantics:
             {
                 "products.json": products,
                 "zones.json": {"file_type": "zones", "zones": [{"id": "domestic", "label": "D"}]},
-                "weights.json": {"file_type": "weights", "weights": {"W001": {"min": 0, "max": 1}}},
+                "weights.json": {
+                    "file_type": "weights",
+                    "unit": {"weight": "g"},
+                    "weights": {"W001": {"min": 0, "max": 1}},
+                },
                 "marks.json": {
                     "file_type": "marks",
                     "provider": "deutschepost",
@@ -250,6 +259,7 @@ class TestGraphExecutionSemantics:
         data_dir = tmp_path / "d"
         products = {
             "file_type": "products",
+            "unit": {"weight": "g"},
             "products": [
                 {
                     "id": "p1",
@@ -281,7 +291,11 @@ class TestGraphExecutionSemantics:
             {
                 "products.json": products,
                 "zones.json": {"file_type": "zones", "zones": [{"id": "domestic", "label": "D"}]},
-                "weights.json": {"file_type": "weights", "weights": {"W001": {"min": 0, "max": 1}}},
+                "weights.json": {
+                    "file_type": "weights",
+                    "unit": {"weight": "g"},
+                    "weights": {"W001": {"min": 0, "max": 1}},
+                },
                 "services.json": services,
             }
         )
@@ -436,7 +450,7 @@ def _product_letter_fixture(**overrides):
         "tracking_mode": "none",
     }
     row.update(overrides)
-    return {"file_type": "products", "products": [row]}
+    return {"file_type": "products", "unit": {"weight": "g"}, "products": [row]}
 
 
 class TestGraphEdgesRefs:
@@ -449,7 +463,11 @@ class TestGraphEdgesRefs:
         docs = _minimal_extras(
             {
                 "zones.json": {"file_type": "zones", "zones": [{"id": "domestic", "label": "D"}]},
-                "weights.json": {"file_type": "weights", "weights": {"W1": {"min": 0, "max": 50}}},
+                "weights.json": {
+                    "file_type": "weights",
+                    "unit": {"weight": "g"},
+                    "weights": {"W1": {"min": 0, "max": 50}},
+                },
             }
         )
         _write_bundle(data_dir, graph, docs)
@@ -465,7 +483,11 @@ class TestGraphEdgesRefs:
             {
                 "products.json": _product_letter_fixture(),
                 "zones.json": {"file_type": "zones", "zones": [{"id": "domestic", "label": "D"}]},
-                "weights.json": {"file_type": "weights", "weights": {"W1": {"min": 0, "max": 50}}},
+                "weights.json": {
+                    "file_type": "weights",
+                    "unit": {"weight": "g"},
+                    "weights": {"W1": {"min": 0, "max": 50}},
+                },
             }
         )
         _write_bundle(data_dir, graph, docs)
@@ -481,10 +503,256 @@ class TestGraphEdgesRefs:
             {
                 "products.json": _product_letter_fixture(),
                 "zones.json": {"file_type": "zones", "zones": [{"id": "domestic", "label": "D"}]},
-                "weights.json": {"file_type": "weights", "weights": {"W1": {"min": 0, "max": 50}}},
+                "weights.json": {
+                    "file_type": "weights",
+                    "unit": {"weight": "g"},
+                    "weights": {"W1": {"min": 0, "max": 50}},
+                },
             }
         )
         _write_bundle(data_dir, graph, docs)
         v = GraphValidator(data_dir)
         v.validate_all()
         assert any("W999" in e and "weight" in e.lower() for e in v.results["errors"])
+
+
+class TestGraphValidateGraphEntrypoint:
+    """``validate_graph()`` CLI wrapper (prints + exit code)."""
+
+    def test_validate_graph_validate_mode_zero_on_warnings_only(self, tmp_path, capsys):
+        data_dir = tmp_path / "d"
+        _write_bundle(data_dir, _base_graph(available_services=[]), _minimal_extras())
+        assert validate_graph(data_dir=data_dir, analyze=False) == 0
+        out = capsys.readouterr().out
+        assert "Validating graph.json" in out and "passed" in out.lower()
+
+    def test_validate_graph_analyze_mode_prints_sections(self, tmp_path, capsys):
+        data_dir = tmp_path / "d"
+        _write_bundle(data_dir, _base_graph(available_services=[]), _minimal_extras())
+        assert validate_graph(data_dir=data_dir, analyze=True) in (0, 1)
+        out = capsys.readouterr().out
+        assert "COMPREHENSIVE" in out or "ANALYSIS" in out
+
+
+class TestGraphLoadAndInit:
+    def test_load_data_short_circuits_when_already_loaded(self, tmp_path):
+        data_dir = tmp_path / "d"
+        _write_bundle(data_dir, _base_graph(available_services=[]), _minimal_extras())
+        v = GraphValidator(data_dir)
+        v.load_data()
+        first = v.graph
+        v.load_data()
+        assert v.graph is first
+
+    def test_graph_validator_raises_when_provider_dir_missing(self, tmp_path):
+        root = tmp_path / "porto_data"
+        (root / "policy").mkdir(parents=True)
+        (root / "mails").mkdir(parents=True)
+        (root / "providers").mkdir(parents=True)
+        with pytest.raises(FileNotFoundError, match="Provider directory"):
+            GraphValidator(project_root=root, provider="deutschepost")
+
+
+class TestGraphPriceLookupAndUnits:
+    def test_price_lookup_wrong_product_prices_array_warns(self, tmp_path):
+        data_dir = tmp_path / "d"
+        graph = dict(_base_graph(available_services=[]))
+        gs = dict(graph["global_settings"])
+        pl = dict(gs["price_lookup"])
+        pp = dict(pl["product_prices"])
+        pp["array"] = "not_product_prices"
+        pl["product_prices"] = pp
+        gs["price_lookup"] = pl
+        graph["global_settings"] = gs
+        _write_bundle(data_dir, graph, _minimal_extras())
+        v = GraphValidator(data_dir)
+        v.validate_all()
+        assert any("array path" in w.lower() for w in v.results["warnings"])
+
+    def test_price_lookup_match_keys_missing_on_rows_errors(self, tmp_path):
+        data_dir = tmp_path / "d"
+        graph = dict(_base_graph(available_services=[]))
+        gs = dict(graph["global_settings"])
+        pl = dict(gs["price_lookup"])
+        pp = dict(pl["product_prices"])
+        m = dict(pp["match"])
+        m["bogus_match_key"] = "z"
+        pp["match"] = m
+        pl["product_prices"] = pp
+        gs["price_lookup"] = pl
+        graph["global_settings"] = gs
+        extras = _minimal_extras(
+            {
+                "prices/products.json": {
+                    "file_type": "product_prices",
+                    "provider": "deutschepost",
+                    "unit": {"price": "cents", "currency": "EUR"},
+                    "product_prices": [
+                        {
+                            "product_id": "p1",
+                            "zone": "domestic",
+                            "weight_tier": "W1",
+                            "price": [{"amount": 1}],
+                        }
+                    ],
+                },
+            }
+        )
+        _write_bundle(data_dir, graph, extras)
+        v = GraphValidator(data_dir)
+        v.validate_all()
+        assert any("bogus_match_key" in e or "match keys" in e for e in v.results["errors"])
+
+    def test_currency_mismatch_between_graph_and_prices_errors(self, tmp_path):
+        data_dir = tmp_path / "d"
+        extras = _minimal_extras(
+            {
+                "prices/products.json": {
+                    "file_type": "product_prices",
+                    "provider": "deutschepost",
+                    "unit": {"price": "cents", "currency": "USD"},
+                    "product_prices": [],
+                },
+            }
+        )
+        _write_bundle(data_dir, _base_graph(available_services=[]), extras)
+        v = GraphValidator(data_dir)
+        v.validate_all()
+        assert any("currency" in e.lower() for e in v.results["errors"])
+
+
+class TestGraphLayoutsAndProducts:
+    def test_layout_unknown_envelope_id_errors(self, tmp_path):
+        data_dir = tmp_path / "d"
+        layouts = {
+            "file_type": "layouts",
+            "unit": {"dimension": "mm"},
+            "jurisdictions": {
+                "DE": {
+                    "envelopes": {
+                        "NOT_IN_ENVELOPES": {
+                            "orientation": "landscape",
+                            "layout": {
+                                "print_area": {"x": 0, "y": 0, "width": 1, "height": 1},
+                                "address_area": {"x": 0, "y": 0, "width": 1, "height": 1},
+                                "window": {"supported": False},
+                                "post_mark": {"x": 0, "y": 0},
+                            },
+                        }
+                    }
+                }
+            },
+        }
+        _write_bundle(
+            data_dir,
+            _base_graph(available_services=[]),
+            _minimal_extras({"layouts.json": layouts}),
+        )
+        v = GraphValidator(data_dir)
+        v.validate_all()
+        assert any(
+            "NOT_IN_ENVELOPES" in e or "unknown envelope" in e.lower() for e in v.results["errors"]
+        )
+
+    def test_layout_row_missing_orientation_errors(self, tmp_path):
+        data_dir = tmp_path / "d"
+        layouts = {
+            "file_type": "layouts",
+            "unit": {"dimension": "mm"},
+            "jurisdictions": {
+                "DE": {
+                    "envelopes": {
+                        "C6": {
+                            "layout": {
+                                "print_area": {"x": 0, "y": 0, "width": 100, "height": 80},
+                                "address_area": {"x": 0, "y": 0, "width": 100, "height": 80},
+                                "window": {"supported": False},
+                                "post_mark": {"x": 90, "y": 5},
+                            },
+                        }
+                    }
+                }
+            },
+        }
+        _write_bundle(
+            data_dir,
+            _base_graph(available_services=[]),
+            _minimal_extras({"layouts.json": layouts}),
+        )
+        v = GraphValidator(data_dir)
+        v.validate_all()
+        assert any("orientation" in e.lower() or "layout" in e.lower() for e in v.results["errors"])
+
+    def test_layout_address_area_non_integer_errors(self, tmp_path):
+        data_dir = tmp_path / "d"
+        layouts = {
+            "file_type": "layouts",
+            "unit": {"dimension": "mm"},
+            "jurisdictions": {
+                "DE": {
+                    "envelopes": {
+                        "C6": {
+                            "orientation": "landscape",
+                            "layout": {
+                                "print_area": {"x": 0, "y": 0, "width": 100, "height": 80},
+                                "address_area": {"x": 0.5, "y": 0, "width": 100, "height": 80},
+                                "window": {"supported": False},
+                                "post_mark": {"x": 90, "y": 5},
+                            },
+                        }
+                    }
+                }
+            },
+        }
+        _write_bundle(
+            data_dir,
+            _base_graph(available_services=[]),
+            _minimal_extras({"layouts.json": layouts}),
+        )
+        v = GraphValidator(data_dir)
+        v.validate_all()
+        assert any(
+            "address_area" in e.lower() and "integer" in e.lower() for e in v.results["errors"]
+        )
+
+    def test_product_envelope_id_missing_in_envelopes_errors(self, tmp_path):
+        data_dir = tmp_path / "d"
+        _write_bundle(
+            data_dir,
+            dict(
+                _base_graph(available_services=[]), edges={"p1": {"zones": [], "weight_tiers": []}}
+            ),
+            _minimal_extras(
+                {
+                    "products.json": _product_letter_fixture(envelope_ids=["NO_SUCH_FORMAT"]),
+                }
+            ),
+        )
+        v = GraphValidator(data_dir)
+        v.validate_all()
+        assert any("NO_SUCH_FORMAT" in e for e in v.results["errors"])
+
+
+class TestGraphDependenciesAndCircular:
+    def test_dependency_points_at_missing_file_warns(self, tmp_path):
+        data_dir = tmp_path / "d"
+        graph = dict(_base_graph(available_services=[]))
+        deps = dict(graph["dependencies"])
+        deps["ghost"] = {"file": "ghost.json", "depends_on": []}
+        graph["dependencies"] = deps
+        _write_bundle(data_dir, graph, _minimal_extras())
+        v = GraphValidator(data_dir)
+        v.validate_all()
+        assert any("ghost.json" in w.lower() for w in v.results["warnings"])
+
+
+class TestGraphEnvelopeHelpers:
+    def test_envelope_validation_views_legacy_top_level_window(self):
+        env = {
+            "address_area": {"x": 0, "y": 0, "width": 10, "height": 10},
+            "print_area": {"x": 0, "y": 0, "width": 10, "height": 10},
+            "window_area": {"x": 0, "y": 0, "width": 10, "height": 10},
+            "window_supported": True,
+        }
+        v = _envelope_validation_views(env)
+        assert v["has_w"] and v["force_window"]

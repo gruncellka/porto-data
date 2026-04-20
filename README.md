@@ -91,16 +91,16 @@ All JSON validates against **`schemas/`**; **`mappings.json`** maps entities to 
 
 ## Related resources
 
-- **Unified `porto_id` (cross-operator ids):** [docs/id.md](docs/id.md) (naming policy), [PORTO_ID_MAPPING.md](PORTO_ID_MAPPING.md) (per-provider tables), [porto_id_normalization_plan.md](porto_id_normalization_plan.md) (migration notes).
+- **Unified `porto_id` (cross-operator ids):** [docs/id.md](docs/id.md) (naming policy).
 
 **Carriers in this bundle** — tariff / modeling notes, shipped JSON folder, and official site:
 
-| Provider (`providers.json` id) | Reconciliation doc | Bundle data folder | Website |
-| --- | --- | --- | --- |
+| Provider (`providers.json` id) | Reconciliation doc                                               | Bundle data folder                   | Website                                        |
+| ------------------------------ | ---------------------------------------------------------------- | ------------------------------------ | ---------------------------------------------- |
 | Deutsche Post (`deutschepost`) | [docs/providers/deutschepost.md](docs/providers/deutschepost.md) | `porto_data/providers/deutschepost/` | [deutschepost.de](https://www.deutschepost.de) |
-| Swiss Post (`swisspost`) | [docs/providers/swisspost.md](docs/providers/swisspost.md) | `porto_data/providers/swisspost/` | [post.ch](https://www.post.ch) |
-| La Poste (`laposte`) | [docs/providers/laposte.md](docs/providers/laposte.md) | `porto_data/providers/laposte/` | [laposte.fr](https://www.laposte.fr) |
-| Ukrposhta (`ukrposhta`) | [docs/providers/ukrposhta.md](docs/providers/ukrposhta.md) | `porto_data/providers/ukrposhta/` | [ukrposhta.ua](https://ukrposhta.ua/) |
+| Swiss Post (`swisspost`)       | [docs/providers/swisspost.md](docs/providers/swisspost.md)       | `porto_data/providers/swisspost/`    | [post.ch](https://www.post.ch)                 |
+| La Poste (`laposte`)           | [docs/providers/laposte.md](docs/providers/laposte.md)           | `porto_data/providers/laposte/`      | [laposte.fr](https://www.laposte.fr)           |
+| Ukrposhta (`ukrposhta`)        | [docs/providers/ukrposhta.md](docs/providers/ukrposhta.md)       | `porto_data/providers/ukrposhta/`    | [ukrposhta.ua](https://ukrposhta.ua/)          |
 
 **Other references:** [EU Sanctions Map](https://www.sanctionsmap.eu/), [ISO 3166 country codes](https://www.iso.org/iso-3166-country-codes.html)
 
