@@ -4,7 +4,15 @@ import json
 from pathlib import Path
 from typing import Any
 
-from scripts.validators.limits_scope import validate_limits_scope
+import pytest
+
+from scripts.validators import limits_scope as limits_scope_mod
+from scripts.validators.limits_scope import (
+    _jurisdiction_country_timezones,
+    _list_provider_ids,
+    _provider_timezones,
+    validate_limits_scope,
+)
 
 _ACME_REG = {
     "name": "Acme",
@@ -300,3 +308,133 @@ def test_validate_limits_scope_passes_when_registry_providers_not_dict(tmp_path:
         encoding="utf-8",
     )
     assert validate_limits_scope(project_root=tmp_path) == 0
+
+
+class TestLimitsScopeHelpers:
+    """Cover edge cases in ``_jurisdiction_country_timezones`` / ``_provider_timezones``."""
+
+    def test_list_provider_ids_empty_when_providers_not_dict(self, tmp_path: Path) -> None:
+        (tmp_path / "providers.json").write_text(
+            json.dumps({"providers": "not-a-dict"}),
+            encoding="utf-8",
+        )
+        assert _list_provider_ids(tmp_path) == []
+
+    def test_jurisdiction_country_timezones_invalid_json(self, tmp_path: Path) -> None:
+        (tmp_path / "policy").mkdir()
+        (tmp_path / "policy" / "jurisdictions.json").write_text("{not-json", encoding="utf-8")
+        assert _jurisdiction_country_timezones(tmp_path) == {}
+
+    def test_jurisdiction_country_timezones_jurisdictions_not_dict(
+        self,
+        tmp_path: Path,
+    ) -> None:
+        (tmp_path / "policy").mkdir()
+        (tmp_path / "policy" / "jurisdictions.json").write_text(
+            json.dumps({"file_type": "jurisdictions", "jurisdictions": []}),
+            encoding="utf-8",
+        )
+        assert _jurisdiction_country_timezones(tmp_path) == {}
+
+    def test_jurisdiction_country_timezones_skips_non_dict_country_blocs(
+        self,
+        tmp_path: Path,
+    ) -> None:
+        (tmp_path / "policy").mkdir()
+        (tmp_path / "policy" / "jurisdictions.json").write_text(
+            json.dumps(
+                {
+                    "file_type": "jurisdictions",
+                    "jurisdictions": {
+                        "DE": "broken",
+                        "FR": {"timezone": "Europe/Paris"},
+                    },
+                }
+            ),
+            encoding="utf-8",
+        )
+        assert _jurisdiction_country_timezones(tmp_path) == {"FR": "Europe/Paris"}
+
+    def test_jurisdiction_country_timezones_skips_bad_country_codes(
+        self,
+        tmp_path: Path,
+    ) -> None:
+        (tmp_path / "policy").mkdir()
+        (tmp_path / "policy" / "jurisdictions.json").write_text(
+            json.dumps(
+                {
+                    "file_type": "jurisdictions",
+                    "jurisdictions": {
+                        "de": {"timezone": "Europe/Berlin"},
+                        "D": {"timezone": "Europe/Berlin"},
+                        "AT": {"timezone": "Europe/Vienna"},
+                    },
+                }
+            ),
+            encoding="utf-8",
+        )
+        assert _jurisdiction_country_timezones(tmp_path) == {"AT": "Europe/Vienna"}
+
+    def test_jurisdiction_country_timezones_empty_when_resolved_path_missing(
+        self,
+        tmp_path: Path,
+        monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        ghost = tmp_path / "missing-jurisdictions.json"
+
+        def _fake_get_data_file_path(entity: str, **_kwargs: Any) -> Path:
+            assert entity == "jurisdictions"
+            return ghost
+
+        monkeypatch.setattr(limits_scope_mod, "get_data_file_path", _fake_get_data_file_path)
+        assert _jurisdiction_country_timezones(tmp_path) == {}
+
+    def test_provider_timezones_skips_non_dict_registry_rows(self, tmp_path: Path) -> None:
+        (tmp_path / "policy").mkdir()
+        (tmp_path / "policy" / "jurisdictions.json").write_text(
+            json.dumps(
+                {
+                    "file_type": "jurisdictions",
+                    "jurisdictions": {"DE": {"timezone": "Europe/Berlin"}},
+                }
+            ),
+            encoding="utf-8",
+        )
+        (tmp_path / "providers.json").write_text(
+            json.dumps(
+                {
+                    "providers": {
+                        "good": {"country": "DE"},
+                        "bad": "not-a-dict",
+                    }
+                }
+            ),
+            encoding="utf-8",
+        )
+        assert _provider_timezones(tmp_path) == {"good": "Europe/Berlin"}
+
+    def test_provider_timezones_skips_short_or_blank_country(self, tmp_path: Path) -> None:
+        (tmp_path / "policy").mkdir()
+        (tmp_path / "policy" / "jurisdictions.json").write_text(
+            json.dumps(
+                {
+                    "file_type": "jurisdictions",
+                    "jurisdictions": {"DE": {"timezone": "Europe/Berlin"}},
+                }
+            ),
+            encoding="utf-8",
+        )
+        (tmp_path / "providers.json").write_text(
+            json.dumps(
+                {
+                    "providers": {
+                        "ok": {"country": "DE"},
+                        "short": {"country": "D"},
+                        "blank": {"country": "   "},
+                        "not_str": {"country": 99},
+                    }
+                }
+            ),
+            encoding="utf-8",
+        )
+        assert _provider_timezones(tmp_path) == {"ok": "Europe/Berlin"}
