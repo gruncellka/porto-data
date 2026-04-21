@@ -419,7 +419,7 @@ _REQUIRED_ENTITIES = [
 
 # Validate required entities exist - fail fast if mappings.json is incomplete
 _missing = [e for e in _REQUIRED_ENTITIES if e not in _FILE_NAMES]
-if _missing:
+if _missing:  # pragma: no cover — only reachable with a broken/edited mappings.json tree
     raise ValueError(
         f"Missing required entities in mappings.json: {_missing}. "
         f"Available entities: {sorted(_FILE_NAMES.keys())}. "

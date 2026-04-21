@@ -1,7 +1,9 @@
 """Validate provider ``graph.json`` against catalog files.
 
 Implementation is split under this package: ``validator`` (orchestrator),
-``edges``, ``layouts``, ``price_lookup``, ``envelope_geometry``, ``constants``.
+``runner`` (CLI entry + printing), ``edges``, ``layouts``, ``services``,
+``execution_semantics``, ``marks_profiles``, ``provider_rules``, ``dependencies``,
+``units``, ``price_lookup``, ``envelope_geometry``, ``constants``.
 """
 
 from .constants import (
@@ -15,12 +17,12 @@ from .constants import (
     PROVIDER_RULE_METRIC_THICKNESS,
 )
 from .envelope_geometry import envelope_validation_views
-from .validator import (
-    GraphValidator,
+from .runner import (
     _print_analyze_mode,
     _print_validate_mode,
     validate_graph,
 )
+from .validator import GraphValidator
 
 # Tests import ``_envelope_validation_views`` from this module
 _envelope_validation_views = envelope_validation_views
