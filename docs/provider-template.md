@@ -29,7 +29,7 @@ Every operator in `porto_data/providers/<id>/` follows this layout. Registry id 
 
 Provider `graph.json` → `dependencies` may reference:
 
-- `policy/restrictions.json`, `policy/jurisdictions.json`
+- `policy/restrictions.json`, `policy/jurisdictions.json`, `policy/markets.json`
 - `formats/envelopes.json`, `formats/layouts.json`
 
 ## Adding a provider

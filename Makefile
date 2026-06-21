@@ -22,7 +22,7 @@ help:
 	@echo "  make help          - Show this help"
 	@echo ""
 	@echo "Most Common Commands:"
-	@echo "  make validate      - Validate all JSON (schema → mappings → limits → porto_ids → graph)"
+	@echo "  make validate      - Validate all JSON (schema → mappings → markets → limits → porto_ids → graph)"
 	@echo "  make format        - Format JSON and Python"
 	@echo "  make lint          - Lint JSON and Python"
 	@echo "  make quality       - Same as default make"

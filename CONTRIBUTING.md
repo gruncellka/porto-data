@@ -14,7 +14,9 @@ The **`porto` CLI**, **`cli/`**, and **`scripts/`** validators run **only here**
 make
 ```
 
-First run creates `venv`, installs dev dependencies, and runs the full quality gate (validate → format → lint → type-check). Use `make help` for other targets.
+First run of **`make`** (or any target that needs the venv) creates `venv`, installs dev dependencies, and runs the full quality gate (validate → format → lint → type-check). There is no separate **`make setup`** — use **`make`** or **`make help`**.
+
+Pre-commit hooks install automatically on first venv setup when run inside a git checkout.
 
 ## Where files live
 
@@ -75,7 +77,7 @@ Disambiguation when multiple native rows share one `porto_id`: [docs/resolution.
 | `make validate`                                 | Same as full `porto validate`         |
 | `make validate-graph`                           | Graph only                            |
 | `make format` / `make lint` / `make type-check` | Quality                               |
-| `make test` / `make test-cov`                   | Tests (90% coverage gate)             |
+| `make test` / `make test-cov`                   | Tests (**100%** coverage gate on `scripts/` + `cli/`) |
 | `make metadata`                                 | Regenerate metadata                   |
 | `make quality`                                  | validate + format + lint + type-check |
 

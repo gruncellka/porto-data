@@ -3,8 +3,10 @@
 ## Scope
 
 - Review rules for Bugbot in this `porto-data` tree only: data integrity, validation correctness, release safety.
-- **Consistency** means cross-file agreement: registry ↔ mappings ↔ disk, catalog JSON ↔ **`graph.json`**, units, services ↔ prices ↔ graph.
-- **Resolution** (for SDKs/loaders) is anchored in each provider’s **`graph.json`**: **`dependencies`**, **`edges`** (product × zones × weight tiers), **`services`**, plus schema **`porto_data/schemas/graph.schema.json`**. Price lookup uses **`dependencies`** paths and price-schema join keys (`product_id`, `zone`, `weight_tier` / `service_id`). Loaders must not assume removed layouts (`porto_data/data/`, `data_links.json`, top-level **`links`**, **`lookup_rules`**, **`global_settings`**, or **`price_lookup`** on the graph).
+- **Consistency** means cross-file agreement: registry ↔ mappings ↔ disk, **`policy/markets.json`** ↔ provider countries, catalog JSON ↔ **`graph.json`**, units, services ↔ prices ↔ graph, **`porto_id`** ↔ native ids.
+- **Resolution** (for SDKs/loaders) is anchored in each provider’s **`graph.json`**: **`dependencies`**, **`edges`** (product × zones × weight tiers), top-level **`services`**, plus **`porto_data/schemas/graph.schema.json`**. Price lookup uses **`dependencies`** paths and price-schema join keys (`product_id`, `zone`, `weight_tier` / `service_id`). Loaders must not assume removed layouts (`porto_data/data/`, `data_links.json`, top-level **`links`**, **`lookup_rules`**, **`global_settings`**, **`price_lookup`**, or graph key **`available_services`** — use **`services`**).
+- **Provider order** in docs and prose: **`deutschepost` → `ukrposhta` → `laposte` → `swisspost`**.
+- **`limits.json`** with empty **`limits[]`** is **valid** — global restrictions live in **`policy/restrictions.json`**; overlays are optional.
 - Align with `.cursorrules` and `CONTRIBUTING.md`.
 - Do not flag files, workflows, or policies outside this repository.
 
@@ -20,7 +22,7 @@
 If a PR changes `porto_data/policy/**`, `porto_data/formats/**`, `porto_data/providers/**`, `porto_data/schemas/**`, `porto_data/providers.json`, `porto_data/mappings.json`, `scripts/**`, or `cli/**` and has **no** changes under `tests/**`:
 
 - **Title:** `Core data or validation logic changed without tests`
-- **Body:** `Add or update focused tests in tests/ for the new or changed behavior.`
+- **Body:** `Add or update focused tests in tests/ for the new or changed behavior. Target 100% coverage on scripts/ + cli/ (make test-cov).`
 - **Labels:** `quality`, `tests`
 
 ### 2) Do not hand-edit metadata (blocking)
@@ -62,7 +64,7 @@ If a PR adds `sys.path` mutation under `scripts/**` or `cli/**`:
 If changed JSON under `porto_data/**` is minified, not 2-space indented, or keys reshuffled without need:
 
 - **Title:** `JSON formatting or key-order drift`
-- **Body:** `Keep 2 spaces, preserve key order, format with project tooling.`
+- **Body:** `Keep 2 spaces, preserve key order, format with make format-json or scripts/format_json_file.py.`
 - **Labels:** `maintainability`
 
 ### 7) User-visible contract changes → changelog (non-blocking)
@@ -85,14 +87,14 @@ If new/changed code adds `TODO` or `FIXME` without an issue reference (`#123`, `
 
 ## Data consistency and resolution
 
-These rules align reviews with how **`GraphValidator`** (`scripts/validators/graph.py`) and **`validate_mappings_layout`** (`scripts/validators/mappings_layout.py`) protect the bundle. When in doubt, **`make validate`** (or `porto validate`) must pass for all providers.
+These rules align reviews with validators under `scripts/validators/` and **`make validate`** (same order as **`porto validate`**: schema → mappings → markets → limits → porto_ids → graph). Graph logic lives in package **`scripts/validators/graph/`** (not a single `graph.py` file).
 
-### 9) Graph uses `edges`, not legacy `links` (blocking)
+### 9) Graph uses `edges` and `services`, not legacy keys (blocking)
 
-If a diff adds or keeps a **top-level** `"links"` key in any `porto_data/providers/**/graph.json`:
+If a diff adds or keeps a **top-level** `"links"` or `"available_services"` key in any `porto_data/providers/**/graph.json`:
 
-- **Title:** `graph.json must use top-level edges, not links`
-- **Body:** `Resolution graphs use edges (product → zones + weight_tiers). Remove links or rename to edges per graph.schema.json.`
+- **Title:** `graph.json uses removed top-level keys`
+- **Body:** `Use edges (product → zones + weight_tiers) and top-level services (native service ids). Remove links, available_services, lookup_rules, global_settings, price_lookup per graph.schema.json.`
 - **Labels:** `data`, `resolution`
 
 ### 10) Provider registry and mappings stay in lockstep (blocking)
@@ -116,21 +118,53 @@ If a PR adds a new `*.json` under `porto_data/providers/<id>/` and the file is a
 If a PR changes any of **`graph.json`** (`edges`, `services`, `dependencies`), **`products.json`**, **`prices/products.json`**, **`prices/services.json`**, **`zones.json`**, or **`weights.json`** for a provider:
 
 - **Title:** `Verify graph resolution and cross-file consistency`
-- **Body:** `Run porto validate --type graph (or make validate) for that provider. Confirm edges reference existing product_ids; zones and weight_tiers match products and price rows; dependencies price paths are correct; services and price service_ids use native ids from services.json.`
+- **Body:** `Run porto validate --type graph (or make validate) for that provider. Confirm edges reference existing product_ids; zones and weight_tiers match products and price rows; dependencies price paths are correct; graph services and price service_ids use native ids from services.json.`
 - **Labels:** `resolution`, `consistency`
 
-### 13) Validator changes must keep graph/mappings guarantees (blocking)
+### 13) Validator changes must keep tests and coverage (blocking)
 
-If a PR edits **`scripts/validators/graph.py`** or **`scripts/validators/mappings_layout.py`** without updates to **`tests/`** (or without clear refactor-only rationale in the description):
+If a PR edits **`scripts/validators/**`** or **`cli/**`** without updates to **`tests/`** (or without clear refactor-only rationale in the description):
 
-- **Title:** `Validator change without tests`
-- **Body:** `Graph and layout validators enforce resolution and consistency; extend or adjust tests when behavior changes.`
+- **Title:** `Validator or CLI change without tests`
+- **Body:** `Validators enforce resolution and consistency; extend or adjust tests when behavior changes. make test-cov requires 100% on scripts/ + cli/.`
 - **Labels:** `quality`, `tests`
 
 ### 14) Schema changes for graph or catalogs need data alignment (non-blocking)
 
-If a PR changes **`porto_data/schemas/graph.schema.json`** or schemas for **`products`**, **`prices`**, **`services`**, **`zones`**, or **`weights`**:
+If a PR changes **`porto_data/schemas/graph.schema.json`**, **`markets.schema.json`**, **`porto_ids.schema.json`**, or schemas for **`products`**, **`prices`**, **`services`**, **`zones`**, or **`weights`**:
 
 - **Title:** `Schema change — confirm all providers still validate`
-- **Body:** `Run porto validate --type schema and full porto validate; update every provider’s JSON that must satisfy the new contract.`
+- **Body:** `Run porto validate (or make validate) for all providers; update every JSON file that must satisfy the new contract.`
+- **Labels:** `data`, `consistency`
+
+### 15) Markets must be validated in CI (blocking)
+
+If a PR changes validation tooling or **`.github/workflows/validation.yml`** and the workflow runs mappings / limits / porto_ids / graph but **not** `porto validate --type markets` (or equivalent **`validate-markets`** job):
+
+- **Title:** `CI skips markets validation`
+- **Body:** `make validate and pre-commit include markets between mappings and limits. Add a validate-markets job so policy/markets.json and provider country coverage cannot drift silently.`
+- **Labels:** `ci`, `consistency`
+
+### 16) Markets validator must cover all registry providers (blocking)
+
+If **`scripts/validators/markets.py`** (or equivalent) iterates only a fixed provider tuple (e.g. **`PROVIDER_IDS_ORDER`**) and skips other ids present in **`providers.json`**:
+
+- **Title:** `Markets check ignores extra registry providers`
+- **Body:** `Every providers.json entry with a country must have a matching markets[CC] row; walk the full registry, not a hard-coded subset.`
+- **Labels:** `data`, `consistency`
+
+### 17) Do not require rows in empty limits.json (non-blocking)
+
+If a review comment treats **`limits[]`: []** or **`frameworks`: {}** in **`providers/*/limits.json`** as incomplete or missing compliance data:
+
+- **Title:** `Empty limits.json is intentional`
+- **Body:** `Sanctions and destination regimes belong in policy/restrictions.json. limits.json is an optional provider overlay slot; empty is the expected steady state until a citable operator letter rule is modeled.`
+- **Labels:** `docs`, `consistency`
+
+### 18) VAT and currency belong in markets, not providers.json (blocking)
+
+If a PR adds **`vat`** or per-provider default currency fields to **`providers.json`** instead of **`policy/markets.json`**:
+
+- **Title:** `Fiscal defaults must use policy/markets.json`
+- **Body:** `providers.json carries identity and country; markets[country].currency / vat / intl_ccy hold fiscal defaults.`
 - **Labels:** `data`, `consistency`
