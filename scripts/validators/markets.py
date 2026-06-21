@@ -5,7 +5,6 @@ from __future__ import annotations
 from typing import Any
 
 from scripts.data_files import (
-    PROVIDER_IDS_ORDER,
     load_markets,
     load_providers_registry,
 )
@@ -78,10 +77,7 @@ def validate_markets() -> int:
         return 1
 
     countries = _provider_countries()
-    for pid in PROVIDER_IDS_ORDER:
-        cc = countries.get(pid)
-        if cc is None:
-            continue
+    for pid, cc in countries.items():
         if cc not in markets:
             errors.append(
                 f"providers.{pid}.country {cc!r} has no markets.{cc} entry in policy/markets.json"

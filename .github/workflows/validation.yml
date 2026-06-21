@@ -52,7 +52,7 @@ jobs:
     validate-limits:
         name: Validate limits (letter scope)
         runs-on: ubuntu-22.04
-        needs: [validate-mappings]
+        needs: [validate-markets]
         steps:
             - uses: actions/checkout@v4
             - uses: actions/setup-python@v5
@@ -63,6 +63,21 @@ jobs:
               run: |
                   make ensure-venv
                   . venv/bin/activate && PYTHONPATH=. python -m cli.main validate --type limits
+
+    validate-markets:
+        name: Validate policy/markets.json
+        runs-on: ubuntu-22.04
+        needs: [validate-mappings]
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-python@v5
+              with:
+                  python-version: ${{ env.PYTHON_VERSION }}
+                  cache: 'pip'
+            - name: Validate markets vs provider countries
+              run: |
+                  make ensure-venv
+                  . venv/bin/activate && PYTHONPATH=. python -m cli.main validate --type markets
 
     validate-porto-ids:
         name: Validate porto_id vocabulary
@@ -108,7 +123,7 @@ jobs:
     verify-metadata:
         name: Verify Metadata
         runs-on: ubuntu-22.04
-        needs: [validate-schemas, validate-mappings, validate-limits, validate-porto-ids, validate-graph]
+        needs: [validate-schemas, validate-mappings, validate-markets, validate-limits, validate-porto-ids, validate-graph]
         steps:
             - uses: actions/checkout@v4
             - uses: actions/setup-python@v5
@@ -186,6 +201,7 @@ jobs:
             - validate-schemas
             - lint-json
             - validate-mappings
+            - validate-markets
             - validate-limits
             - validate-porto-ids
             - validate-graph

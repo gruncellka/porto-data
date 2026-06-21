@@ -191,6 +191,20 @@ class TestValidateMarketsBranches:
         )
         assert validate_markets() == 0
 
+    def test_missing_market_for_extra_registry_provider(self, tmp_path, capsys):
+        _write_registry(
+            tmp_path,
+            countries={
+                "deutschepost": "DE",
+                "newoperator": "PL",
+            },
+        )
+        _write_markets(tmp_path, {"DE": {"currency": "EUR"}})
+        with patch.object(data_files, "_get_project_root", return_value=tmp_path):
+            assert validate_markets() == 1
+        out = capsys.readouterr().out
+        assert "providers.newoperator.country 'PL'" in out
+
     def test_provider_row_skips_non_dict_country(self, tmp_path, capsys, monkeypatch):
         monkeypatch.setattr(
             "scripts.validators.markets.load_providers_registry",
