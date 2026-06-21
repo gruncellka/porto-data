@@ -9,7 +9,7 @@
     "project",
     "generated_at",
     "policy",
-    "mails",
+    "formats",
     "registry",
     "providers",
     "checksums"
@@ -122,7 +122,7 @@
         "$ref": "#/definitions/entityBundle"
       }
     },
-    "mails": {
+    "formats": {
       "type": "object",
       "additionalProperties": {
         "$ref": "#/definitions/entityBundle"

@@ -239,7 +239,7 @@ class TestGetExistingChecksumsFromMetadata:
     """Test get_existing_checksums_from_metadata function."""
 
     def test_get_existing_checksums_from_metadata_bundle_structure(self, tmp_path):
-        """Test extracting checksums from policy/mails/registry + providers metadata structure."""
+        """Test extracting checksums from policy/formats/registry + providers metadata structure."""
         metadata_file = tmp_path / "metadata.json"
         metadata = {
             "policy": {
@@ -251,7 +251,7 @@ class TestGetExistingChecksumsFromMetadata:
                     },
                 }
             },
-            "mails": {},
+            "formats": {},
             "registry": {
                 "providers": {
                     "data": {"path": "providers.json", "checksum": "reg123"},
@@ -295,7 +295,7 @@ class TestGetExistingChecksumsFromMetadata:
                     "schema": {"path": "schemas/jurisdictions.schema.json", "checksum": "j2"},
                 }
             },
-            "mails": {},
+            "formats": {},
             "registry": {
                 "providers": {
                     "data": {"path": "providers.json", "checksum": "r1"},

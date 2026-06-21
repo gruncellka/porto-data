@@ -14,7 +14,7 @@
       "depends_on": [
         "zones.json",
         "weights.json",
-        "mails/envelopes.json",
+        "formats/envelopes.json",
         "services.json",
         "features.json",
         "marks.json"
@@ -60,7 +60,7 @@
       "description": "Weight brackets"
     },
     "envelopes": {
-      "file": "mails/envelopes.json",
+      "file": "formats/envelopes.json",
       "depends_on": [],
       "description": "Envelope catalog"
     },

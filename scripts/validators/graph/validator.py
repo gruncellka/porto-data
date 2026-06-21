@@ -67,7 +67,7 @@ class GraphValidator:
 
         Args:
             data_dir: Path to directory containing all JSON files (single-directory layout).
-            project_root: Path to porto_data root (with policy/, mails/, providers/).
+            project_root: Path to porto_data root (with policy/, formats/, providers/).
             provider: Provider ID when using project_root (default: deutschepost).
 
         When data_dir is provided, all entity files are read from that directory.

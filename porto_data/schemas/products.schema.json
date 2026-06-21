@@ -28,7 +28,7 @@
     },
     "unit": {
       "type": "object",
-      "description": "Product-level units: weight only. Envelope formats: envelope_ids reference mails/envelopes.json; print layout via mails/layouts.json by jurisdiction.",
+      "description": "Product-level units: weight only. Envelope formats: envelope_ids reference formats/envelopes.json; print layout via formats/layouts.json by jurisdiction.",
       "required": [
         "weight"
       ],

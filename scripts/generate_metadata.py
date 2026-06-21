@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Any
 
 from scripts.data_files import (
-    MAILS_MAPPINGS_KEY,
+    FORMATS_MAPPINGS_KEY,
     MAPPINGS_FILENAME,
     MAPPINGS_SCHEMA_RELPATH,
     POLICY_MAPPINGS_KEY,
@@ -108,9 +108,9 @@ get_schema_url = _schema_url
 
 
 def generate_metadata() -> dict[str, Any]:
-    """Build full metadata dict (project, policy/mails/registry, providers, checksums, generated_at).
+    """Build full metadata dict (project, policy/formats/registry, providers, checksums, generated_at).
 
-    Top-level keys ``policy``, ``mails``, ``registry`` mirror ``mappings.json`` blocks.
+    Top-level keys ``policy``, ``formats``, ``registry`` mirror ``mappings.json`` blocks.
     """
     root = get_project_root()
     checksums = get_all_file_checksums()
@@ -118,7 +118,7 @@ def generate_metadata() -> dict[str, Any]:
     project_meta = _get_project_meta(root)
 
     policy_entities: dict[str, dict[str, Any]] = {}
-    mails_entities: dict[str, dict[str, Any]] = {}
+    formats_entities: dict[str, dict[str, Any]] = {}
     registry_entities: dict[str, dict[str, Any]] = {}
     providers_entities: dict[str, dict[str, Any]] = {}
 
@@ -136,8 +136,8 @@ def generate_metadata() -> dict[str, Any]:
         }
         if data_rel.startswith("policy/"):
             policy_entities[name] = entity
-        elif data_rel.startswith("mails/"):
-            mails_entities[name] = entity
+        elif data_rel.startswith("formats/"):
+            formats_entities[name] = entity
         elif data_rel == PROVIDERS_REGISTRY_FILENAME:
             registry_entities[name] = entity
         elif data_rel.startswith(f"{PROVIDERS_DIR}/"):
@@ -171,7 +171,7 @@ def generate_metadata() -> dict[str, Any]:
         "project": project_meta,
         "generated_at": datetime.now(UTC).isoformat().replace("+00:00", "Z"),
         POLICY_MAPPINGS_KEY: policy_entities,
-        MAILS_MAPPINGS_KEY: mails_entities,
+        FORMATS_MAPPINGS_KEY: formats_entities,
         REGISTRY_MAPPINGS_KEY: registry_entities,
         PROVIDERS_DIR: providers_entities,
         "checksums": {
@@ -220,7 +220,7 @@ def main() -> None:
             f.write("\n")
         entity_count = (
             len(new_meta.get(POLICY_MAPPINGS_KEY, {}))
-            + len(new_meta.get(MAILS_MAPPINGS_KEY, {}))
+            + len(new_meta.get(FORMATS_MAPPINGS_KEY, {}))
             + len(new_meta.get(REGISTRY_MAPPINGS_KEY, {}))
             + sum(len(p) for p in new_meta.get(PROVIDERS_DIR, {}).values())
         )

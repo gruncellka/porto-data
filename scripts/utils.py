@@ -58,9 +58,9 @@ def get_all_file_checksums() -> dict[str, str]:
 
 
 def _iter_metadata_entities(metadata: dict) -> list[dict]:
-    """Yield entity dicts from metadata (policy/mails/registry + providers or flat ``entities``)."""
+    """Yield entity dicts from metadata (policy/formats/registry + providers or flat ``entities``)."""
     from scripts.data_files import (
-        MAILS_MAPPINGS_KEY,
+        FORMATS_MAPPINGS_KEY,
         POLICY_MAPPINGS_KEY,
         PROVIDERS_DIR,
         REGISTRY_MAPPINGS_KEY,
@@ -69,11 +69,11 @@ def _iter_metadata_entities(metadata: dict) -> list[dict]:
     entities = []
     if (
         POLICY_MAPPINGS_KEY in metadata
-        and MAILS_MAPPINGS_KEY in metadata
+        and FORMATS_MAPPINGS_KEY in metadata
         and REGISTRY_MAPPINGS_KEY in metadata
         and PROVIDERS_DIR in metadata
     ):
-        for key in (POLICY_MAPPINGS_KEY, MAILS_MAPPINGS_KEY, REGISTRY_MAPPINGS_KEY):
+        for key in (POLICY_MAPPINGS_KEY, FORMATS_MAPPINGS_KEY, REGISTRY_MAPPINGS_KEY):
             for entity in metadata[key].values():
                 entities.append(entity)
         for provider_entities in metadata[PROVIDERS_DIR].values():

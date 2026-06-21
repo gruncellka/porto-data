@@ -5,7 +5,7 @@
 
 **Porto Data** is **JSON + schemas** for national postal operators under one shared layout and vocabulary. Published on **npm** and **PyPI** with the **same** `porto_data/` tree on every platform.
 
-The bundle covers **Deutsche Post**, **Swiss Post**, and **La Poste** with shared policy/mails data at the bundle root and **per-operator** catalogs under **`providers/<id>/`** (products, services, prices, zones, weight tiers, features, limits, **`graph.json`**).
+The bundle covers **Deutsche Post**, **Swiss Post**, and **La Poste** with shared policy/formats data at the bundle root and **per-operator** catalogs under **`providers/<id>/`** (products, services, prices, zones, weight tiers, features, limits, **`graph.json`**).
 
 ---
 
@@ -27,7 +27,7 @@ uv add gruncellka-porto-data
 poetry add gruncellka-porto-data
 ```
 
-Shipped layout: **`porto_data/policy/`**, **`porto_data/mails/`**, **`porto_data/providers/<id>/`**, **`porto_data/schemas/`**, **`mappings.json`**, **`metadata.json`**. Resolve paths via **`mappings.json`** / **`metadata.json`** (no legacy flat `data/` tree).
+Shipped layout: **`porto_data/policy/`**, **`porto_data/formats/`**, **`porto_data/providers/<id>/`**, **`porto_data/schemas/`**, **`mappings.json`**, **`metadata.json`**. Resolve paths via **`mappings.json`** / **`metadata.json`** (no legacy flat `data/` tree).
 
 - **Python:** `import porto_data` and open files relative to the package root.
 - **TypeScript / JavaScript:** same paths (e.g. `porto_data/providers.json`, `porto_data/policy/restrictions.json`, `porto_data/providers/deutschepost/products.json`).
@@ -57,8 +57,8 @@ E-commerce and logistics (multi-carrier quotes, letters), compliance (sanctions,
 | `features.json`             | Operator-scoped **`id`**, unified **`porto_id`**, native **`name`**, English **`label`**                                                                                                                                                               |
 | `limits.json`               | Operational limits and compliance framework metadata                                                                                                                                                                                                   |
 | `graph.json`                | **`dependencies`** (file load order), **`edges`** (per product: allowed zones + weight tiers), **`lookup_rules`**, **`global_settings`**, **`unit`**                                                                                                   |
-| `mails/layouts.json`        | Jurisdiction-keyed print/window geometry (**DE / CH / FR**) per envelope **`id`** (`file_type` **`layouts`**); optional **`standard`** (norm token, e.g. **DIN678**, **SN010130**, **NFEN13850**); physical sizes remain in **`mails/envelopes.json`** |
-| `mails/envelopes.json`      | Physical envelope catalog: **`envelopes[]`** with **`id`**, **`width`/`height`**, **`standard`** `ISO269`, **`sheets[]`** (ISO 216 **`sheet`** + **`fold`**)                                                                                           |
+| `formats/layouts.json`        | Jurisdiction-keyed print/window geometry (**DE / CH / FR**) per envelope **`id`** (`file_type` **`layouts`**); optional **`standard`** (norm token, e.g. **DIN678**, **SN010130**, **NFEN13850**); physical sizes remain in **`formats/envelopes.json`** |
+| `formats/envelopes.json`      | Physical envelope catalog: **`envelopes[]`** with **`id`**, **`width`/`height`**, **`standard`** `ISO269`, **`sheets[]`** (ISO 216 **`sheet`** + **`fold`**)                                                                                           |
 | `policy/restrictions.json`  | Sanctions-style restrictions and compliance frameworks                                                                                                                                                                                                 |
 | `policy/jurisdictions.json` | `jurisdictions.eu` / `jurisdictions.un` (ISO alpha-2; align with symbolic `EU` / `UN`)                                                                                                                                                                 |
 

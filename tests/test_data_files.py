@@ -210,9 +210,9 @@ class TestConstantsAndHelpers:
     """Test bundle mapping keys, PROVIDERS_DIR, get_global_data_paths, get_provider_data_paths."""
 
     def test_bundle_mapping_keys_and_providers_dir_constants(self):
-        """Policy/mails/registry keys and PROVIDERS_DIR match mappings.json / metadata.json."""
+        """Policy/formats/registry keys and PROVIDERS_DIR match mappings.json / metadata.json."""
         assert data_files.POLICY_MAPPINGS_KEY == "policy"
-        assert data_files.MAILS_MAPPINGS_KEY == "mails"
+        assert data_files.FORMATS_MAPPINGS_KEY == "formats"
         assert data_files.REGISTRY_MAPPINGS_KEY == "registry"
         assert data_files.PROVIDERS_DIR == "providers"
 
@@ -220,13 +220,13 @@ class TestConstantsAndHelpers:
         """get_global_data_paths returns entity name -> path mapping."""
         result = data_files.get_global_data_paths()
         assert isinstance(result, dict)
-        # Non-provider paths: policy/, mails/, or providers.json at bundle root
+        # Non-provider paths: policy/, formats/, or providers.json at bundle root
         for key, val in result.items():
             assert isinstance(key, str)
             assert isinstance(val, str)
             assert (
                 val.startswith("policy/")
-                or val.startswith("mails/")
+                or val.startswith("formats/")
                 or val == data_files.PROVIDERS_REGISTRY_FILENAME
             )
 
@@ -251,7 +251,7 @@ class TestConstantsAndHelpers:
                 {
                     "mappings": {
                         "policy": "not_a_dict",
-                        "mails": {},
+                        "formats": {},
                         "registry": {},
                         "providers": {
                             "deutschepost": {
@@ -273,7 +273,7 @@ class TestConstantsAndHelpers:
                 {
                     "mappings": {
                         "policy": {},
-                        "mails": {},
+                        "formats": {},
                         "registry": {},
                         "providers": {"deutschepost": "not_a_dict"},
                     }
@@ -362,7 +362,7 @@ class TestGetDataFilePathProjectRoot:
                 {
                     "mappings": {
                         "policy": {},
-                        "mails": {},
+                        "formats": {},
                         "registry": {},
                         "providers": {
                             "acme": {

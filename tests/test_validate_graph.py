@@ -15,7 +15,7 @@ class TestGraphValidatorInitialization:
     """Test GraphValidator initialization and error handling."""
 
     def test_validator_initialization_with_project_root(self, project_root):
-        """Test validator with project_root + provider (policy/, mails/, providers/)."""
+        """Test validator with project_root + provider (policy/, formats/, providers/)."""
         from scripts.data_files import POLICY_MAPPINGS_KEY, PROVIDERS_DIR
 
         porto_data = project_root / "porto_data"

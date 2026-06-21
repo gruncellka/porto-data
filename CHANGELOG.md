@@ -6,10 +6,10 @@ All notable changes to this project will be documented in this file.
 
 ### Breaking (bundle layout & resolution)
 
-- **Layout:** Shared data is **`porto_data/policy/`** (restrictions, jurisdictions) and **`porto_data/mails/`** (envelopes, layouts). Per-operator data is **`porto_data/providers/<id>/`**. **`porto_data/providers.json`** is the provider registry at the bundle root (not under `global/`). Legacy flat **`porto_data/data/`** and **`data_links.json`** are removed; **`graph.json`** (`file_type` **`graph`**) holds **dependencies**, **`edges`** (product × zones × weight tiers), **lookup_rules**, and **global_settings**.
+- **Layout:** Shared data is **`porto_data/policy/`** (restrictions, jurisdictions) and **`porto_data/formats/`** (envelopes, layouts). Per-operator data is **`porto_data/providers/<id>/`**. **`porto_data/providers.json`** is the provider registry at the bundle root (not under `global/`). Legacy flat **`porto_data/data/`** and **`data_links.json`** are removed; **`graph.json`** (`file_type` **`graph`**) holds **dependencies**, **`edges`** (product × zones × weight tiers), **lookup_rules**, and **global_settings**.
 - **Prices:** **`providers/<id>/prices.json`** split into **`prices/products.json`** (`product_prices`) and **`prices/services.json`** (`service_prices`).
 - **Weights:** **`weight_tiers.json`** → **`weights.json`** (schema **`weights.schema.json`**).
-- **Products:** **`supported_zones`** → **`zones`**; physical formats via **`envelope_ids`** referencing **`mails/envelopes.json`**; **`unit`** is **`weight`** (`g`) only.
+- **Products:** **`supported_zones`** → **`zones`**; physical formats via **`envelope_ids`** referencing **`formats/envelopes.json`**; **`unit`** is **`weight`** (`g`) only.
 - **Features:** No global features file — only **`providers/<id>/features.json`**. **`services.json`** uses **`porto_id`**; graph/prices reference native service **`id`**.
 - **Registry:** **`deutschepost`**, **`swisspost`**, **`laposte`**, **`ukrposhta`** in **`providers.json`** and **`mappings.json`**.
 

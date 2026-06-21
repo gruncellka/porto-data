@@ -21,7 +21,7 @@ Reference for **reconciling JSON with official letter/postcard tariffs** (not a 
 | `limits.json` | `limits` | Provider operational overlays on top of global policy (often empty) |
 | `graph.json` | `graph` | Edges, units (EUR cents), `lookup_rules`, `available_services` |
 
-**Loaded with the bundle (not under this folder):** `policy/jurisdictions.json`, `policy/restrictions.json`, `mails/envelopes.json`, `mails/layouts.json` — see `graph.json` `dependencies`.
+**Loaded with the bundle (not under this folder):** `policy/jurisdictions.json`, `policy/restrictions.json`, `formats/envelopes.json`, `formats/layouts.json` — see `graph.json` `dependencies`.
 
 ---
 

@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/envelopes.schema.json",
   "title": "Envelopes (international physical sizes)",
-  "description": "Canonical envelope id and face dimensions (mm). standard ISO269 is the catalog token for the ISO 269 physical envelope-size family. Print/window geometry is jurisdiction-specific: mails/layouts.json.",
+  "description": "Canonical envelope id and face dimensions (mm). standard ISO269 is the catalog token for the ISO 269 physical envelope-size family. Print/window geometry is jurisdiction-specific: formats/layouts.json.",
   "type": "object",
   "required": [
     "file_type",

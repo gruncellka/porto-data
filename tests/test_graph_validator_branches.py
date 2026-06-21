@@ -547,7 +547,7 @@ class TestGraphLoadAndInit:
     def test_graph_validator_raises_when_provider_dir_missing(self, tmp_path):
         root = tmp_path / "porto_data"
         (root / "policy").mkdir(parents=True)
-        (root / "mails").mkdir(parents=True)
+        (root / "formats").mkdir(parents=True)
         (root / "providers").mkdir(parents=True)
         with pytest.raises(FileNotFoundError, match="Provider directory"):
             GraphValidator(project_root=root, provider="deutschepost")

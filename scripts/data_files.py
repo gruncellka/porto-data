@@ -6,7 +6,7 @@ This module provides:
 - Validation of required entities at import time
 
 Schema→data paths come from mappings.json. Provider ids come from providers.json (bundle root);
-mappings.providers keys must match that registry. Layout: policy/, mails/, providers/{id}/.
+mappings.providers keys must match that registry. Layout: policy/, formats/, providers/{id}/.
 """
 
 import json
@@ -17,25 +17,25 @@ PROVIDERS_DIR = "providers"
 
 # Non-provider schema→data blocks in mappings.json / metadata.json (mirror bundle layout).
 POLICY_MAPPINGS_KEY = "policy"
-MAILS_MAPPINGS_KEY = "mails"
+FORMATS_MAPPINGS_KEY = "formats"
 REGISTRY_MAPPINGS_KEY = "registry"
 BUNDLE_MAPPINGS_KEYS: Final[tuple[str, ...]] = (
     POLICY_MAPPINGS_KEY,
-    MAILS_MAPPINGS_KEY,
+    FORMATS_MAPPINGS_KEY,
     REGISTRY_MAPPINGS_KEY,
 )
 
-# Bundle-relative prefixes for policy/mails data (not providers/<id>/ or root registry).
-SHARED_BUNDLE_PATH_PREFIXES: Final[tuple[str, ...]] = ("policy/", "mails/")
+# Bundle-relative prefixes for policy/formats data (not providers/<id>/ or root registry).
+SHARED_BUNDLE_PATH_PREFIXES: Final[tuple[str, ...]] = ("policy/", "formats/")
 
 
 def is_shared_bundle_data_path(data_path: str) -> bool:
-    """True if ``data_path`` is under ``policy/`` or ``mails/`` (not registry or provider)."""
+    """True if ``data_path`` is under ``policy/`` or ``formats/`` (not registry or provider)."""
     return any(data_path.startswith(p) for p in SHARED_BUNDLE_PATH_PREFIXES)
 
 
 def _has_structured_mappings(mappings: dict[str, Any]) -> bool:
-    """True if mappings use policy/mails/registry/providers blocks (not flat schema→data)."""
+    """True if mappings use policy/formats/registry/providers blocks (not flat schema→data)."""
     return any(k in mappings for k in (*BUNDLE_MAPPINGS_KEYS, PROVIDERS_DIR))
 
 
@@ -61,7 +61,7 @@ def _get_project_root() -> Path:
     3. Current working directory
 
     Returns:
-        Path to the directory containing mappings.json (and policy/, mails/, providers/)
+        Path to the directory containing mappings.json (and policy/, formats/, providers/)
 
     Raises:
         FileNotFoundError: If mappings.json cannot be found
@@ -106,7 +106,7 @@ def get_project_root() -> Path:
 
 
 def _load_mappings_raw(mappings_path: str | None = None) -> dict[str, Any]:
-    """Load raw mappings from mappings.json (policy/mails/registry + providers)."""
+    """Load raw mappings from mappings.json (policy/formats/registry + providers)."""
     if mappings_path is None:
         project_root = _get_project_root()
         mappings_file = project_root / "mappings.json"
@@ -128,7 +128,7 @@ def _load_mappings_raw(mappings_path: str | None = None) -> dict[str, Any]:
 
 
 def _expand_mappings_to_pairs(mappings: dict[str, Any]) -> list[tuple[str, str]]:
-    """Expand policy/mails/registry + providers to flat (schema_path, data_path) pairs."""
+    """Expand policy/formats/registry + providers to flat (schema_path, data_path) pairs."""
     pairs: list[tuple[str, str]] = []
 
     for key in BUNDLE_MAPPINGS_KEYS:
@@ -254,7 +254,7 @@ def get_data_file_path(
     schema_key = f"schemas/{entity_name}.schema.json"
     effective_provider = provider if provider is not None else DEFAULT_PROVIDER
 
-    # Non-provider entities (paths from mappings: policy/, mails/, root registry)
+    # Non-provider entities (paths from mappings: policy/, formats/, root registry)
     global_entities = {
         "envelopes",
         "layouts",
@@ -289,7 +289,7 @@ def get_data_file_path(
 def get_data_files() -> set[str]:
     """Get set of bundle-relative data paths from mappings.json.
 
-    Values match ``mappings`` targets (e.g. ``mails/envelopes.json``,
+    Values match ``mappings`` targets (e.g. ``formats/envelopes.json``,
     ``providers/deutschepost/prices/products.json``). Excludes the root
     ``providers.json`` registry (not a graph dependency).
     """
@@ -304,7 +304,7 @@ def get_graph_dependency_file_refs(provider: str) -> set[str]:
 
     Provider files use paths relative to ``providers/<id>/`` (e.g.
     ``prices/products.json``, ``products.json``). Shared bundle paths use
-    ``policy/`` and ``mails/``. Aligns with ``mappings.json``
+    ``policy/`` and ``formats/``. Aligns with ``mappings.json``
     after stripping the provider prefix.
     """
     prefix = f"{PROVIDERS_DIR}/{provider}/"
@@ -320,7 +320,7 @@ def get_graph_dependency_file_refs(provider: str) -> set[str]:
 
 
 def get_global_data_paths() -> dict[str, str]:
-    """Map entity name → data path for policy, mails, and root registry (non-provider blocks)."""
+    """Map entity name → data path for policy, formats, and root registry (non-provider blocks)."""
     mappings = _load_mappings_raw()
     out: dict[str, str] = {}
     for key in BUNDLE_MAPPINGS_KEYS:
@@ -397,7 +397,7 @@ _FILE_NAMES = get_all_data_file_names()
 
 # Minimum schema→data entity keys that must appear in mappings.json at import time.
 # Covers graph resolution files, per-provider catalog surface, and bundle-shared files
-# (policy/, mails/, provider registry, jurisdictions). Basenames for
+# (policy/, formats/, provider registry, jurisdictions). Basenames for
 # provider-scoped rows come from the first matching mapping when names differ.
 _REQUIRED_ENTITIES = [
     "envelopes",

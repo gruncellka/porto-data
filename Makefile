@@ -88,7 +88,7 @@ validate-graph:
 
 format-json:
 	@if [ -n "$(CHECK)" ]; then echo "Checking JSON formatting..."; else echo "Formatting JSON files..."; fi
-	@for file in porto_data/*.json porto_data/schemas/*.json porto_data/policy/*.json porto_data/mails/*.json porto_data/providers/*/*.json porto_data/providers/*/prices/*.json; do \
+	@for file in porto_data/*.json porto_data/schemas/*.json porto_data/policy/*.json porto_data/formats/*.json porto_data/providers/*/*.json porto_data/providers/*/prices/*.json; do \
 		if [ -f "$$file" ]; then \
 			if [ -n "$(CHECK)" ]; then \
 				$(PYTHON3) scripts/format_json_file.py --check "$$file" && echo "✓ $$file (already formatted)" || (echo "✗ $$file is not properly formatted"; exit 1); \
@@ -101,7 +101,7 @@ format-json:
 
 lint-json:
 	@echo "Linting JSON files for syntax errors..."
-	@for file in porto_data/*.json porto_data/schemas/*.json porto_data/policy/*.json porto_data/mails/*.json porto_data/providers/*/*.json porto_data/providers/*/prices/*.json; do \
+	@for file in porto_data/*.json porto_data/schemas/*.json porto_data/policy/*.json porto_data/formats/*.json porto_data/providers/*/*.json porto_data/providers/*/prices/*.json; do \
 		if [ -f "$$file" ]; then \
 			$(PYTHON3) -m json.tool "$$file" > /dev/null && echo "✓ $$file" || (echo "✗ $$file: JSON syntax error" && exit 1); \
 		fi; \

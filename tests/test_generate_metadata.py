@@ -215,7 +215,7 @@ class TestGenerateMetadata:
         assert metadata["$schema"].endswith("porto_data/schemas/metadata.schema.json")
         assert "project" in metadata
         assert "policy" in metadata
-        assert "mails" in metadata
+        assert "formats" in metadata
         assert "registry" in metadata
         assert "providers" in metadata
         assert "generated_at" in metadata
@@ -244,11 +244,11 @@ class TestGenerateMetadata:
         metadata = generate_metadata()
 
         assert "policy" in metadata
-        assert "mails" in metadata
+        assert "formats" in metadata
         assert "registry" in metadata
         assert "providers" in metadata
         assert isinstance(metadata["policy"], dict)
-        assert isinstance(metadata["mails"], dict)
+        assert isinstance(metadata["formats"], dict)
         assert isinstance(metadata["registry"], dict)
         assert isinstance(metadata["providers"], dict)
         assert "bundle" in metadata
@@ -286,11 +286,11 @@ class TestGenerateMetadata:
         with patch("scripts.generate_metadata.Path.exists", return_value=False):
             metadata = generate_metadata()
         assert "policy" in metadata
-        assert "mails" in metadata
+        assert "formats" in metadata
         assert "registry" in metadata
         assert "providers" in metadata
         assert metadata["policy"] == {}
-        assert metadata["mails"] == {}
+        assert metadata["formats"] == {}
         assert metadata["registry"] == {}
         assert metadata["providers"] == {}
         assert "bundle" not in metadata

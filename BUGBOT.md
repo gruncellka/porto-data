@@ -17,7 +17,7 @@
 
 ### 1) Data or schema changes need test updates (blocking)
 
-If a PR changes `porto_data/policy/**`, `porto_data/mails/**`, `porto_data/providers/**`, `porto_data/schemas/**`, `porto_data/providers.json`, `porto_data/mappings.json`, `scripts/**`, or `cli/**` and has **no** changes under `tests/**`:
+If a PR changes `porto_data/policy/**`, `porto_data/formats/**`, `porto_data/providers/**`, `porto_data/schemas/**`, `porto_data/providers.json`, `porto_data/mappings.json`, `scripts/**`, or `cli/**` and has **no** changes under `tests/**`:
 
 - **Title:** `Core data or validation logic changed without tests`
 - **Body:** `Add or update focused tests in tests/ for the new or changed behavior.`
@@ -33,7 +33,7 @@ If a PR edits `porto_data/metadata.json` without related changes to data, schema
 
 ### 3) Data / schema / mappings changes need refreshed metadata (blocking)
 
-If a PR changes `porto_data/policy/**`, `porto_data/mails/**`, `porto_data/providers/**`, `porto_data/schemas/**`, or `porto_data/mappings.json` but **not** `porto_data/metadata.json`:
+If a PR changes `porto_data/policy/**`, `porto_data/formats/**`, `porto_data/providers/**`, `porto_data/schemas/**`, or `porto_data/mappings.json` but **not** `porto_data/metadata.json`:
 
 - **Title:** `Data or schema changed without metadata refresh`
 - **Body:** `Run make metadata and commit porto_data/metadata.json in the same PR.`
@@ -67,7 +67,7 @@ If changed JSON under `porto_data/**` is minified, not 2-space indented, or keys
 
 ### 7) User-visible contract changes → changelog (non-blocking)
 
-If a PR changes published JSON contracts under `porto_data/policy/**`, `porto_data/mails/**`, `porto_data/providers/**`, `porto_data/schemas/**`, or `mappings.json` without `CHANGELOG.md`:
+If a PR changes published JSON contracts under `porto_data/policy/**`, `porto_data/formats/**`, `porto_data/providers/**`, `porto_data/schemas/**`, or `mappings.json` without `CHANGELOG.md`:
 
 - **Title:** `User-visible data change without changelog update`
 - **Body:** `Document notable consumer-facing changes in CHANGELOG.md.`

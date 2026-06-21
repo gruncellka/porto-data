@@ -14,7 +14,7 @@
       "depends_on": [
         "zones.json",
         "weights.json",
-        "mails/envelopes.json",
+        "formats/envelopes.json",
         "services.json",
         "features.json",
         "marks.json"
@@ -60,16 +60,16 @@
       "description": "Weight brackets (tier ids) are standalone definitions"
     },
     "envelopes": {
-      "file": "mails/envelopes.json",
+      "file": "formats/envelopes.json",
       "depends_on": [],
-      "description": "Global envelope id catalog: physical front size (mm); international baseline (e.g. ISO 269); file mails/envelopes.json"
+      "description": "Global envelope id catalog: physical front size (mm); international baseline (e.g. ISO 269); file formats/envelopes.json"
     },
     "envelope_layouts": {
-      "file": "mails/layouts.json",
+      "file": "formats/layouts.json",
       "depends_on": [
-        "mails/envelopes.json"
+        "formats/envelopes.json"
       ],
-      "description": "Jurisdiction-keyed print/window layout (DE/CH/FR); file mails/layouts.json"
+      "description": "Jurisdiction-keyed print/window layout (DE/CH/FR); file formats/layouts.json"
     },
     "jurisdictions": {
       "file": "policy/jurisdictions.json",

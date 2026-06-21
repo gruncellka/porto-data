@@ -5,9 +5,9 @@
       "schemas/jurisdictions.schema.json": "policy/jurisdictions.json",
       "schemas/restrictions.schema.json": "policy/restrictions.json"
     },
-    "mails": {
-      "schemas/envelopes.schema.json": "mails/envelopes.json",
-      "schemas/layouts.schema.json": "mails/layouts.json"
+    "formats": {
+      "schemas/envelopes.schema.json": "formats/envelopes.json",
+      "schemas/layouts.schema.json": "formats/layouts.json"
     },
     "registry": {
       "schemas/providers.schema.json": "providers.json"

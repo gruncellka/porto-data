@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/layouts.schema.json",
   "title": "Envelope layouts by jurisdiction",
-  "description": "Print geometry on the envelope front per ISO 3166-1 alpha-2 jurisdiction. Physical sizes: mails/envelopes.json. Coordinates: origin top-left, mm, landscape front. Optional standard cites the norm (e.g. DIN678, SN010130, NFEN13850).",
+  "description": "Print geometry on the envelope front per ISO 3166-1 alpha-2 jurisdiction. Physical sizes: formats/envelopes.json. Coordinates: origin top-left, mm, landscape front. Optional standard cites the norm (e.g. DIN678, SN010130, NFEN13850).",
   "type": "object",
   "required": [
     "file_type",

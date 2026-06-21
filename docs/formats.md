@@ -1,4 +1,4 @@
-# Mails bundle (`porto_data/mails/`)
+# Formats bundle (`porto_data/formats/`)
 
 Shared **letter mail** data used by all operators: physical envelope formats and jurisdiction-specific print/window geometry. Not per-provider tariff data—that lives under `providers/<id>/`.
 
@@ -14,8 +14,8 @@ Physical sizes stay in **`envelopes.json`**; geometry on the face stays in **`la
 ## Schemas & mappings
 
 - Schemas: `schemas/envelopes.schema.json`, `schemas/layouts.schema.json`.
-- **`mappings.json`** → `mappings.mails` lists schema→data pairs for these files.
-- Provider **`graph.json`** `dependencies` reference paths like `mails/envelopes.json` and `mails/layouts.json` where the tariff depends on them.
+- **`mappings.json`** → `mappings.formats` lists schema→data pairs for these files.
+- Provider **`graph.json`** `dependencies` reference paths like `formats/envelopes.json` and `formats/layouts.json` where the tariff depends on them.
 
 ## Conventions
 

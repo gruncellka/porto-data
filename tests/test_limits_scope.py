@@ -55,7 +55,7 @@ def _write_limits_bundle(
             {
                 "mappings": {
                     "policy": {},
-                    "mails": {},
+                    "formats": {},
                     "registry": {},
                     "providers": mappings_providers,
                 }
@@ -283,7 +283,7 @@ def test_validate_limits_scope_passes_when_registry_providers_not_dict(tmp_path:
             {
                 "mappings": {
                     "policy": {},
-                    "mails": {},
+                    "formats": {},
                     "registry": {},
                     "providers": {
                         "acme": {

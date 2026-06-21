@@ -76,14 +76,14 @@
           "properties": {
             "file": {
               "type": "string",
-              "pattern": "^(policy/[a-z0-9_./-]+\\.json|mails/[a-z0-9_./-]+\\.json|[a-z0-9_./-]+\\.json)$",
-              "description": "Data path: provider-relative (e.g. prices/products.json) or bundle-shared under policy/ or mails/"
+              "pattern": "^(policy/[a-z0-9_./-]+\\.json|formats/[a-z0-9_./-]+\\.json|[a-z0-9_./-]+\\.json)$",
+              "description": "Data path: provider-relative (e.g. prices/products.json) or bundle-shared under policy/ or formats/"
             },
             "depends_on": {
               "type": "array",
               "items": {
                 "type": "string",
-                "pattern": "^(policy/[a-z0-9_./-]+\\.json|mails/[a-z0-9_./-]+\\.json|[a-z0-9_./-]+\\.json)$"
+                "pattern": "^(policy/[a-z0-9_./-]+\\.json|formats/[a-z0-9_./-]+\\.json|[a-z0-9_./-]+\\.json)$"
               },
               "description": "List of dependent files (same path convention as file)"
             },
@@ -190,7 +190,7 @@
               "properties": {
                 "file": {
                   "type": "string",
-                  "pattern": "^(policy/[a-z0-9_./-]+\\.json|mails/[a-z0-9_./-]+\\.json|[a-z0-9_./-]+\\.json)$"
+                  "pattern": "^(policy/[a-z0-9_./-]+\\.json|formats/[a-z0-9_./-]+\\.json|[a-z0-9_./-]+\\.json)$"
                 },
                 "array": {
                   "type": "string",
@@ -220,7 +220,7 @@
               "properties": {
                 "file": {
                   "type": "string",
-                  "pattern": "^(policy/[a-z0-9_./-]+\\.json|mails/[a-z0-9_./-]+\\.json|[a-z0-9_./-]+\\.json)$"
+                  "pattern": "^(policy/[a-z0-9_./-]+\\.json|formats/[a-z0-9_./-]+\\.json|[a-z0-9_./-]+\\.json)$"
                 },
                 "array": {
                   "type": "string",

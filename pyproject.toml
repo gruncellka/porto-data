@@ -50,7 +50,7 @@ porto_data = [
     "metadata.json",
     "providers.json",
     "policy/*.json",
-    "mails/*.json",
+    "formats/*.json",
     "schemas/*.json",
     "providers/*/*.json",
     "providers/*/prices/*.json",

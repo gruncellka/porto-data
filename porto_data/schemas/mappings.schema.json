@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/mappings.schema.json",
   "title": "Porto-data schema \u2194 data mappings",
-  "description": "Maps each JSON Schema path under schemas/ to its canonical data file (policy/, mails/, providers/<id>/, or bundle root). Blocks mirror bundle layout: policy, mails, registry (e.g. providers.json), providers. Provider keys must match providers.json.",
+  "description": "Maps each JSON Schema path under schemas/ to its canonical data file (policy/, formats/, providers/<id>/, or bundle root). Blocks mirror bundle layout: policy, formats, registry (e.g. providers.json), providers. Provider keys must match providers.json.",
   "type": "object",
   "required": [
     "mappings"
@@ -17,7 +17,7 @@
       "type": "object",
       "required": [
         "policy",
-        "mails",
+        "formats",
         "registry",
         "providers"
       ],
@@ -33,7 +33,7 @@
           },
           "description": "Schema paths \u2192 data under policy/."
         },
-        "mails": {
+        "formats": {
           "type": "object",
           "minProperties": 0,
           "additionalProperties": {
@@ -41,7 +41,7 @@
             "minLength": 1,
             "pattern": "^(?!\\.\\./)([A-Za-z0-9_.-]+/)*[A-Za-z0-9_.-]+\\.json$"
           },
-          "description": "Schema paths \u2192 data under mails/."
+          "description": "Schema paths \u2192 data under formats/."
         },
         "registry": {
           "type": "object",

@@ -20,7 +20,7 @@ def validate_graph(
 
     Args:
         data_dir: Path to data directory (single-directory layout). If None, uses project_root + provider.
-        project_root: Path to porto_data root (with policy/, mails/, providers/). Defaults to get_project_root().
+        project_root: Path to porto_data root (with policy/, formats/, providers/). Defaults to get_project_root().
         provider: Provider ID (default: deutschepost).
         analyze: If True, show detailed analysis. If False, CI/CD friendly output.
 

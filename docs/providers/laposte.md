@@ -21,7 +21,7 @@ Reference for **reconciling JSON with official letter tariffs** (not a legal tar
 | `limits.json` | `limits` | Provider overlays on global policy |
 | `graph.json` | `graph` | Edges, units (EUR cents), lookups |
 
-**Loaded with the bundle:** `policy/jurisdictions.json`, `policy/restrictions.json`, `mails/envelopes.json`, `mails/layouts.json` — see `graph.json` `dependencies`.
+**Loaded with the bundle:** `policy/jurisdictions.json`, `policy/restrictions.json`, `formats/envelopes.json`, `formats/layouts.json` — see `graph.json` `dependencies`.
 
 ---
 

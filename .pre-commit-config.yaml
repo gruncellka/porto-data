@@ -12,7 +12,7 @@
 # (and any other porto_data JSON you intend to commit), or `git stash` everything,
 # then commit. Prefer a clean index for files hooks modify.
 #
-# Data layout: porto_data/policy/, porto_data/mails/, porto_data/providers/<id>/, porto_data/schemas/,
+# Data layout: porto_data/policy/, porto_data/formats/, porto_data/providers/<id>/, porto_data/schemas/,
 # porto_data/mappings.json, porto_data/metadata.json (no legacy porto_data/data/).
 #
 # Run manually: pre-commit run --all-files
@@ -31,7 +31,7 @@ repos:
             name: Validate JSON schemas
             entry: bash -c 'if [ -f venv/bin/activate ]; then . venv/bin/activate; fi && PYTHONPATH=. python -m cli.main validate --type schema'
             language: system
-            files: ^porto_data/(policy|mails|schemas)/.*\.json$|^porto_data/providers/[^/]+/.*\.json$|^porto_data/(mappings|metadata|providers)\.json$
+            files: ^porto_data/(policy|formats|schemas)/.*\.json$|^porto_data/providers/[^/]+/.*\.json$|^porto_data/(mappings|metadata|providers)\.json$
             pass_filenames: false
             always_run: false
 
@@ -47,7 +47,7 @@ repos:
             name: Validate graph.json consistency
             entry: bash -c 'if [ -f venv/bin/activate ]; then . venv/bin/activate; fi && PYTHONPATH=. python -m cli.main validate --type graph'
             language: system
-            files: ^porto_data/providers/.*/graph\.json$|^porto_data/providers/.*/(products|zones|weights|services|features|limits|marks|rules)\.json$|^porto_data/providers/.*/prices/.*\.json$|^porto_data/(policy|mails|schemas)/.*\.json$
+            files: ^porto_data/providers/.*/graph\.json$|^porto_data/providers/.*/(products|zones|weights|services|features|limits|marks|rules)\.json$|^porto_data/providers/.*/prices/.*\.json$|^porto_data/(policy|formats|schemas)/.*\.json$
             pass_filenames: false
             always_run: false
 
@@ -56,7 +56,7 @@ repos:
             entry: bash -c 'if [ -f venv/bin/activate ]; then . venv/bin/activate; fi && PYTHONPATH=. python -m cli.main metadata && git add porto_data/metadata.json'
             language: system
             # Omit metadata.json so regenerating it does not re-trigger this hook in a loop
-            files: ^porto_data/(policy|mails|schemas)/.*\.json$|^porto_data/providers/[^/]+/.*\.json$|^porto_data/mappings\.json$
+            files: ^porto_data/(policy|formats|schemas)/.*\.json$|^porto_data/providers/[^/]+/.*\.json$|^porto_data/mappings\.json$
             pass_filenames: false
             always_run: false
 
@@ -83,10 +83,10 @@ repos:
       hooks:
           - id: lint-json
             name: Validate JSON syntax
-            entry: bash -c 'shopt -s nullglob; for file in porto_data/*.json porto_data/schemas/*.json porto_data/policy/*.json porto_data/mails/*.json porto_data/providers/*/*.json porto_data/providers/*/prices/*.json; do python3 -m json.tool "$file" > /dev/null || exit 1; done'
+            entry: bash -c 'shopt -s nullglob; for file in porto_data/*.json porto_data/schemas/*.json porto_data/policy/*.json porto_data/formats/*.json porto_data/providers/*/*.json porto_data/providers/*/prices/*.json; do python3 -m json.tool "$file" > /dev/null || exit 1; done'
             language: system
             types: [json]
-            files: ^porto_data/(policy|mails|schemas)/.*\.json$|^porto_data/providers/[^/]+/.*\.json$|^porto_data/(mappings|metadata|providers)\.json$
+            files: ^porto_data/(policy|formats|schemas)/.*\.json$|^porto_data/providers/[^/]+/.*\.json$|^porto_data/(mappings|metadata|providers)\.json$
             pass_filenames: false
             always_run: false
 
@@ -121,7 +121,7 @@ repos:
             entry: bash -c 'for f in "$@"; do python3 scripts/format_json_file.py "$f" && git add "$f" || exit 1; done' bash
             language: system
             types: [json]
-            files: ^porto_data/(policy|mails|schemas)/.*\.json$|^porto_data/providers/[^/]+/.*\.json$|^porto_data/(mappings|metadata|providers)\.json$
+            files: ^porto_data/(policy|formats|schemas)/.*\.json$|^porto_data/providers/[^/]+/.*\.json$|^porto_data/(mappings|metadata|providers)\.json$
             pass_filenames: true
             always_run: false
 

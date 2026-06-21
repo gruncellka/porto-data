@@ -30,7 +30,7 @@
     ],
     "files": [
         "porto_data/policy",
-        "porto_data/mails",
+        "porto_data/formats",
         "porto_data/providers",
         "porto_data/schemas",
         "porto_data/providers.json",

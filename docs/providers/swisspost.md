@@ -22,7 +22,7 @@ Reference for **reconciling JSON with official letter tariffs** (not a legal tar
 | **`rules.json`** | **`provider_rules`** | **Conditional rules** (e.g. thickness band → attach `brief_dicke_zuschlag`) — evaluated after base price resolution |
 | `graph.json` | `graph` | Edges, units (CHF cents/rappen), `lookup_rules`, `available_services` |
 
-**Loaded with the bundle:** `policy/jurisdictions.json`, `policy/restrictions.json`, `mails/envelopes.json`, `mails/layouts.json` — see `graph.json` `dependencies`.
+**Loaded with the bundle:** `policy/jurisdictions.json`, `policy/restrictions.json`, `formats/envelopes.json`, `formats/layouts.json` — see `graph.json` `dependencies`.
 
 **Swiss-only:** `rules.json` is not used for Deutsche Post / La Poste in this bundle.
 

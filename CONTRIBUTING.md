@@ -2,7 +2,7 @@
 
 ## Published packages vs this repo
 
-**npm** (`@gruncellka/porto-data`) and **PyPI** (`gruncellka-porto-data`) carry the **same** dataset: `porto_data/policy/`, `porto_data/mails/`, `porto_data/providers/<id>/`, `porto_data/schemas/`, `mappings.json`, `metadata.json`. It is **cross-platform** (JSON + schemas only, no compiled code).
+**npm** (`@gruncellka/porto-data`) and **PyPI** (`gruncellka-porto-data`) carry the **same** dataset: `porto_data/policy/`, `porto_data/formats/`, `porto_data/providers/<id>/`, `porto_data/schemas/`, `mappings.json`, `metadata.json`. It is **cross-platform** (JSON + schemas only, no compiled code).
 
 The **`porto` CLI**, **`cli/`**, and **`scripts/`** validators run **only here** (and in CI)—they are **not** included in the published packages. Consumers read the JSON; contributors use this repo to edit and validate.
 
@@ -20,7 +20,7 @@ Creates `venv`, dev dependencies, and pre-commit hooks.
 
 | Area                              | Path                                                                                                             |
 | --------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| Shared across providers           | `porto_data/policy/*.json`, `porto_data/mails/*.json`, and bundle-root `providers.json` |
+| Shared across providers           | `porto_data/policy/*.json`, `porto_data/formats/*.json`, and bundle-root `providers.json` |
 | Per operator                      | `porto_data/providers/<provider_id>/*.json` and `.../prices/*.json` (e.g. `products.json`, `graph.json`, `prices/products.json`, `prices/services.json`, `limits.json`) |
 | Schemas                           | `porto_data/schemas/*.json`                                                                                      |
 | Which entities exist per provider | `porto_data/mappings.json`                                                                                       |
