@@ -1,0 +1,17 @@
+{
+  "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/limits.schema.json",
+  "file_type": "limits",
+  "provider": "ukrposhta",
+  "unit": {
+    "country_code": "ISO 3166-1 alpha-2",
+    "date": "ISO 8601"
+  },
+  "provider_context": {
+    "national_policy": {
+      "description": "Letter-format services; domestic acceptance in UA. International acceptance follows Ukrposhta operational status.",
+      "notes": "Add rows when Ukrposhta publishes destination suspensions or operational limits for letters."
+    }
+  },
+  "limits": [],
+  "compliance_frameworks": {}
+}

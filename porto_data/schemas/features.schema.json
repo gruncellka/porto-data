@@ -1,60 +1,72 @@
 {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/features.schema.json",
-    "title": "Features Schema",
-    "description": "Schema for service features definitions",
-    "type": "object",
-    "required": [
-        "file_type",
-        "features"
-    ],
-    "properties": {
-        "$schema": {
-            "type": "string",
-            "format": "uri",
-            "description": "JSON Schema URI reference"
-        },
-        "file_type": {
-            "type": "string",
-            "const": "features",
-            "description": "File type identifier"
-        },
-        "features": {
-            "type": "array",
-            "minItems": 1,
-            "items": {
-                "type": "object",
-                "required": [
-                    "id",
-                    "name",
-                    "label",
-                    "description"
-                ],
-                "properties": {
-                    "id": {
-                        "type": "string",
-                        "pattern": "^[a-z_]+$",
-                        "description": "Feature ID"
-                    },
-                    "name": {
-                        "type": "string",
-                        "minLength": 1,
-                        "description": "German feature name"
-                    },
-                    "label": {
-                        "type": "string",
-                        "minLength": 1,
-                        "description": "English feature label"
-                    },
-                    "description": {
-                        "type": "string",
-                        "minLength": 1,
-                        "description": "Feature description"
-                    }
-                },
-                "additionalProperties": false
-            }
-        }
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/features.schema.json",
+  "title": "Features Schema",
+  "description": "Provider-scoped service feature catalog. Each row has a unified Porto `porto_id` (cross-provider vocabulary) and a provider `id` (this bundle\u2019s primary key; `services[].features` references `id`, and may match `porto_id` when vocabulary aligns). Native-market `name` and English `label`.",
+  "type": "object",
+  "required": [
+    "file_type",
+    "provider",
+    "features"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "format": "uri",
+      "description": "JSON Schema URI reference"
     },
-    "additionalProperties": false
+    "file_type": {
+      "type": "string",
+      "const": "features",
+      "description": "File type identifier"
+    },
+    "provider": {
+      "type": "string",
+      "pattern": "^[a-z_]+$",
+      "description": "Provider id (must match providers.json and this file path)"
+    },
+    "features": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "porto_id",
+          "name",
+          "label",
+          "description"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z_]+$",
+            "description": "Provider-scoped feature id in this catalog; referenced from services.json feature lists within the same provider"
+          },
+          "porto_id": {
+            "type": "string",
+            "pattern": "^[a-z_]+$",
+            "description": "Unified Porto feature id for cross-provider resolution and tooling (stable across operators when the capability is the same)"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Native-market display name (operator primary language, e.g. DE/FR)"
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "description": "English human-readable label for unified tooling and docs"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Feature description"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
 }

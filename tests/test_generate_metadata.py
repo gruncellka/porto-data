@@ -32,6 +32,11 @@ class TestExtractEntityName:
         path = Path("schemas/test.schema.json")
         assert extract_entity_name(path) == "test"
 
+    def test_extract_entity_name_from_price_schema(self):
+        """Price schemas must not collapse to catalog entity names."""
+        assert extract_entity_name(Path("schemas/product_prices.schema.json")) == "product_prices"
+        assert extract_entity_name(Path("schemas/service_prices.schema.json")) == "service_prices"
+
 
 class TestGetFileInfo:
     """Test get_file_info function."""
@@ -56,7 +61,7 @@ class TestGetFileInfo:
         test_file = subdir / "test.txt"
         test_file.write_text("content")
         base_path = tmp_path
-        checksums = {}
+        checksums: dict[str, str] = {}
 
         info = get_file_info(test_file, base_path, checksums)
 
@@ -167,29 +172,34 @@ class TestGenerateMetadata:
     """Test generate_metadata function."""
 
     @patch("scripts.generate_metadata.get_all_file_checksums")
-    @patch("scripts.generate_metadata.get_schema_data_mappings")
+    @patch("scripts.generate_metadata.get_all_schema_data_pairs")
     @patch("scripts.generate_metadata.get_project_metadata")
     @patch("scripts.generate_metadata.Path.exists")
     @patch("scripts.generate_metadata.Path.stat")
     def test_generate_metadata_structure(
-        self, mock_stat, mock_exists, mock_project_meta, mock_mappings, mock_checksums
+        self, mock_stat, mock_exists, mock_project_meta, mock_pairs, mock_checksums
     ):
         """Test that generate_metadata returns correct structure."""
-        # Setup mocks
         mock_project_meta.return_value = {
             "name": "test-project",
             "version": "1.0.0",
             "description": "Test",
         }
-        mock_mappings.return_value = {"schemas/products.schema.json": "data/products.json"}
+        mock_pairs.return_value = [
+            ("schemas/products.schema.json", "providers/deutschepost/products.json"),
+        ]
+        _h = "a" * 64
         mock_checksums.return_value = {
             "schemas/products.schema.json": "schema_checksum",
-            "data/products.json": "data_checksum",
+            "providers/deutschepost/products.json": "data_checksum",
+            "mappings.json": _h,
+            "schemas/mappings.schema.json": _h,
+            "providers.json": _h,
+            "schemas/providers.schema.json": _h,
         }
         mock_exists.return_value = True
         mock_stat.return_value.st_size = 100
 
-        # Mock Path operations
         with patch("scripts.generate_metadata.Path") as mock_path:
             mock_schema_path = MagicMock()
             mock_data_path = MagicMock()
@@ -200,26 +210,32 @@ class TestGenerateMetadata:
             mock_path.side_effect = lambda p: (
                 mock_schema_path if "schema" in str(p) else mock_data_path
             )
-
-            # Mock get_schema_url
             with patch(
                 "scripts.generate_metadata.get_schema_url",
                 return_value="https://example.com/schema.json",
             ):
                 metadata = generate_metadata()
 
+        assert "$schema" in metadata
+        assert metadata["$schema"].endswith("porto_data/schemas/metadata.schema.json")
         assert "project" in metadata
-        assert "entities" in metadata
+        assert "policy" in metadata
+        assert "formats" in metadata
+        assert "registry" in metadata
+        assert "providers" in metadata
         assert "generated_at" in metadata
         assert "checksums" in metadata
         assert metadata["project"]["name"] == "test-project"
         assert metadata["project"]["version"] == "1.0.0"
+        assert "bundle" in metadata
+        assert "mappings" in metadata["bundle"]
+        assert "providers_registry" in metadata["bundle"]
 
     @patch("scripts.generate_metadata.get_all_file_checksums")
-    @patch("scripts.generate_metadata.get_schema_data_mappings")
+    @patch("scripts.generate_metadata.get_all_schema_data_pairs")
     @patch("scripts.generate_metadata.get_project_metadata")
     def test_generate_metadata_includes_entities(
-        self, mock_project_meta, mock_mappings, mock_checksums
+        self, mock_project_meta, mock_pairs, mock_checksums
     ):
         """Test that entities are included in metadata."""
         mock_project_meta.return_value = {
@@ -227,13 +243,22 @@ class TestGenerateMetadata:
             "version": "1.0.0",
             "description": "",
         }
-        mock_mappings.return_value = {}
+        mock_pairs.return_value = []
         mock_checksums.return_value = {}
 
         metadata = generate_metadata()
 
-        assert "entities" in metadata
-        assert isinstance(metadata["entities"], dict)
+        assert "policy" in metadata
+        assert "formats" in metadata
+        assert "registry" in metadata
+        assert "providers" in metadata
+        assert isinstance(metadata["policy"], dict)
+        assert isinstance(metadata["formats"], dict)
+        assert isinstance(metadata["registry"], dict)
+        assert isinstance(metadata["providers"], dict)
+        assert "bundle" in metadata
+        assert "mappings" in metadata["bundle"]
+        assert "providers_registry" in metadata["bundle"]
 
     def test_generate_metadata_has_timestamp(self):
         """Test that generated_at timestamp is included."""
@@ -244,12 +269,26 @@ class TestGenerateMetadata:
         # Should be ISO format with Z suffix
         assert metadata["generated_at"].endswith("Z") or "+" in metadata["generated_at"]
 
+    def test_generate_metadata_keeps_catalog_and_price_entities_distinct(self):
+        """Regression: prices/products.json must not overwrite catalog products.json."""
+        metadata = generate_metadata()
+        dp = metadata["providers"]["deutschepost"]
+
+        assert dp["products"]["data"]["path"] == "providers/deutschepost/products.json"
+        assert dp["products"]["schema"]["path"] == "schemas/products.schema.json"
+        assert dp["services"]["data"]["path"] == "providers/deutschepost/services.json"
+        assert dp["services"]["schema"]["path"] == "schemas/services.schema.json"
+        assert dp["product_prices"]["data"]["path"] == "providers/deutschepost/prices/products.json"
+        assert dp["product_prices"]["schema"]["path"] == "schemas/product_prices.schema.json"
+        assert dp["service_prices"]["data"]["path"] == "providers/deutschepost/prices/services.json"
+        assert dp["service_prices"]["schema"]["path"] == "schemas/service_prices.schema.json"
+
     @patch("scripts.generate_metadata.get_all_file_checksums")
-    @patch("scripts.generate_metadata.get_schema_data_mappings")
+    @patch("scripts.generate_metadata.get_all_schema_data_pairs")
     @patch("scripts.generate_metadata.get_project_root")
     @patch("scripts.generate_metadata._get_project_meta")
     def test_generate_metadata_skips_missing_files(
-        self, mock_project_meta, mock_get_root, mock_mappings, mock_checksums, tmp_path
+        self, mock_project_meta, mock_get_root, mock_pairs, mock_checksums, tmp_path
     ):
         """Test that mappings whose schema or data file does not exist are skipped."""
         mock_get_root.return_value = tmp_path
@@ -258,12 +297,19 @@ class TestGenerateMetadata:
             "version": "1.0.0",
             "description": "",
         }
-        mock_mappings.return_value = {
-            "schemas/products.schema.json": "data/products.json",
-            "schemas/nonexistent.schema.json": "data/nonexistent.json",
-        }
+        mock_pairs.return_value = [
+            ("schemas/products.schema.json", "providers/deutschepost/products.json"),
+            ("schemas/nonexistent.schema.json", "providers/deutschepost/nonexistent.json"),
+        ]
         mock_checksums.return_value = {}
         with patch("scripts.generate_metadata.Path.exists", return_value=False):
             metadata = generate_metadata()
-        assert "entities" in metadata
-        assert metadata["entities"] == {}
+        assert "policy" in metadata
+        assert "formats" in metadata
+        assert "registry" in metadata
+        assert "providers" in metadata
+        assert metadata["policy"] == {}
+        assert metadata["formats"] == {}
+        assert metadata["registry"] == {}
+        assert metadata["providers"] == {}
+        assert "bundle" not in metadata

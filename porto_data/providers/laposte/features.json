@@ -1,0 +1,42 @@
+{
+  "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/features.schema.json",
+  "file_type": "features",
+  "provider": "laposte",
+  "features": [
+    {
+      "id": "numero_suivi",
+      "porto_id": "tracking_number",
+      "name": "Num\u00e9ro de suivi",
+      "label": "Tracking number",
+      "description": "Suivi / Lettre suivie style tracking when the ordered service provides it"
+    },
+    {
+      "id": "preuve_depot",
+      "porto_id": "proof_of_mailing",
+      "name": "Preuve de d\u00e9p\u00f4t",
+      "label": "Proof of mailing",
+      "description": "Attestation de d\u00e9p\u00f4t (recommand\u00e9 and similar services)"
+    },
+    {
+      "id": "signature_destinataire",
+      "porto_id": "recipient_signature",
+      "name": "Signature du destinataire",
+      "label": "Recipient signature",
+      "description": "Signature upon delivery when offered by the service"
+    },
+    {
+      "id": "avis_reception",
+      "porto_id": "return_receipt",
+      "name": "Avis de r\u00e9ception",
+      "label": "Return receipt",
+      "description": "Avis de r\u00e9ception returned to the sender (recommand\u00e9 AR)"
+    },
+    {
+      "id": "preuve_livraison",
+      "porto_id": "proof_of_delivery",
+      "name": "Preuve de distribution",
+      "label": "Proof of delivery",
+      "description": "Derived from delivery confirmation / tracking outcome where applicable"
+    }
+  ]
+}

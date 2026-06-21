@@ -5,6 +5,8 @@ from pathlib import Path
 
 import pytest
 
+from tests.minimal_fixtures import minimal_restrictions_document
+
 _project_root = Path(__file__).parent.parent
 _scripts_path = _project_root / "scripts"
 
@@ -22,17 +24,39 @@ def scripts_path():
 
 
 @pytest.fixture
-def minimal_data_links():
-    """Minimal valid data_links.json structure."""
+def minimal_graph():
+    """Minimal valid graph.json structure."""
     return {
-        "file_type": "data_links",
-        "schema_version": "1.0",
+        "file_type": "graph",
+        "provider": "deutschepost",
         "unit": {"weight": "g", "dimension": "mm", "price": "cents", "currency": "EUR"},
         "dependencies": {},
-        "links": {},
+        "edges": {},
+        "lookup_rules": {
+            "price_lookup": "product_prices + service_prices",
+            "service_lookup": "by id",
+            "weight_resolution": "min<=weight<=max",
+            "zone_validation": "zone in edges",
+        },
         "global_settings": {
-            "price_source": "prices.json",
-            "lookup_method": {"file": "prices.json", "array": "prices.product_prices", "match": {}},
+            "price_lookup": {
+                "product_prices": {
+                    "file": "prices/products.json",
+                    "array": "product_prices",
+                    "match": {
+                        "product_id": "x",
+                        "zone": "y",
+                        "weight_tier": "z",
+                    },
+                    "description": "test",
+                },
+                "service_prices": {
+                    "file": "prices/services.json",
+                    "array": "service_prices",
+                    "match": {"service_id": "x"},
+                    "description": "test",
+                },
+            },
             "available_services": [],
         },
     }
@@ -48,68 +72,126 @@ def minimal_services():
 
 
 @pytest.fixture
-def minimal_prices():
-    """Minimal valid prices.json structure."""
+def minimal_product_prices():
+    """Minimal valid product_prices.json structure."""
     return {
-        "file_type": "prices",
+        "file_type": "product_prices",
+        "provider": "deutschepost",
         "unit": {"price": "cents", "currency": "EUR"},
-        "prices": {
-            "product_prices": [],
-            "service_prices": [],
+        "product_prices": [],
+    }
+
+
+@pytest.fixture
+def minimal_service_prices():
+    """Minimal valid service_prices.json structure."""
+    return {
+        "file_type": "service_prices",
+        "provider": "deutschepost",
+        "unit": {"price": "cents", "currency": "EUR"},
+        "service_prices": [],
+    }
+
+
+@pytest.fixture
+def minimal_envelope_layouts():
+    """Minimal layouts.json (DE C6 only, matches minimal envelopes fixture)."""
+    return {
+        "file_type": "layouts",
+        "unit": {"dimension": "mm"},
+        "jurisdictions": {
+            "DE": {
+                "envelopes": {
+                    "C6": {
+                        "orientation": "landscape",
+                        "layout": {
+                            "print_area": {"x": 0, "y": 0, "width": 100, "height": 80},
+                            "address_area": {"x": 0, "y": 0, "width": 100, "height": 80},
+                            "window": {"supported": False},
+                            "post_mark": {"x": 90, "y": 5},
+                        },
+                    }
+                }
+            }
         },
     }
 
 
 @pytest.fixture
-def minimal_data_files(tmp_path, minimal_services, minimal_prices, minimal_data_links):
+def minimal_data_files(
+    tmp_path,
+    minimal_services,
+    minimal_product_prices,
+    minimal_service_prices,
+    minimal_graph,
+    minimal_envelope_layouts,
+):
     """Create minimal data files structure for testing."""
     data_dir = tmp_path / "data"
     data_dir.mkdir()
 
-    # Create all required data files
+    prices_dir = data_dir / "prices"
+    prices_dir.mkdir()
+
     files = {
         "services.json": minimal_services,
-        "prices.json": minimal_prices,
-        "data_links.json": minimal_data_links,
+        "graph.json": minimal_graph,
         "products.json": {"products": [], "file_type": "products"},
         "zones.json": {"zones": [], "file_type": "zones"},
-        "weight_tiers.json": {"weight_tiers": {}, "file_type": "weight_tiers"},
-        "dimensions.json": {"dimensions": {}, "file_type": "dimensions"},
-        "features.json": {"features": {}, "file_type": "features"},
-        "restrictions.json": {"restrictions": [], "file_type": "restrictions"},
+        "weights.json": {"weights": {}, "file_type": "weights"},
+        "envelopes.json": {
+            "file_type": "envelopes",
+            "unit": {"dimension": "mm"},
+            "envelopes": [
+                {
+                    "id": "C6",
+                    "label": "C6",
+                    "width": 162,
+                    "height": 114,
+                    "standard": "ISO269",
+                    "sheets": [{"sheet": "A4", "fold": "quarter", "description": "Test fixture"}],
+                }
+            ],
+        },
+        "layouts.json": minimal_envelope_layouts,
+        "features.json": {
+            "file_type": "features",
+            "provider": "deutschepost",
+            "features": [
+                {
+                    "id": "tracking_number",
+                    "porto_id": "tracking_number",
+                    "name": "Sendungsnummer",
+                    "label": "Tracking number",
+                    "description": "Test",
+                }
+            ],
+        },
+        "marks.json": {
+            "file_type": "marks",
+            "provider": "deutschepost",
+            "default_profile": "test_stamp",
+            "profiles": [
+                {
+                    "id": "test_stamp",
+                    "mark_type": "stamp",
+                    "label": "Test stamp profile",
+                }
+            ],
+        },
+        "restrictions.json": minimal_restrictions_document(),
     }
 
     for filename, data in files.items():
         with open(data_dir / filename, "w") as f:
             json.dump(data, f)
 
+    with open(prices_dir / "products.json", "w") as f:
+        json.dump(minimal_product_prices, f)
+    with open(prices_dir / "services.json", "w") as f:
+        json.dump(minimal_service_prices, f)
+
     return data_dir
-
-
-@pytest.fixture
-def sample_schema():
-    """Sample JSON schema for testing."""
-    return {
-        "$schema": "http://json-schema.org/draft-07/schema#",
-        "type": "object",
-        "properties": {
-            "name": {"type": "string"},
-            "age": {"type": "integer"},
-        },
-        "required": ["name"],
-    }
-
-
-@pytest.fixture
-def sample_valid_data():
-    """Sample valid JSON data matching sample_schema."""
-    return {"name": "Test", "age": 30}
-
-
-@pytest.fixture
-def sample_invalid_data():
-    """Sample invalid JSON data (missing required field)."""
-    return {"age": 30}  # Missing "name"
 
 
 def create_test_data_files(tmp_path, **file_data):
@@ -125,21 +207,99 @@ def create_test_data_files(tmp_path, **file_data):
     data_dir = tmp_path / "data"
     data_dir.mkdir()
 
-    # Default minimal files
+    prices_dir = data_dir / "prices"
+    prices_dir.mkdir()
+
     defaults = {
         "products.json": {"products": [], "file_type": "products"},
         "zones.json": {"zones": [], "file_type": "zones"},
-        "weight_tiers.json": {"weight_tiers": {}, "file_type": "weight_tiers"},
-        "dimensions.json": {"dimensions": {}, "file_type": "dimensions"},
-        "features.json": {"features": {}, "file_type": "features"},
-        "restrictions.json": {"restrictions": [], "file_type": "restrictions"},
+        "weights.json": {"weights": {}, "file_type": "weights"},
+        "envelopes.json": {
+            "file_type": "envelopes",
+            "unit": {"dimension": "mm"},
+            "envelopes": [
+                {
+                    "id": "C6",
+                    "label": "C6",
+                    "width": 162,
+                    "height": 114,
+                    "standard": "ISO269",
+                    "sheets": [{"sheet": "A4", "fold": "quarter", "description": "Test fixture"}],
+                }
+            ],
+        },
+        "layouts.json": {
+            "file_type": "layouts",
+            "unit": {"dimension": "mm"},
+            "jurisdictions": {
+                "DE": {
+                    "envelopes": {
+                        "C6": {
+                            "orientation": "landscape",
+                            "layout": {
+                                "print_area": {"x": 0, "y": 0, "width": 100, "height": 80},
+                                "address_area": {"x": 0, "y": 0, "width": 100, "height": 80},
+                                "window": {"supported": False},
+                                "post_mark": {"x": 90, "y": 5},
+                            },
+                        }
+                    }
+                }
+            },
+        },
+        "features.json": {
+            "file_type": "features",
+            "provider": "deutschepost",
+            "features": [
+                {
+                    "id": "tracking_number",
+                    "porto_id": "tracking_number",
+                    "name": "Sendungsnummer",
+                    "label": "Tracking number",
+                    "description": "Test",
+                }
+            ],
+        },
+        "marks.json": {
+            "file_type": "marks",
+            "provider": "deutschepost",
+            "default_profile": "test_stamp",
+            "profiles": [
+                {
+                    "id": "test_stamp",
+                    "mark_type": "stamp",
+                    "label": "Test stamp profile",
+                }
+            ],
+        },
+        "restrictions.json": minimal_restrictions_document(),
     }
 
-    # Merge defaults with provided data
     all_files = {**defaults, **file_data}
+    pp = all_files.pop("product_prices.json", None)
+    sp = all_files.pop("service_prices.json", None)
+    if pp is None:
+        pp = {
+            "file_type": "product_prices",
+            "provider": "deutschepost",
+            "unit": {"price": "cents", "currency": "EUR"},
+            "product_prices": [],
+        }
+    if sp is None:
+        sp = {
+            "file_type": "service_prices",
+            "provider": "deutschepost",
+            "unit": {"price": "cents", "currency": "EUR"},
+            "service_prices": [],
+        }
 
     for filename, data in all_files.items():
         with open(data_dir / filename, "w") as f:
             json.dump(data, f)
+
+    with open(prices_dir / "products.json", "w") as f:
+        json.dump(pp, f)
+    with open(prices_dir / "services.json", "w") as f:
+        json.dump(sp, f)
 
     return data_dir

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Tests for schema validation - validators/schema.py and backward compatibility."""
+"""Tests for schema validation (validators/schema.py)."""
 
 import json
 from unittest.mock import patch
@@ -95,22 +95,6 @@ class TestValidateFile:
         result = validate_file(str(schema_path), str(data_path))
         assert result is False
 
-    def test_validate_file_backward_compatibility(self, tmp_path, sample_schema, sample_valid_data):
-        """Test that validate_file is accessible via backward compat wrapper."""
-        schema_path = tmp_path / "schema.json"
-        data_path = tmp_path / "data.json"
-
-        with open(schema_path, "w") as f:
-            json.dump(sample_schema, f)
-        with open(data_path, "w") as f:
-            json.dump(sample_valid_data, f)
-
-        # Test direct import
-        result1 = validate_file(str(schema_path), str(data_path))
-        # Test via backward compat (if available)
-        # Note: validate_schemas.py exports validate_file for backward compat
-        assert result1 is True
-
 
 class TestValidateAllSchemas:
     """Test validate_all_schemas function."""
@@ -142,8 +126,8 @@ class TestValidateAllSchemas:
         with (
             patch("scripts.validators.schema.get_project_root", return_value=tmp_path),
             patch(
-                "scripts.validators.schema.get_schema_data_mappings",
-                return_value={"schemas/s.schema.json": "data/d.json"},
+                "scripts.validators.schema.get_all_schema_data_pairs",
+                return_value=[("schemas/s.schema.json", "data/d.json")],
             ),
         ):
             result = validate_all_schemas()

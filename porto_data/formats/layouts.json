@@ -1,0 +1,468 @@
+{
+  "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/layouts.schema.json",
+  "file_type": "layouts",
+  "unit": {
+    "dimension": "mm"
+  },
+  "jurisdictions": {
+    "DE": {
+      "envelopes": {
+        "DL": {
+          "standard": "DIN678",
+          "orientation": "landscape",
+          "layout": {
+            "print_area": {
+              "x": 10,
+              "y": 45,
+              "width": 200,
+              "height": 60
+            },
+            "address_area": {
+              "x": 20,
+              "y": 50,
+              "width": 90,
+              "height": 45
+            },
+            "window": {
+              "supported": true,
+              "area": {
+                "x": 20,
+                "y": 50,
+                "width": 90,
+                "height": 45
+              }
+            },
+            "post_mark": {
+              "x": 160,
+              "y": 10
+            }
+          }
+        },
+        "C6": {
+          "standard": "DIN678",
+          "orientation": "landscape",
+          "layout": {
+            "print_area": {
+              "x": 10,
+              "y": 45,
+              "width": 140,
+              "height": 60
+            },
+            "address_area": {
+              "x": 20,
+              "y": 54,
+              "width": 90,
+              "height": 45
+            },
+            "window": {
+              "supported": true,
+              "area": {
+                "x": 20,
+                "y": 54,
+                "width": 90,
+                "height": 45
+              }
+            },
+            "post_mark": {
+              "x": 110,
+              "y": 10
+            }
+          }
+        },
+        "C5": {
+          "standard": "DIN678",
+          "orientation": "landscape",
+          "layout": {
+            "print_area": {
+              "x": 10,
+              "y": 10,
+              "width": 209,
+              "height": 142
+            },
+            "address_area": {
+              "x": 20,
+              "y": 57,
+              "width": 90,
+              "height": 45
+            },
+            "window": {
+              "supported": true,
+              "area": {
+                "x": 20,
+                "y": 57,
+                "width": 90,
+                "height": 45
+              }
+            },
+            "post_mark": {
+              "x": 180,
+              "y": 15
+            }
+          }
+        },
+        "C4": {
+          "standard": "DIN678",
+          "orientation": "landscape",
+          "layout": {
+            "print_area": {
+              "x": 10,
+              "y": 10,
+              "width": 304,
+              "height": 209
+            },
+            "address_area": {
+              "x": 20,
+              "y": 55,
+              "width": 90,
+              "height": 55
+            },
+            "window": {
+              "supported": true,
+              "area": {
+                "x": 20,
+                "y": 55,
+                "width": 90,
+                "height": 55
+              }
+            },
+            "post_mark": {
+              "x": 270,
+              "y": 15
+            }
+          }
+        },
+        "B4": {
+          "standard": "DIN678",
+          "orientation": "landscape",
+          "layout": {
+            "print_area": {
+              "x": 15,
+              "y": 70,
+              "width": 320,
+              "height": 170
+            },
+            "address_area": {
+              "x": 15,
+              "y": 70,
+              "width": 320,
+              "height": 170
+            },
+            "window": {
+              "supported": false
+            },
+            "post_mark": {
+              "x": 300,
+              "y": 15
+            }
+          }
+        }
+      }
+    },
+    "CH": {
+      "envelopes": {
+        "DL": {
+          "standard": "SN010130",
+          "orientation": "landscape",
+          "layout": {
+            "print_area": {
+              "x": 10,
+              "y": 45,
+              "width": 200,
+              "height": 60
+            },
+            "address_area": {
+              "x": 20,
+              "y": 50,
+              "width": 90,
+              "height": 45
+            },
+            "window": {
+              "supported": true,
+              "area": {
+                "x": 20,
+                "y": 50,
+                "width": 90,
+                "height": 45
+              }
+            },
+            "post_mark": {
+              "x": 160,
+              "y": 10
+            }
+          }
+        },
+        "C6": {
+          "standard": "SN010130",
+          "orientation": "landscape",
+          "layout": {
+            "print_area": {
+              "x": 10,
+              "y": 45,
+              "width": 140,
+              "height": 60
+            },
+            "address_area": {
+              "x": 20,
+              "y": 54,
+              "width": 90,
+              "height": 45
+            },
+            "window": {
+              "supported": true,
+              "area": {
+                "x": 20,
+                "y": 54,
+                "width": 90,
+                "height": 45
+              }
+            },
+            "post_mark": {
+              "x": 110,
+              "y": 10
+            }
+          }
+        },
+        "C5": {
+          "standard": "SN010130",
+          "orientation": "landscape",
+          "layout": {
+            "print_area": {
+              "x": 10,
+              "y": 10,
+              "width": 209,
+              "height": 142
+            },
+            "address_area": {
+              "x": 20,
+              "y": 57,
+              "width": 90,
+              "height": 45
+            },
+            "window": {
+              "supported": true,
+              "area": {
+                "x": 20,
+                "y": 57,
+                "width": 90,
+                "height": 45
+              }
+            },
+            "post_mark": {
+              "x": 180,
+              "y": 15
+            }
+          }
+        },
+        "C4": {
+          "standard": "SN010130",
+          "orientation": "landscape",
+          "layout": {
+            "print_area": {
+              "x": 10,
+              "y": 10,
+              "width": 304,
+              "height": 209
+            },
+            "address_area": {
+              "x": 20,
+              "y": 55,
+              "width": 90,
+              "height": 55
+            },
+            "window": {
+              "supported": true,
+              "area": {
+                "x": 20,
+                "y": 55,
+                "width": 90,
+                "height": 55
+              }
+            },
+            "post_mark": {
+              "x": 270,
+              "y": 15
+            }
+          }
+        },
+        "B4": {
+          "standard": "SN010130",
+          "orientation": "landscape",
+          "layout": {
+            "print_area": {
+              "x": 15,
+              "y": 70,
+              "width": 320,
+              "height": 170
+            },
+            "address_area": {
+              "x": 15,
+              "y": 70,
+              "width": 320,
+              "height": 170
+            },
+            "window": {
+              "supported": false
+            },
+            "post_mark": {
+              "x": 300,
+              "y": 15
+            }
+          }
+        }
+      }
+    },
+    "FR": {
+      "envelopes": {
+        "DL": {
+          "standard": "NFZ10011",
+          "orientation": "landscape",
+          "layout": {
+            "print_area": {
+              "x": 10,
+              "y": 45,
+              "width": 200,
+              "height": 60
+            },
+            "address_area": {
+              "x": 20,
+              "y": 50,
+              "width": 90,
+              "height": 45
+            },
+            "window": {
+              "supported": true,
+              "area": {
+                "x": 20,
+                "y": 50,
+                "width": 90,
+                "height": 45
+              }
+            },
+            "post_mark": {
+              "x": 160,
+              "y": 10
+            }
+          }
+        },
+        "C6": {
+          "standard": "NFZ10011",
+          "orientation": "landscape",
+          "layout": {
+            "print_area": {
+              "x": 10,
+              "y": 45,
+              "width": 140,
+              "height": 60
+            },
+            "address_area": {
+              "x": 20,
+              "y": 54,
+              "width": 90,
+              "height": 45
+            },
+            "window": {
+              "supported": true,
+              "area": {
+                "x": 20,
+                "y": 54,
+                "width": 90,
+                "height": 45
+              }
+            },
+            "post_mark": {
+              "x": 110,
+              "y": 10
+            }
+          }
+        },
+        "C5": {
+          "standard": "NFZ10011",
+          "orientation": "landscape",
+          "layout": {
+            "print_area": {
+              "x": 10,
+              "y": 10,
+              "width": 209,
+              "height": 142
+            },
+            "address_area": {
+              "x": 20,
+              "y": 57,
+              "width": 90,
+              "height": 45
+            },
+            "window": {
+              "supported": true,
+              "area": {
+                "x": 20,
+                "y": 57,
+                "width": 90,
+                "height": 45
+              }
+            },
+            "post_mark": {
+              "x": 180,
+              "y": 15
+            }
+          }
+        },
+        "C4": {
+          "standard": "NFZ10011",
+          "orientation": "landscape",
+          "layout": {
+            "print_area": {
+              "x": 10,
+              "y": 10,
+              "width": 304,
+              "height": 209
+            },
+            "address_area": {
+              "x": 20,
+              "y": 55,
+              "width": 90,
+              "height": 55
+            },
+            "window": {
+              "supported": true,
+              "area": {
+                "x": 20,
+                "y": 55,
+                "width": 90,
+                "height": 55
+              }
+            },
+            "post_mark": {
+              "x": 270,
+              "y": 15
+            }
+          }
+        },
+        "B4": {
+          "standard": "NFZ10011",
+          "orientation": "landscape",
+          "layout": {
+            "print_area": {
+              "x": 15,
+              "y": 70,
+              "width": 320,
+              "height": 170
+            },
+            "address_area": {
+              "x": 15,
+              "y": 70,
+              "width": 320,
+              "height": 170
+            },
+            "window": {
+              "supported": false
+            },
+            "post_mark": {
+              "x": 300,
+              "y": 15
+            }
+          }
+        }
+      }
+    }
+  }
+}

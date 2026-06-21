@@ -1,0 +1,17 @@
+{
+  "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/limits.schema.json",
+  "file_type": "limits",
+  "provider": "deutschepost",
+  "unit": {
+    "country_code": "ISO 3166-1 alpha-2",
+    "date": "ISO 8601"
+  },
+  "provider_context": {
+    "national_policy": {
+      "description": "Volatile operator rules (strikes, temporary suspensions) and SDK overlays use the same row shape as policy/restrictions.json limits[] items when present. Sanctions and destination facts (EU/UN/CH rows) live only in policy/restrictions.json under destinations[].restrictions. This file is usually empty.",
+      "notes": "Merge order: global restrictions, then limits[] here, then any SDK operational overlay."
+    }
+  },
+  "limits": [],
+  "compliance_frameworks": {}
+}

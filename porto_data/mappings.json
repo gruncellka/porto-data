@@ -1,13 +1,67 @@
 {
-    "mappings": {
-        "schemas/products.schema.json": "data/products.json",
-        "schemas/services.schema.json": "data/services.json",
-        "schemas/prices.schema.json": "data/prices.json",
-        "schemas/zones.schema.json": "data/zones.json",
-        "schemas/weight_tiers.schema.json": "data/weight_tiers.json",
-        "schemas/dimensions.schema.json": "data/dimensions.json",
-        "schemas/features.schema.json": "data/features.json",
-        "schemas/restrictions.schema.json": "data/restrictions.json",
-        "schemas/data_links.schema.json": "data/data_links.json"
+  "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/mappings.schema.json",
+  "mappings": {
+    "policy": {
+      "schemas/jurisdictions.schema.json": "policy/jurisdictions.json",
+      "schemas/restrictions.schema.json": "policy/restrictions.json"
+    },
+    "formats": {
+      "schemas/envelopes.schema.json": "formats/envelopes.json",
+      "schemas/layouts.schema.json": "formats/layouts.json"
+    },
+    "registry": {
+      "schemas/providers.schema.json": "providers.json"
+    },
+    "providers": {
+      "deutschepost": {
+        "schemas/marks.schema.json": "providers/deutschepost/marks.json",
+        "schemas/products.schema.json": "providers/deutschepost/products.json",
+        "schemas/features.schema.json": "providers/deutschepost/features.json",
+        "schemas/services.schema.json": "providers/deutschepost/services.json",
+        "schemas/product_prices.schema.json": "providers/deutschepost/prices/products.json",
+        "schemas/service_prices.schema.json": "providers/deutschepost/prices/services.json",
+        "schemas/zones.schema.json": "providers/deutschepost/zones.json",
+        "schemas/weights.schema.json": "providers/deutschepost/weights.json",
+        "schemas/limits.schema.json": "providers/deutschepost/limits.json",
+        "schemas/graph.schema.json": "providers/deutschepost/graph.json"
+      },
+      "swisspost": {
+        "schemas/marks.schema.json": "providers/swisspost/marks.json",
+        "schemas/rules.schema.json": "providers/swisspost/rules.json",
+        "schemas/products.schema.json": "providers/swisspost/products.json",
+        "schemas/features.schema.json": "providers/swisspost/features.json",
+        "schemas/services.schema.json": "providers/swisspost/services.json",
+        "schemas/product_prices.schema.json": "providers/swisspost/prices/products.json",
+        "schemas/service_prices.schema.json": "providers/swisspost/prices/services.json",
+        "schemas/zones.schema.json": "providers/swisspost/zones.json",
+        "schemas/weights.schema.json": "providers/swisspost/weights.json",
+        "schemas/limits.schema.json": "providers/swisspost/limits.json",
+        "schemas/graph.schema.json": "providers/swisspost/graph.json"
+      },
+      "laposte": {
+        "schemas/marks.schema.json": "providers/laposte/marks.json",
+        "schemas/products.schema.json": "providers/laposte/products.json",
+        "schemas/features.schema.json": "providers/laposte/features.json",
+        "schemas/services.schema.json": "providers/laposte/services.json",
+        "schemas/product_prices.schema.json": "providers/laposte/prices/products.json",
+        "schemas/service_prices.schema.json": "providers/laposte/prices/services.json",
+        "schemas/zones.schema.json": "providers/laposte/zones.json",
+        "schemas/weights.schema.json": "providers/laposte/weights.json",
+        "schemas/limits.schema.json": "providers/laposte/limits.json",
+        "schemas/graph.schema.json": "providers/laposte/graph.json"
+      },
+      "ukrposhta": {
+        "schemas/marks.schema.json": "providers/ukrposhta/marks.json",
+        "schemas/products.schema.json": "providers/ukrposhta/products.json",
+        "schemas/features.schema.json": "providers/ukrposhta/features.json",
+        "schemas/services.schema.json": "providers/ukrposhta/services.json",
+        "schemas/product_prices.schema.json": "providers/ukrposhta/prices/products.json",
+        "schemas/service_prices.schema.json": "providers/ukrposhta/prices/services.json",
+        "schemas/zones.schema.json": "providers/ukrposhta/zones.json",
+        "schemas/weights.schema.json": "providers/ukrposhta/weights.json",
+        "schemas/limits.schema.json": "providers/ukrposhta/limits.json",
+        "schemas/graph.schema.json": "providers/ukrposhta/graph.json"
+      }
     }
+  }
 }

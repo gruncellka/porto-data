@@ -16,7 +16,12 @@ import json
 from pathlib import Path
 from typing import Any
 
-from scripts.data_files import get_project_root, get_schema_data_mappings
+from scripts.data_files import (
+    MAPPINGS_FILENAME,
+    MAPPINGS_SCHEMA_RELPATH,
+    get_all_schema_data_pairs,
+    get_project_root,
+)
 
 
 def compute_checksum(file_path: str) -> str:
@@ -26,24 +31,63 @@ def compute_checksum(file_path: str) -> str:
 
 
 def get_all_file_checksums() -> dict[str, str]:
-    """Get checksums for all schema and data files (for metadata generation)."""
+    """Get checksums for all schema and data files (for metadata generation).
+
+    Uses get_all_schema_data_pairs to include all providers (deutschepost, swisspost, etc.).
+    """
     root = get_project_root()
     checksums = {}
-    mappings = get_schema_data_mappings()
+    pairs = get_all_schema_data_pairs()
 
-    # Add schema files (paths relative to project root)
-    for schema_path in mappings:
-        full = root / schema_path
-        if full.exists():
-            checksums[schema_path] = compute_checksum(str(full))
+    for schema_path, data_path in pairs:
+        schema_full = root / schema_path
+        if schema_full.exists():
+            checksums[schema_path] = compute_checksum(str(schema_full))
+        data_full = root / data_path
+        if data_full.exists():
+            checksums[data_path] = compute_checksum(str(data_full))
 
-    # Add data files
-    for data_path in mappings.values():
-        full = root / data_path
-        if full.exists():
-            checksums[data_path] = compute_checksum(str(full))
+    mappings_data = root / MAPPINGS_FILENAME
+    if mappings_data.exists():
+        checksums[MAPPINGS_FILENAME] = compute_checksum(str(mappings_data))
+    mappings_schema = root / MAPPINGS_SCHEMA_RELPATH
+    if mappings_schema.exists():
+        checksums[MAPPINGS_SCHEMA_RELPATH] = compute_checksum(str(mappings_schema))
 
     return checksums
+
+
+def _iter_metadata_entities(metadata: dict) -> list[dict]:
+    """Yield entity dicts from metadata (policy/formats/registry + providers or flat ``entities``)."""
+    from scripts.data_files import (
+        FORMATS_MAPPINGS_KEY,
+        POLICY_MAPPINGS_KEY,
+        PROVIDERS_DIR,
+        REGISTRY_MAPPINGS_KEY,
+    )
+
+    entities = []
+    if (
+        POLICY_MAPPINGS_KEY in metadata
+        and FORMATS_MAPPINGS_KEY in metadata
+        and REGISTRY_MAPPINGS_KEY in metadata
+        and PROVIDERS_DIR in metadata
+    ):
+        for key in (POLICY_MAPPINGS_KEY, FORMATS_MAPPINGS_KEY, REGISTRY_MAPPINGS_KEY):
+            for entity in metadata[key].values():
+                entities.append(entity)
+        for provider_entities in metadata[PROVIDERS_DIR].values():
+            for entity in provider_entities.values():
+                entities.append(entity)
+        bundle = metadata.get("bundle")
+        if isinstance(bundle, dict):
+            for entity in bundle.values():
+                if isinstance(entity, dict) and "data" in entity and "schema" in entity:
+                    entities.append(entity)
+    elif "entities" in metadata:
+        for entity in metadata["entities"].values():
+            entities.append(entity)
+    return entities
 
 
 def get_existing_checksums_from_metadata(metadata_path: str = "metadata.json") -> dict[str, str]:
@@ -58,31 +102,22 @@ def get_existing_checksums_from_metadata(metadata_path: str = "metadata.json") -
         return {}
 
     existing_checksums = {}
+    for entity_data in _iter_metadata_entities(metadata):
+        if "data" in entity_data and "path" in entity_data["data"]:
+            existing_checksums[entity_data["data"]["path"]] = entity_data["data"].get(
+                "checksum", ""
+            )
+        if "schema" in entity_data and "path" in entity_data["schema"]:
+            existing_checksums[entity_data["schema"]["path"]] = entity_data["schema"].get(
+                "checksum", ""
+            )
 
-    # Handle new structure with entities
-    if "entities" in metadata:
-        for _, entity_data in metadata["entities"].items():
-            # Extract data file checksum
-            if "data" in entity_data and "path" in entity_data["data"]:
-                existing_checksums[entity_data["data"]["path"]] = entity_data["data"].get(
-                    "checksum", ""
-                )
-            # Extract schema file checksum
-            if "schema" in entity_data and "path" in entity_data["schema"]:
-                existing_checksums[entity_data["schema"]["path"]] = entity_data["schema"].get(
-                    "checksum", ""
-                )
-    # Fallback to old structure for backward compatibility
-    else:
-        # Extract schema checksums
-        if "schemas" in metadata and "files" in metadata["schemas"]:
-            for file_info in metadata["schemas"]["files"]:
-                existing_checksums[file_info["path"]] = file_info["checksum"]
-
-        # Extract data checksums
-        if "data" in metadata and "files" in metadata["data"]:
-            for file_info in metadata["data"]["files"]:
-                existing_checksums[file_info["path"]] = file_info["checksum"]
+    if "schemas" in metadata and "files" in metadata["schemas"]:
+        for file_info in metadata["schemas"]["files"]:
+            existing_checksums[file_info["path"]] = file_info["checksum"]
+    if "data" in metadata and "files" in metadata["data"]:
+        for file_info in metadata["data"]["files"]:
+            existing_checksums[file_info["path"]] = file_info["checksum"]
 
     return existing_checksums
 

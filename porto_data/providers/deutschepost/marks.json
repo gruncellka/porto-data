@@ -1,0 +1,37 @@
+{
+  "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/marks.schema.json",
+  "file_type": "marks",
+  "provider": "deutschepost",
+  "unit": {
+    "dimension": "mm"
+  },
+  "default_profile": "internetmarke_standard",
+  "profiles": [
+    {
+      "id": "internetmarke_standard",
+      "mark_type": "stamp",
+      "label": "Internetmarke",
+      "size": {
+        "width": 46,
+        "height": 22
+      },
+      "mime_type": [
+        "image/png",
+        "application/pdf"
+      ]
+    },
+    {
+      "id": "internetmarke_international",
+      "mark_type": "stamp",
+      "label": "Internetmarke international",
+      "size": {
+        "width": 46,
+        "height": 22
+      },
+      "mime_type": [
+        "image/png",
+        "application/pdf"
+      ]
+    }
+  ]
+}

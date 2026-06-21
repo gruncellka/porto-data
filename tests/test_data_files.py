@@ -204,3 +204,176 @@ class TestLoadMappingsUsesProjectRoot:
 
         assert "schemas/products.schema.json" in result
         assert result["schemas/products.schema.json"] == "data/products.json"
+
+
+class TestConstantsAndHelpers:
+    """Test bundle mapping keys, PROVIDERS_DIR, get_global_data_paths, get_provider_data_paths."""
+
+    def test_bundle_mapping_keys_and_providers_dir_constants(self):
+        """Policy/formats/registry keys and PROVIDERS_DIR match mappings.json / metadata.json."""
+        assert data_files.POLICY_MAPPINGS_KEY == "policy"
+        assert data_files.FORMATS_MAPPINGS_KEY == "formats"
+        assert data_files.REGISTRY_MAPPINGS_KEY == "registry"
+        assert data_files.PROVIDERS_DIR == "providers"
+
+    def test_get_global_data_paths_returns_dict(self):
+        """get_global_data_paths returns entity name -> path mapping."""
+        result = data_files.get_global_data_paths()
+        assert isinstance(result, dict)
+        # Non-provider paths: policy/, formats/, or providers.json at bundle root
+        for key, val in result.items():
+            assert isinstance(key, str)
+            assert isinstance(val, str)
+            assert (
+                val.startswith("policy/")
+                or val.startswith("formats/")
+                or val == data_files.PROVIDERS_REGISTRY_FILENAME
+            )
+
+    def test_get_provider_data_paths_returns_dict(self):
+        """get_provider_data_paths returns entity name -> path for provider."""
+        result = data_files.get_provider_data_paths("deutschepost")
+        assert isinstance(result, dict)
+        for key, val in result.items():
+            assert isinstance(key, str)
+            assert isinstance(val, str)
+            assert "providers/deutschepost/" in val
+
+    def test_get_provider_data_paths_unknown_provider_returns_empty(self):
+        """get_provider_data_paths for unknown provider returns empty dict."""
+        result = data_files.get_provider_data_paths("nonexistent_provider_xyz")
+        assert result == {}
+
+    def test_get_global_data_paths_with_malformed_global_returns_empty(self, tmp_path):
+        """When a bundle block is not a dict, get_global_data_paths skips it."""
+        (tmp_path / "mappings.json").write_text(
+            json.dumps(
+                {
+                    "mappings": {
+                        "policy": "not_a_dict",
+                        "formats": {},
+                        "registry": {},
+                        "providers": {
+                            "deutschepost": {
+                                "schemas/products.schema.json": "providers/deutschepost/products.json"
+                            }
+                        },
+                    }
+                }
+            )
+        )
+        with patch.object(data_files, "_get_project_root", return_value=tmp_path):
+            result = data_files.get_global_data_paths()
+        assert result == {}
+
+    def test_get_provider_data_paths_with_malformed_provider_mappings_returns_empty(self, tmp_path):
+        """When provider mappings is not a dict, get_provider_data_paths returns empty."""
+        (tmp_path / "mappings.json").write_text(
+            json.dumps(
+                {
+                    "mappings": {
+                        "policy": {},
+                        "formats": {},
+                        "registry": {},
+                        "providers": {"deutschepost": "not_a_dict"},
+                    }
+                }
+            )
+        )
+        with patch.object(data_files, "_get_project_root", return_value=tmp_path):
+            result = data_files.get_provider_data_paths("deutschepost")
+        assert result == {}
+
+
+class TestListProviderIds:
+    """list_provider_ids() from mappings."""
+
+    def test_includes_laposte_swisspost_deutschepost(self):
+        ids = data_files.list_provider_ids()
+        assert ids == sorted(ids)
+        assert "deutschepost" in ids
+        assert "swisspost" in ids
+        assert "laposte" in ids
+        assert "ukrposhta" in ids
+
+
+class TestLoadProvidersRegistryErrors:
+    def test_raises_file_not_found_when_registry_missing(self, tmp_path):
+        with (
+            patch.object(data_files, "_get_project_root", return_value=tmp_path),
+            pytest.raises(FileNotFoundError, match="Provider registry not found"),
+        ):
+            data_files.load_providers_registry()
+
+    def test_raises_value_error_when_providers_empty(self, tmp_path):
+        (tmp_path / "providers.json").write_text(json.dumps({"providers": {}}), encoding="utf-8")
+        with (
+            patch.object(data_files, "_get_project_root", return_value=tmp_path),
+            pytest.raises(ValueError, match="non-empty object 'providers'"),
+        ):
+            data_files.load_providers_registry()
+
+
+class TestGetMappingsProviderIdsEdgeCases:
+    def test_returns_empty_when_providers_section_not_dict(self, tmp_path):
+        (tmp_path / "mappings.json").write_text(
+            json.dumps({"mappings": {"providers": []}}), encoding="utf-8"
+        )
+        assert data_files.get_mappings_provider_ids(str(tmp_path / "mappings.json")) == set()
+
+    def test_returns_provider_ids_from_valid_mappings_file(self, tmp_path):
+        (tmp_path / "mappings.json").write_text(
+            json.dumps(
+                {
+                    "mappings": {
+                        "providers": {
+                            "alpha": {"schemas/x.schema.json": "providers/a/p.json"},
+                            "beta": {"schemas/y.schema.json": "providers/b/p.json"},
+                        }
+                    }
+                }
+            ),
+            encoding="utf-8",
+        )
+        ids = data_files.get_mappings_provider_ids(str(tmp_path / "mappings.json"))
+        assert ids == {"alpha", "beta"}
+
+
+class TestGetDataFilePathProjectRoot:
+    def test_resolves_limits_relative_to_given_root(self, tmp_path):
+        (tmp_path / "policy").mkdir()
+        (tmp_path / "providers.json").write_text(
+            json.dumps(
+                {
+                    "providers": {
+                        "acme": {
+                            "name": "A",
+                            "country": "XX",
+                            "mark_types": ["stamp"],
+                            "tracking_model": "mixed",
+                        }
+                    }
+                }
+            ),
+            encoding="utf-8",
+        )
+        (tmp_path / "mappings.json").write_text(
+            json.dumps(
+                {
+                    "mappings": {
+                        "policy": {},
+                        "formats": {},
+                        "registry": {},
+                        "providers": {
+                            "acme": {
+                                "schemas/limits.schema.json": "providers/acme/limits.json",
+                            }
+                        },
+                    }
+                }
+            ),
+            encoding="utf-8",
+        )
+        (tmp_path / "providers" / "acme").mkdir(parents=True)
+        p = data_files.get_data_file_path("limits", "acme", project_root=tmp_path)
+        assert p == tmp_path / "providers" / "acme" / "limits.json"

@@ -1,0 +1,111 @@
+{
+  "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/products.schema.json",
+  "file_type": "products",
+  "provider": "deutschepost",
+  "unit": {
+    "weight": "g"
+  },
+  "products": [
+    {
+      "id": "standardbrief",
+      "native_id": 10001,
+      "porto_id": "small",
+      "name": "Standardbrief",
+      "envelope_ids": [
+        "DL",
+        "C6"
+      ],
+      "zones": [
+        "domestic",
+        "zone_1_eu",
+        "zone_2_europe",
+        "world"
+      ],
+      "weight_tier": "W0020",
+      "effective_from": "2026-01-01",
+      "effective_to": null,
+      "mark_type": "stamp",
+      "tracking_mode": "optional"
+    },
+    {
+      "id": "kompaktbrief",
+      "native_id": 10002,
+      "porto_id": "medium",
+      "name": "Kompaktbrief",
+      "envelope_ids": [
+        "C5"
+      ],
+      "zones": [
+        "domestic",
+        "zone_1_eu",
+        "zone_2_europe",
+        "world"
+      ],
+      "weight_tier": "W0050",
+      "effective_from": "2026-01-01",
+      "effective_to": null,
+      "mark_type": "stamp",
+      "tracking_mode": "optional"
+    },
+    {
+      "id": "grossbrief",
+      "native_id": 10003,
+      "porto_id": "large",
+      "name": "Gro\u00dfbrief",
+      "envelope_ids": [
+        "C4"
+      ],
+      "zones": [
+        "domestic",
+        "zone_1_eu",
+        "zone_2_europe",
+        "world"
+      ],
+      "weight_tier": "W0500",
+      "effective_from": "2026-01-01",
+      "effective_to": null,
+      "mark_type": "stamp",
+      "tracking_mode": "optional"
+    },
+    {
+      "id": "maxibrief",
+      "native_id": 10004,
+      "porto_id": "extra_large",
+      "name": "Maxibrief",
+      "envelope_ids": [
+        "B4"
+      ],
+      "zones": [
+        "domestic",
+        "zone_1_eu",
+        "zone_2_europe",
+        "world"
+      ],
+      "weight_tier": "W1000",
+      "effective_from": "2026-01-01",
+      "effective_to": null,
+      "mark_type": "stamp",
+      "tracking_mode": "optional"
+    },
+    {
+      "id": "maxibrief_international_heavy",
+      "native_id": 10005,
+      "porto_id": "extra_large",
+      "name": "Maxibrief International (bis 2.000 g)",
+      "envelope_ids": [
+        "B4"
+      ],
+      "zones": [
+        "zone_1_eu",
+        "zone_2_europe",
+        "world"
+      ],
+      "weight_tier": "W2000",
+      "effective_from": "2026-01-01",
+      "effective_to": null,
+      "mark_profile": "internetmarke_international",
+      "mark_type": "stamp",
+      "tracking_mode": "optional"
+    }
+  ]
+}

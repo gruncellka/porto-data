@@ -1,0 +1,128 @@
+{
+  "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/products.schema.json",
+  "file_type": "products",
+  "provider": "swisspost",
+  "unit": {
+    "weight": "g"
+  },
+  "products": [
+    {
+      "id": "a_post_standardbrief",
+      "porto_id": "small",
+      "name": "A-Post Standardbrief",
+      "envelope_ids": [
+        "DL",
+        "C6"
+      ],
+      "zones": [
+        "domestic"
+      ],
+      "effective_from": "2026-01-01",
+      "effective_to": null,
+      "mark_type": "stamp",
+      "tracking_mode": "optional"
+    },
+    {
+      "id": "a_post_grossbrief",
+      "porto_id": "large",
+      "name": "A-Post Grossbrief",
+      "envelope_ids": [
+        "C4",
+        "B4"
+      ],
+      "zones": [
+        "domestic"
+      ],
+      "effective_from": "2026-01-01",
+      "effective_to": null,
+      "mark_type": "stamp",
+      "tracking_mode": "optional"
+    },
+    {
+      "id": "b_post_standardbrief",
+      "porto_id": "small",
+      "name": "B-Post Standardbrief",
+      "envelope_ids": [
+        "DL",
+        "C6"
+      ],
+      "zones": [
+        "domestic"
+      ],
+      "effective_from": "2026-01-01",
+      "effective_to": null,
+      "mark_type": "stamp",
+      "tracking_mode": "optional"
+    },
+    {
+      "id": "b_post_grossbrief",
+      "porto_id": "large",
+      "name": "B-Post Grossbrief",
+      "envelope_ids": [
+        "C4",
+        "B4"
+      ],
+      "zones": [
+        "domestic"
+      ],
+      "effective_from": "2026-01-01",
+      "effective_to": null,
+      "mark_type": "stamp",
+      "tracking_mode": "optional"
+    },
+    {
+      "id": "international_standardbrief",
+      "porto_id": "small",
+      "name": "International Standardbrief (documents)",
+      "envelope_ids": [
+        "DL",
+        "C6",
+        "C5"
+      ],
+      "zones": [
+        "zone_1_eu",
+        "world"
+      ],
+      "effective_from": "2026-01-01",
+      "effective_to": null,
+      "mark_profile": "webstamp_international",
+      "mark_type": "stamp",
+      "tracking_mode": "none"
+    },
+    {
+      "id": "international_grossbrief",
+      "porto_id": "large",
+      "name": "International Grossbrief (documents)",
+      "envelope_ids": [
+        "C4",
+        "B4"
+      ],
+      "zones": [
+        "zone_1_eu",
+        "world"
+      ],
+      "effective_from": "2026-01-01",
+      "effective_to": null,
+      "mark_profile": "webstamp_international",
+      "mark_type": "stamp",
+      "tracking_mode": "none"
+    },
+    {
+      "id": "international_maxibrief",
+      "porto_id": "extra_large",
+      "name": "International Maxibrief (documents)",
+      "envelope_ids": [
+        "B4"
+      ],
+      "zones": [
+        "zone_1_eu",
+        "world"
+      ],
+      "effective_from": "2026-01-01",
+      "effective_to": null,
+      "mark_profile": "webstamp_international",
+      "mark_type": "stamp",
+      "tracking_mode": "none"
+    }
+  ]
+}

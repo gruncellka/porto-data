@@ -1,0 +1,37 @@
+{
+  "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/marks.schema.json",
+  "file_type": "marks",
+  "provider": "swisspost",
+  "unit": {
+    "dimension": "mm"
+  },
+  "default_profile": "webstamp_domestic",
+  "profiles": [
+    {
+      "id": "webstamp_domestic",
+      "mark_type": "stamp",
+      "label": "WebStamp domestic",
+      "size": {
+        "width": 40,
+        "height": 40
+      },
+      "mime_type": [
+        "application/pdf",
+        "image/png"
+      ]
+    },
+    {
+      "id": "webstamp_international",
+      "mark_type": "stamp",
+      "label": "WebStamp international",
+      "size": {
+        "width": 40,
+        "height": 40
+      },
+      "mime_type": [
+        "application/pdf",
+        "image/png"
+      ]
+    }
+  ]
+}

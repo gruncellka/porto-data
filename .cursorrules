@@ -1,202 +1,60 @@
-# Porto Data - Cursor Rules
+# Porto Data — Cursor rules
 
-## Project Type
+## What this repo is
 
-Data repository for Deutsche Post shipping services with JSON schema validation. This is NOT a typical application - it's a structured data repository with validation tooling.
+- **Data + schemas** shipped in the npm/PyPI package; Python is **tooling** (validate, metadata, tests).
+- **Multi-provider:** under `porto_data/providers/<id>/` (see `providers.json` at bundle root + `mappings.json`).
+- **Not** an app server; changes are mostly JSON and schema contracts.
 
-## Code Style
+## Layout (current)
 
-### Python
+- `porto_data/global/` — shared reference JSON (`jurisdictions.json`, …).
+- `porto_data/providers.json` — provider id registry.
+- `porto_data/policy/restrictions.json` — destination restrictions (EU/UN/CH buckets under `destinations[]`).
+- `porto_data/envelopes/` — physical formats, profiles, support matrix, `envelope_rules.json`.
+- `porto_data/providers/<provider_id>/` — per-operator JSON (`products`, `services`, `prices`, `zones`, `weight_tiers`, **`graph.json`**, `limits.json`, `features.json`, …).
+- `porto_data/schemas/` — JSON Schema for the above.
+- `porto_data/mappings.json` — which logical entities exist for each provider (paths are authoritative for tooling).
+- `porto_data/metadata.json` — **generated** (checksums, manifest). Regenerate with `make metadata` / `porto metadata`; do not edit by hand.
 
--   **Formatter**: Ruff (line-length=100)
--   **Linter**: Ruff with rules: E, W, F, I, N, UP, B, C4, SIM
--   **Type checking**: MyPy (strict mode, Python 3.13+)
--   **Import style**: Use proper package imports (`from scripts.validators import ...`)
--   **Follow existing patterns** in `scripts/` and `cli/` directories
+There is **no** `porto_data/data/` bundle anymore. Cross-file dependencies and product resolution wiring live in each provider’s **`graph.json`** (`file_type`: `graph`), including **`edges`** (product → zones × weight tiers). Do not use removed names `links` (as top-level key), `data_links.json`, or flat single-bundle paths in new work.
 
-### JSON
+## JSON conventions
 
--   **Indentation**: 4 spaces (not tabs)
--   **Key order**: Preserve original order (do NOT sort keys)
--   **Formatting**: Use Python's `json.tool` for formatting
--   **Arrays**: Multi-line for readability
--   **Validation**: All JSON files MUST validate against schemas in `porto_data/schemas/` directory
+- Indent **2 spaces**, no tab reformatting for style churn.
+- **Preserve key order** (do not sort keys).
+- All committed data must validate against the matching schema in `porto_data/schemas/`.
 
-## Data Structure
+## Python conventions
 
-### Directory Organization
+- **Ruff** format + lint; **MyPy** strict; **Python 3.13+**.
+- Imports: `from scripts....` / `from cli....` — **no** `sys.path` hacks.
+- Paths: use `scripts/data_files.py` (project root, mappings-driven paths).
 
--   `porto_data/` - Data package (included in wheel and npm): `data/`, `schemas/`, `mappings.json`, `metadata.json`
--   `porto_data/data/` - Main JSON data files (products, services, prices, zones, etc.)
--   `porto_data/schemas/` - JSON schemas for validation
--   `scripts/` - Core validation logic and utilities
--   `cli/` - CLI commands (`porto` command)
--   `tests/` - Test suite (90% coverage target)
+## Validation stack (for code changes)
 
-### Data Files
+- `scripts.validators.schema` — JSON Schema validation.
+- `scripts.validators.mappings_layout` — `mappings.json`, registry, stray files, metadata presence.
+- `scripts.validators.limits_scope` — `limits.json` letter-scope rules.
+- `scripts/validators/graph/` — package for `graph.json`: `validator` (orchestrator), `runner` (`validate_graph` + printing), plus `edges`, `services`, `execution_semantics`, `marks_profiles`, `provider_rules`, `dependencies`, `units`, `layouts`, `price_lookup`, `envelope_geometry`, `constants`. Import as `scripts.validators.graph`.
+- Results shape: `ValidationResults` in `scripts.validators.base`.
 
--   All data files in `porto_data/data/` must validate against corresponding schemas in `porto_data/schemas/`
--   `porto_data/data/data_links.json` provides cross-references between data files
--   `porto_data/metadata.json` is auto-generated (do NOT edit manually)
--   `porto_data/mappings.json` is the source of truth for schema-to-data mappings
-
-### Data Relationships
-
--   Products → Prices → Zones (one-directional, no circular dependencies)
--   Services → Features
--   Restrictions → Compliance Frameworks
--   All relationships validated via `data_links.json`
+CLI / default order: **schema → mappings → limits → graph** (`porto validate`).
 
 ## Workflow
 
-### Validation
+- After JSON or schema edits: **`make validate`** and **`make format`**.
+- If `metadata.json` regenerates, **stage it in the same commit** as the data/schema/mappings change.
+- New validation behavior → **tests** in `tests/` (target **90%** coverage on full `make test`).
 
--   Always run `make validate` after JSON changes
--   Pre-commit hooks auto-format and validate on commit
--   If `porto_data/metadata.json` regenerates, MUST stage it in same commit
--   Pre-commit hooks run format, lint, validate, and type-check on commit
+## Domain tokens (high level)
 
-### Commits
+- Country codes: **ISO 3166-1 alpha-2** where used.
+- Jurisdiction blocs in data: e.g. **`EU`**, **`UN`**; operator-specific postal rules belong in **`limits.json`**, not pseudo-jurisdictions in global restrictions.
 
--   Use conventional commits: `feat:`, `fix:`, `chore:`, `docs:`, `refactor:`
--   Small config changes (like this file) can go directly to main
--   Features and bug fixes should use feature branches + PR
--   Release commits: ONE commit with version + changelog + metadata
+## Assistant behavior
 
-### Testing
-
--   Test coverage target: 90%
--   Tests in `tests/` directory mirror source structure
--   Use pytest fixtures from `tests/conftest.py`
--   Run `make test-cov` to check coverage
-
-## Standards
-
-### ISO Standards
-
--   **Country codes**: ISO 3166-1 alpha-2 (`DE`, `US`, `FR`, `YE`)
--   **Region codes**: ISO 3166-2 (`DE-BY`, `US-CA`, `FR-75`)
--   **Dates**: ISO 8601 format (`2024-01-15`, `2023-06-01`)
-
-### Jurisdiction Codes
-
--   `EU` - European Union
--   `UN` - United Nations
--   `DE` - Germany (national)
--   `DP` - Deutsche Post (operational)
-
-## CLI Commands
-
-### Porto CLI
-
--   `porto validate` - Validate everything (default)
--   `porto validate --type schema` - Validate JSON against schemas
--   `porto validate --type links` - Validate data_links.json consistency
--   `porto validate --type links --analyze` - Detailed links analysis
--   `porto metadata` - Generate metadata.json
-
-### Make Commands
-
--   `make validate` - Validate all JSON (schema + data_links)
--   `make validate-data-links` - Validate data_links.json only
--   `make format` - Format JSON and Python
--   `make lint` - Lint JSON and Python
--   `make metadata` - Generate porto_data/metadata.json
--   Use `make format`, `make lint`, `make validate`, `make type-check` (or rely on pre-commit)
--   `make test` / `make test-cov` - Run tests (with coverage)
--   `make install-hooks` - Reinstall pre-commit hooks
-
-## Important Behaviors
-
-### Pre-commit Hooks
-
--   Auto-format JSON and Python files
--   Validate JSON syntax and schemas
--   Regenerate `porto_data/metadata.json` if data/schema files changed
--   If `porto_data/metadata.json` regenerates but isn't staged, commit FAILS (by design)
--   Must stage `porto_data/metadata.json` in same commit as data changes
-
-### Metadata.json
-
--   Auto-generated file at `porto_data/metadata.json` (do NOT edit manually)
--   Regenerated when data/schema files or version changes
--   Includes checksums (SHA-256) for all files
--   Version comes from `pyproject.toml`
--   Must be committed when regenerated
-
-## Domain Knowledge
-
-### Deutsche Post Shipping Data
-
--   Products: letters, parcels, packages
--   Services: registered mail, insurance, etc.
--   Zones: Geographic shipping zones
--   Weight tiers: Pricing brackets
--   Restrictions: Shipping restrictions and sanctions
--   Features: Service capabilities
-
-### Data Integrity
-
--   All data must validate against schemas
--   Cross-references validated via `data_links.json`
--   Checksums ensure data integrity
--   Validation workflow (`.github/workflows/validation.yml`) runs on every push/PR (format, structure, metadata, tests, lint, type-check)
--   Publish workflow (`.github/workflows/publish.yml`): triggered by **tag** `v*` or **manual** (workflow_dispatch); version from packages; manual run also for re-publish same version if npm or PyPI failed; runs only `porto validate` before build, no tests/lint
-
-## Code Patterns
-
-### Validation
-
--   Use `scripts.validators.schema` for JSON schema validation
--   Use `scripts.validators.links` for data links validation
--   Validation results use `ValidationResults` TypedDict
--   Fail-fast validation of required entities at import time
-
-### File Paths
-
--   Use `scripts.data_files` for centralized path management
--   Use `_get_project_root()` helper for path resolution
--   Paths relative to project root, not current directory
-
-### Error Handling
-
--   Validation errors include context and file paths
--   Use descriptive error messages
--   Fail fast on validation errors
-
-## When Making Changes
-
-### JSON Data Changes
-
-1. Edit JSON file in `porto_data/data/`
-2. Ensure it follows schema in `porto_data/schemas/`
-3. Run `make validate`
-4. Run `make format` to auto-format
-5. Commit changes
-6. If `porto_data/metadata.json` regenerates, stage it: `git add porto_data/metadata.json`
-
-### Schema Changes
-
-1. Edit schema file in `porto_data/schemas/`
-2. Update corresponding data in `porto_data/data/`
-3. Run `make validate` to verify compatibility
-4. Update `porto_data/mappings.json` if needed
-
-### Code Changes
-
-1. Follow existing patterns
-2. Add type hints (MyPy)
-3. Pre-commit runs format, lint, validate, and type-check on commit
-4. Add tests for new functionality
-5. Maintain 90% coverage target
-
-## AI Assistant Guidelines
-
--   Understand this is a DATA repository, not an application
--   JSON files are the primary content, Python is tooling
--   Always validate JSON against schemas
--   Preserve JSON key order (don't sort)
--   Use 4-space indentation for JSON
--   Check `metadata.json` regeneration when data changes
--   Follow existing code patterns in `scripts/` and `cli/`
--   Use proper package imports (no `sys.path` hacks)
+- Prefer editing **`global/`** or **`providers/<id>/`** JSON, not inventing legacy paths.
+- When touching **`graph.json`**, keep **`edges`** and schema `graph.schema.json` aligned.
+- Do not hand-edit **`metadata.json`**.
+- Match existing style in `scripts/` and `cli/`; add types and tests for new logic.

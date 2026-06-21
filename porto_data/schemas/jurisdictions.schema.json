@@ -1,0 +1,116 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/jurisdictions.schema.json",
+  "title": "Jurisdictions (membership reference)",
+  "description": "Symbolic blocs eu and un (members + timezone) plus per-country IANA zones (uppercase ISO alpha-2 key, timezone only). Switzerland is keyed CH only (no lowercase ch bloc). providers.json resolves operational timezone via jurisdictions[COUNTRY].timezone.",
+  "type": "object",
+  "required": [
+    "file_type",
+    "unit",
+    "jurisdictions"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "format": "uri"
+    },
+    "file_type": {
+      "type": "string",
+      "const": "jurisdictions"
+    },
+    "description": {
+      "type": "string"
+    },
+    "unit": {
+      "type": "object",
+      "description": "Human-readable encoding hints for this file and related porto-data fields. Required: country_code (alpha-2 in jurisdictions.*.members and uppercase country keys). Other keys are optional documentation (e.g. region_code, date); values are short standard names.",
+      "required": [
+        "country_code"
+      ],
+      "properties": {
+        "country_code": {
+          "type": "string",
+          "const": "ISO 3166-1 alpha-2"
+        },
+        "region_code": {
+          "type": "string",
+          "const": "ISO 3166-2"
+        },
+        "date": {
+          "type": "string",
+          "const": "ISO 8601"
+        }
+      },
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "jurisdictions": {
+      "type": "object",
+      "description": "Keys: lowercase eu, un (blocs with members + timezone). Uppercase ISO alpha-2: timezone only. Framework tag CH resolves via country entry CH, not a ch bloc.",
+      "required": [
+        "eu",
+        "un"
+      ],
+      "properties": {
+        "eu": {
+          "$ref": "#/definitions/jurisdiction_bloc"
+        },
+        "un": {
+          "$ref": "#/definitions/jurisdiction_bloc"
+        }
+      },
+      "patternProperties": {
+        "^[A-Z]{2}$": {
+          "$ref": "#/definitions/jurisdiction_country"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "definitions": {
+    "jurisdiction_bloc": {
+      "type": "object",
+      "description": "Member list and default IANA zone for symbolic framework tags EU or UN.",
+      "required": [
+        "members",
+        "timezone"
+      ],
+      "properties": {
+        "members": {
+          "type": "array",
+          "description": "ISO 3166-1 alpha-2 codes in this bloc",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Z]{2}$"
+          }
+        },
+        "timezone": {
+          "type": "string",
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9_+-]+(/[A-Za-z0-9_+-]+)+$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "jurisdiction_country": {
+      "type": "object",
+      "description": "Primary legal/operational IANA zone for this country code (same key as ISO alpha-2).",
+      "required": [
+        "timezone"
+      ],
+      "properties": {
+        "timezone": {
+          "type": "string",
+          "minLength": 3,
+          "pattern": "^[A-Za-z0-9_+-]+(/[A-Za-z0-9_+-]+)+$"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

@@ -7,7 +7,13 @@ from pathlib import Path
 
 import pytest
 
-from cli.commands.validate import validate_all, validate_links, validate_schema
+from cli.commands.validate import (
+    validate_all,
+    validate_graph,
+    validate_limits,
+    validate_mappings,
+    validate_schema,
+)
 
 
 @pytest.fixture
@@ -43,7 +49,7 @@ class TestCLIHelp:
         assert result.returncode == 0
         assert "--type" in result.stdout
         assert "schema" in result.stdout
-        assert "links" in result.stdout
+        assert "graph" in result.stdout
         assert "all" in result.stdout
         assert "--analyze" in result.stdout
 
@@ -66,10 +72,12 @@ class TestCLIValidateCommands:
         "command_args,expected_output",
         [
             (["validate", "--type", "schema"], "Validating JSON schemas"),
-            (["validate", "--type", "links"], "Validating data_links.json"),
+            (["validate", "--type", "mappings"], "Validating mappings"),
+            (["validate", "--type", "limits"], "limits.json checks"),
+            (["validate", "--type", "graph"], "Validating graph.json"),
             (
-                ["validate", "--type", "links", "--analyze"],
-                "COMPREHENSIVE DATA_LINKS.JSON ANALYSIS",
+                ["validate", "--type", "graph", "--analyze"],
+                "COMPREHENSIVE GRAPH.JSON ANALYSIS",
             ),
         ],
     )
@@ -107,9 +115,9 @@ class TestCLICommandFunctions:
         assert isinstance(result, int)
 
     @pytest.mark.parametrize("analyze", [False, True])
-    def test_validate_links_function(self, analyze):
-        """Test validate_links function with both modes."""
-        result = validate_links(analyze=analyze)
+    def test_validate_graph_function(self, analyze):
+        """Test validate_graph function with both modes."""
+        result = validate_graph(analyze=analyze)
         assert result in (0, 1)
         assert isinstance(result, int)
 
@@ -128,8 +136,50 @@ class TestCLICommandFunctions:
         monkeypatch.setattr("cli.commands.validate.validate_schema", mock_validate_schema)
 
         result = validate_all()
-        # Should return 1 (failure) without running links validation
+        # Should return 1 (failure) without running graph validation
         assert result == 1
+
+    def test_validate_graph_with_explicit_provider(self, monkeypatch):
+        """Single-provider graph path forwards provider id to the graph validator."""
+        calls: list[tuple[bool, str | None]] = []
+
+        def fake_validate(analyze: bool = False, provider: str | None = None):
+            calls.append((analyze, provider))
+            return 0
+
+        monkeypatch.setattr("cli.commands.validate._validate_provider_graph", fake_validate)
+        assert validate_graph(analyze=False, provider="deutschepost") == 0
+        assert calls == [(False, "deutschepost")]
+
+    def test_validate_graph_propagates_failure_from_any_provider(self, monkeypatch):
+        """Loop keeps last non-zero exit code when validating all providers."""
+
+        def fake_validate(analyze: bool = False, provider: str | None = None):
+            return 1 if provider == "laposte" else 0
+
+        monkeypatch.setattr("cli.commands.validate._validate_provider_graph", fake_validate)
+        monkeypatch.setattr(
+            "cli.commands.validate.list_provider_ids",
+            lambda: ["deutschepost", "laposte"],
+        )
+        assert validate_graph() == 1
+
+    def test_validate_all_stops_on_mappings_failure(self, monkeypatch):
+        monkeypatch.setattr("cli.commands.validate.validate_schema", lambda: 0)
+        monkeypatch.setattr("cli.commands.validate.validate_mappings", lambda: 1)
+        assert validate_all() == 1
+
+    def test_validate_all_stops_on_limits_failure(self, monkeypatch):
+        monkeypatch.setattr("cli.commands.validate.validate_schema", lambda: 0)
+        monkeypatch.setattr("cli.commands.validate.validate_mappings", lambda: 0)
+        monkeypatch.setattr("cli.commands.validate.validate_limits", lambda: 1)
+        assert validate_all() == 1
+
+    def test_validate_mappings_and_limits_delegate(self, monkeypatch):
+        monkeypatch.setattr("cli.commands.validate.validate_mappings_layout", lambda: 42)
+        monkeypatch.setattr("cli.commands.validate.validate_limits_scope", lambda: 7)
+        assert validate_mappings() == 42
+        assert validate_limits() == 7
 
 
 class TestCLIExitCodes:

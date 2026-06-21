@@ -1,0 +1,172 @@
+{
+  "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/products.schema.json",
+  "file_type": "products",
+  "provider": "laposte",
+  "unit": {
+    "weight": "g"
+  },
+  "products": [
+    {
+      "id": "lettre_verte",
+      "porto_id": "small",
+      "name": "Lettre verte",
+      "envelope_ids": [
+        "DL",
+        "C6",
+        "C5",
+        "C4",
+        "B4"
+      ],
+      "zones": [
+        "domestic"
+      ],
+      "effective_from": "2026-01-01",
+      "effective_to": null,
+      "mark_type": "label",
+      "tracking_mode": "optional"
+    },
+    {
+      "id": "lettre_verte_suivie",
+      "porto_id": "small",
+      "name": "Lettre verte suivie",
+      "envelope_ids": [
+        "DL",
+        "C6",
+        "C5",
+        "C4",
+        "B4"
+      ],
+      "zones": [
+        "domestic",
+        "zone_1_eu",
+        "zone_2_europe",
+        "world"
+      ],
+      "effective_from": "2026-01-01",
+      "effective_to": null,
+      "mark_profile": "mtel_international",
+      "mark_type": "label",
+      "tracking_mode": "included"
+    },
+    {
+      "id": "lettre_services_plus",
+      "porto_id": "small",
+      "name": "Lettre Services Plus",
+      "envelope_ids": [
+        "DL",
+        "C6",
+        "C5",
+        "C4",
+        "B4"
+      ],
+      "zones": [
+        "domestic"
+      ],
+      "effective_from": "2026-01-01",
+      "effective_to": null,
+      "mark_type": "label",
+      "tracking_mode": "included"
+    },
+    {
+      "id": "lettre_recommandee_r_un",
+      "porto_id": "registered",
+      "name": "Lettre recommand\u00e9e R1",
+      "envelope_ids": [
+        "DL",
+        "C6",
+        "C5",
+        "C4",
+        "B4"
+      ],
+      "zones": [
+        "domestic"
+      ],
+      "effective_from": "2026-01-01",
+      "effective_to": null,
+      "mark_type": "label",
+      "tracking_mode": "included"
+    },
+    {
+      "id": "lettre_recommandee_r_deux",
+      "porto_id": "registered",
+      "name": "Lettre recommand\u00e9e R2",
+      "envelope_ids": [
+        "DL",
+        "C6",
+        "C5",
+        "C4",
+        "B4"
+      ],
+      "zones": [
+        "domestic"
+      ],
+      "effective_from": "2026-01-01",
+      "effective_to": null,
+      "mark_type": "label",
+      "tracking_mode": "included"
+    },
+    {
+      "id": "lettre_recommandee_r_trois",
+      "porto_id": "registered",
+      "name": "Lettre recommand\u00e9e R3",
+      "envelope_ids": [
+        "DL",
+        "C6",
+        "C5",
+        "C4",
+        "B4"
+      ],
+      "zones": [
+        "domestic"
+      ],
+      "effective_from": "2026-01-01",
+      "effective_to": null,
+      "mark_type": "label",
+      "tracking_mode": "included"
+    },
+    {
+      "id": "lettre_recommandee_inter_r_un",
+      "porto_id": "registered",
+      "name": "Lettre recommand\u00e9e internationale R1",
+      "envelope_ids": [
+        "DL",
+        "C6",
+        "C5",
+        "C4",
+        "B4"
+      ],
+      "zones": [
+        "zone_1_eu",
+        "zone_2_europe",
+        "world"
+      ],
+      "effective_from": "2026-01-01",
+      "effective_to": null,
+      "mark_profile": "mtel_international",
+      "mark_type": "label",
+      "tracking_mode": "included"
+    },
+    {
+      "id": "lettre_recommandee_inter_r_deux",
+      "porto_id": "registered",
+      "name": "Lettre recommand\u00e9e internationale R2",
+      "envelope_ids": [
+        "DL",
+        "C6",
+        "C5",
+        "C4",
+        "B4"
+      ],
+      "zones": [
+        "zone_1_eu",
+        "zone_2_europe",
+        "world"
+      ],
+      "effective_from": "2026-01-01",
+      "effective_to": null,
+      "mark_profile": "mtel_international",
+      "mark_type": "label",
+      "tracking_mode": "included"
+    }
+  ]
+}

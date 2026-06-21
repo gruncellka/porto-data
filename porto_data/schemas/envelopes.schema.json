@@ -1,0 +1,120 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/envelopes.schema.json",
+  "title": "Envelopes (international physical sizes)",
+  "description": "Canonical envelope id and face dimensions (mm). standard ISO269 is the catalog token for the ISO 269 physical envelope-size family. Print/window geometry is jurisdiction-specific: formats/layouts.json.",
+  "type": "object",
+  "required": [
+    "file_type",
+    "unit",
+    "envelopes"
+  ],
+  "definitions": {
+    "envelope_sheet": {
+      "type": "object",
+      "required": [
+        "sheet",
+        "fold"
+      ],
+      "properties": {
+        "sheet": {
+          "type": "string",
+          "pattern": "^[AB][0-9]+$",
+          "description": "ISO 216 paper size (e.g. A4, A5, A6, B4)"
+        },
+        "fold": {
+          "type": "string",
+          "enum": [
+            "flat",
+            "half",
+            "quarter",
+            "trifold"
+          ],
+          "description": "Fold style for this sheets[] entry (outcome-oriented). flat=no crease; half=one crease (~\u00bd area); quarter=two creases to ~\u00bc sheet area (e.g. A4\u2192C6); trifold=two parallel creases, three panels (DL / business letter). quarter and trifold both use two creases; geometry differs."
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable fold / use hint for SDKs and docs"
+        }
+      },
+      "additionalProperties": false
+    },
+    "envelope": {
+      "type": "object",
+      "required": [
+        "id",
+        "label",
+        "width",
+        "height",
+        "standard",
+        "sheets"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Z0-9]+$",
+          "description": "Referenced from products.envelope_ids"
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "width": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "standard": {
+          "type": "string",
+          "const": "ISO269",
+          "description": "Physical envelope size taxonomy for this row (ISO 269 C/B/DL family)"
+        },
+        "sheets": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/definitions/envelope_sheet"
+          },
+          "description": "Document preparation options for this envelope: ISO 216 sheet size + fold that typically fits the face dimensions (carrier thickness and operator rules still apply)"
+        },
+        "notes": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "format": "uri"
+    },
+    "file_type": {
+      "type": "string",
+      "const": "envelopes"
+    },
+    "unit": {
+      "type": "object",
+      "required": [
+        "dimension"
+      ],
+      "properties": {
+        "dimension": {
+          "type": "string",
+          "const": "mm"
+        }
+      },
+      "additionalProperties": false
+    },
+    "envelopes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/envelope"
+      }
+    }
+  },
+  "additionalProperties": false
+}

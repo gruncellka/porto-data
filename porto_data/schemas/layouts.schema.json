@@ -1,0 +1,164 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/layouts.schema.json",
+  "title": "Envelope layouts by jurisdiction",
+  "description": "Print geometry on the envelope front per ISO 3166-1 alpha-2 jurisdiction. Physical sizes: formats/envelopes.json. Coordinates: origin top-left, mm, landscape front. Optional standard cites the norm (e.g. DIN678, SN010130, NFEN13850).",
+  "type": "object",
+  "required": [
+    "file_type",
+    "unit",
+    "jurisdictions"
+  ],
+  "definitions": {
+    "rectangleMm": {
+      "type": "object",
+      "required": [
+        "x",
+        "y",
+        "width",
+        "height"
+      ],
+      "properties": {
+        "x": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "y": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "width": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "postMarkAnchorMm": {
+      "type": "object",
+      "required": [
+        "x",
+        "y"
+      ],
+      "properties": {
+        "x": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "y": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "layoutBody": {
+      "type": "object",
+      "required": [
+        "print_area",
+        "post_mark",
+        "address_area",
+        "window"
+      ],
+      "properties": {
+        "print_area": {
+          "$ref": "#/definitions/rectangleMm"
+        },
+        "post_mark": {
+          "$ref": "#/definitions/postMarkAnchorMm"
+        },
+        "address_area": {
+          "$ref": "#/definitions/rectangleMm"
+        },
+        "window": {
+          "type": "object",
+          "required": [
+            "supported"
+          ],
+          "properties": {
+            "supported": {
+              "type": "boolean"
+            },
+            "area": {
+              "$ref": "#/definitions/rectangleMm"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "envelopeLayoutRow": {
+      "type": "object",
+      "required": [
+        "orientation",
+        "layout"
+      ],
+      "properties": {
+        "standard": {
+          "type": "string",
+          "minLength": 1
+        },
+        "orientation": {
+          "type": "string",
+          "enum": [
+            "landscape",
+            "portrait"
+          ]
+        },
+        "layout": {
+          "$ref": "#/definitions/layoutBody"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "format": "uri"
+    },
+    "file_type": {
+      "type": "string",
+      "const": "layouts"
+    },
+    "unit": {
+      "type": "object",
+      "required": [
+        "dimension"
+      ],
+      "properties": {
+        "dimension": {
+          "type": "string",
+          "const": "mm"
+        }
+      },
+      "additionalProperties": false
+    },
+    "jurisdictions": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "object",
+        "required": [
+          "envelopes"
+        ],
+        "properties": {
+          "envelopes": {
+            "type": "object",
+            "minProperties": 1,
+            "additionalProperties": {
+              "$ref": "#/definitions/envelopeLayoutRow"
+            }
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,259 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/graph.schema.json",
+  "title": "Graph schema",
+  "description": "Provider graph: data file dependencies, relationships, and product edges (zones \u00d7 weight tiers)",
+  "type": "object",
+  "required": [
+    "file_type",
+    "provider",
+    "unit",
+    "dependencies",
+    "edges",
+    "lookup_rules",
+    "global_settings"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "format": "uri",
+      "description": "JSON Schema URI reference"
+    },
+    "file_type": {
+      "type": "string",
+      "const": "graph",
+      "description": "File type identifier"
+    },
+    "provider": {
+      "type": "string",
+      "pattern": "^[a-z_]+$",
+      "description": "Provider identifier (e.g. deutschepost, swisspost)"
+    },
+    "unit": {
+      "type": "object",
+      "required": [
+        "weight",
+        "dimension",
+        "price",
+        "currency"
+      ],
+      "properties": {
+        "weight": {
+          "type": "string",
+          "const": "g"
+        },
+        "dimension": {
+          "type": "string",
+          "const": "mm"
+        },
+        "price": {
+          "type": "string",
+          "const": "cents"
+        },
+        "currency": {
+          "type": "string",
+          "enum": [
+            "EUR",
+            "CHF",
+            "UAH",
+            "USD"
+          ],
+          "description": "ISO 4217 currency code (EUR for Deutsche Post, CHF for Swiss Post, UAH/USD for Ukrposhta)"
+        }
+      },
+      "additionalProperties": false
+    },
+    "dependencies": {
+      "type": "object",
+      "patternProperties": {
+        "^[a-z_]+$": {
+          "type": "object",
+          "required": [
+            "file",
+            "depends_on",
+            "description"
+          ],
+          "properties": {
+            "file": {
+              "type": "string",
+              "pattern": "^(policy/[a-z0-9_./-]+\\.json|formats/[a-z0-9_./-]+\\.json|[a-z0-9_./-]+\\.json)$",
+              "description": "Data path: provider-relative (e.g. prices/products.json) or bundle-shared under policy/ or formats/"
+            },
+            "depends_on": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "pattern": "^(policy/[a-z0-9_./-]+\\.json|formats/[a-z0-9_./-]+\\.json|[a-z0-9_./-]+\\.json)$"
+              },
+              "description": "List of dependent files (same path convention as file)"
+            },
+            "description": {
+              "type": "string",
+              "minLength": 1,
+              "description": "Dependency description"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "edges": {
+      "type": "object",
+      "description": "Per-product edges: each key must be a **product `id`** from products.json (provider-native catalog key), not `porto_id`. Maps product \u2192 allowed zones and weight tiers.",
+      "patternProperties": {
+        "^[a-z_]+$": {
+          "type": "object",
+          "required": [
+            "zones",
+            "weight_tiers"
+          ],
+          "properties": {
+            "zones": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string",
+                "pattern": "^[a-z0-9_]+$"
+              },
+              "description": "Available zones for this product (provider-specific ids, e.g. domestic, zone_1_eu, zone_2, world)"
+            },
+            "weight_tiers": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string",
+                "pattern": "^W[0-9]+$"
+              },
+              "description": "Available weight tiers for this product"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "lookup_rules": {
+      "type": "object",
+      "required": [
+        "price_lookup",
+        "service_lookup",
+        "weight_resolution",
+        "zone_validation"
+      ],
+      "properties": {
+        "price_lookup": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Price lookup rule description"
+        },
+        "service_lookup": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Service lookup rule description"
+        },
+        "weight_resolution": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Weight resolution rule description"
+        },
+        "zone_validation": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Zone validation rule description"
+        }
+      },
+      "additionalProperties": false
+    },
+    "global_settings": {
+      "type": "object",
+      "required": [
+        "price_lookup",
+        "available_services"
+      ],
+      "properties": {
+        "price_lookup": {
+          "type": "object",
+          "required": [
+            "product_prices",
+            "service_prices"
+          ],
+          "properties": {
+            "product_prices": {
+              "type": "object",
+              "required": [
+                "file",
+                "array",
+                "match",
+                "description"
+              ],
+              "properties": {
+                "file": {
+                  "type": "string",
+                  "pattern": "^(policy/[a-z0-9_./-]+\\.json|formats/[a-z0-9_./-]+\\.json|[a-z0-9_./-]+\\.json)$"
+                },
+                "array": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "match": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                },
+                "description": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "additionalProperties": false
+            },
+            "service_prices": {
+              "type": "object",
+              "required": [
+                "file",
+                "array",
+                "match",
+                "description"
+              ],
+              "properties": {
+                "file": {
+                  "type": "string",
+                  "pattern": "^(policy/[a-z0-9_./-]+\\.json|formats/[a-z0-9_./-]+\\.json|[a-z0-9_./-]+\\.json)$"
+                },
+                "array": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "match": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                },
+                "description": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        },
+        "available_services": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z_]+$"
+          },
+          "description": "Each entry must match **services.json `id`** (provider-native key). Use `porto_id` only in SDK/app code for cross-provider semantics, not in graph or prices."
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

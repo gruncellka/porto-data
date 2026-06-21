@@ -1,77 +1,121 @@
 {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/services.schema.json",
-    "title": "Services Schema",
-    "description": "Schema for Deutsche Post services definitions",
-    "type": "object",
-    "required": [
-        "file_type",
-        "services"
-    ],
-    "properties": {
-        "$schema": {
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/services.schema.json",
+  "title": "Services Schema",
+  "description": "Provider-scoped postal add-on services. Each row has unified Porto `porto_id` (cross-provider semantic, used in prices/graph when referencing the capability), provider `id` (catalog key in this bundle), native `name`, and English `label`.",
+  "type": "object",
+  "required": [
+    "file_type",
+    "provider",
+    "services"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "format": "uri",
+      "description": "JSON Schema URI reference"
+    },
+    "file_type": {
+      "type": "string",
+      "const": "services",
+      "description": "File type identifier"
+    },
+    "provider": {
+      "type": "string",
+      "pattern": "^[a-z_]+$",
+      "description": "Provider identifier (e.g. deutschepost, swisspost)"
+    },
+    "services": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "porto_id",
+          "name",
+          "label",
+          "description",
+          "features"
+        ],
+        "properties": {
+          "id": {
             "type": "string",
-            "format": "uri",
-            "description": "JSON Schema URI reference"
-        },
-        "file_type": {
+            "pattern": "^[a-z_]+$",
+            "description": "Provider-scoped service id in this catalog (may match operator naming; referenced from provider-specific tooling)"
+          },
+          "porto_id": {
             "type": "string",
-            "const": "services",
-            "description": "File type identifier"
-        },
-        "services": {
+            "pattern": "^[a-z_]+$",
+            "description": "Unified Porto service id for SDK/resolver across carriers. **graph.json** and **prices.service_id** use provider **`id`** (native); use `porto_id` in app logic when you need the same semantic across operators."
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Native-market service name (operator primary language)"
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "description": "English human-readable label for unified tooling and docs"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Service description"
+          },
+          "features": {
             "type": "array",
             "minItems": 1,
             "items": {
-                "type": "object",
-                "required": [
-                    "id",
-                    "name",
-                    "description",
-                    "features"
-                ],
-                "properties": {
-                    "id": {
-                        "type": "string",
-                        "pattern": "^[a-z_]+$",
-                        "description": "Service ID"
-                    },
-                    "name": {
-                        "type": "string",
-                        "minLength": 1,
-                        "description": "German service name"
-                    },
-                    "name_en": {
-                        "type": "string",
-                        "minLength": 1,
-                        "description": "English service name (optional)"
-                    },
-                    "description": {
-                        "type": "string",
-                        "minLength": 1,
-                        "description": "Service description"
-                    },
-                    "features": {
-                        "type": "array",
-                        "minItems": 1,
-                        "items": {
-                            "type": "string",
-                            "pattern": "^[a-z_]+$",
-                            "description": "Feature ID reference"
-                        },
-                        "description": "List of feature IDs this service provides"
-                    },
-                    "source_id": {
-                        "type": [
-                            "string",
-                            "null"
-                        ],
-                        "description": "Deutsche Post PPL service identifier (note: services in PPL are typically composite products, not standalone IDs)"
-                    }
-                },
-                "additionalProperties": false
-            }
-        }
-    },
-    "additionalProperties": false
+              "type": "string",
+              "pattern": "^[a-z_]+$",
+              "description": "Feature ID reference"
+            },
+            "description": "Feature references: each entry may be provider feature `id` or unified `porto_id` (see features.json)"
+          },
+          "source_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Deutsche Post PPL service identifier (note: services in PPL are typically composite products, not standalone IDs)"
+          },
+          "online_supported": {
+            "type": "boolean",
+            "description": "Whether this service can be ordered via online provider flows (e.g. Internetmarke, WebStamp). Default: true if omitted. Set false for discontinued or offline-only services."
+          },
+          "integration_supported": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "boolean"
+            },
+            "description": "Per-integration support: { \"internetmarke\": true, \"webstamp\": false }. Only list integrations with explicit evidence of support."
+          },
+          "supported_zones": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z0-9_]+$"
+            },
+            "description": "Zone IDs where this service is orderable via API. When omitted, service is available for all zones the product supports. Used for API restrictions (e.g. Einschreiben Einwurf/R\u00fcckschein only domestic via Internetmarke)."
+          },
+          "combinable_with": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z_]+$"
+            },
+            "description": "Service IDs this service can be combined with in a single order."
+          },
+          "enables_tracking": {
+            "type": "boolean",
+            "description": "When true, ordering this service activates tracking on the execution result (product tracking_mode must be optional or included)."
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
 }

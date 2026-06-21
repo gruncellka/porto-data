@@ -1,0 +1,127 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/marks.schema.json",
+  "title": "Provider mark profiles",
+  "description": "Per-provider catalog of mark geometry and payload type for SDK layout. mime_type is an array of IANA media types the carrier may return for that profile (e.g. PNG and/or PDF). Physical printing is the application\u2019s concern\u2014not modeled here. Profile size (width \u00d7 height) is the nominal footprint in file unit.dimension (mm). Verify against live carrier output. Products may set mark_profile to pick a non-default profile (e.g. international). When omitted, marks.default_profile applies.",
+  "type": "object",
+  "required": [
+    "file_type",
+    "provider",
+    "default_profile",
+    "profiles"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "format": "uri",
+      "description": "JSON Schema URI reference"
+    },
+    "file_type": {
+      "type": "string",
+      "const": "marks",
+      "description": "File type identifier"
+    },
+    "provider": {
+      "type": "string",
+      "pattern": "^[a-z_]+$",
+      "description": "Provider id (must match path providers/<id>/)"
+    },
+    "unit": {
+      "type": "object",
+      "required": [
+        "dimension"
+      ],
+      "properties": {
+        "dimension": {
+          "type": "string",
+          "const": "mm",
+          "description": "Intrinsic size and layout coordinates use millimetres"
+        }
+      },
+      "additionalProperties": false
+    },
+    "default_profile": {
+      "type": "string",
+      "pattern": "^[a-z0-9_]+$",
+      "description": "Profile id used when product.mark_profile is omitted"
+    },
+    "profiles": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "mark_type",
+          "label"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9_]+$",
+            "description": "Stable profile id; referenced from products.mark_profile"
+          },
+          "mark_type": {
+            "type": "string",
+            "enum": [
+              "stamp",
+              "label"
+            ],
+            "description": "Must match product.mark_type for products using this profile"
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "description": "English short name for tooling"
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "description": "When to use this profile vs others"
+          },
+          "scope_notes": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Optional: domestic vs international, registered, channel notes"
+          },
+          "size": {
+            "type": "object",
+            "description": "Nominal width \u00d7 height of the franking graphic in file unit.dimension (mm); optional until verified from API/spec",
+            "required": [
+              "width",
+              "height"
+            ],
+            "properties": {
+              "width": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "height": {
+                "type": "integer",
+                "minimum": 1
+              }
+            },
+            "additionalProperties": false
+          },
+          "mime_type": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "enum": [
+                "image/png",
+                "image/jpeg",
+                "application/pdf",
+                "application/octet-stream"
+              ]
+            },
+            "description": "IANA media types the provider API may return for this profile; order is not significant"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

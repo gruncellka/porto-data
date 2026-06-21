@@ -1,0 +1,120 @@
+{
+  "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/envelopes.schema.json",
+  "file_type": "envelopes",
+  "unit": {
+    "dimension": "mm"
+  },
+  "envelopes": [
+    {
+      "id": "DL",
+      "label": "DL envelope",
+      "width": 220,
+      "height": 110,
+      "standard": "ISO269",
+      "sheets": [
+        {
+          "sheet": "A4",
+          "fold": "trifold",
+          "description": "A4 trifold: two parallel creases, three panels"
+        }
+      ],
+      "notes": "ISO DL; long pocket for A4 folded in thirds"
+    },
+    {
+      "id": "C6",
+      "label": "C6 envelope",
+      "width": 162,
+      "height": 114,
+      "standard": "ISO269",
+      "sheets": [
+        {
+          "sheet": "A4",
+          "fold": "quarter",
+          "description": "A4 with two folds to fit C6"
+        },
+        {
+          "sheet": "A6",
+          "fold": "flat",
+          "description": "Unfolded A6 or postcard stock"
+        },
+        {
+          "sheet": "A5",
+          "fold": "half",
+          "description": "A5 folded once to fit C6"
+        }
+      ]
+    },
+    {
+      "id": "C5",
+      "label": "C5 envelope",
+      "width": 229,
+      "height": 162,
+      "standard": "ISO269",
+      "sheets": [
+        {
+          "sheet": "A4",
+          "fold": "half",
+          "description": "A4 folded once to fit C5"
+        },
+        {
+          "sheet": "A5",
+          "fold": "flat",
+          "description": "Unfolded A5 sheet"
+        }
+      ]
+    },
+    {
+      "id": "C4",
+      "label": "C4 envelope",
+      "width": 324,
+      "height": 229,
+      "standard": "ISO269",
+      "sheets": [
+        {
+          "sheet": "A4",
+          "fold": "flat",
+          "description": "Unfolded A4"
+        },
+        {
+          "sheet": "A5",
+          "fold": "flat",
+          "description": "Unfolded A5 sheet"
+        },
+        {
+          "sheet": "B5",
+          "fold": "flat",
+          "description": "Unfolded B5 sheet"
+        }
+      ]
+    },
+    {
+      "id": "B4",
+      "label": "B4 envelope",
+      "width": 353,
+      "height": 250,
+      "standard": "ISO269",
+      "sheets": [
+        {
+          "sheet": "B4",
+          "fold": "flat",
+          "description": "Unfolded B4 sheet"
+        },
+        {
+          "sheet": "A4",
+          "fold": "flat",
+          "description": "One or more unfolded A4 sheets; carrier max thickness applies"
+        },
+        {
+          "sheet": "A5",
+          "fold": "flat",
+          "description": "Unfolded A5 sheet"
+        },
+        {
+          "sheet": "B5",
+          "fold": "flat",
+          "description": "Unfolded B5 sheet"
+        }
+      ]
+    }
+  ]
+}

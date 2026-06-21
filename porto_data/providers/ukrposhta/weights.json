@@ -1,0 +1,26 @@
+{
+  "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/weights.schema.json",
+  "file_type": "weights",
+  "provider": "ukrposhta",
+  "unit": {
+    "weight": "g"
+  },
+  "weights": {
+    "W0050": {
+      "min": 0,
+      "max": 50
+    },
+    "W0250": {
+      "min": 51,
+      "max": 250
+    },
+    "W1000": {
+      "min": 251,
+      "max": 1000
+    },
+    "W2000": {
+      "min": 1001,
+      "max": 2000
+    }
+  }
+}

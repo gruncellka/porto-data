@@ -1,0 +1,35 @@
+{
+  "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/marks.schema.json",
+  "file_type": "marks",
+  "provider": "laposte",
+  "unit": {
+    "dimension": "mm"
+  },
+  "default_profile": "mtel_domestic",
+  "profiles": [
+    {
+      "id": "mtel_domestic",
+      "mark_type": "label",
+      "label": "Mon Timbre en ligne domestic",
+      "size": {
+        "width": 70,
+        "height": 35
+      },
+      "mime_type": [
+        "application/pdf"
+      ]
+    },
+    {
+      "id": "mtel_international",
+      "mark_type": "label",
+      "label": "Mon Timbre en ligne international",
+      "size": {
+        "width": 70,
+        "height": 35
+      },
+      "mime_type": [
+        "application/pdf"
+      ]
+    }
+  ]
+}

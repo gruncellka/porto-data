@@ -1,0 +1,1199 @@
+{
+  "provider": "laposte",
+  "unit": {
+    "price": "cents",
+    "currency": "EUR"
+  },
+  "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/product_prices.schema.json",
+  "file_type": "product_prices",
+  "product_prices": [
+    {
+      "product_id": "lettre_verte",
+      "zone": "domestic",
+      "weight_tier": "W0020",
+      "price": [
+        {
+          "amount": 152,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_verte",
+      "zone": "domestic",
+      "weight_tier": "W0100",
+      "price": [
+        {
+          "amount": 310,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_verte",
+      "zone": "domestic",
+      "weight_tier": "W0250",
+      "price": [
+        {
+          "amount": 524,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_verte",
+      "zone": "domestic",
+      "weight_tier": "W0500",
+      "price": [
+        {
+          "amount": 741,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_verte",
+      "zone": "domestic",
+      "weight_tier": "W1000",
+      "price": [
+        {
+          "amount": 929,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_verte",
+      "zone": "domestic",
+      "weight_tier": "W2000",
+      "price": [
+        {
+          "amount": 1114,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_verte_suivie",
+      "zone": "domestic",
+      "weight_tier": "W0020",
+      "price": [
+        {
+          "amount": 202,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_verte_suivie",
+      "zone": "zone_1_eu",
+      "weight_tier": "W0020",
+      "price": [
+        {
+          "amount": 505,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_verte_suivie",
+      "zone": "zone_2_europe",
+      "weight_tier": "W0020",
+      "price": [
+        {
+          "amount": 505,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_verte_suivie",
+      "zone": "world",
+      "weight_tier": "W0020",
+      "price": [
+        {
+          "amount": 505,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_verte_suivie",
+      "zone": "domestic",
+      "weight_tier": "W0100",
+      "price": [
+        {
+          "amount": 360,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_verte_suivie",
+      "zone": "zone_1_eu",
+      "weight_tier": "W0100",
+      "price": [
+        {
+          "amount": 765,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_verte_suivie",
+      "zone": "zone_2_europe",
+      "weight_tier": "W0100",
+      "price": [
+        {
+          "amount": 765,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_verte_suivie",
+      "zone": "world",
+      "weight_tier": "W0100",
+      "price": [
+        {
+          "amount": 765,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_verte_suivie",
+      "zone": "domestic",
+      "weight_tier": "W0250",
+      "price": [
+        {
+          "amount": 574,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_verte_suivie",
+      "zone": "zone_1_eu",
+      "weight_tier": "W0250",
+      "price": [
+        {
+          "amount": 1445,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_verte_suivie",
+      "zone": "zone_2_europe",
+      "weight_tier": "W0250",
+      "price": [
+        {
+          "amount": 1445,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_verte_suivie",
+      "zone": "world",
+      "weight_tier": "W0250",
+      "price": [
+        {
+          "amount": 1445,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_verte_suivie",
+      "zone": "domestic",
+      "weight_tier": "W0500",
+      "price": [
+        {
+          "amount": 791,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_verte_suivie",
+      "zone": "zone_1_eu",
+      "weight_tier": "W0500",
+      "price": [
+        {
+          "amount": 1940,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_verte_suivie",
+      "zone": "zone_2_europe",
+      "weight_tier": "W0500",
+      "price": [
+        {
+          "amount": 1940,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_verte_suivie",
+      "zone": "world",
+      "weight_tier": "W0500",
+      "price": [
+        {
+          "amount": 1940,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_verte_suivie",
+      "zone": "domestic",
+      "weight_tier": "W1000",
+      "price": [
+        {
+          "amount": 979,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_verte_suivie",
+      "zone": "zone_1_eu",
+      "weight_tier": "W1000",
+      "price": [
+        {
+          "amount": 3450,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_verte_suivie",
+      "zone": "zone_2_europe",
+      "weight_tier": "W1000",
+      "price": [
+        {
+          "amount": 3450,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_verte_suivie",
+      "zone": "world",
+      "weight_tier": "W1000",
+      "price": [
+        {
+          "amount": 3450,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_verte_suivie",
+      "zone": "domestic",
+      "weight_tier": "W2000",
+      "price": [
+        {
+          "amount": 1164,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_verte_suivie",
+      "zone": "zone_1_eu",
+      "weight_tier": "W2000",
+      "price": [
+        {
+          "amount": 3450,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_verte_suivie",
+      "zone": "zone_2_europe",
+      "weight_tier": "W2000",
+      "price": [
+        {
+          "amount": 3450,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_verte_suivie",
+      "zone": "world",
+      "weight_tier": "W2000",
+      "price": [
+        {
+          "amount": 3450,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_services_plus",
+      "zone": "domestic",
+      "weight_tier": "W0020",
+      "price": [
+        {
+          "amount": 347,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_services_plus",
+      "zone": "domestic",
+      "weight_tier": "W0100",
+      "price": [
+        {
+          "amount": 457,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_services_plus",
+      "zone": "domestic",
+      "weight_tier": "W0250",
+      "price": [
+        {
+          "amount": 578,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_services_plus",
+      "zone": "domestic",
+      "weight_tier": "W0500",
+      "price": [
+        {
+          "amount": 810,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_services_plus",
+      "zone": "domestic",
+      "weight_tier": "W1000",
+      "price": [
+        {
+          "amount": 1035,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_services_plus",
+      "zone": "domestic",
+      "weight_tier": "W2000",
+      "price": [
+        {
+          "amount": 1201,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_r_un",
+      "zone": "domestic",
+      "weight_tier": "W0020",
+      "price": [
+        {
+          "amount": 611,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_r_un",
+      "zone": "domestic",
+      "weight_tier": "W0050",
+      "price": [
+        {
+          "amount": 698,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_r_un",
+      "zone": "domestic",
+      "weight_tier": "W0100",
+      "price": [
+        {
+          "amount": 788,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_r_un",
+      "zone": "domestic",
+      "weight_tier": "W0250",
+      "price": [
+        {
+          "amount": 963,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_r_un",
+      "zone": "domestic",
+      "weight_tier": "W0500",
+      "price": [
+        {
+          "amount": 1132,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_r_un",
+      "zone": "domestic",
+      "weight_tier": "W1000",
+      "price": [
+        {
+          "amount": 1302,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_r_un",
+      "zone": "domestic",
+      "weight_tier": "W2000",
+      "price": [
+        {
+          "amount": 1542,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_r_deux",
+      "zone": "domestic",
+      "weight_tier": "W0020",
+      "price": [
+        {
+          "amount": 729,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_r_deux",
+      "zone": "domestic",
+      "weight_tier": "W0050",
+      "price": [
+        {
+          "amount": 807,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_r_deux",
+      "zone": "domestic",
+      "weight_tier": "W0100",
+      "price": [
+        {
+          "amount": 897,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_r_deux",
+      "zone": "domestic",
+      "weight_tier": "W0250",
+      "price": [
+        {
+          "amount": 1073,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_r_deux",
+      "zone": "domestic",
+      "weight_tier": "W0500",
+      "price": [
+        {
+          "amount": 1235,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_r_deux",
+      "zone": "domestic",
+      "weight_tier": "W1000",
+      "price": [
+        {
+          "amount": 1411,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_r_deux",
+      "zone": "domestic",
+      "weight_tier": "W2000",
+      "price": [
+        {
+          "amount": 1648,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_r_trois",
+      "zone": "domestic",
+      "weight_tier": "W0020",
+      "price": [
+        {
+          "amount": 897,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_r_trois",
+      "zone": "domestic",
+      "weight_tier": "W0050",
+      "price": [
+        {
+          "amount": 967,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_r_trois",
+      "zone": "domestic",
+      "weight_tier": "W0100",
+      "price": [
+        {
+          "amount": 1054,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_r_trois",
+      "zone": "domestic",
+      "weight_tier": "W0250",
+      "price": [
+        {
+          "amount": 1242,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_r_trois",
+      "zone": "domestic",
+      "weight_tier": "W0500",
+      "price": [
+        {
+          "amount": 1390,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_r_trois",
+      "zone": "domestic",
+      "weight_tier": "W1000",
+      "price": [
+        {
+          "amount": 1565,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_r_trois",
+      "zone": "domestic",
+      "weight_tier": "W2000",
+      "price": [
+        {
+          "amount": 1818,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_inter_r_un",
+      "zone": "zone_1_eu",
+      "weight_tier": "W0020",
+      "price": [
+        {
+          "amount": 720,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_inter_r_un",
+      "zone": "zone_2_europe",
+      "weight_tier": "W0020",
+      "price": [
+        {
+          "amount": 720,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_inter_r_un",
+      "zone": "world",
+      "weight_tier": "W0020",
+      "price": [
+        {
+          "amount": 720,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_inter_r_un",
+      "zone": "zone_1_eu",
+      "weight_tier": "W0050",
+      "price": [
+        {
+          "amount": 980,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_inter_r_un",
+      "zone": "zone_2_europe",
+      "weight_tier": "W0050",
+      "price": [
+        {
+          "amount": 980,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_inter_r_un",
+      "zone": "world",
+      "weight_tier": "W0050",
+      "price": [
+        {
+          "amount": 980,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_inter_r_un",
+      "zone": "zone_1_eu",
+      "weight_tier": "W0100",
+      "price": [
+        {
+          "amount": 980,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_inter_r_un",
+      "zone": "zone_2_europe",
+      "weight_tier": "W0100",
+      "price": [
+        {
+          "amount": 980,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_inter_r_un",
+      "zone": "world",
+      "weight_tier": "W0100",
+      "price": [
+        {
+          "amount": 980,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_inter_r_un",
+      "zone": "zone_1_eu",
+      "weight_tier": "W0250",
+      "price": [
+        {
+          "amount": 1660,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_inter_r_un",
+      "zone": "zone_2_europe",
+      "weight_tier": "W0250",
+      "price": [
+        {
+          "amount": 1660,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_inter_r_un",
+      "zone": "world",
+      "weight_tier": "W0250",
+      "price": [
+        {
+          "amount": 1660,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_inter_r_un",
+      "zone": "zone_1_eu",
+      "weight_tier": "W0500",
+      "price": [
+        {
+          "amount": 2155,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_inter_r_un",
+      "zone": "zone_2_europe",
+      "weight_tier": "W0500",
+      "price": [
+        {
+          "amount": 2155,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_inter_r_un",
+      "zone": "world",
+      "weight_tier": "W0500",
+      "price": [
+        {
+          "amount": 2155,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_inter_r_un",
+      "zone": "zone_1_eu",
+      "weight_tier": "W1000",
+      "price": [
+        {
+          "amount": 3665,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_inter_r_un",
+      "zone": "zone_2_europe",
+      "weight_tier": "W1000",
+      "price": [
+        {
+          "amount": 3665,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_inter_r_un",
+      "zone": "world",
+      "weight_tier": "W1000",
+      "price": [
+        {
+          "amount": 3665,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_inter_r_un",
+      "zone": "zone_1_eu",
+      "weight_tier": "W2000",
+      "price": [
+        {
+          "amount": 3665,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_inter_r_un",
+      "zone": "zone_2_europe",
+      "weight_tier": "W2000",
+      "price": [
+        {
+          "amount": 3665,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_inter_r_un",
+      "zone": "world",
+      "weight_tier": "W2000",
+      "price": [
+        {
+          "amount": 3665,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_inter_r_deux",
+      "zone": "zone_1_eu",
+      "weight_tier": "W0020",
+      "price": [
+        {
+          "amount": 820,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_inter_r_deux",
+      "zone": "zone_2_europe",
+      "weight_tier": "W0020",
+      "price": [
+        {
+          "amount": 820,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_inter_r_deux",
+      "zone": "world",
+      "weight_tier": "W0020",
+      "price": [
+        {
+          "amount": 820,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_inter_r_deux",
+      "zone": "zone_1_eu",
+      "weight_tier": "W0050",
+      "price": [
+        {
+          "amount": 1080,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_inter_r_deux",
+      "zone": "zone_2_europe",
+      "weight_tier": "W0050",
+      "price": [
+        {
+          "amount": 1080,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_inter_r_deux",
+      "zone": "world",
+      "weight_tier": "W0050",
+      "price": [
+        {
+          "amount": 1080,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_inter_r_deux",
+      "zone": "zone_1_eu",
+      "weight_tier": "W0100",
+      "price": [
+        {
+          "amount": 1080,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_inter_r_deux",
+      "zone": "zone_2_europe",
+      "weight_tier": "W0100",
+      "price": [
+        {
+          "amount": 1080,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_inter_r_deux",
+      "zone": "world",
+      "weight_tier": "W0100",
+      "price": [
+        {
+          "amount": 1080,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_inter_r_deux",
+      "zone": "zone_1_eu",
+      "weight_tier": "W0250",
+      "price": [
+        {
+          "amount": 1760,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_inter_r_deux",
+      "zone": "zone_2_europe",
+      "weight_tier": "W0250",
+      "price": [
+        {
+          "amount": 1760,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_inter_r_deux",
+      "zone": "world",
+      "weight_tier": "W0250",
+      "price": [
+        {
+          "amount": 1760,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_inter_r_deux",
+      "zone": "zone_1_eu",
+      "weight_tier": "W0500",
+      "price": [
+        {
+          "amount": 2255,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_inter_r_deux",
+      "zone": "zone_2_europe",
+      "weight_tier": "W0500",
+      "price": [
+        {
+          "amount": 2255,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_inter_r_deux",
+      "zone": "world",
+      "weight_tier": "W0500",
+      "price": [
+        {
+          "amount": 2255,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_inter_r_deux",
+      "zone": "zone_1_eu",
+      "weight_tier": "W1000",
+      "price": [
+        {
+          "amount": 3765,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_inter_r_deux",
+      "zone": "zone_2_europe",
+      "weight_tier": "W1000",
+      "price": [
+        {
+          "amount": 3765,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_inter_r_deux",
+      "zone": "world",
+      "weight_tier": "W1000",
+      "price": [
+        {
+          "amount": 3765,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_inter_r_deux",
+      "zone": "zone_1_eu",
+      "weight_tier": "W2000",
+      "price": [
+        {
+          "amount": 3765,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_inter_r_deux",
+      "zone": "zone_2_europe",
+      "weight_tier": "W2000",
+      "price": [
+        {
+          "amount": 3765,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "lettre_recommandee_inter_r_deux",
+      "zone": "world",
+      "weight_tier": "W2000",
+      "price": [
+        {
+          "amount": 3765,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    }
+  ]
+}

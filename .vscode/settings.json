@@ -6,9 +6,10 @@
     ],
     "python.analysis.typeCheckingMode": "basic",
     "[json]": {
-        "editor.tabSize": 4,
+        "editor.tabSize": 2,
         "editor.insertSpaces": true,
-        "editor.detectIndentation": false
+        "editor.detectIndentation": false,
+        "editor.defaultFormatter": "vscode.json-language-features"
     },
     "[jsonc]": {
         "editor.tabSize": 4,

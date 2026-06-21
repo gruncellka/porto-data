@@ -1,0 +1,222 @@
+{
+  "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/graph.schema.json",
+  "file_type": "graph",
+  "provider": "swisspost",
+  "unit": {
+    "weight": "g",
+    "dimension": "mm",
+    "price": "cents",
+    "currency": "CHF"
+  },
+  "dependencies": {
+    "products": {
+      "file": "products.json",
+      "depends_on": [
+        "zones.json",
+        "weights.json",
+        "formats/envelopes.json",
+        "services.json",
+        "features.json",
+        "marks.json"
+      ],
+      "description": "Products require zones, weight tiers, canonical envelope format ids, services, features, and mark profiles"
+    },
+    "services": {
+      "file": "services.json",
+      "depends_on": [
+        "features.json"
+      ],
+      "description": "Services require features"
+    },
+    "product_prices": {
+      "file": "prices/products.json",
+      "depends_on": [
+        "products.json",
+        "zones.json",
+        "weights.json"
+      ],
+      "description": "Base postage grid; file providers/<id>/prices/products.json (file_type product_prices)"
+    },
+    "service_prices": {
+      "file": "prices/services.json",
+      "depends_on": [
+        "products.json",
+        "services.json",
+        "zones.json",
+        "weights.json"
+      ],
+      "description": "Service surcharge amounts; file providers/<id>/prices/services.json (file_type service_prices)"
+    },
+    "zones": {
+      "file": "zones.json",
+      "depends_on": [
+        "policy/restrictions.json"
+      ],
+      "description": "Zones may have restricted destinations"
+    },
+    "weights": {
+      "file": "weights.json",
+      "depends_on": [],
+      "description": "Weight brackets (tier ids) are standalone definitions"
+    },
+    "envelopes": {
+      "file": "formats/envelopes.json",
+      "depends_on": [],
+      "description": "Global envelope id catalog: physical front size (mm); international baseline (e.g. ISO 269); file formats/envelopes.json"
+    },
+    "envelope_layouts": {
+      "file": "formats/layouts.json",
+      "depends_on": [
+        "formats/envelopes.json"
+      ],
+      "description": "Jurisdiction-keyed print/window layout (DE/CH/FR); file formats/layouts.json"
+    },
+    "jurisdictions": {
+      "file": "policy/jurisdictions.json",
+      "depends_on": [],
+      "description": "UN/EU membership sets for restriction framework jurisdiction resolution"
+    },
+    "restrictions": {
+      "file": "policy/restrictions.json",
+      "depends_on": [
+        "policy/jurisdictions.json",
+        "zones.json",
+        "products.json"
+      ],
+      "description": "Global destination restrictions (bundled as policy/restrictions.json); optional cross-reference to zones and products"
+    },
+    "limits": {
+      "file": "limits.json",
+      "depends_on": [
+        "policy/restrictions.json"
+      ],
+      "description": "Provider operational limits extend global restrictions after load"
+    },
+    "features": {
+      "file": "features.json",
+      "depends_on": [],
+      "description": "Features are standalone"
+    },
+    "marks": {
+      "file": "marks.json",
+      "depends_on": [],
+      "description": "Provider mark/stamp/label physical defaults; referenced optionally from products.mark_profile"
+    },
+    "rules": {
+      "file": "rules.json",
+      "depends_on": [
+        "graph.json",
+        "products.json",
+        "services.json",
+        "zones.json",
+        "prices/services.json"
+      ],
+      "description": "Conditional letter policies (e.g. thickness surcharge); SDK evaluates after base resolution"
+    }
+  },
+  "edges": {
+    "a_post_standardbrief": {
+      "zones": [
+        "domestic"
+      ],
+      "weight_tiers": [
+        "W0020",
+        "W0050",
+        "W0100"
+      ]
+    },
+    "a_post_grossbrief": {
+      "zones": [
+        "domestic"
+      ],
+      "weight_tiers": [
+        "W0250",
+        "W0500",
+        "W1000"
+      ]
+    },
+    "b_post_standardbrief": {
+      "zones": [
+        "domestic"
+      ],
+      "weight_tiers": [
+        "W0020",
+        "W0050",
+        "W0100"
+      ]
+    },
+    "b_post_grossbrief": {
+      "zones": [
+        "domestic"
+      ],
+      "weight_tiers": [
+        "W0250",
+        "W0500",
+        "W1000"
+      ]
+    },
+    "international_standardbrief": {
+      "zones": [
+        "zone_1_eu",
+        "world"
+      ],
+      "weight_tiers": [
+        "W0020",
+        "W0050",
+        "W0100"
+      ]
+    },
+    "international_grossbrief": {
+      "zones": [
+        "zone_1_eu",
+        "world"
+      ],
+      "weight_tiers": [
+        "W0250",
+        "W0500"
+      ]
+    },
+    "international_maxibrief": {
+      "zones": [
+        "zone_1_eu",
+        "world"
+      ],
+      "weight_tiers": [
+        "W0500",
+        "W1000",
+        "W2000"
+      ]
+    }
+  },
+  "lookup_rules": {
+    "price_lookup": "Base postage: prices/products.json (product_prices[]). Service surcharges: prices/services.json (service_prices[])",
+    "service_lookup": "Find service in services.json by id",
+    "weight_resolution": "Resolve weight_tier id from weights.json where min <= weight <= max",
+    "zone_validation": "Check if zone is in product's zones array"
+  },
+  "global_settings": {
+    "price_lookup": {
+      "product_prices": {
+        "file": "prices/products.json",
+        "array": "product_prices",
+        "match": {
+          "product_id": "from products.json native id",
+          "zone": "from zones array",
+          "weight_tier": "from weight_tiers array"
+        },
+        "description": "Domestic A/B Mail and international document letter prices aligned with post.ch DigitalStamp and \u201cDocuments to be sent abroad\u201d (CHF, VAT-exempt published amounts). **Product choice is explicit:** use a_post_* vs b_post_* (speed) and standardbrief vs grossbrief (format) \u2014 there is no separate Midibrief in this catalog. International zone_1_eu and world use the **same** cent amounts per post.ch international documents table snapshot (verify live site / PDF). effective_from 2026-01-01."
+      },
+      "service_prices": {
+        "file": "prices/services.json",
+        "array": "service_prices",
+        "match": {
+          "service_id": "from services.json native id"
+        },
+        "description": "Optional service amounts in prices/services.json."
+      }
+    },
+    "available_services": [
+      "a_mail_plus"
+    ]
+  }
+}

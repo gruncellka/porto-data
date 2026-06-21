@@ -1,0 +1,63 @@
+{
+  "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/services.schema.json",
+  "file_type": "services",
+  "provider": "laposte",
+  "services": [
+    {
+      "id": "suivi_option",
+      "porto_id": "tracking",
+      "name": "Option suivi (add-on)",
+      "label": "Optional tracking add-on",
+      "description": "Optional tracking when posting Lettre verte without using Lettre verte suivie (e.g. Mon Timbre en ligne). Catalog uses a nominal add-on row; verify current fee on laposte.fr.",
+      "features": [
+        "numero_suivi"
+      ],
+      "enables_tracking": true,
+      "online_supported": true,
+      "integration_supported": {
+        "mon_timbre_en_ligne": true
+      },
+      "supported_zones": [
+        "domestic"
+      ]
+    },
+    {
+      "id": "avis_de_reception_national",
+      "porto_id": "return_receipt",
+      "name": "Avis de r\u00e9ception (national)",
+      "label": "Return receipt add-on (France)",
+      "description": "Optional avis de r\u00e9ception papier national, priced per official Lettre recommand\u00e9e table (laposte.fr tarifs 2026). Add to a recommand\u00e9e base product when the purchase flow offers it.",
+      "features": [
+        "avis_reception"
+      ],
+      "enables_tracking": false,
+      "online_supported": true,
+      "integration_supported": {
+        "mon_timbre_en_ligne": true
+      },
+      "supported_zones": [
+        "domestic"
+      ]
+    },
+    {
+      "id": "avis_de_reception_international",
+      "porto_id": "return_receipt",
+      "name": "Avis de r\u00e9ception (international)",
+      "label": "Return receipt add-on (international)",
+      "description": "Optional avis de r\u00e9ception for international registered letter, per official 2026 tariff table.",
+      "features": [
+        "avis_reception"
+      ],
+      "enables_tracking": false,
+      "online_supported": true,
+      "integration_supported": {
+        "mon_timbre_en_ligne": true
+      },
+      "supported_zones": [
+        "zone_1_eu",
+        "zone_2_europe",
+        "world"
+      ]
+    }
+  ]
+}
