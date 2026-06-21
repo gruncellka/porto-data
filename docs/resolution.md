@@ -6,7 +6,7 @@ SDK and app code should pass **`porto_id`** (canonical bucket). The bundle resol
 
 | Input | Role |
 |-------|------|
-| `provider` | Operator id (`deutschepost`, `swisspost`, …) |
+| `provider` | Operator id (`deutschepost`, `ukrposhta`, `laposte`, `swisspost`, …) |
 | `porto_id` | Canonical product bucket (`small`, `registered`, …) |
 | `zone` | Resolved from destination country |
 | `weight_g` | Actual weight in grams → `weight_tier` via `weights.json` |
@@ -25,21 +25,6 @@ Cross-file refs (graph, prices, rules) always use **native `id`**, never `porto_
 
 ## Known ambiguous cases
 
-### Swiss Post — same `porto_id`, different speed class
-
-Multiple products share `porto_id: small` or `large`:
-
-- `a_post_standardbrief` vs `b_post_standardbrief` (domestic speed)
-- `international_standardbrief` vs domestic variants
-
-Disambiguation: prefer **zone** (domestic vs international) first, then **speed class** (A-Post vs B-Post) from app/SDK policy or explicit product hint when the user selects a tariff.
-
-### La Poste — registered letter tiers
-
-Several products use `porto_id: registered` (`lettre_recommandee_r_un`, `r_deux`, `r_trois`, international variants).
-
-Disambiguation: match **registered tier** from user selection or service bundle (R1/R2/R3), not from `porto_id` alone.
-
 ### Deutsche Post — extra_large variants
 
 `maxibrief` and `maxibrief_international_heavy` both map to `extra_large`.
@@ -49,6 +34,21 @@ Disambiguation: **zone** and **weight_tier** (e.g. W2000 only on international h
 ### Ukrposhta
 
 `lyst_standartnyi` → `porto_id: small`; `dokument` → `porto_id: large`. Currently distinct at the `porto_id` level.
+
+### La Poste — registered letter tiers
+
+Several products use `porto_id: registered` (`lettre_recommandee_r_un`, `r_deux`, `r_trois`, international variants).
+
+Disambiguation: match **registered tier** from user selection or service bundle (R1/R2/R3), not from `porto_id` alone.
+
+### Swiss Post — same `porto_id`, different speed class
+
+Multiple products share `porto_id: small` or `large`:
+
+- `a_post_standardbrief` vs `b_post_standardbrief` (domestic speed)
+- `international_standardbrief` vs domestic variants
+
+Disambiguation: prefer **zone** (domestic vs international) first, then **speed class** (A-Post vs B-Post) from app/SDK policy or explicit product hint when the user selects a tariff.
 
 ## Service variants
 

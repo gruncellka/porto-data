@@ -5,7 +5,7 @@
 
 **Porto Data** is **JSON + schemas** for national postal operators under one shared layout and vocabulary. Published on **npm** and **PyPI** with the **same** `porto_data/` tree on every platform.
 
-The bundle covers **Deutsche Post**, **La Poste**, **Ukrposhta** and **Swiss Post** with shared policy/formats data at the bundle root and **per-operator** catalogs under **`providers/<id>/`** (products, services, prices, zones, weight tiers, features, limits, **`graph.json`**).
+The bundle covers **Deutsche Post**, **Ukrposhta**, **La Poste**, and **Swiss Post** with shared policy/formats data at the bundle root and **per-operator** catalogs under **`providers/<id>/`** (products, services, prices, zones, weight tiers, features, limits, **`graph.json`**).
 
 ---
 
@@ -98,9 +98,9 @@ All JSON validates against **`schemas/`**; **`mappings.json`** maps entities to 
 | Provider (`providers.json` id) | Reconciliation doc                                               | Bundle data folder                   | Website                                        |
 | ------------------------------ | ---------------------------------------------------------------- | ------------------------------------ | ---------------------------------------------- |
 | Deutsche Post (`deutschepost`) | [docs/providers/deutschepost.md](docs/providers/deutschepost.md) | `porto_data/providers/deutschepost/` | [deutschepost.de](https://www.deutschepost.de) |
-| Swiss Post (`swisspost`)       | [docs/providers/swisspost.md](docs/providers/swisspost.md)       | `porto_data/providers/swisspost/`    | [post.ch](https://www.post.ch)                 |
-| La Poste (`laposte`)           | [docs/providers/laposte.md](docs/providers/laposte.md)           | `porto_data/providers/laposte/`      | [laposte.fr](https://www.laposte.fr)           |
 | Ukrposhta (`ukrposhta`)        | [docs/providers/ukrposhta.md](docs/providers/ukrposhta.md)       | `porto_data/providers/ukrposhta/`    | [ukrposhta.ua](https://ukrposhta.ua/)          |
+| La Poste (`laposte`)           | [docs/providers/laposte.md](docs/providers/laposte.md)           | `porto_data/providers/laposte/`      | [laposte.fr](https://www.laposte.fr)           |
+| Swiss Post (`swisspost`)       | [docs/providers/swisspost.md](docs/providers/swisspost.md)       | `porto_data/providers/swisspost/`    | [post.ch](https://www.post.ch)                 |
 
 **Other references:** [EU Sanctions Map](https://www.sanctionsmap.eu/), [ISO 3166 country codes](https://www.iso.org/iso-3166-country-codes.html)
 

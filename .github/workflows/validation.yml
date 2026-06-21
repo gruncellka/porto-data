@@ -4,9 +4,12 @@ on: [push, pull_request]
 
 env:
     PYTHON_VERSION: '3.13'
-    PYTHON3: python
 
 jobs:
+    # ==========================================
+    # JSON Validation (MUST RUN FIRST)
+    # ==========================================
+    # These can run in parallel - both just need valid JSON files
     validate-schemas:
         name: Validate JSON Schemas
         runs-on: ubuntu-22.04

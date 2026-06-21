@@ -2,7 +2,7 @@
 
 How we reconcile **product and service prices** in this bundle with official carrier sources. This is **reference data**, not a legal tariff publication.
 
-**Provider notes:** [deutschepost.md](providers/deutschepost.md) · [laposte.md](providers/laposte.md) · [swisspost.md](providers/swisspost.md) · [ukrposhta.md](providers/ukrposhta.md)
+**Provider notes:** [deutschepost.md](providers/deutschepost.md) · [ukrposhta.md](providers/ukrposhta.md) · [laposte.md](providers/laposte.md) · [swisspost.md](providers/swisspost.md)
 
 ---
 
@@ -43,8 +43,8 @@ File-level default: `unit.currency` in each price file. Row override: optional *
 Use one **`world`** zone (same amount for all destinations) when the carrier publishes a **single international letter table** without country columns:
 
 - Deutsche Post — “Alle Länder – ein Preis – weltweit”
-- Swiss Post — flat international document ladder (EU = world in our minimal model)
 - Ukrposhta — **international letters** flat USD table at bottom of [taryfy](https://www.ukrposhta.ua/ua/taryfy)
+- Swiss Post — flat international document ladder (EU = world in our minimal model)
 
 Use **per-country or multi-zone** models when the official table is country- or zone-indexed:
 
@@ -58,9 +58,9 @@ Use **per-country or multi-zone** models when the official table is country- or 
 | Provider | Last checked (UTC) | Confidence | Notes |
 |----------|-------------------|------------|-------|
 | Deutsche Post | 2026-06-21 | verified | Letter ladder + Einschreiben surcharges vs deutschepost.de |
-| Swiss Post | 2026-06-21 | verified | A/B domestic + intl documents + thickness surcharge vs post.ch |
-| La Poste | 2026-06-21 | verified | Lettre verte / suivie / Services Plus / recommandée vs laposte.fr 2026 tables |
 | Ukrposhta | 2026-06-21 | partial | Domestic + intl **letters** verified; parcels / personal intl / extra services deferred |
+| La Poste | 2026-06-21 | verified | Lettre verte / suivie / Services Plus / recommandée vs laposte.fr 2026 tables |
+| Swiss Post | 2026-06-21 | verified | A/B domestic + intl documents + thickness surcharge vs post.ch |
 
 ---
 

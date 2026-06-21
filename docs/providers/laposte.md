@@ -2,7 +2,7 @@
 
 Reference for **reconciling JSON with official letter tariffs** (not a legal tariff publication). Verify on [laposte.fr](https://www.laposte.fr) and the **[catalogue intégral](https://www.laposte.fr/tarifs-postaux/catalogue-integral)** before production changes.
 
-**Related:** [deutschepost.md](deutschepost.md) · [swisspost.md](swisspost.md) · [ukrposhta.md](ukrposhta.md) · [tariff-verification.md](../tariff-verification.md)
+**Related:** [deutschepost.md](deutschepost.md) · [ukrposhta.md](ukrposhta.md) · [swisspost.md](swisspost.md) · [tariff-verification.md](../tariff-verification.md)
 
 ---
 
