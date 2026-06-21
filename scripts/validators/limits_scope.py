@@ -7,7 +7,7 @@ Paths come from mappings.json via ``get_data_file_path("limits", provider_id)``.
 Policy:
 - limits[] = optional operator-specific rows that affect *letter* execution only.
 - Sanctions / UN-EU style regimes live in policy/restrictions.json (not duplicated here).
-- compliance_frameworks entries must align with the provider's operational timezone from
+- frameworks entries must align with the provider's operational timezone from
   policy/jurisdictions.json (jurisdictions[country].timezone for providers.json ``country``).
 """
 
@@ -18,6 +18,7 @@ from pathlib import Path
 from typing import Any
 
 from scripts.data_files import (
+    PROVIDER_IDS_ORDER,
     PROVIDERS_REGISTRY_FILENAME,
     get_data_file_path,
     get_project_root,
@@ -34,7 +35,9 @@ def _list_provider_ids(project_root: Path) -> list[str]:
     prov = data.get("providers") or {}
     if not isinstance(prov, dict):
         return []
-    return sorted(prov.keys())
+    ordered = [pid for pid in PROVIDER_IDS_ORDER if pid in prov]
+    extra = sorted(pid for pid in prov if pid not in PROVIDER_IDS_ORDER)
+    return ordered + extra
 
 
 def _jurisdiction_country_timezones(project_root: Path) -> dict[str, str]:
@@ -121,12 +124,12 @@ def validate_limits_scope(project_root: Path | None = None) -> int:
             errors.append(f"{path}: limits must be an array")
             continue
 
-        frameworks = data.get("compliance_frameworks")
+        frameworks = data.get("frameworks")
         if frameworks is None:
-            errors.append(f"{path}: compliance_frameworks is required (use {{}} if empty)")
+            errors.append(f"{path}: frameworks is required (use {{}} if empty)")
             continue
         if not isinstance(frameworks, dict):
-            errors.append(f"{path}: compliance_frameworks must be an object")
+            errors.append(f"{path}: frameworks must be an object")
             continue
 
         seen_ids: set[str] = set()
@@ -146,7 +149,7 @@ def validate_limits_scope(project_root: Path | None = None) -> int:
 
         for fw_id, fw in frameworks.items():
             if not isinstance(fw, dict):
-                errors.append(f"{path}: compliance_frameworks.{fw_id} must be an object")
+                errors.append(f"{path}: frameworks.{fw_id} must be an object")
                 continue
             if expected_tz and fw.get("timezone") != expected_tz:
                 errors.append(

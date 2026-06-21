@@ -1,4 +1,4 @@
-"""``available_services``, service price rows, and service reference helpers."""
+"""``graph.services``, service price rows, and service reference helpers."""
 
 from __future__ import annotations
 
@@ -8,30 +8,31 @@ from scripts.data_files import GRAPH_FILE, SERVICE_PRICES_FILE, SERVICES_FILE
 from scripts.validators.base import ValidationResults
 
 
-def service_refs_set(services: dict[str, Any] | None) -> set[str]:
-    """Provider ``id`` and unified ``porto_id`` strings that may appear in graph/prices."""
+def service_ids_set(services: dict[str, Any] | None) -> set[str]:
+    """Native ``services[].id`` strings valid in graph/prices/rules."""
     if not services:
         return set()
-    out: set[str] = set()
-    for s in services.get("services", []):
-        if s.get("id"):
-            out.add(str(s["id"]))
-        if s.get("porto_id"):
-            out.add(str(s["porto_id"]))
-    return out
+    return {
+        str(s["id"]) for s in services.get("services", []) if isinstance(s, dict) and s.get("id")
+    }
 
 
-def get_service_by_ref(services: dict[str, Any] | None, ref: str) -> dict[str, Any] | None:
-    """Resolve a service row by provider ``id`` or ``porto_id``."""
-    if not services or not ref:
+def get_service_by_id(services: dict[str, Any] | None, service_id: str) -> dict[str, Any] | None:
+    """Resolve a service row by native ``id``."""
+    if not services or not service_id:
         return None
     for s in services.get("services", []):
-        if isinstance(s, dict) and (s.get("id") == ref or s.get("porto_id") == ref):
+        if isinstance(s, dict) and s.get("id") == service_id:
             return s
     return None
 
 
-def run_validate_service_price_consistency(
+# Backward-compatible aliases for graph package internals
+service_refs_set = service_ids_set
+get_service_by_ref = get_service_by_id
+
+
+def run_validate_service_prices(
     results: ValidationResults,
     *,
     services: dict[str, Any] | None,
@@ -52,7 +53,7 @@ def run_validate_service_price_consistency(
                 break
 
         if price_effective_to is not None:
-            service = get_service_by_ref(services, str(service_id))
+            service = get_service_by_id(services, str(service_id))
             if not service:
                 results["errors"].append(
                     f"Service '{service_id}' has prices but service not found in services.json"
@@ -78,41 +79,39 @@ def run_validate_service_price_consistency(
                 )
 
 
-def run_validate_available_services(
+def run_validate_graph_services(
     results: ValidationResults,
     *,
     graph: dict[str, Any],
     services: dict[str, Any] | None,
     service_prices: list[dict[str, Any]],
 ) -> None:
-    """Validate ``available_services`` and service-price consistency."""
-    available_services = graph.get("global_settings", {}).get("available_services", [])
+    """Validate ``graph.services`` native ids and service-price consistency."""
+    attached = graph.get("services", [])
 
-    valid_refs = service_refs_set(services)
+    valid_ids = service_ids_set(services)
     for sp in service_prices:
         sid = sp.get("service_id")
         if not sid:
             continue
-        if str(sid) not in valid_refs:
+        if str(sid) not in valid_ids:
             results["errors"].append(
                 f"Service '{sid}' in service_prices does not exist in {SERVICES_FILE} "
-                f"(by id or porto_id). Found in: {SERVICE_PRICES_FILE} -> service_prices"
+                f"(native id required). Found in: {SERVICE_PRICES_FILE} -> service_prices"
             )
 
-    for service_id in available_services:
-        if service_id not in valid_refs:
+    for service_id in attached:
+        if service_id not in valid_ids:
             results["errors"].append(
-                f"Service '{service_id}' in available_services does not exist in {SERVICES_FILE}. "
-                f"Found in: {GRAPH_FILE} -> global_settings -> available_services"
+                f"Service '{service_id}' in graph.services does not exist in {SERVICES_FILE}. "
+                f"Found in: {GRAPH_FILE} -> services"
             )
 
     service_price_ids = {sp.get("service_id") for sp in service_prices}
-    for service_id in available_services:
+    for service_id in attached:
         if service_id not in service_price_ids:
             results["warnings"].append(
                 f"Service '{service_id}' is listed as available but has no row in {SERVICE_PRICES_FILE}"
             )
 
-    run_validate_service_price_consistency(
-        results, services=services, service_prices=service_prices
-    )
+    run_validate_service_prices(results, services=services, service_prices=service_prices)

@@ -7,6 +7,7 @@ from pathlib import Path
 
 from scripts.validators.base import ValidationResults
 from scripts.validators.graph import GraphValidator
+from scripts.validators.graph.dependencies import run_validate_price_dependencies
 from scripts.validators.graph.edges import run_validate_edges
 from scripts.validators.graph.envelope_geometry import (
     envelope_rect_complete,
@@ -15,10 +16,9 @@ from scripts.validators.graph.envelope_geometry import (
 from scripts.validators.graph.layouts import (
     envelope_layout_geometry_errors,
     run_validate_envelope_address_window,
-    run_validate_envelope_layout_references,
-    run_validate_product_envelope_format_ids,
+    run_validate_envelope_ids,
+    run_validate_layout_refs,
 )
-from scripts.validators.graph.price_lookup import run_price_lookup_validation
 
 
 def _results() -> ValidationResults:
@@ -234,14 +234,14 @@ class TestLayoutsPureAndRunners:
 
     def test_run_layout_references_skips_malformed_blocks(self) -> None:
         r = _results()
-        run_validate_envelope_layout_references(r, envelope_layouts=None, envelopes={})
+        run_validate_layout_refs(r, envelope_layouts=None, envelopes={})
         assert not r["errors"]
-        run_validate_envelope_layout_references(
+        run_validate_layout_refs(
             r,
             envelope_layouts={"jurisdictions": []},
             envelopes={"envelopes": [{"id": "C6"}]},
         )
-        run_validate_envelope_layout_references(
+        run_validate_layout_refs(
             r,
             envelope_layouts={
                 "jurisdictions": {
@@ -286,9 +286,9 @@ class TestLayoutsPureAndRunners:
 
     def test_run_product_envelope_ids_skips_and_errors(self) -> None:
         r = _results()
-        run_validate_product_envelope_format_ids(r, envelopes=None, products={})
+        run_validate_envelope_ids(r, envelopes=None, products={})
         assert not r["errors"]
-        run_validate_product_envelope_format_ids(
+        run_validate_envelope_ids(
             r,
             envelopes={"envelopes": [{"id": "C6"}]},
             products={"products": ["not-a-dict", {"id": "p1", "envelope_ids": ["Nope"]}]},
@@ -296,12 +296,19 @@ class TestLayoutsPureAndRunners:
         assert any("Nope" in e for e in r["errors"])
 
 
-class TestPriceLookupRunner:
-    def test_price_lookup_skips_when_not_dict(self) -> None:
+class TestPriceDependenciesRunner:
+    _deps_graph = {
+        "dependencies": {
+            "product_prices": {"file": "prices/products.json", "depends_on": []},
+            "service_prices": {"file": "prices/services.json", "depends_on": []},
+        }
+    }
+
+    def test_price_dependencies_skips_when_dependencies_not_dict(self) -> None:
         r = _results()
-        run_price_lookup_validation(
+        run_validate_price_dependencies(
             r,
-            graph={"global_settings": {"price_lookup": []}},
+            graph={"dependencies": []},
             shared_bundle_subdir=Path("/a"),
             bundle_root=Path("/a"),
             provider_dir=Path("/a/p"),
@@ -315,24 +322,9 @@ class TestPriceLookupRunner:
 
     def test_file_reference_missing_on_disk_error(self) -> None:
         r = _results()
-        run_price_lookup_validation(
+        run_validate_price_dependencies(
             r,
-            graph={
-                "global_settings": {
-                    "price_lookup": {
-                        "product_prices": {
-                            "file": "prices/products.json",
-                            "array": "product_prices",
-                            "match": {"product_id": "x"},
-                        },
-                        "service_prices": {
-                            "file": "prices/services.json",
-                            "array": "service_prices",
-                            "match": {"service_id": "x"},
-                        },
-                    }
-                }
-            },
+            graph=self._deps_graph,
             shared_bundle_subdir=Path("/tmp"),
             bundle_root=Path("/tmp"),
             provider_dir=Path("/tmp/deutschepost"),
@@ -342,28 +334,13 @@ class TestPriceLookupRunner:
             product_prices=[],
             service_prices=[],
         )
-        assert any("doesn't exist" in e for e in r["errors"])
+        assert any("does not exist" in e for e in r["errors"])
 
-    def test_lookup_array_structure_mismatch_errors(self) -> None:
+    def test_price_array_structure_mismatch_errors(self) -> None:
         r = _results()
-        run_price_lookup_validation(
+        run_validate_price_dependencies(
             r,
-            graph={
-                "global_settings": {
-                    "price_lookup": {
-                        "product_prices": {
-                            "file": "prices/products.json",
-                            "array": "product_prices",
-                            "match": {"product_id": "x"},
-                        },
-                        "service_prices": {
-                            "file": "prices/services.json",
-                            "array": "service_prices",
-                            "match": {"service_id": "x"},
-                        },
-                    }
-                }
-            },
+            graph=self._deps_graph,
             shared_bundle_subdir=Path("/x"),
             bundle_root=Path("/x"),
             provider_dir=Path("/x"),
@@ -373,28 +350,13 @@ class TestPriceLookupRunner:
             product_prices=[],
             service_prices=[],
         )
-        assert any("structure doesn't match" in e for e in r["errors"])
+        assert any("Price file for product_prices missing" in e for e in r["errors"])
 
-    def test_match_keys_empty_product_prices_warns(self) -> None:
+    def test_empty_product_prices_rows_warns(self) -> None:
         r = _results()
-        run_price_lookup_validation(
+        run_validate_price_dependencies(
             r,
-            graph={
-                "global_settings": {
-                    "price_lookup": {
-                        "product_prices": {
-                            "file": "prices/products.json",
-                            "array": "product_prices",
-                            "match": {"product_id": "x"},
-                        },
-                        "service_prices": {
-                            "file": "prices/services.json",
-                            "array": "service_prices",
-                            "match": {"service_id": "x"},
-                        },
-                    }
-                }
-            },
+            graph=self._deps_graph,
             shared_bundle_subdir=Path("/x"),
             bundle_root=Path("/x"),
             provider_dir=Path("/x"),
@@ -404,28 +366,13 @@ class TestPriceLookupRunner:
             product_prices=[],
             service_prices=[{"service_id": "s", "price": []}],
         )
-        assert any("No product prices" in w for w in r["warnings"])
+        assert any("No product_prices rows" in w for w in r["warnings"])
 
-    def test_match_keys_empty_service_prices_warns(self) -> None:
+    def test_empty_service_prices_rows_warns(self) -> None:
         r = _results()
-        run_price_lookup_validation(
+        run_validate_price_dependencies(
             r,
-            graph={
-                "global_settings": {
-                    "price_lookup": {
-                        "product_prices": {
-                            "file": "prices/products.json",
-                            "array": "product_prices",
-                            "match": {"product_id": "x"},
-                        },
-                        "service_prices": {
-                            "file": "prices/services.json",
-                            "array": "service_prices",
-                            "match": {"service_id": "x"},
-                        },
-                    }
-                }
-            },
+            graph=self._deps_graph,
             shared_bundle_subdir=Path("/x"),
             bundle_root=Path("/x"),
             provider_dir=Path("/x"),
@@ -439,7 +386,44 @@ class TestPriceLookupRunner:
             product_prices=[{"product_id": "p", "zone": "z", "weight_tier": "w", "price": []}],
             service_prices=[],
         )
-        assert any("No service prices" in w for w in r["warnings"])
+        assert any("No service_prices rows" in w for w in r["warnings"])
+
+    def test_wrong_dependency_path_errors(self) -> None:
+        r = _results()
+        run_validate_price_dependencies(
+            r,
+            graph={
+                "dependencies": {
+                    "product_prices": {"file": "prices/wrong.json", "depends_on": []},
+                    "service_prices": {"file": "prices/services.json", "depends_on": []},
+                }
+            },
+            shared_bundle_subdir=Path("/x"),
+            bundle_root=Path("/x"),
+            provider_dir=Path("/x"),
+            all_data_files={"prices/products.json", "prices/services.json"},
+            product_prices_doc={"product_prices": []},
+            service_prices_doc={"service_prices": []},
+            product_prices=[],
+            service_prices=[],
+        )
+        assert any("should be" in e for e in r["errors"])
+
+    def test_missing_row_keys_errors(self) -> None:
+        r = _results()
+        run_validate_price_dependencies(
+            r,
+            graph=self._deps_graph,
+            shared_bundle_subdir=Path("/x"),
+            bundle_root=Path("/x"),
+            provider_dir=Path("/x"),
+            all_data_files={"prices/products.json", "prices/services.json"},
+            product_prices_doc={"product_prices": [{"product_id": "p", "zone": "z"}]},
+            service_prices_doc={"service_prices": []},
+            product_prices=[{"product_id": "p", "zone": "z"}],
+            service_prices=[],
+        )
+        assert any("weight_tier" in e for e in r["errors"])
 
 
 class TestGraphValidatorEarlyReturnsAndBranches:
@@ -448,11 +432,11 @@ class TestGraphValidatorEarlyReturnsAndBranches:
         data_dir.mkdir()
         v = GraphValidator(data_dir=data_dir)
         v.graph = None
-        v.validate_lookup_method()
+        v.validate_price_dependencies()
         v.validate_edges()
         v.validate_products_in_edges()
         v.validate_zones_and_weight_tiers()
-        v.validate_available_services()
+        v.validate_services()
         v.validate_dependencies()
         v.validate_circular_dependencies()
         assert not v.results["errors"] and not v.results["warnings"]
@@ -466,7 +450,7 @@ class TestGraphValidatorEarlyReturnsAndBranches:
             "unit": {"weight": "g", "dimension": "mm", "price": "cents", "currency": "EUR"},
             "dependencies": {"products": {"file": "products.json", "depends_on": []}},
             "edges": {},
-            "global_settings": {"price_lookup": {}},
+            "services": ["svc"],
         }
         (data_dir / "graph.json").write_text(json.dumps(graph), encoding="utf-8")
         (data_dir / "products.json").write_text(
@@ -561,21 +545,7 @@ class TestGraphValidatorEarlyReturnsAndBranches:
                 "features": {"file": "features.json", "depends_on": []},
             },
             "edges": {},
-            "global_settings": {
-                "price_lookup": {
-                    "product_prices": {
-                        "file": "prices/products.json",
-                        "array": "product_prices",
-                        "match": {"product_id": "x"},
-                    },
-                    "service_prices": {
-                        "file": "prices/services.json",
-                        "array": "service_prices",
-                        "match": {"service_id": "x"},
-                    },
-                },
-                "available_services": [],
-            },
+            "services": ["einschreiben"],
         }
         (data_dir / "graph.json").write_text(json.dumps(graph), encoding="utf-8")
         (data_dir / "products.json").write_text(
@@ -679,21 +649,7 @@ class TestGraphValidatorMoreBranches:
                 "features": {"file": "features.json", "depends_on": []},
             },
             "edges": {},
-            "global_settings": {
-                "price_lookup": {
-                    "product_prices": {
-                        "file": "prices/products.json",
-                        "array": "product_prices",
-                        "match": {"product_id": "x"},
-                    },
-                    "service_prices": {
-                        "file": "prices/services.json",
-                        "array": "service_prices",
-                        "match": {"service_id": "x"},
-                    },
-                },
-                "available_services": [],
-            },
+            "services": ["einschreiben"],
         }
         (data_dir / "graph.json").write_text(json.dumps(graph), encoding="utf-8")
         (data_dir / "products.json").write_text(
@@ -794,21 +750,7 @@ class TestGraphValidatorMoreBranches:
                 "features": {"file": "features.json", "depends_on": []},
             },
             "edges": {},
-            "global_settings": {
-                "price_lookup": {
-                    "product_prices": {
-                        "file": "prices/products.json",
-                        "array": "product_prices",
-                        "match": {"product_id": "x"},
-                    },
-                    "service_prices": {
-                        "file": "prices/services.json",
-                        "array": "service_prices",
-                        "match": {"service_id": "x"},
-                    },
-                },
-                "available_services": [],
-            },
+            "services": ["einschreiben"],
         }
         (data_dir / "graph.json").write_text(json.dumps(graph), encoding="utf-8")
         (data_dir / "products.json").write_text(
@@ -895,21 +837,7 @@ class TestGraphValidatorMoreBranches:
                 "features": {"file": "features.json", "depends_on": []},
             },
             "edges": {},
-            "global_settings": {
-                "price_lookup": {
-                    "product_prices": {
-                        "file": "prices/products.json",
-                        "array": "product_prices",
-                        "match": {"product_id": "x"},
-                    },
-                    "service_prices": {
-                        "file": "prices/services.json",
-                        "array": "service_prices",
-                        "match": {"service_id": "x"},
-                    },
-                },
-                "available_services": [],
-            },
+            "services": ["einschreiben"],
         }
         (data_dir / "graph.json").write_text(json.dumps(graph), encoding="utf-8")
         (data_dir / "products.json").write_text(

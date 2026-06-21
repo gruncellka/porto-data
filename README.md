@@ -5,17 +5,15 @@
 
 **Porto Data** is **JSON + schemas** for national postal operators under one shared layout and vocabulary. Published on **npm** and **PyPI** with the **same** `porto_data/` tree on every platform.
 
-The bundle covers **Deutsche Post**, **Swiss Post**, and **La Poste** with shared policy/formats data at the bundle root and **per-operator** catalogs under **`providers/<id>/`** (products, services, prices, zones, weight tiers, features, limits, **`graph.json`**).
+The bundle covers **Deutsche Post**, **La Poste**, **Ukrposhta** and **Swiss Post** with shared policy/formats data at the bundle root and **per-operator** catalogs under **`providers/<id>/`** (products, services, prices, zones, weight tiers, features, limits, **`graph.json`**).
 
 ---
 
 ## Install
 
-**TypeScript / JavaScript (npm, scope: `@gruncellka`)**
+**TypeScript / JavaScript (npm)**
 
 ```bash
-pnpm add @gruncellka/porto-data
-yarn add @gruncellka/porto-data
 npm install @gruncellka/porto-data
 ```
 
@@ -23,8 +21,6 @@ npm install @gruncellka/porto-data
 
 ```bash
 pip install gruncellka-porto-data
-uv add gruncellka-porto-data
-poetry add gruncellka-porto-data
 ```
 
 Shipped layout: **`porto_data/policy/`**, **`porto_data/formats/`**, **`porto_data/providers/<id>/`**, **`porto_data/schemas/`**, **`mappings.json`**, **`metadata.json`**. Resolve paths via **`mappings.json`** / **`metadata.json`** (no legacy flat `data/` tree).
@@ -56,15 +52,18 @@ E-commerce and logistics (multi-carrier quotes, letters), compliance (sanctions,
 | `weights.json`              | Weight brackets for pricing                                                                                                                                                                                                                            |
 | `features.json`             | Operator-scoped **`id`**, unified **`porto_id`**, native **`name`**, English **`label`**                                                                                                                                                               |
 | `limits.json`               | Operational limits and compliance framework metadata                                                                                                                                                                                                   |
-| `graph.json`                | **`dependencies`** (file load order), **`edges`** (per product: allowed zones + weight tiers), **`lookup_rules`**, **`global_settings`**, **`unit`**                                                                                                   |
+| `graph.json`                | **`dependencies`** (file load order), **`edges`** (per product: allowed zones + weight tiers), **`services`**, **`unit`**                                                                                                   |
 | `formats/layouts.json`        | Jurisdiction-keyed print/window geometry (**DE / CH / FR**) per envelope **`id`** (`file_type` **`layouts`**); optional **`standard`** (norm token, e.g. **DIN678**, **SN010130**, **NFEN13850**); physical sizes remain in **`formats/envelopes.json`** |
 | `formats/envelopes.json`      | Physical envelope catalog: **`envelopes[]`** with **`id`**, **`width`/`height`**, **`standard`** `ISO269`, **`sheets[]`** (ISO 216 **`sheet`** + **`fold`**)                                                                                           |
 | `policy/restrictions.json`  | Sanctions-style restrictions and compliance frameworks                                                                                                                                                                                                 |
 | `policy/jurisdictions.json` | `jurisdictions.eu` / `jurisdictions.un` (ISO alpha-2; align with symbolic `EU` / `UN`)                                                                                                                                                                 |
+| `policy/markets.json`       | Per-country currency, VAT, intl quote currencies (`markets[CC]`); resolved via `providers.json` `country`                                                                                                                                            |
 
 All JSON validates against **`schemas/`**; **`mappings.json`** maps entities to paths; **`metadata.json`** has checksums and schema URLs.
 
-**Cross-file rules:** **`graph.json` → `edges`** keys = **`products.json` `id`**. **`available_services`** and price rows reference native **`id`** (not **`porto_id`**) for **`product_id`** / **`service_id`**. **`porto_id`** is the **cross-operator** semantic id when native ids differ. **`services[].features`** may list feature **`id`** or **`porto_id`**.
+**Cross-file rules:** **`graph.json` → `edges`** keys = **`products.json` `id`**. **`services`** and price rows reference native **`id`** (not **`porto_id`**) for **`product_id`** / **`service_id`**. **`porto_id`** is the **cross-operator** semantic id when native ids differ. **`services[].features`** may list feature **`id`** or **`porto_id`**.
+
+**Tariff verification:** CI validates structure only — not that amounts match live carrier tables. See [docs/tariff-verification.md](docs/tariff-verification.md) and per-provider notes under [docs/providers/](docs/providers/).
 
 **Provider tariff dating (catalog baseline):** In **`providers/<id>/products.json`**, **`prices/products.json`**, and **`prices/services.json`**, **`effective_from`** is the **bundle baseline** (**`2026-01-01`**) for the modeled **2026** tariff snapshot. Use **`effective_to`**: **`null`** until a row is superseded by a newer **`price[]`** entry. (Other files, e.g. **`policy/restrictions.json`** or **`limits.json`**, keep their own effective-dating semantics.)
 
@@ -91,7 +90,8 @@ All JSON validates against **`schemas/`**; **`mappings.json`** maps entities to 
 
 ## Related resources
 
-- **Unified `porto_id` (cross-operator ids):** [docs/id.md](docs/id.md) (naming policy).
+- **Unified `porto_id` (cross-operator ids):** [docs/id.md](docs/id.md) · [docs/porto_id.md](docs/porto_id.md) · [docs/resolution.md](docs/resolution.md) · [docs/provider-template.md](docs/provider-template.md)
+- **Tariff reconciliation (manual):** [docs/tariff-verification.md](docs/tariff-verification.md)
 
 **Carriers in this bundle** — tariff / modeling notes, shipped JSON folder, and official site:
 

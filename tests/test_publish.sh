@@ -25,12 +25,29 @@ node -e "
 const pkg = require('@gruncellka/porto-data');
 const fs = require('fs');
 const path = require('path');
-const pdir = path.join(process.cwd(), 'node_modules/@gruncellka/porto-data/porto_data');
+const root = path.join(process.cwd(), 'node_modules/@gruncellka/porto-data');
+const pdir = path.join(root, 'porto_data');
 const files = fs.readdirSync(pdir);
 const hasPy = files.some(f => f.endsWith('.py'));
 if (hasPy) { console.error('FAIL: .py file in npm package'); process.exit(1); }
+const mustHave = [
+  'porto_data/schemas/porto_ids.schema.json',
+  'docs/porto_id.md',
+  'docs/resolution.md',
+];
+for (const rel of mustHave) {
+  if (!fs.existsSync(path.join(root, rel))) {
+    console.error('FAIL: missing', rel);
+    process.exit(1);
+  }
+}
+if (!pkg.policy || !pkg.providers || pkg.global) {
+  console.error('FAIL: metadata shape (expected policy/providers, not global)');
+  process.exit(1);
+}
 console.log('✓ require() OK, project.version:', pkg.project?.version);
 console.log('✓ No Python files in porto_data/');
+console.log('✓ porto_ids.schema.json and contract docs present');
 "
 cd "$ROOT"
 rm -f "$TARBALL"
@@ -47,12 +64,17 @@ PYDIR="${ROOT}/test-publish-pypi"
 rm -rf "$PYDIR" && mkdir -p "$PYDIR"
 cd "$PYDIR"
 python3 -c "
+from pathlib import Path
 from porto_data import __version__, metadata, get_package_root
+root = get_package_root()
 assert __version__, 'missing __version__'
 assert 'project' in metadata, 'missing metadata.project'
-assert get_package_root().exists(), 'get_package_root() failed'
+assert 'policy' in metadata and 'formats' in metadata, 'missing policy/formats'
+assert 'global' not in metadata, 'stale global key in metadata'
+assert (root / 'schemas' / 'porto_ids.schema.json').is_file(), 'missing porto_ids.schema.json'
+assert root.exists(), 'get_package_root() failed'
 print('✓ __version__:', __version__)
-print('✓ metadata, get_package_root() OK')
+print('✓ metadata, get_package_root(), porto_ids.schema.json OK')
 "
 cd "$ROOT"
 echo "✓ PyPI package test passed"

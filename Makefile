@@ -1,90 +1,98 @@
-.PHONY: help setup install-hooks
+.PHONY: help ensure-venv install-hooks
 .PHONY: validate-json validate-graph format-json lint-json format-code lint-code type-check
 .PHONY: validate format lint metadata test test-cov quality test-publish
 
-# System Python for venv creation and recipes that do not activate venv (override in CI: PYTHON3=python)
-PYTHON3 ?= python3
+# Default: full quality gate (creates venv on first run)
+.DEFAULT_GOAL := quality
+
+# Prefer Python 3.13+ (project requires >=3.13). Override in CI: PYTHON3=python
+PYTHON3 ?= $(shell command -v python3.13 2>/dev/null || command -v python3 2>/dev/null || echo python3)
 export PYTHON3
+
+VENV := venv
+VENV_PYTHON := $(VENV)/bin/python
+VENV_MARKER := $(VENV)/.setup-complete
 
 help:
 	@echo "Porto Data - Schema Validation & Code Quality"
 	@echo "=============================================="
 	@echo ""
-	@echo "Setup (First Time):"
-	@echo "  make setup         - Install dependencies and pre-commit hooks"
+	@echo "Default:"
+	@echo "  make               - validate + format + lint + type-check (creates venv if needed)"
+	@echo "  make help          - Show this help"
 	@echo ""
 	@echo "Most Common Commands:"
-	@echo "  make validate      - Validate all JSON files against schemas (most important)"
-	@echo "  make format        - Format both JSON and Python code"
-	@echo "  make lint          - Lint both JSON and Python code"
+	@echo "  make validate      - Validate all JSON (schema → mappings → limits → porto_ids → graph)"
+	@echo "  make format        - Format JSON and Python"
+	@echo "  make lint          - Lint JSON and Python"
+	@echo "  make quality       - Same as default make"
 	@echo ""
 	@echo "JSON Commands:"
-	@echo "  make validate-json    - Validate schemas, mappings, limits, then graph"
-	@echo "  make validate-graph - Validate graph.json consistency with data files"
-	@echo "  make format-json        - Format JSON files (use CHECK=1 for read-only check)"
-	@echo "  make lint-json        - Check JSON files for syntax errors (read-only)"
+	@echo "  make validate-json  - Full JSON validation chain"
+	@echo "  make validate-graph - graph.json only"
+	@echo "  make format-json    - Format JSON (CHECK=1 for read-only)"
+	@echo "  make lint-json      - JSON syntax check"
 	@echo ""
 	@echo "Code Commands:"
-	@echo "  make format-code        - Format Python code with ruff (use CHECK=1 for read-only check)"
-	@echo "  make lint-code        - Lint Python code with ruff"
-	@echo "  make type-check       - Type check Python code with mypy"
+	@echo "  make format-code    - Ruff format (CHECK=1 for read-only)"
+	@echo "  make lint-code      - Ruff lint"
+	@echo "  make type-check     - MyPy"
 	@echo ""
 	@echo "Testing:"
-	@echo "  make test             - Run all tests"
-	@echo "  make test-cov         - Run tests with coverage report"
+	@echo "  make test           - Run tests"
+	@echo "  make test-cov       - Tests with coverage"
 	@echo ""
 	@echo "Metadata:"
-	@echo "  make metadata      - Generate metadata.json with checksums"
+	@echo "  make metadata       - Regenerate metadata.json"
 	@echo ""
-	@echo "Hooks:"
-	@echo "  make install-hooks - Install pre-commit hook (usually done by setup)"
-	@echo ""
-	@echo "Quality (validate + fix format/lint + type-check):"
-	@echo "  make quality      - Validate + format + lint + type-check (pre-commit; re-stage if it fixed files)"
-	@echo ""
-	@echo "Publish (run before npm publish / twine upload):"
-	@echo "  make test-publish - Pack npm tarball + install and test; build wheel + install and test Python"
+	@echo "Publish:"
+	@echo "  make test-publish   - npm + PyPI install smoke test"
 	@echo ""
 
 # ==========================================
-# Setup (First Time)
+# Virtualenv (internal — triggered by other targets)
 # ==========================================
-setup:
-	@echo "Setting up porto-data..."
-	@$(PYTHON3) -m venv venv
-	@. venv/bin/activate && pip install -q -e ".[dev]"
-	@if git rev-parse --is-inside-work-tree > /dev/null 2>&1; then \
-		$(MAKE) install-hooks || echo "Warning: Could not install pre-commit hooks. Run 'make install-hooks' manually."; \
-	else \
-		echo "Skipping hook installation (not a git repository)"; \
+ensure-venv:
+	@if [ ! -x "$(VENV_PYTHON)" ] || [ ! -f "$(VENV_MARKER)" ]; then \
+		echo "Setting up porto-data (venv + dev deps)..."; \
+		$(PYTHON3) -m venv $(VENV) || (echo "Error: need Python >=3.13 ($(PYTHON3) failed)" && exit 1); \
+		. $(VENV)/bin/activate && pip install -q -U pip && pip install -q ".[dev]"; \
+		touch $(VENV_MARKER); \
+		if git rev-parse --is-inside-work-tree > /dev/null 2>&1; then \
+			$(MAKE) install-hooks || echo "Warning: pre-commit hooks not installed."; \
+		fi; \
+		echo "✓ Ready"; \
 	fi
-	@echo "✓ Setup complete - run 'make help' for commands"
 
 # ==========================================
 # Most Common Commands
 # ==========================================
-validate: validate-json
+validate: ensure-venv validate-json
 
-format: format-json format-code
+format: ensure-venv format-json format-code
 
-lint: lint-json lint-code
+lint: ensure-venv lint-json lint-code
 
 # ==========================================
 # JSON Commands
 # ==========================================
-validate-json:
+validate-json: ensure-venv
 	@echo "Validating JSON against schemas..."
-	@. venv/bin/activate && PYTHONPATH=. python -m cli.main validate --type schema
+	@. $(VENV)/bin/activate && PYTHONPATH=. python -m cli.main validate --type schema
 	@echo "Validating mappings (mappings.json, registry, metadata, stray files)..."
-	@. venv/bin/activate && PYTHONPATH=. python -m cli.main validate --type mappings
+	@. $(VENV)/bin/activate && PYTHONPATH=. python -m cli.main validate --type mappings
+	@echo "Validating policy/markets.json..."
+	@. $(VENV)/bin/activate && PYTHONPATH=. python -m cli.main validate --type markets
 	@echo "Validating providers/*/limits.json..."
-	@. venv/bin/activate && PYTHONPATH=. python -m cli.main validate --type limits
+	@. $(VENV)/bin/activate && PYTHONPATH=. python -m cli.main validate --type limits
+	@echo "Validating porto_id vocabulary and native-id refs..."
+	@. $(VENV)/bin/activate && PYTHONPATH=. python -m cli.main validate --type porto_ids
 	@echo "Validating graph.json..."
-	@. venv/bin/activate && PYTHONPATH=. python -m cli.main validate --type graph
+	@. $(VENV)/bin/activate && PYTHONPATH=. python -m cli.main validate --type graph
 
-validate-graph:
+validate-graph: ensure-venv
 	@echo "Validating graph.json consistency..."
-	@. venv/bin/activate && PYTHONPATH=. python -m cli.main validate --type graph
+	@. $(VENV)/bin/activate && PYTHONPATH=. python -m cli.main validate --type graph
 
 format-json:
 	@if [ -n "$(CHECK)" ]; then echo "Checking JSON formatting..."; else echo "Formatting JSON files..."; fi
@@ -111,59 +119,56 @@ lint-json:
 # ==========================================
 # Code Commands
 # ==========================================
-format-code:
+format-code: ensure-venv
 	@if [ -n "$(CHECK)" ]; then \
 		echo "Checking Python code formatting..."; \
-		. venv/bin/activate && ruff format --check . || (echo "✗ Code is not properly formatted. Run 'make format-code' to fix." && exit 1); \
+		. $(VENV)/bin/activate && ruff format --check . || (echo "✗ Code is not properly formatted. Run 'make format-code' to fix." && exit 1); \
 		echo "✓ Code formatting check complete"; \
 	else \
 		echo "Formatting Python code..."; \
-		. venv/bin/activate && ruff format . || (echo "✗ Failed to format code with ruff" && exit 1); \
-		. venv/bin/activate && ruff check --fix . || (echo "✗ Failed to fix linting issues with ruff" && exit 1); \
+		. $(VENV)/bin/activate && ruff format . || (echo "✗ Failed to format code with ruff" && exit 1); \
+		. $(VENV)/bin/activate && ruff check --fix . || (echo "✗ Failed to fix linting issues with ruff" && exit 1); \
 		echo "✓ Code formatted"; \
 	fi
 
-lint-code:
+lint-code: ensure-venv
 	@echo "Linting Python code..."
-	@. venv/bin/activate && ruff check . || (echo "✗ Code linting failed. Fix issues before committing." && exit 1)
+	@. $(VENV)/bin/activate && ruff check . || (echo "✗ Code linting failed. Fix issues before committing." && exit 1)
 	@echo "✓ Code linting complete"
 
-type-check:
+type-check: ensure-venv
 	@echo "Type checking Python code..."
-	@. venv/bin/activate && PYTHONPATH=. mypy scripts/ cli/
+	@. $(VENV)/bin/activate && PYTHONPATH=. mypy scripts/ cli/
 	@echo "✓ Type check complete"
 
 # ==========================================
 # Testing
 # ==========================================
-test:
+test: ensure-venv
 	@echo "Running tests..."
-	@. venv/bin/activate && pytest
+	@. $(VENV)/bin/activate && PYTHONPATH=. pytest
 	@echo "✓ Tests complete"
 
-test-cov:
+test-cov: ensure-venv
 	@echo "Running tests with coverage..."
-	@. venv/bin/activate && pytest --cov-report=html --cov-report=xml
+	@. $(VENV)/bin/activate && PYTHONPATH=. pytest --cov-report=html --cov-report=xml
 	@echo "✓ Coverage report complete (see htmlcov/index.html for detailed report)"
 
 # ==========================================
 # Metadata
 # ==========================================
-metadata:
-	@. venv/bin/activate && PYTHONPATH=. python -m cli.main metadata
-
-# Regenerate metadata after version change (runs automatically via pre-commit)
-# But you can also run manually: make metadata
+metadata: ensure-venv
+	@. $(VENV)/bin/activate && PYTHONPATH=. python -m cli.main metadata
 
 # ==========================================
-# Hooks (Usually Automatic)
+# Hooks (internal — run from ensure-venv)
 # ==========================================
-install-hooks:
+install-hooks: ensure-venv
 	@echo "Installing pre-commit hooks..."
-	@if [ -f venv/bin/pre-commit ]; then \
-		venv/bin/pre-commit install; \
+	@if [ -f $(VENV)/bin/pre-commit ]; then \
+		$(VENV)/bin/pre-commit install; \
 	else \
-		echo "Error: pre-commit not found. Run 'make setup' first."; \
+		echo "Error: pre-commit not found."; \
 		exit 1; \
 	fi
 	@echo "✓ Pre-commit hooks installed"
@@ -171,12 +176,10 @@ install-hooks:
 # ==========================================
 # Quality
 # ==========================================
-# validate + format + lint + type-check. Re-stage if hooks modified files.
-# Check-only (e.g. CI): make validate && make format CHECK=1 && make lint && make type-check
-quality: validate format lint type-check
+quality: ensure-venv validate format lint type-check
 
 # ==========================================
 # Test before publish (npm + PyPI)
 # ==========================================
-test-publish:
+test-publish: ensure-venv
 	@./tests/test_publish.sh

@@ -69,7 +69,7 @@ def envelope_layout_geometry_errors(
     return out
 
 
-def run_validate_envelope_layout_references(
+def run_validate_layout_refs(
     results: ValidationResults,
     *,
     envelope_layouts: dict[str, Any] | None,
@@ -135,7 +135,7 @@ def run_validate_envelope_address_window(
                 results["errors"].append(msg)
 
 
-def run_validate_product_envelope_format_ids(
+def run_validate_envelope_ids(
     results: ValidationResults,
     *,
     envelopes: dict[str, Any] | None,

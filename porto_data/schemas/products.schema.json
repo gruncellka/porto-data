@@ -47,6 +47,7 @@
         "type": "object",
         "required": [
           "id",
+          "porto_id",
           "name",
           "envelope_ids",
           "zones",
@@ -80,11 +81,8 @@
             ]
           },
           "porto_id": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "Unified Porto product id for cross-provider resolution. Often equals `id` when the operator\u2019s tariff id already matches Porto vocabulary (e.g. Deutsche Post); may differ when the native id is operator-specific (e.g. Swiss Post) while the graph/resolver still keys on one shared semantic."
+            "$ref": "porto_ids.schema.json#/definitions/product_porto_id",
+            "description": "Unified Porto product id for cross-provider resolution and SDK input. Graph and prices use native `id`, not `porto_id`."
           },
           "envelope_ids": {
             "type": "array",

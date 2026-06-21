@@ -2,7 +2,17 @@
 
 Reference for **reconciling JSON with official letter tariffs** (not a legal tariff publication). Verify on [post.ch](https://www.post.ch) and brochure PDFs before production changes.
 
-**Related:** [deutschepost.md](deutschepost.md) · [laposte.md](laposte.md)
+**Related:** [deutschepost.md](deutschepost.md) · [laposte.md](laposte.md) · [ukrposhta.md](ukrposhta.md) · [tariff-verification.md](../tariff-verification.md)
+
+---
+
+## Verification status
+
+| Field | Value |
+|-------|--------|
+| Last checked (UTC) | 2026-06-21 |
+| Confidence | **verified** — A/B domestic standard + large letters, intl document ladder, thickness surcharge |
+| Baseline | A/B letter prices **unchanged 2026-01-01** per Swiss Post press release; JSON `effective_from`: **2026-01-01** |
 
 ---
 
@@ -12,33 +22,42 @@ Reference for **reconciling JSON with official letter tariffs** (not a legal tar
 |------|-------------|------|
 | `products.json` | `products` | **Explicit A vs B** domestic + international document products |
 | `prices/products.json` | `product_prices` | Base postage (CHF → **rappen** in JSON) |
-| `prices/services.json` | `service_prices` | Surcharges (e.g. thickness) |
+| `prices/services.json` | `service_prices` | Surcharges (thickness, A Mail Plus) |
 | `services.json` | `services` | Service ids referenced by rules and prices |
 | `features.json` | `features` | Features |
 | `marks.json` | `marks` | Mark profiles |
 | `weights.json` | `weights` | Tiers for standard / gross / maxi ladders |
 | `zones.json` | `zones` | `domestic`, `zone_1_eu`, `world` |
 | `limits.json` | `limits` | Provider overlays on global policy |
-| **`rules.json`** | **`provider_rules`** | **Conditional rules** (e.g. thickness band → attach `brief_dicke_zuschlag`) — evaluated after base price resolution |
-| `graph.json` | `graph` | Edges, units (CHF cents/rappen), `lookup_rules`, `available_services` |
+| **`rules.json`** | **`provider_rules`** | Thickness band → `brief_dicke_zuschlag` |
+| `graph.json` | `graph` | Edges, units (CHF cents/rappen), `services` |
 
-**Loaded with the bundle:** `policy/jurisdictions.json`, `policy/restrictions.json`, `formats/envelopes.json`, `formats/layouts.json` — see `graph.json` `dependencies`.
+**Loaded with the bundle:** `policy/jurisdictions.json`, `policy/markets.json`, `policy/restrictions.json`, `formats/envelopes.json`, `formats/layouts.json` — see `graph.json` `dependencies`.
 
 **Swiss-only:** `rules.json` is not used for Deutsche Post / La Poste in this bundle.
 
 ---
 
+## Known pitfalls
+
+- **A Mail vs B Mail:** separate product ids (`a_post_*` vs `b_post_*`); resolver cannot infer from weight alone.
+- **Thickness surcharge:** domestic letters **>2 cm and ≤5 cm** → **+2,00 CHF** via `rules.json` + `brief_dicke_zuschlag` (200 rappen).
+- **Midi letters (101–500 g):** separate prices on site (A 1,70 / B 1,40) — **not** split in minimal model (standard product covers 1–100 g flat rate per DigitalStamp table).
+- **International flat zones:** `zone_1_eu` and `world` share amounts where post.ch table is destination-independent.
+
+---
+
 ## Pricing & geography rules (how we model)
 
-- **Domestic:** two axes — **A Mail vs B Mail** (speed) and **standard vs gross** (format). Product ids must disambiguate (`a_post_*` vs `b_post_*`); resolver cannot infer from weight alone.
-- **International documents:** **standard / gross / maxi** ladders from [international letters](https://www.post.ch/en/sending-letters/international-letters); in minimal data, **`zone_1_eu`** and **`world`** use the **same** cent amounts per row (matches destination-independent table where published).
-- **`rules.json`:** e.g. domestic letter **thickness** in (20, 50] mm → attach service **`brief_dicke_zuschlag`** (amount in `prices/services.json`) — see `rules.json` and `graph.json` `global_settings.available_services`.
-- **Not in minimal JSON:** Registered, A Mail Plus, international small goods, Pro Juventute — add when integrating those flows.
+- **Domestic:** A vs B × standard vs gross (large) format products.
+- **International documents:** standard / gross / maxi ladders from [international letters](https://www.post.ch/en/sending-letters/international-letters).
+- **`rules.json`:** thickness (20, 50] mm → attach **`brief_dicke_zuschlag`**.
 
 ## Service support (proof/signature/AR)
-- **Proof of mailing:** Registered (Einschreiben) creates a posting record/track event when accepted.
-- **Recipient signature:** Registered requires signature on delivery.
-- **Return receipt:** `Rückschein / avis de réception` available for registered; modeled as surcharge in `service_prices.json` when added.
+
+- **Proof of mailing:** Registered flow (not in minimal JSON).
+- **Recipient signature:** Registered requires signature when modeled.
+- **Return receipt:** deferred until registered products added.
 
 ---
 
@@ -46,21 +65,24 @@ Reference for **reconciling JSON with official letter tariffs** (not a legal tar
 
 | Date (UTC) | Source | Use |
 |------------|--------|-----|
-| 2026-03-23 | [WebStamp info](https://www.post.ch/en/customer-center/online-services/webstamp/webstamp/info) | Scope of online franking |
-| 2026-03-23 | [International letters](https://www.post.ch/en/sending-letters/international-letters) | CHF document letter tables |
-| 2026-03-23 | [DigitalStamp](https://www.post.ch/en/sending-letters/franking-mail/franking/online-stamp-digitalstamp) | Domestic A/B CHF rows |
-| — | [Versenden International (PDF)](https://www.post.ch/-/media/portal-opp/pm/dokumente/versenden-international-broschuere.pdf) | Dimensions, footnotes — refresh URL if post.ch moves the file |
+| 2026-06-21 | [DigitalStamp](https://www.post.ch/en/sending-letters/franking-mail/franking/online-stamp-digitalstamp) | Domestic A/B standard + large |
+| 2026-06-21 | [Domestic letters](https://www.post.ch/en/sending-letters/domestic-letters) | Midi tiers, thickness footnote |
+| 2026-06-21 | [International letters](https://www.post.ch/en/sending-letters/international-letters) | CHF document letter tables |
+| 2026-06-21 | [Press release Offer 2026](https://www.post.ch/en/about-us/media/press-releases/2025/swiss-post-is-adjusting-prices-and-collection-times-in-selected-cases) | A/B letters unchanged Jan 2026 |
+| — | [Versenden International (PDF)](https://www.post.ch/-/media/portal-opp/pm/dokumente/versenden-international-broschuere.pdf) | Dimensions, footnotes |
 
 ---
 
-## Official snapshots (CHF, VAT-exempt — verify site)
+## Official snapshots (CHF — post.ch, 2026)
 
-**Domestic (DigitalStamp-style)**
+**Domestic (DigitalStamp — standard / large, 1–100 g / 1–1000 g)**
 
-| Class | Standard 1–100 g | Gross 1–1000 g |
+| Class | Standard 1–100 g | Large 1–1000 g |
 |-------|-----------------:|---------------:|
 | **A Mail** | 1,20 | 2,50 |
 | **B Mail** | 1,00 | 2,00 |
+
+**Thickness:** >2 cm up to 5 cm → **+2,00 CHF** surcharge.
 
 **International — documents**
 
@@ -85,12 +107,22 @@ Reference for **reconciling JSON with official letter tariffs** (not a legal tar
 | `international_grossbrief` | — | W0250 **750**, W0500 **1200** | — |
 | `international_maxibrief` | — | — | W0500 **1300**, W1000 **1900**, W2000 **2600** |
 
-**Zones:** `zone_1_eu` and `world` — same amounts per `product_prices` row where the international table is flat.
+**`service_prices`:** `brief_dicke_zuschlag` **200** (CHF 2,00).
 
-**Rules:** `rules.json` → `domestic_letter_thickness` → `brief_dicke_zuschlag` (verify thickness band vs live tariff).
+**Zones:** `zone_1_eu` and `world` — same amounts per row where table is flat.
+
+**Rules:** `domestic_letter_thickness` → thickness (20, 50] mm → `brief_dicke_zuschlag`.
+
+---
+
+## Out of scope
+
+- Domestic **midi** letter tier (101–500 g at 1,70 / 1,40 CHF)
+- **Registered**, A Mail Plus (service price exists but no registered product flow)
+- International small goods, Pro Juventute
 
 ---
 
 ## Reconcile
 
-Latest post.ch / PDF → diff `prices/*.json`, `rules.json`, `graph.json` → `make validate`.
+Latest post.ch / PDF → diff `prices/*.json`, `rules.json`, `graph.json` → update status date → `make validate` → `make metadata`.

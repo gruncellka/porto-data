@@ -26,12 +26,12 @@ BUNDLE_MAPPINGS_KEYS: Final[tuple[str, ...]] = (
 )
 
 # Bundle-relative prefixes for policy/formats data (not providers/<id>/ or root registry).
-SHARED_BUNDLE_PATH_PREFIXES: Final[tuple[str, ...]] = ("policy/", "formats/")
+PATH_PREFIXES: Final[tuple[str, ...]] = ("policy/", "formats/")
 
 
 def is_shared_bundle_data_path(data_path: str) -> bool:
     """True if ``data_path`` is under ``policy/`` or ``formats/`` (not registry or provider)."""
-    return any(data_path.startswith(p) for p in SHARED_BUNDLE_PATH_PREFIXES)
+    return any(data_path.startswith(p) for p in PATH_PREFIXES)
 
 
 def _has_structured_mappings(mappings: dict[str, Any]) -> bool:
@@ -41,15 +41,23 @@ def _has_structured_mappings(mappings: dict[str, Any]) -> bool:
 
 # Provider domain registry (same data layer as envelopes/features/restrictions)
 PROVIDERS_REGISTRY_FILENAME = "providers.json"
-PROVIDERS_REGISTRY_DATA_PATH = PROVIDERS_REGISTRY_FILENAME
+PROVIDERS_REGISTRY_FILENAME = PROVIDERS_REGISTRY_FILENAME
 
 # Bundle root (not listed as a schema→data pair in mappings.json)
 MAPPINGS_FILENAME = "mappings.json"
-MAPPINGS_SCHEMA_RELPATH = "schemas/mappings.schema.json"
-PROVIDERS_SCHEMA_RELPATH = "schemas/providers.schema.json"
+MAPPINGS_SCHEMA = "schemas/mappings.schema.json"
+PROVIDERS_SCHEMA = "schemas/providers.schema.json"
 
 # Default provider id when none is supplied to resolution helpers
 DEFAULT_PROVIDER = "deutschepost"
+
+# Canonical display / iteration order (registry, docs, validation, metadata).
+PROVIDER_IDS_ORDER: Final[tuple[str, ...]] = (
+    "deutschepost",
+    "ukrposhta",
+    "laposte",
+    "swisspost",
+)
 
 
 def _get_project_root() -> Path:
@@ -258,6 +266,7 @@ def get_data_file_path(
     global_entities = {
         "envelopes",
         "layouts",
+        "markets",
         "restrictions",
         "features",
         "providers",
@@ -359,24 +368,66 @@ def load_providers_registry() -> dict[str, Any]:
     if not path.exists():
         raise FileNotFoundError(
             f"Provider registry not found: {path}. "
-            f"Add {PROVIDERS_REGISTRY_DATA_PATH} at porto_data root (see schemas/providers.schema.json)."
+            f"Add {PROVIDERS_REGISTRY_FILENAME} at porto_data root (see schemas/providers.schema.json)."
         )
     with open(path, encoding="utf-8") as f:
         data: Any = json.load(f)
     prov = data.get("providers")
     if not isinstance(prov, dict) or not prov:
         raise ValueError(
-            f"{PROVIDERS_REGISTRY_DATA_PATH} must contain a non-empty object 'providers'"
+            f"{PROVIDERS_REGISTRY_FILENAME} must contain a non-empty object 'providers'"
         )
     return cast(dict[str, Any], data)
 
 
+def load_markets() -> dict[str, Any]:
+    """Load policy/markets.json (country fiscal defaults).
+
+    Raises:
+        FileNotFoundError: If markets.json is missing.
+        ValueError: If structure is invalid.
+    """
+    root = _get_project_root()
+    path = root / "policy" / "markets.json"
+    if not path.exists():
+        try:
+            path = get_data_file_path("markets", project_root=root)
+        except FileNotFoundError as e:
+            raise FileNotFoundError(
+                f"Markets policy not found under {root / 'policy'}. "
+                "Add policy/markets.json (see schemas/markets.schema.json)."
+            ) from e
+    with open(path, encoding="utf-8") as f:
+        data: Any = json.load(f)
+    markets = data.get("markets")
+    if not isinstance(markets, dict) or not markets:
+        raise ValueError("policy/markets.json must contain a non-empty object 'markets'")
+    return cast(dict[str, Any], data)
+
+
+def market_for_country(
+    country_code: str, *, markets_doc: dict[str, Any] | None = None
+) -> dict[str, Any]:
+    """Return markets[country_code] or raise ValueError."""
+    doc = markets_doc if markets_doc is not None else load_markets()
+    markets = doc.get("markets")
+    if not isinstance(markets, dict):
+        raise ValueError("markets document missing 'markets' object")
+    cc = country_code.strip().upper()
+    row = markets.get(cc)
+    if not isinstance(row, dict):
+        raise ValueError(f"markets[{cc!r}] not found in policy/markets.json")
+    return row
+
+
 def list_provider_ids() -> list[str]:
-    """Return sorted provider IDs from providers.json (authoritative registry)."""
+    """Return provider IDs in canonical bundle order (``PROVIDER_IDS_ORDER``)."""
     data = load_providers_registry()
     prov = data["providers"]
     assert isinstance(prov, dict)
-    return sorted(prov.keys())
+    ordered = [pid for pid in PROVIDER_IDS_ORDER if pid in prov]
+    extra = sorted(pid for pid in prov if pid not in PROVIDER_IDS_ORDER)
+    return ordered + extra
 
 
 def get_mappings_provider_ids(mappings_path: str | None = None) -> set[str]:
@@ -403,6 +454,7 @@ _REQUIRED_ENTITIES = [
     "envelopes",
     "layouts",
     "jurisdictions",
+    "markets",
     "providers",
     "restrictions",
     "features",
@@ -439,4 +491,5 @@ LAYOUTS_FILE = _FILE_NAMES["layouts"]
 FEATURES_FILE = _FILE_NAMES["features"]
 MARKS_FILE = _FILE_NAMES["marks"]
 RESTRICTIONS_FILE = _FILE_NAMES["restrictions"]
+MARKETS_FILE = _FILE_NAMES["markets"]
 LIMITS_FILE = _FILE_NAMES["limits"]

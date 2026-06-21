@@ -204,3 +204,23 @@ class TestGraphValidatorUnit:
         # Should have errors about missing files
         assert len(results["errors"]) > 0
         assert any("Missing file" in e or "not found" in e.lower() for e in results["errors"])
+
+    def test_load_market_skips_when_graph_none(self, tmp_path):
+        data_dir = tmp_path / "data"
+        data_dir.mkdir()
+        v = GraphValidator(data_dir)
+        v.graph = None
+        v._load_market_for_provider()
+        assert v.market is None
+
+    def test_load_market_handles_registry_error(self, tmp_path, monkeypatch):
+        data_dir = tmp_path / "data"
+        data_dir.mkdir()
+        v = GraphValidator(data_dir)
+        v.graph = {"provider": "deutschepost", "unit": {"currency": "EUR"}}
+        monkeypatch.setattr(
+            "scripts.validators.graph.validator.load_providers_registry",
+            lambda: (_ for _ in ()).throw(FileNotFoundError("missing")),
+        )
+        v._load_market_for_provider()
+        assert v.market is None

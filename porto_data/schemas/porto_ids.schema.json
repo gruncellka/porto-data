@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/porto_ids.schema.json",
+  "title": "Porto ID vocabulary",
+  "description": "Canonical porto_id enums for cross-provider SDK normalization. Normative list: docs/id.md. Do not add values without semver-major review.",
+  "definitions": {
+    "product_porto_id": {
+      "type": "string",
+      "enum": [
+        "small",
+        "medium",
+        "large",
+        "extra_large",
+        "registered",
+        "postcard"
+      ],
+      "description": "Unified product size/role bucket for SDK input and cross-operator resolution"
+    },
+    "service_porto_id": {
+      "type": "string",
+      "enum": [
+        "registered",
+        "registered_return_receipt",
+        "tracking",
+        "insurance",
+        "return_receipt",
+        "thickness",
+        "proof_of_mailing",
+        "proof_of_delivery"
+      ],
+      "description": "Unified add-on service bucket for SDK input"
+    },
+    "feature_porto_id": {
+      "type": "string",
+      "enum": [
+        "tracking_number",
+        "proof_of_mailing",
+        "recipient_signature",
+        "return_receipt",
+        "proof_of_delivery",
+        "thickness_surcharge"
+      ],
+      "description": "Unified capability feature bucket for cross-operator semantics"
+    }
+  }
+}

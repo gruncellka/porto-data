@@ -16,11 +16,12 @@ from pathlib import Path
 
 from scripts.data_files import (
     PROVIDERS_DIR,
-    PROVIDERS_REGISTRY_DATA_PATH,
+    PROVIDERS_REGISTRY_FILENAME,
     _load_mappings_raw,
     get_project_root,
     load_providers_registry,
 )
+from scripts.validators.porto_ids import REQUIRED_PROVIDER_SCHEMAS
 
 
 def validate_mappings_layout() -> int:
@@ -58,7 +59,7 @@ def validate_mappings_layout() -> int:
 
     if registry_ids != mapping_ids:
         errors.append(
-            f"mappings.json provider keys must match provider registry {PROVIDERS_REGISTRY_DATA_PATH}.\n"
+            f"mappings.json provider keys must match provider registry {PROVIDERS_REGISTRY_FILENAME}.\n"
             f"  registry only: {sorted(registry_ids - mapping_ids)}\n"
             f"  mappings only: {sorted(mapping_ids - registry_ids)}"
         )
@@ -75,6 +76,13 @@ def validate_mappings_layout() -> int:
             continue
 
         mapped_rel: set[str] = set()
+        schema_keys = set(pmap.keys()) if isinstance(pmap, dict) else set()
+        missing_schemas = sorted(set(REQUIRED_PROVIDER_SCHEMAS) - schema_keys)
+        if missing_schemas:
+            errors.append(
+                f"mappings.providers.{pid} missing required schema mappings: {missing_schemas}"
+            )
+
         for _schema, data_rel in pmap.items():
             if not isinstance(data_rel, str):
                 errors.append(
@@ -127,7 +135,7 @@ def validate_mappings_layout() -> int:
             if entry.name not in registry_ids:
                 errors.append(
                     f"folder {PROVIDERS_DIR}/{entry.name}/ is not listed in "
-                    f"{PROVIDERS_REGISTRY_DATA_PATH}"
+                    f"{PROVIDERS_REGISTRY_FILENAME}"
                 )
 
     meta_path = root / "metadata.json"
@@ -144,7 +152,7 @@ def validate_mappings_layout() -> int:
                 meta_ids = set(meta_prov.keys())
                 if meta_ids != registry_ids:
                     errors.append(
-                        f"metadata.json provider keys must match {PROVIDERS_REGISTRY_DATA_PATH}.\n"
+                        f"metadata.json provider keys must match {PROVIDERS_REGISTRY_FILENAME}.\n"
                         f"  registry only: {sorted(registry_ids - meta_ids)}\n"
                         f"  metadata only: {sorted(meta_ids - registry_ids)}\n"
                         "  Regenerate: python -m cli.main metadata"

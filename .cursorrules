@@ -8,16 +8,15 @@
 
 ## Layout (current)
 
-- `porto_data/global/` — shared reference JSON (`jurisdictions.json`, …).
+- `porto_data/policy/` — shared policy JSON (`jurisdictions.json`, `restrictions.json`).
+- `porto_data/formats/` — shared envelope catalog and print layouts (`envelopes.json`, `layouts.json`).
 - `porto_data/providers.json` — provider id registry.
-- `porto_data/policy/restrictions.json` — destination restrictions (EU/UN/CH buckets under `destinations[]`).
-- `porto_data/envelopes/` — physical formats, profiles, support matrix, `envelope_rules.json`.
-- `porto_data/providers/<provider_id>/` — per-operator JSON (`products`, `services`, `prices`, `zones`, `weight_tiers`, **`graph.json`**, `limits.json`, `features.json`, …).
-- `porto_data/schemas/` — JSON Schema for the above.
+- `porto_data/providers/<provider_id>/` — per-operator JSON (`products`, `services`, `prices`, `zones`, `weights.json`, **`graph.json`**, `limits.json`, `features.json`, optional `rules.json`, …).
+- `porto_data/schemas/` — JSON Schema for the above (including `porto_ids.schema.json` enum vocabulary).
 - `porto_data/mappings.json` — which logical entities exist for each provider (paths are authoritative for tooling).
 - `porto_data/metadata.json` — **generated** (checksums, manifest). Regenerate with `make metadata` / `porto metadata`; do not edit by hand.
 
-There is **no** `porto_data/data/` bundle anymore. Cross-file dependencies and product resolution wiring live in each provider’s **`graph.json`** (`file_type`: `graph`), including **`edges`** (product → zones × weight tiers). Do not use removed names `links` (as top-level key), `data_links.json`, or flat single-bundle paths in new work.
+There is **no** `porto_data/data/` or `porto_data/global/` bundle anymore. Cross-file dependencies and product resolution wiring live in each provider’s **`graph.json`** (`file_type`: `graph`), including **`edges`** (product → zones × weight tiers) and top-level **`services`**. Price paths live in **`dependencies`**; join keys in price schemas. Do not use removed names `links` (as top-level key), `lookup_rules`, `global_settings`, `price_lookup`, `data_links.json`, or flat single-bundle paths in new work.
 
 ## JSON conventions
 
@@ -33,13 +32,14 @@ There is **no** `porto_data/data/` bundle anymore. Cross-file dependencies and p
 
 ## Validation stack (for code changes)
 
-- `scripts.validators.schema` — JSON Schema validation.
-- `scripts.validators.mappings_layout` — `mappings.json`, registry, stray files, metadata presence.
+- `scripts.validators.schema` — JSON Schema validation (with `$ref` to sibling schemas).
+- `scripts.validators.mappings_layout` — `mappings.json`, registry, stray files, metadata presence, required provider template.
 - `scripts.validators.limits_scope` — `limits.json` letter-scope rules.
-- `scripts/validators/graph/` — package for `graph.json`: `validator` (orchestrator), `runner` (`validate_graph` + printing), plus `edges`, `services`, `execution_semantics`, `marks_profiles`, `provider_rules`, `dependencies`, `units`, `layouts`, `price_lookup`, `envelope_geometry`, `constants`. Import as `scripts.validators.graph`.
+- `scripts.validators.porto_ids` — canonical `porto_id` enums and native-id cross-file refs.
+- `scripts/validators/graph/` — package for `graph.json`: `validator` (orchestrator), `runner` (`validate_graph` + printing), plus `edges`, `services`, `execution_semantics`, `marks_profiles`, `provider_rules`, `dependencies`, `units`, `layouts`, `envelope_geometry`, `constants`. Import as `scripts.validators.graph`.
 - Results shape: `ValidationResults` in `scripts.validators.base`.
 
-CLI / default order: **schema → mappings → limits → graph** (`porto validate`).
+CLI / default order: **schema → mappings → limits → porto_ids → graph** (`porto validate`).
 
 ## Workflow
 
@@ -49,12 +49,14 @@ CLI / default order: **schema → mappings → limits → graph** (`porto valida
 
 ## Domain tokens (high level)
 
+- **`porto_id`** — SDK normalization identifier; enum in `porto_ids.schema.json`.
+- **Native `id`** — operator catalog key; used in graph, prices, rules.
 - Country codes: **ISO 3166-1 alpha-2** where used.
-- Jurisdiction blocs in data: e.g. **`EU`**, **`UN`**; operator-specific postal rules belong in **`limits.json`**, not pseudo-jurisdictions in global restrictions.
+- Jurisdiction blocs in data: e.g. **`EU`**, **`UN`**; operator-specific postal rules belong in **`limits.json`**.
 
 ## Assistant behavior
 
-- Prefer editing **`global/`** or **`providers/<id>/`** JSON, not inventing legacy paths.
-- When touching **`graph.json`**, keep **`edges`** and schema `graph.schema.json` aligned.
+- Prefer editing **`policy/`**, **`formats/`**, or **`providers/<id>/`** JSON, not inventing legacy paths.
+- When touching **`graph.json`**, keep **`edges`** and `graph.schema.json` aligned.
 - Do not hand-edit **`metadata.json`**.
 - Match existing style in `scripts/` and `cli/`; add types and tests for new logic.

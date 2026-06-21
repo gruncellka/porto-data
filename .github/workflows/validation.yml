@@ -4,12 +4,9 @@ on: [push, pull_request]
 
 env:
     PYTHON_VERSION: '3.13'
+    PYTHON3: python
 
 jobs:
-    # ==========================================
-    # JSON Validation (MUST RUN FIRST)
-    # ==========================================
-    # These can run in parallel - both just need valid JSON files
     validate-schemas:
         name: Validate JSON Schemas
         runs-on: ubuntu-22.04
@@ -19,30 +16,24 @@ jobs:
               with:
                   python-version: ${{ env.PYTHON_VERSION }}
                   cache: 'pip'
-            - name: Install dependencies
-              run: make setup
             - name: Validate JSON files against schemas
               run: |
+                  . venv/bin/activate 2>/dev/null || true
+                  make ensure-venv
                   . venv/bin/activate && PYTHONPATH=. python -m cli.main validate --type schema
 
     lint-json:
         name: Lint JSON Syntax
         runs-on: ubuntu-22.04
-        # No dependency - just checks JSON syntax, doesn't need schemas
         steps:
             - uses: actions/checkout@v4
             - uses: actions/setup-python@v5
               with:
                   python-version: ${{ env.PYTHON_VERSION }}
                   cache: 'pip'
-            - name: Install dependencies
-              run: make setup
             - name: Lint JSON syntax
               run: make lint-json
 
-    # ==========================================
-    # Mappings (needs valid schemas)
-    # ==========================================
     validate-mappings:
         name: Validate mappings
         runs-on: ubuntu-22.04
@@ -53,10 +44,9 @@ jobs:
               with:
                   python-version: ${{ env.PYTHON_VERSION }}
                   cache: 'pip'
-            - name: Install dependencies
-              run: make setup
             - name: Validate mappings.json, providers registry, metadata alignment
               run: |
+                  make ensure-venv
                   . venv/bin/activate && PYTHONPATH=. python -m cli.main validate --type mappings
 
     validate-limits:
@@ -69,31 +59,39 @@ jobs:
               with:
                   python-version: ${{ env.PYTHON_VERSION }}
                   cache: 'pip'
-            - name: Install dependencies
-              run: make setup
             - name: Validate providers/*/limits.json
               run: |
+                  make ensure-venv
                   . venv/bin/activate && PYTHONPATH=. python -m cli.main validate --type limits
 
-    validate-graph:
-        name: Validate provider graph.json
+    validate-porto-ids:
+        name: Validate porto_id vocabulary
         runs-on: ubuntu-22.04
-        needs: [validate-mappings]
+        needs: [validate-limits]
         steps:
             - uses: actions/checkout@v4
             - uses: actions/setup-python@v5
               with:
                   python-version: ${{ env.PYTHON_VERSION }}
                   cache: 'pip'
-            - name: Install dependencies
-              run: make setup
-            - name: Validate graph consistency (dependencies, edges, cross-file refs)
+            - name: Validate porto_id enums and native-id refs
               run: |
-                  . venv/bin/activate && PYTHONPATH=. python -m cli.main validate --type graph
+                  make ensure-venv
+                  . venv/bin/activate && PYTHONPATH=. python -m cli.main validate --type porto_ids
 
-    # ==========================================
-    # Formatting Checks (needs valid data)
-    # ==========================================
+    validate-graph:
+        name: Validate provider graph.json
+        runs-on: ubuntu-22.04
+        needs: [validate-porto-ids]
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-python@v5
+              with:
+                  python-version: ${{ env.PYTHON_VERSION }}
+                  cache: 'pip'
+            - name: Validate graph consistency (dependencies, edges, cross-file refs)
+              run: make validate-graph
+
     format-json:
         name: Check JSON Formatting
         runs-on: ubuntu-22.04
@@ -104,26 +102,22 @@ jobs:
               with:
                   python-version: ${{ env.PYTHON_VERSION }}
                   cache: 'pip'
-            - name: Install dependencies
-              run: make setup
             - name: Check JSON formatting
               run: make format-json CHECK=1
 
     verify-metadata:
         name: Verify Metadata
         runs-on: ubuntu-22.04
-        needs: [validate-schemas, validate-mappings, validate-limits, validate-graph]
+        needs: [validate-schemas, validate-mappings, validate-limits, validate-porto-ids, validate-graph]
         steps:
             - uses: actions/checkout@v4
             - uses: actions/setup-python@v5
               with:
                   python-version: ${{ env.PYTHON_VERSION }}
                   cache: 'pip'
-            - name: Install dependencies
-              run: make setup
             - name: Verify metadata.json is up to date
               run: |
-                  . venv/bin/activate && PYTHONPATH=. python -m cli.main metadata
+                  make metadata
                   if [ -n "$(git diff porto_data/metadata.json)" ]; then
                     echo "❌ metadata.json is out of date. The file must be regenerated and committed."
                     echo "Run 'make metadata' locally, then commit the updated porto_data/metadata.json file."
@@ -132,82 +126,59 @@ jobs:
                   fi
                   echo "✓ metadata.json is up to date"
 
-    # ==========================================
-    # Python Code Quality (independent of JSON)
-    # ==========================================
-    # These can run in parallel with JSON validation - completely independent
     format-code:
         name: Check Python Formatting
         runs-on: ubuntu-22.04
-        # No dependency - Python code is independent of JSON validation
         steps:
             - uses: actions/checkout@v4
             - uses: actions/setup-python@v5
               with:
                   python-version: ${{ env.PYTHON_VERSION }}
                   cache: 'pip'
-            - name: Install dependencies
-              run: make setup
             - name: Check Python code formatting
               run: make format-code CHECK=1
 
     lint-code:
         name: Lint Python Code
         runs-on: ubuntu-22.04
-        # No dependency - Python code is independent of JSON validation
         steps:
             - uses: actions/checkout@v4
             - uses: actions/setup-python@v5
               with:
                   python-version: ${{ env.PYTHON_VERSION }}
                   cache: 'pip'
-            - name: Install dependencies
-              run: make setup
             - name: Lint Python code
               run: make lint-code
 
     type-check:
         name: Type Check Python
         runs-on: ubuntu-22.04
-        # No dependency - Python code is independent of JSON validation
         steps:
             - uses: actions/checkout@v4
             - uses: actions/setup-python@v5
               with:
                   python-version: ${{ env.PYTHON_VERSION }}
                   cache: 'pip'
-            - name: Install dependencies
-              run: make setup
             - name: Type check Python code
               run: make type-check
 
-    # ==========================================
-    # Python Tests (CLI and scripts)
-    # ==========================================
     test:
         name: Run Tests with Coverage
         runs-on: ubuntu-22.04
-        # Tests can run in parallel with other checks
         steps:
             - uses: actions/checkout@v4
             - uses: actions/setup-python@v5
               with:
                   python-version: ${{ env.PYTHON_VERSION }}
                   cache: 'pip'
-            - name: Install dependencies
-              run: make setup
             - name: Run tests with coverage
               run: make test-cov
-            # Pin minor: @v5 floated to v5.5.4 whose actions/github-script SHA tarball 404s on GitHub.
             - name: Upload coverage reports to Codecov
               uses: codecov/codecov-action@v6.0.0
               continue-on-error: true
               with:
                   token: ${{ secrets.CODECOV_TOKEN }}
 
-    # ==========================================
-    # Final Summary (waits for all checks)
-    # ==========================================
     validation:
         name: Porto Data Validation
         runs-on: ubuntu-22.04
@@ -216,6 +187,7 @@ jobs:
             - lint-json
             - validate-mappings
             - validate-limits
+            - validate-porto-ids
             - validate-graph
             - format-json
             - verify-metadata

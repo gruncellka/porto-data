@@ -72,6 +72,7 @@ class TestProductsSchemaExecutionSemantics:
             "products": [
                 {
                     "id": "prod_one",
+                    "porto_id": "small",
                     "name": "P",
                     "envelope_ids": ["C6"],
                     "zones": ["domestic"],

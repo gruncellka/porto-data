@@ -115,6 +115,7 @@ def run_validate_currency_units(
     graph: dict[str, Any] | None,
     product_prices_doc: dict[str, Any] | None,
     service_prices_doc: dict[str, Any] | None,
+    market: dict[str, Any] | None = None,
 ) -> None:
     if not all([graph, product_prices_doc]):
         return
@@ -125,7 +126,19 @@ def run_validate_currency_units(
     graph_currency = graph.get("unit", {}).get("currency")
     pp_currency = product_prices_doc.get("unit", {}).get("currency")
     sp_currency = service_prices_doc.get("unit", {}).get("currency") if service_prices_doc else None
-    expected_ccy = str(graph_currency) if graph_currency else EXPECTED_CURRENCY
+
+    market_currency = market.get("currency") if market else None
+    expected_ccy = (
+        str(market_currency)
+        if market_currency
+        else (str(graph_currency) if graph_currency else EXPECTED_CURRENCY)
+    )
+
+    if market_currency and graph_currency and graph_currency != market_currency:
+        results["errors"].append(
+            f"{GRAPH_FILE} unit.currency {graph_currency!r} != "
+            f"policy/markets.json currency {market_currency!r}"
+        )
 
     validate_unit_consistency(
         unit_name="currency",
@@ -135,6 +148,99 @@ def run_validate_currency_units(
         results=results,
         other_values=[pp_currency, sp_currency],
     )
+
+
+def run_validate_row_ccy(
+    results: ValidationResults,
+    *,
+    graph: dict[str, Any] | None,
+    product_prices_doc: dict[str, Any] | None,
+    service_prices_doc: dict[str, Any] | None,
+    market: dict[str, Any] | None = None,
+) -> None:
+    """Validate per-row currency overrides: only when row differs from file default."""
+    if not graph:
+        return
+
+    graph_currency = graph.get("unit", {}).get("currency")
+    intl_ccy: list[str] = []
+    market_currency: str | None = None
+    if market:
+        market_currency = (
+            market.get("currency") if isinstance(market.get("currency"), str) else None
+        )
+        raw_intl = market.get("intl_ccy")
+        if isinstance(raw_intl, list):
+            intl_ccy = [str(c) for c in raw_intl if isinstance(c, str)]
+
+    def _check_rows(
+        rows: list[Any] | None,
+        file_label: str,
+        file_currency: str | None,
+        row_id_key: str,
+        zone_key: str | None = None,
+    ) -> None:
+        if not rows or not file_currency:
+            return
+        for idx, row in enumerate(rows):
+            if not isinstance(row, dict):
+                continue
+            row_ccy = row.get("currency")
+            if row_ccy is None:
+                if (
+                    zone_key
+                    and row.get(zone_key) == "world"
+                    and intl_ccy
+                    and file_currency == market_currency
+                ):
+                    row_ref = row.get(row_id_key, idx)
+                    results["errors"].append(
+                        f"{file_label}[{idx}] ({row_id_key}={row_ref!r}, zone=world): "
+                        f"must set currency in {intl_ccy!r} (international rows)"
+                    )
+                continue
+            if row_ccy == file_currency:
+                row_ref = row.get(row_id_key, idx)
+                results["errors"].append(
+                    f"{file_label}[{idx}] ({row_id_key}={row_ref!r}): "
+                    f"row currency {row_ccy!r} matches file unit.currency; omit the override"
+                )
+            elif intl_ccy and row_ccy not in intl_ccy:
+                row_ref = row.get(row_id_key, idx)
+                results["errors"].append(
+                    f"{file_label}[{idx}] ({row_id_key}={row_ref!r}): "
+                    f"row currency {row_ccy!r} must be in market intl_ccy {intl_ccy!r}"
+                )
+            if graph_currency and row_ccy == graph_currency and row_ccy != file_currency:
+                row_ref = row.get(row_id_key, idx)
+                results["warnings"].append(
+                    f"{file_label}[{idx}] ({row_id_key}={row_ref!r}): "
+                    f"row currency {row_ccy!r} equals graph.unit.currency but file default is "
+                    f"{file_currency!r} — intentional mixed-currency file"
+                )
+
+    if product_prices_doc:
+        pp_ccy = product_prices_doc.get("unit", {}).get("currency")
+        rows = product_prices_doc.get("product_prices")
+        if isinstance(rows, list):
+            _check_rows(
+                rows,
+                PRODUCT_PRICES_FILE,
+                str(pp_ccy) if pp_ccy else None,
+                "product_id",
+                zone_key="zone",
+            )
+
+    if service_prices_doc:
+        sp_ccy = service_prices_doc.get("unit", {}).get("currency")
+        rows = service_prices_doc.get("service_prices")
+        if isinstance(rows, list):
+            _check_rows(
+                rows,
+                SERVICE_PRICES_FILE,
+                str(sp_ccy) if sp_ccy else None,
+                "service_id",
+            )
 
 
 def run_validate_units(
@@ -147,6 +253,7 @@ def run_validate_units(
     envelope_layouts: dict[str, Any] | None,
     product_prices_doc: dict[str, Any] | None,
     service_prices_doc: dict[str, Any] | None,
+    market: dict[str, Any] | None = None,
 ) -> None:
     run_validate_weight_units(results, graph=graph, products=products, weight_tiers=weight_tiers)
     run_validate_dimension_units(
@@ -166,4 +273,12 @@ def run_validate_units(
         graph=graph,
         product_prices_doc=product_prices_doc,
         service_prices_doc=service_prices_doc,
+        market=market,
+    )
+    run_validate_row_ccy(
+        results,
+        graph=graph,
+        product_prices_doc=product_prices_doc,
+        service_prices_doc=service_prices_doc,
+        market=market,
     )

@@ -22,9 +22,9 @@ def run_validate_execution_semantics(
     if products is None or services is None:
         return
 
-    available_services = (graph or {}).get("global_settings", {}).get("available_services") or []
-    if not isinstance(available_services, list):
-        available_services = []
+    attached = (graph or {}).get("services") or []
+    if not isinstance(attached, list):
+        attached = []
 
     for product_id, product in product_dict.items():
         mark_type = product.get("mark_type")
@@ -57,7 +57,7 @@ def run_validate_execution_semantics(
             return bool(set(product_zones) & set(sz))
 
         ok = False
-        for sid in available_services:
+        for sid in attached:
             svc = get_service_by_ref(services, str(sid))
             if not svc or not svc.get("enables_tracking"):
                 continue
@@ -76,6 +76,6 @@ def run_validate_execution_semantics(
         if not ok:
             results["errors"].append(
                 f"Product '{product_id}' has tracking_mode optional but no service with "
-                f"enables_tracking covers its zones in {SERVICES_FILE} / available_services "
+                f"enables_tracking covers its zones in {SERVICES_FILE} / graph.services "
                 f"({GRAPH_FILE})"
             )

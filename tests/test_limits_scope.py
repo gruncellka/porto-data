@@ -84,7 +84,7 @@ def test_validate_limits_scope_errors_on_provider_mismatch(tmp_path: Path):
         "file_type": "limits",
         "provider": "wrong",
         "limits": [],
-        "compliance_frameworks": {},
+        "frameworks": {},
     }
     _write_limits_bundle(
         tmp_path,
@@ -107,7 +107,7 @@ def test_validate_limits_scope_errors_when_limits_mapping_missing_for_second_pro
             "file_type": "limits",
             "provider": "acme",
             "limits": [],
-            "compliance_frameworks": {},
+            "frameworks": {},
         },
     )
     assert validate_limits_scope(project_root=tmp_path) == 1
@@ -142,7 +142,7 @@ def test_validate_limits_scope_errors_on_wrong_file_type(tmp_path: Path):
             "file_type": "other",
             "provider": "acme",
             "limits": [],
-            "compliance_frameworks": {},
+            "frameworks": {},
         },
     )
     assert validate_limits_scope(project_root=tmp_path) == 1
@@ -156,13 +156,13 @@ def test_validate_limits_scope_errors_when_limits_not_array(tmp_path: Path):
             "file_type": "limits",
             "provider": "acme",
             "limits": {},
-            "compliance_frameworks": {},
+            "frameworks": {},
         },
     )
     assert validate_limits_scope(project_root=tmp_path) == 1
 
 
-def test_validate_limits_scope_errors_when_compliance_frameworks_null(tmp_path: Path):
+def test_validate_limits_scope_errors_when_frameworks_null(tmp_path: Path):
     _write_limits_bundle(
         tmp_path,
         mappings_providers={"acme": {"schemas/limits.schema.json": "providers/acme/limits.json"}},
@@ -170,13 +170,13 @@ def test_validate_limits_scope_errors_when_compliance_frameworks_null(tmp_path: 
             "file_type": "limits",
             "provider": "acme",
             "limits": [],
-            "compliance_frameworks": None,
+            "frameworks": None,
         },
     )
     assert validate_limits_scope(project_root=tmp_path) == 1
 
 
-def test_validate_limits_scope_errors_when_compliance_frameworks_not_object(
+def test_validate_limits_scope_errors_when_frameworks_not_object(
     tmp_path: Path,
 ):
     _write_limits_bundle(
@@ -186,7 +186,7 @@ def test_validate_limits_scope_errors_when_compliance_frameworks_not_object(
             "file_type": "limits",
             "provider": "acme",
             "limits": [],
-            "compliance_frameworks": [],
+            "frameworks": [],
         },
     )
     assert validate_limits_scope(project_root=tmp_path) == 1
@@ -200,7 +200,7 @@ def test_validate_limits_scope_errors_on_non_object_limit_row(tmp_path: Path):
             "file_type": "limits",
             "provider": "acme",
             "limits": ["bad"],
-            "compliance_frameworks": {},
+            "frameworks": {},
         },
     )
     assert validate_limits_scope(project_root=tmp_path) == 1
@@ -214,7 +214,7 @@ def test_validate_limits_scope_errors_on_missing_row_id(tmp_path: Path):
             "file_type": "limits",
             "provider": "acme",
             "limits": [{}],
-            "compliance_frameworks": {},
+            "frameworks": {},
         },
     )
     assert validate_limits_scope(project_root=tmp_path) == 1
@@ -236,7 +236,7 @@ def test_validate_limits_scope_errors_on_duplicate_row_ids(tmp_path: Path):
             "file_type": "limits",
             "provider": "acme",
             "limits": [row, dict(row)],
-            "compliance_frameworks": {},
+            "frameworks": {},
         },
     )
     assert validate_limits_scope(project_root=tmp_path) == 1
@@ -250,7 +250,7 @@ def test_validate_limits_scope_errors_when_framework_entry_not_object(tmp_path: 
             "file_type": "limits",
             "provider": "acme",
             "limits": [],
-            "compliance_frameworks": {"fw1": "x"},
+            "frameworks": {"fw1": "x"},
         },
     )
     assert validate_limits_scope(project_root=tmp_path) == 1
@@ -264,7 +264,7 @@ def test_validate_limits_scope_errors_on_framework_timezone_mismatch(tmp_path: P
             "file_type": "limits",
             "provider": "acme",
             "limits": [],
-            "compliance_frameworks": {
+            "frameworks": {
                 "fw1": {"timezone": "Europe/Berlin"},
             },
         },
@@ -302,7 +302,7 @@ def test_validate_limits_scope_passes_when_registry_providers_not_dict(tmp_path:
                 "file_type": "limits",
                 "provider": "acme",
                 "limits": [],
-                "compliance_frameworks": {},
+                "frameworks": {},
             }
         ),
         encoding="utf-8",

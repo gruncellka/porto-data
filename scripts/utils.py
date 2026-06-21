@@ -18,7 +18,7 @@ from typing import Any
 
 from scripts.data_files import (
     MAPPINGS_FILENAME,
-    MAPPINGS_SCHEMA_RELPATH,
+    MAPPINGS_SCHEMA,
     get_all_schema_data_pairs,
     get_project_root,
 )
@@ -50,9 +50,9 @@ def get_all_file_checksums() -> dict[str, str]:
     mappings_data = root / MAPPINGS_FILENAME
     if mappings_data.exists():
         checksums[MAPPINGS_FILENAME] = compute_checksum(str(mappings_data))
-    mappings_schema = root / MAPPINGS_SCHEMA_RELPATH
+    mappings_schema = root / MAPPINGS_SCHEMA
     if mappings_schema.exists():
-        checksums[MAPPINGS_SCHEMA_RELPATH] = compute_checksum(str(mappings_schema))
+        checksums[MAPPINGS_SCHEMA] = compute_checksum(str(mappings_schema))
 
     return checksums
 

@@ -6,7 +6,7 @@ from __future__ import annotations
 from scripts.data_files import GRAPH_FILE
 from scripts.validators.base import ValidationResults
 from scripts.validators.graph.dependencies import (
-    run_validate_circular_dependencies,
+    run_validate_cycles,
     run_validate_dependencies,
 )
 from scripts.validators.graph.execution_semantics import run_validate_execution_semantics
@@ -44,7 +44,7 @@ class TestDependenciesCoverage:
     def test_non_dict_dep_skipped_in_graph(self) -> None:
         r = _empty_results()
         graph = {"dependencies": {"bad": "x", "ok": {"file": "a.json", "depends_on": []}}}
-        run_validate_circular_dependencies(r, graph=graph)
+        run_validate_cycles(r, graph=graph)
 
     def test_non_str_depends_on_skipped(self) -> None:
         r = _empty_results()
@@ -54,11 +54,11 @@ class TestDependenciesCoverage:
                 "b": {"file": "b.json", "depends_on": []},
             }
         }
-        run_validate_circular_dependencies(r, graph=graph)
+        run_validate_cycles(r, graph=graph)
 
     def test_circular_deps_skips_non_dict_dependencies(self) -> None:
         r = _empty_results()
-        run_validate_circular_dependencies(r, graph={"dependencies": []})
+        run_validate_cycles(r, graph={"dependencies": []})
 
     def test_products_product_prices_circular_warns(self) -> None:
         r = _empty_results()
@@ -74,7 +74,7 @@ class TestDependenciesCoverage:
                 },
             }
         }
-        run_validate_circular_dependencies(r, graph=graph)
+        run_validate_cycles(r, graph=graph)
         assert any("Circular dependency" in w for w in r["warnings"])
 
 
@@ -91,9 +91,9 @@ class TestExecutionSemanticsCoverage:
         )
         assert not r["errors"]
 
-    def test_available_services_not_list_resets(self) -> None:
+    def test_services_not_list_resets(self) -> None:
         r = _empty_results()
-        graph = {"global_settings": {"available_services": (1,)}}
+        graph = {"services": (1,)}
         products = {"products": [{"id": "p1", "mark_type": "stamp", "tracking_mode": "none"}]}
         services = {"services": []}
         run_validate_execution_semantics(
@@ -108,7 +108,7 @@ class TestExecutionSemanticsCoverage:
 
     def test_missing_mark_type_errors(self) -> None:
         r = _empty_results()
-        graph = {"global_settings": {"available_services": []}}
+        graph = {"services": []}
         products = {"products": [{"id": "p1", "tracking_mode": "none"}]}
         services = {"services": []}
         run_validate_execution_semantics(
@@ -123,7 +123,7 @@ class TestExecutionSemanticsCoverage:
 
     def test_label_none_errors(self) -> None:
         r = _empty_results()
-        graph = {"global_settings": {"available_services": []}}
+        graph = {"services": []}
         products = {
             "products": [
                 {"id": "p1", "mark_type": "label", "tracking_mode": "none", "zones": ["z"]}
@@ -142,7 +142,7 @@ class TestExecutionSemanticsCoverage:
 
     def test_optional_tracking_via_available_service(self) -> None:
         r = _empty_results()
-        graph = {"global_settings": {"available_services": ["no_trk", "trk"]}}
+        graph = {"services": ["no_trk", "trk"]}
         products = {
             "products": [
                 {
@@ -177,7 +177,7 @@ class TestExecutionSemanticsCoverage:
 
     def test_optional_tracking_service_without_zones_covers(self) -> None:
         r = _empty_results()
-        graph = {"global_settings": {"available_services": ["trk"]}}
+        graph = {"services": ["trk"]}
         products = {
             "products": [
                 {
@@ -206,7 +206,7 @@ class TestExecutionSemanticsCoverage:
 
     def test_optional_tracking_no_service_errors(self) -> None:
         r = _empty_results()
-        graph = {"global_settings": {"available_services": []}}
+        graph = {"services": []}
         products = {
             "products": [
                 {
@@ -231,7 +231,7 @@ class TestExecutionSemanticsCoverage:
 
     def test_optional_tracking_fallback_services_by_id(self) -> None:
         r = _empty_results()
-        graph = {"global_settings": {"available_services": ["only_plain"]}}
+        graph = {"services": ["only_plain"]}
         products = {
             "products": [
                 {

@@ -6,12 +6,12 @@
     "country_code": "ISO 3166-1 alpha-2",
     "date": "ISO 8601"
   },
-  "provider_context": {
-    "national_policy": {
+  "context": {
+    "national": {
       "description": "Letter-format products only. Letter destination gating: policy/restrictions.json + zones.json. Switzerland is not in the EU; CH is domestic when posting from CH. limits[] only for Swiss Post\u2013documented letter operational blocks.",
       "notes": "Keep limits[] minimal; add a row only when Post CH materially restricts or suspends letters to a destination (verifiable). No parcel-only or generic geopolitical inventories."
     }
   },
   "limits": [],
-  "compliance_frameworks": {}
+  "frameworks": {}
 }

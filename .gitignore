@@ -41,6 +41,11 @@ Thumbs.db
 .coverage
 htmlcov/
 coverage.xml
+test-publish-npm/
+test-publish-pypi/
+dist-test/
+gruncellka-porto-data-*.tgz
+gruncellka_porto_data-*.whl
 
 # Type checking
 .mypy_cache/

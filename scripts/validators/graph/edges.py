@@ -170,7 +170,7 @@ def run_validate_products_in_edges(
         results["correct"].append("All products are in edges")
 
 
-def run_validate_zones_and_weight_tiers_in_edges(
+def run_validate_edge_tiers(
     results: ValidationResults,
     *,
     graph: dict[str, Any],

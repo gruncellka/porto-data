@@ -8,11 +8,11 @@
         "stamp"
       ]
     },
-    "swisspost": {
-      "name": "Swiss Post",
-      "country": "CH",
+    "ukrposhta": {
+      "name": "Ukrposhta",
+      "country": "UA",
       "mark_types": [
-        "stamp"
+        "label"
       ]
     },
     "laposte": {
@@ -22,16 +22,12 @@
         "label"
       ]
     },
-    "ukrposhta": {
-      "name": "Ukrposhta",
-      "country": "UA",
+    "swisspost": {
+      "name": "Swiss Post",
+      "country": "CH",
       "mark_types": [
-        "label"
-      ],
-      "vat": {
-        "applicable": true,
-        "rate": 0.2
-      }
+        "stamp"
+      ]
     }
   }
 }

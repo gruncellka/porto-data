@@ -42,7 +42,8 @@
             "CHF",
             "UAH",
             "USD"
-          ]
+          ],
+          "description": "Default currency for rows in this file. Set row.currency only when a row is quoted in another currency (must differ from this default)."
         }
       },
       "additionalProperties": false
@@ -80,7 +81,7 @@
               "UAH",
               "USD"
             ],
-            "description": "Optional override; when omitted, defaults to unit.currency"
+            "description": "Row override when this amount is not in unit.currency. Omit when same as file default. SDK priority: row \u2192 file unit \u2192 markets[country].currency."
           },
           "price": {
             "type": "array",

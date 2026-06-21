@@ -8,8 +8,8 @@ from pathlib import Path
 from scripts.validators.base import ValidationResults
 from scripts.validators.graph import GraphValidator
 from scripts.validators.graph.constants import (
-    PROVIDER_RULE_KIND_METRIC_BAND_ATTACH,
     PROVIDER_RULE_METRIC_THICKNESS,
+    RULE_KIND_BAND,
 )
 from scripts.validators.graph.marks_profiles import run_validate_marks_profiles
 from scripts.validators.graph.provider_rules import run_validate_provider_rules
@@ -177,7 +177,7 @@ class TestProviderRulesCoverage:
             "rules": [
                 {
                     "id": "r1",
-                    "kind": PROVIDER_RULE_KIND_METRIC_BAND_ATTACH,
+                    "kind": RULE_KIND_BAND,
                     "metric": PROVIDER_RULE_METRIC_THICKNESS,
                     "product_ids": [],
                     "service_id": "s1",
@@ -199,7 +199,7 @@ class TestProviderRulesCoverage:
     def test_rule_shape_and_refs(self) -> None:
         r = _empty_results()
         base_rule = {
-            "kind": PROVIDER_RULE_KIND_METRIC_BAND_ATTACH,
+            "kind": RULE_KIND_BAND,
             "metric": PROVIDER_RULE_METRIC_THICKNESS,
             "min_exclusive": 0,
             "max_inclusive": 2,
@@ -272,7 +272,7 @@ class TestProviderRulesCoverage:
             "rules": [
                 {
                     "id": "ok",
-                    "kind": PROVIDER_RULE_KIND_METRIC_BAND_ATTACH,
+                    "kind": RULE_KIND_BAND,
                     "metric": PROVIDER_RULE_METRIC_THICKNESS,
                     "product_ids": ["p1"],
                     "service_id": "s1",

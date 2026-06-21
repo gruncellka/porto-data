@@ -17,11 +17,11 @@ from typing import Any
 from scripts.data_files import (
     FORMATS_MAPPINGS_KEY,
     MAPPINGS_FILENAME,
-    MAPPINGS_SCHEMA_RELPATH,
+    MAPPINGS_SCHEMA,
     POLICY_MAPPINGS_KEY,
     PROVIDERS_DIR,
     PROVIDERS_REGISTRY_FILENAME,
-    PROVIDERS_SCHEMA_RELPATH,
+    PROVIDERS_SCHEMA,
     REGISTRY_MAPPINGS_KEY,
     get_all_schema_data_pairs,
     get_project_root,
@@ -148,7 +148,7 @@ def generate_metadata() -> dict[str, Any]:
 
     bundle: dict[str, dict[str, Any]] = {}
     mappings_data = root / MAPPINGS_FILENAME
-    mappings_schema = root / MAPPINGS_SCHEMA_RELPATH
+    mappings_schema = root / MAPPINGS_SCHEMA
     if mappings_data.exists() and mappings_schema.exists():
         ms = _file_info(mappings_schema, root, checksums)
         ms["url"] = _schema_url(mappings_schema)
@@ -157,7 +157,7 @@ def generate_metadata() -> dict[str, Any]:
             "schema": ms,
         }
     registry_data = root / PROVIDERS_REGISTRY_FILENAME
-    registry_schema = root / PROVIDERS_SCHEMA_RELPATH
+    registry_schema = root / PROVIDERS_SCHEMA
     if registry_data.exists() and registry_schema.exists():
         rs = _file_info(registry_schema, root, checksums)
         rs["url"] = _schema_url(registry_schema)
@@ -216,7 +216,7 @@ def main() -> None:
 
     if write:
         with open(out_path, "w", encoding="utf-8") as f:
-            json.dump(new_meta, f, indent=4, ensure_ascii=False)
+            json.dump(new_meta, f, indent=2, ensure_ascii=False)
             f.write("\n")
         entity_count = (
             len(new_meta.get(POLICY_MAPPINGS_KEY, {}))

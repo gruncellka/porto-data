@@ -43,11 +43,27 @@ repos:
             pass_filenames: false
             always_run: false
 
+          - id: validate-markets
+            name: Validate policy/markets.json
+            entry: bash -c 'if [ -f venv/bin/activate ]; then . venv/bin/activate; fi && PYTHONPATH=. python -m cli.main validate --type markets'
+            language: system
+            files: ^porto_data/policy/markets\.json$|^porto_data/providers\.json$|^porto_data/schemas/markets\.schema\.json$|^porto_data/mappings\.json$
+            pass_filenames: false
+            always_run: false
+
           - id: validate-limits
             name: Validate limits.json (letter scope)
             entry: bash -c 'if [ -f venv/bin/activate ]; then . venv/bin/activate; fi && PYTHONPATH=. python -m cli.main validate --type limits'
             language: system
             files: ^porto_data/providers/.*/limits\.json$|^porto_data/providers\.json$|^porto_data/policy/jurisdictions\.json$|^porto_data/schemas/limits\.schema\.json$
+            pass_filenames: false
+            always_run: false
+
+          - id: validate-porto-ids
+            name: Validate porto_id vocabulary and native-id refs
+            entry: bash -c 'if [ -f venv/bin/activate ]; then . venv/bin/activate; fi && PYTHONPATH=. python -m cli.main validate --type porto_ids'
+            language: system
+            files: ^porto_data/providers/[^/]+/(products|services|features|graph)\.json$|^porto_data/providers/[^/]+/prices/.*\.json$|^porto_data/schemas/porto_ids\.schema\.json$|^docs/porto_id\.md$
             pass_filenames: false
             always_run: false
 
@@ -121,16 +137,18 @@ repos:
     # ==========================================
     # JSON Formatting (runs after validation)
     # ==========================================
-    # Uses scripts/format_json_file.py (same as Makefile); stage after format so commit succeeds when only whitespace/format changes.
+    # Uses scripts/format_json_file.py (same as Makefile). require_serial avoids parallel
+    # hook invocations racing on index.lock (notably when porto-data is a git submodule).
     - repo: local
       hooks:
           - id: format-json
             name: Format JSON files
-            entry: bash -c 'for f in "$@"; do python3 scripts/format_json_file.py "$f" && git add "$f" || exit 1; done' bash
+            entry: bash -c 'for f in "$@"; do python3 scripts/format_json_file.py "$f" || exit 1; done; git add "$@"' bash
             language: system
             types: [json]
             files: ^porto_data/(policy|formats|schemas)/.*\.json$|^porto_data/providers/[^/]+/.*\.json$|^porto_data/(mappings|metadata|providers)\.json$
             pass_filenames: true
+            require_serial: true
             always_run: false
 
     # ==========================================

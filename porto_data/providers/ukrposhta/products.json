@@ -7,7 +7,7 @@
   },
   "products": [
     {
-      "id": "letter_standard",
+      "id": "lyst_standartnyi",
       "porto_id": "small",
       "native_id": "letter",
       "name": "\u041b\u0438\u0441\u0442 \u0441\u0442\u0430\u043d\u0434\u0430\u0440\u0442\u043d\u0438\u0439",
@@ -27,7 +27,7 @@
       "tracking_mode": "optional"
     },
     {
-      "id": "ukrposhta_document",
+      "id": "dokument",
       "porto_id": "large",
       "native_id": "document",
       "name": "\u0423\u043a\u0440\u043f\u043e\u0448\u0442\u0430 \u0414\u043e\u043a\u0443\u043c\u0435\u043d\u0442",

@@ -6,6 +6,48 @@ from pathlib import Path
 import pytest
 
 from scripts.validators.mappings_layout import validate_mappings_layout
+from scripts.validators.porto_ids import REQUIRED_PROVIDER_SCHEMAS
+
+
+def _full_provider_schema_map(provider_id: str, **extra: str) -> dict[str, str]:
+    """Minimal mappings block satisfying REQUIRED_PROVIDER_SCHEMAS."""
+    rel = {
+        "schemas/marks.schema.json": f"providers/{provider_id}/marks.json",
+        "schemas/products.schema.json": f"providers/{provider_id}/products.json",
+        "schemas/features.schema.json": f"providers/{provider_id}/features.json",
+        "schemas/services.schema.json": f"providers/{provider_id}/services.json",
+        "schemas/product_prices.schema.json": f"providers/{provider_id}/prices/products.json",
+        "schemas/service_prices.schema.json": f"providers/{provider_id}/prices/services.json",
+        "schemas/zones.schema.json": f"providers/{provider_id}/zones.json",
+        "schemas/weights.schema.json": f"providers/{provider_id}/weights.json",
+        "schemas/limits.schema.json": f"providers/{provider_id}/limits.json",
+        "schemas/graph.schema.json": f"providers/{provider_id}/graph.json",
+    }
+    assert set(rel) == set(REQUIRED_PROVIDER_SCHEMAS)
+    rel.update(extra)
+    return rel
+
+
+def _write_stub_provider_files(root: Path, provider_id: str) -> None:
+    """Write placeholder JSON files so mappings layout checks pass."""
+    prov = root / "providers" / provider_id
+    (prov / "prices").mkdir(parents=True, exist_ok=True)
+    rel_paths = [
+        "marks.json",
+        "products.json",
+        "features.json",
+        "services.json",
+        "zones.json",
+        "weights.json",
+        "limits.json",
+        "graph.json",
+        "prices/products.json",
+        "prices/services.json",
+    ]
+    for rel in rel_paths:
+        path = prov / rel
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps({"provider": provider_id}), encoding="utf-8")
 
 
 def _patch_bundle_root(monkeypatch: pytest.MonkeyPatch, root: Path) -> None:
@@ -219,7 +261,14 @@ def test_validate_mappings_layout_errors_when_provider_mappings_not_object(
     )
     (tmp_path / "mappings.json").write_text(
         json.dumps(
-            {"mappings": {"policy": {}, "formats": {}, "registry": {}, "providers": {"acme": "bad"}}}
+            {
+                "mappings": {
+                    "policy": {},
+                    "formats": {},
+                    "registry": {},
+                    "providers": {"acme": "bad"},
+                }
+            }
         ),
         encoding="utf-8",
     )
@@ -556,10 +605,12 @@ def test_validate_mappings_layout_skips_provider_field_check_for_non_json_mapped
                     "formats": {},
                     "registry": {},
                     "providers": {
-                        "acme": {
-                            "schemas/placeholder.schema.json": "providers/acme/notes.txt",
-                            "schemas/products.schema.json": "providers/acme/products.json",
-                        }
+                        "acme": _full_provider_schema_map(
+                            "acme",
+                            **{
+                                "schemas/placeholder.schema.json": "providers/acme/notes.txt",
+                            },
+                        ),
                     },
                 }
             }
@@ -567,11 +618,8 @@ def test_validate_mappings_layout_skips_provider_field_check_for_non_json_mapped
         encoding="utf-8",
     )
     (tmp_path / "providers" / "acme").mkdir(parents=True)
+    _write_stub_provider_files(tmp_path, "acme")
     (tmp_path / "providers" / "acme" / "notes.txt").write_text("x", encoding="utf-8")
-    (tmp_path / "providers" / "acme" / "products.json").write_text(
-        json.dumps({"provider": "acme", "products": []}),
-        encoding="utf-8",
-    )
     assert validate_mappings_layout() == 0
 
 
@@ -592,20 +640,14 @@ def test_validate_mappings_layout_ignores_nondirectory_entries_under_providers(
                     "formats": {},
                     "registry": {},
                     "providers": {
-                        "acme": {
-                            "schemas/products.schema.json": "providers/acme/products.json",
-                        }
+                        "acme": _full_provider_schema_map("acme"),
                     },
                 }
             }
         ),
         encoding="utf-8",
     )
-    (tmp_path / "providers" / "acme").mkdir(parents=True)
-    (tmp_path / "providers" / "acme" / "products.json").write_text(
-        json.dumps({"provider": "acme", "products": []}),
-        encoding="utf-8",
-    )
+    _write_stub_provider_files(tmp_path, "acme")
     (tmp_path / "providers" / "junk").write_text("", encoding="utf-8")
     assert validate_mappings_layout() == 0
 
@@ -628,20 +670,14 @@ def test_validate_mappings_layout_skips_dot_prefixed_provider_dirs(
                     "formats": {},
                     "registry": {},
                     "providers": {
-                        "acme": {
-                            "schemas/products.schema.json": "providers/acme/products.json",
-                        }
+                        "acme": _full_provider_schema_map("acme"),
                     },
                 }
             }
         ),
         encoding="utf-8",
     )
-    (tmp_path / "providers" / "acme").mkdir(parents=True)
-    (tmp_path / "providers" / "acme" / "products.json").write_text(
-        json.dumps({"provider": "acme", "products": []}),
-        encoding="utf-8",
-    )
+    _write_stub_provider_files(tmp_path, "acme")
     (tmp_path / "providers" / ".cache").mkdir()
     (tmp_path / "providers" / "__pycache__").mkdir()
     assert validate_mappings_layout() == 0
@@ -664,19 +700,13 @@ def test_validate_mappings_layout_warns_when_metadata_missing(
                     "formats": {},
                     "registry": {},
                     "providers": {
-                        "acme": {
-                            "schemas/products.schema.json": "providers/acme/products.json",
-                        }
+                        "acme": _full_provider_schema_map("acme"),
                     },
                 }
             }
         ),
         encoding="utf-8",
     )
-    (tmp_path / "providers" / "acme").mkdir(parents=True)
-    (tmp_path / "providers" / "acme" / "products.json").write_text(
-        json.dumps({"provider": "acme", "products": []}),
-        encoding="utf-8",
-    )
+    _write_stub_provider_files(tmp_path, "acme")
     assert validate_mappings_layout() == 0
     assert "metadata.json" in capsys.readouterr().out

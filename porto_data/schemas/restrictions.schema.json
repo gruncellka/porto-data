@@ -145,10 +145,10 @@
           "enum": [
             "country",
             "territory",
-            "disputed_territory"
+            "disputed"
           ]
         },
-        "effective_partial": {
+        "partial": {
           "type": "boolean"
         },
         "status": {
@@ -157,7 +157,7 @@
             "restricted",
             "limited",
             "prohibited",
-            "severely_restricted",
+            "severe",
             "operational"
           ]
         },

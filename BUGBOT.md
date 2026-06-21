@@ -4,7 +4,7 @@
 
 - Review rules for Bugbot in this `porto-data` tree only: data integrity, validation correctness, release safety.
 - **Consistency** means cross-file agreement: registry ↔ mappings ↔ disk, catalog JSON ↔ **`graph.json`**, units, services ↔ prices ↔ graph.
-- **Resolution** (for SDKs/loaders) is anchored in each provider’s **`graph.json`**: **`dependencies`**, **`edges`** (product × zones × weight tiers), **`global_settings`** (`lookup_method`, `price_source`, `available_services`), plus schema **`porto_data/schemas/graph.schema.json`**. Loaders must not assume removed layouts (`porto_data/data/`, `data_links.json`, top-level **`links`** on the graph).
+- **Resolution** (for SDKs/loaders) is anchored in each provider’s **`graph.json`**: **`dependencies`**, **`edges`** (product × zones × weight tiers), **`services`**, plus schema **`porto_data/schemas/graph.schema.json`**. Price lookup uses **`dependencies`** paths and price-schema join keys (`product_id`, `zone`, `weight_tier` / `service_id`). Loaders must not assume removed layouts (`porto_data/data/`, `data_links.json`, top-level **`links`**, **`lookup_rules`**, **`global_settings`**, or **`price_lookup`** on the graph).
 - Align with `.cursorrules` and `CONTRIBUTING.md`.
 - Do not flag files, workflows, or policies outside this repository.
 
@@ -113,10 +113,10 @@ If a PR adds a new `*.json` under `porto_data/providers/<id>/` and the file is a
 
 ### 12) Resolution graph edits need full validation (non-blocking)
 
-If a PR changes any of **`graph.json`** (`edges`, `global_settings`, `dependencies`, `lookup_rules`), **`products.json`**, **`prices/products.json`**, **`prices/services.json`**, **`zones.json`**, or **`weights.json`** for a provider:
+If a PR changes any of **`graph.json`** (`edges`, `services`, `dependencies`), **`products.json`**, **`prices/products.json`**, **`prices/services.json`**, **`zones.json`**, or **`weights.json`** for a provider:
 
 - **Title:** `Verify graph resolution and cross-file consistency`
-- **Body:** `Run porto validate --type graph (or make validate) for that provider. Confirm edges reference existing product_ids; zones and weight_tiers match products and price rows; global_settings lookup_method/price_source still valid; available_services and price service_ids exist in services.json.`
+- **Body:** `Run porto validate --type graph (or make validate) for that provider. Confirm edges reference existing product_ids; zones and weight_tiers match products and price rows; dependencies price paths are correct; services and price service_ids use native ids from services.json.`
 - **Labels:** `resolution`, `consistency`
 
 ### 13) Validator changes must keep graph/mappings guarantees (blocking)

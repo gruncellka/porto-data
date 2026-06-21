@@ -4,6 +4,7 @@
 from scripts.data_files import (
     get_data_files,
     list_provider_ids,
+    load_markets,
     load_providers_registry,
 )
 from scripts.validators.providers_registry import validate_providers_registry
@@ -12,7 +13,7 @@ from scripts.validators.providers_registry import validate_providers_registry
 class TestLoadProvidersRegistry:
     def test_list_matches_registry(self):
         ids = list_provider_ids()
-        assert ids == ["deutschepost", "laposte", "swisspost", "ukrposhta"]
+        assert ids == ["deutschepost", "ukrposhta", "laposte", "swisspost"]
 
     def test_laposte_coarse_metadata(self):
         doc = load_providers_registry()
@@ -20,12 +21,11 @@ class TestLoadProvidersRegistry:
         assert lp["country"] == "FR"
         assert lp["mark_types"] == ["label"]
 
-    def test_ukrposhta_registry_fields(self):
-        doc = load_providers_registry()
-        ua = doc["providers"]["ukrposhta"]
-        assert ua["country"] == "UA"
-        assert ua["mark_types"] == ["label"]
-        assert ua.get("vat", {}).get("applicable") is True
+    def test_ukrposhta_market_vat(self):
+        markets = load_markets()["markets"]
+        ua = markets["UA"]
+        assert ua["vat"]["rate"] == 0.2
+        assert ua["vat"]["inclusive"] is True
 
 
 class TestGetDataFiles:

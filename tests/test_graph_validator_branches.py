@@ -6,8 +6,8 @@ from pathlib import Path
 import pytest
 
 from scripts.validators.graph import (
-    PROVIDER_RULE_KIND_METRIC_BAND_ATTACH,
     PROVIDER_RULE_METRIC_THICKNESS,
+    RULE_KIND_BAND,
     GraphValidator,
     _envelope_validation_views,
     _print_analyze_mode,
@@ -17,8 +17,8 @@ from scripts.validators.graph import (
 from tests.minimal_fixtures import minimal_restrictions_document
 
 
-def _base_graph(**gs_overrides):
-    return {
+def _base_graph(**overrides):
+    graph = {
         "file_type": "graph",
         "provider": "deutschepost",
         "unit": {"weight": "g", "dimension": "mm", "price": "cents", "currency": "EUR"},
@@ -42,25 +42,10 @@ def _base_graph(**gs_overrides):
             "restrictions": {"file": "restrictions.json", "depends_on": []},
         },
         "edges": {},
-        "lookup_rules": {},
-        "global_settings": {
-            "price_lookup": {
-                "product_prices": {
-                    "file": "prices/products.json",
-                    "array": "product_prices",
-                    "match": {"product_id": "x", "zone": "y", "weight_tier": "z"},
-                    "description": "t",
-                },
-                "service_prices": {
-                    "file": "prices/services.json",
-                    "array": "service_prices",
-                    "match": {"service_id": "x"},
-                    "description": "t",
-                },
-            },
-            **gs_overrides,
-        },
+        "services": ["einschreiben"],
     }
+    graph.update(overrides)
+    return graph
 
 
 def _envelopes_fixture():
@@ -207,7 +192,7 @@ class TestGraphLoadErrors:
     def test_load_data_records_invalid_json(self, tmp_path):
         data_dir = tmp_path / "d"
         docs = _minimal_extras()
-        _write_bundle(data_dir, _base_graph(available_services=[]), docs)
+        _write_bundle(data_dir, _base_graph(services=[]), docs)
         (data_dir / "products.json").write_text("{not json", encoding="utf-8")
         v = GraphValidator(data_dir)
         v.load_data()
@@ -250,7 +235,7 @@ class TestGraphExecutionSemantics:
                 },
             }
         )
-        _write_bundle(data_dir, _base_graph(available_services=[]), docs)
+        _write_bundle(data_dir, _base_graph(services=[]), docs)
         v = GraphValidator(data_dir)
         v.validate_all()
         assert any("label" in e and "none" in e for e in v.results["errors"])
@@ -299,7 +284,7 @@ class TestGraphExecutionSemantics:
                 "services.json": services,
             }
         )
-        _write_bundle(data_dir, _base_graph(available_services=[]), docs)
+        _write_bundle(data_dir, _base_graph(services=[]), docs)
         v = GraphValidator(data_dir)
         v.validate_all()
         assert any("tracking_mode optional" in e for e in v.results["errors"])
@@ -311,7 +296,7 @@ class TestGraphMarksAndRules:
         docs = _minimal_extras(
             {"marks.json": {"file_type": "wrong", "provider": "deutschepost", "profiles": []}},
         )
-        _write_bundle(data_dir, _base_graph(available_services=[]), docs)
+        _write_bundle(data_dir, _base_graph(services=[]), docs)
         v = GraphValidator(data_dir)
         v.validate_all()
         assert any("marks" in e.lower() and "file_type" in e.lower() for e in v.results["errors"])
@@ -331,7 +316,7 @@ class TestGraphMarksAndRules:
                 },
             },
         )
-        _write_bundle(data_dir, _base_graph(available_services=[]), docs)
+        _write_bundle(data_dir, _base_graph(services=[]), docs)
         v = GraphValidator(data_dir)
         v.validate_all()
         assert any("duplicate profile" in e.lower() for e in v.results["errors"])
@@ -345,7 +330,7 @@ class TestGraphMarksAndRules:
             "rules": [{"id": "r1", "kind": "other", "metric": "thickness"}],
         }
         docs = _minimal_extras({"rules.json": rules})
-        _write_bundle(data_dir, _graph_with_rules_dep(_base_graph(available_services=[])), docs)
+        _write_bundle(data_dir, _graph_with_rules_dep(_base_graph(services=[])), docs)
         v = GraphValidator(data_dir)
         v.validate_all()
         assert any("unsupported kind" in e for e in v.results["errors"])
@@ -373,7 +358,7 @@ class TestGraphMarksAndRules:
             "rules": [
                 {
                     "id": "thick",
-                    "kind": PROVIDER_RULE_KIND_METRIC_BAND_ATTACH,
+                    "kind": RULE_KIND_BAND,
                     "metric": PROVIDER_RULE_METRIC_THICKNESS,
                     "product_ids": [],
                     "service_id": "svc_thick",
@@ -398,7 +383,7 @@ class TestGraphMarksAndRules:
         )
         _write_bundle(
             data_dir,
-            _graph_with_rules_dep(_base_graph(available_services=["svc_thick"])),
+            _graph_with_rules_dep(_base_graph(services=["svc_thick"])),
             docs,
         )
         v = GraphValidator(data_dir)
@@ -409,7 +394,7 @@ class TestGraphMarksAndRules:
 class TestGraphCircularDeps:
     def test_circular_products_product_prices_emits_warning(self, tmp_path):
         data_dir = tmp_path / "d"
-        graph = dict(_base_graph(available_services=[]))
+        graph = dict(_base_graph(services=[]))
         deps = dict(graph["dependencies"])
         deps["products"] = {"file": "products.json", "depends_on": ["prices/products.json"]}
         deps["product_prices"] = {
@@ -423,15 +408,16 @@ class TestGraphCircularDeps:
         assert any("Circular dependency" in w for w in v.results["warnings"])
 
 
-class TestGraphLookupFileRef:
-    def test_wrong_product_prices_file_in_graph_errors(self, tmp_path):
+class TestGraphPriceDependencyRefs:
+    def test_wrong_product_prices_file_in_dependencies_errors(self, tmp_path):
         data_dir = tmp_path / "d"
-        gs = dict(_base_graph()["global_settings"])
-        gs["price_lookup"] = dict(gs["price_lookup"])
-        gs["price_lookup"]["product_prices"] = dict(gs["price_lookup"]["product_prices"])
-        gs["price_lookup"]["product_prices"]["file"] = "prices/wrong.json"
         graph = _base_graph()
-        graph["global_settings"] = gs
+        deps = dict(graph["dependencies"])
+        deps["product_prices"] = {
+            "file": "prices/wrong.json",
+            "depends_on": ["products.json"],
+        }
+        graph["dependencies"] = deps
         _write_bundle(data_dir, graph, _minimal_extras())
         v = GraphValidator(data_dir)
         v.validate_all()
@@ -458,7 +444,7 @@ class TestGraphEdgesRefs:
 
     def test_edges_unknown_product_errors(self, tmp_path):
         data_dir = tmp_path / "d"
-        graph = dict(_base_graph(available_services=[]))
+        graph = dict(_base_graph(services=[]))
         graph["edges"] = {"ghost": {"zones": ["domestic"], "weight_tiers": ["W1"]}}
         docs = _minimal_extras(
             {
@@ -477,7 +463,7 @@ class TestGraphEdgesRefs:
 
     def test_edges_unknown_zone_errors(self, tmp_path):
         data_dir = tmp_path / "d"
-        graph = dict(_base_graph(available_services=[]))
+        graph = dict(_base_graph(services=[]))
         graph["edges"] = {"p1": {"zones": ["nowhere"], "weight_tiers": ["W1"]}}
         docs = _minimal_extras(
             {
@@ -497,7 +483,7 @@ class TestGraphEdgesRefs:
 
     def test_edges_unknown_weight_tier_errors(self, tmp_path):
         data_dir = tmp_path / "d"
-        graph = dict(_base_graph(available_services=[]))
+        graph = dict(_base_graph(services=[]))
         graph["edges"] = {"p1": {"zones": ["domestic"], "weight_tiers": ["W999"]}}
         docs = _minimal_extras(
             {
@@ -521,14 +507,14 @@ class TestGraphValidateGraphEntrypoint:
 
     def test_validate_graph_validate_mode_zero_on_warnings_only(self, tmp_path, capsys):
         data_dir = tmp_path / "d"
-        _write_bundle(data_dir, _base_graph(available_services=[]), _minimal_extras())
+        _write_bundle(data_dir, _base_graph(services=[]), _minimal_extras())
         assert validate_graph(data_dir=data_dir, analyze=False) == 0
         out = capsys.readouterr().out
         assert "Validating graph.json" in out and "passed" in out.lower()
 
     def test_validate_graph_analyze_mode_prints_sections(self, tmp_path, capsys):
         data_dir = tmp_path / "d"
-        _write_bundle(data_dir, _base_graph(available_services=[]), _minimal_extras())
+        _write_bundle(data_dir, _base_graph(services=[]), _minimal_extras())
         assert validate_graph(data_dir=data_dir, analyze=True) in (0, 1)
         out = capsys.readouterr().out
         assert "COMPREHENSIVE" in out or "ANALYSIS" in out
@@ -537,7 +523,7 @@ class TestGraphValidateGraphEntrypoint:
 class TestGraphLoadAndInit:
     def test_load_data_short_circuits_when_already_loaded(self, tmp_path):
         data_dir = tmp_path / "d"
-        _write_bundle(data_dir, _base_graph(available_services=[]), _minimal_extras())
+        _write_bundle(data_dir, _base_graph(services=[]), _minimal_extras())
         v = GraphValidator(data_dir)
         v.load_data()
         first = v.graph
@@ -553,34 +539,26 @@ class TestGraphLoadAndInit:
             GraphValidator(project_root=root, provider="deutschepost")
 
 
-class TestGraphPriceLookupAndUnits:
-    def test_price_lookup_wrong_product_prices_array_warns(self, tmp_path):
+class TestGraphPriceDependenciesAndUnits:
+    def test_price_dependencies_missing_array_on_doc_errors(self, tmp_path):
         data_dir = tmp_path / "d"
-        graph = dict(_base_graph(available_services=[]))
-        gs = dict(graph["global_settings"])
-        pl = dict(gs["price_lookup"])
-        pp = dict(pl["product_prices"])
-        pp["array"] = "not_product_prices"
-        pl["product_prices"] = pp
-        gs["price_lookup"] = pl
-        graph["global_settings"] = gs
-        _write_bundle(data_dir, graph, _minimal_extras())
+        extras = _minimal_extras(
+            {
+                "prices/products.json": {
+                    "file_type": "product_prices",
+                    "provider": "deutschepost",
+                    "unit": {"price": "cents", "currency": "EUR"},
+                    "product_prices": "not-a-list",
+                },
+            }
+        )
+        _write_bundle(data_dir, _base_graph(services=["einschreiben"]), extras)
         v = GraphValidator(data_dir)
         v.validate_all()
-        assert any("array path" in w.lower() for w in v.results["warnings"])
+        assert any("Price file for product_prices missing" in e for e in v.results["errors"])
 
-    def test_price_lookup_match_keys_missing_on_rows_errors(self, tmp_path):
+    def test_price_dependencies_missing_row_keys_errors(self, tmp_path):
         data_dir = tmp_path / "d"
-        graph = dict(_base_graph(available_services=[]))
-        gs = dict(graph["global_settings"])
-        pl = dict(gs["price_lookup"])
-        pp = dict(pl["product_prices"])
-        m = dict(pp["match"])
-        m["bogus_match_key"] = "z"
-        pp["match"] = m
-        pl["product_prices"] = pp
-        gs["price_lookup"] = pl
-        graph["global_settings"] = gs
         extras = _minimal_extras(
             {
                 "prices/products.json": {
@@ -591,17 +569,16 @@ class TestGraphPriceLookupAndUnits:
                         {
                             "product_id": "p1",
                             "zone": "domestic",
-                            "weight_tier": "W1",
                             "price": [{"amount": 1}],
                         }
                     ],
                 },
             }
         )
-        _write_bundle(data_dir, graph, extras)
+        _write_bundle(data_dir, _base_graph(services=["einschreiben"]), extras)
         v = GraphValidator(data_dir)
         v.validate_all()
-        assert any("bogus_match_key" in e or "match keys" in e for e in v.results["errors"])
+        assert any("weight_tier" in e for e in v.results["errors"])
 
     def test_currency_mismatch_between_graph_and_prices_errors(self, tmp_path):
         data_dir = tmp_path / "d"
@@ -615,7 +592,7 @@ class TestGraphPriceLookupAndUnits:
                 },
             }
         )
-        _write_bundle(data_dir, _base_graph(available_services=[]), extras)
+        _write_bundle(data_dir, _base_graph(services=[]), extras)
         v = GraphValidator(data_dir)
         v.validate_all()
         assert any("currency" in e.lower() for e in v.results["errors"])
@@ -645,7 +622,7 @@ class TestGraphLayoutsAndProducts:
         }
         _write_bundle(
             data_dir,
-            _base_graph(available_services=[]),
+            _base_graph(services=[]),
             _minimal_extras({"layouts.json": layouts}),
         )
         v = GraphValidator(data_dir)
@@ -676,7 +653,7 @@ class TestGraphLayoutsAndProducts:
         }
         _write_bundle(
             data_dir,
-            _base_graph(available_services=[]),
+            _base_graph(services=[]),
             _minimal_extras({"layouts.json": layouts}),
         )
         v = GraphValidator(data_dir)
@@ -706,7 +683,7 @@ class TestGraphLayoutsAndProducts:
         }
         _write_bundle(
             data_dir,
-            _base_graph(available_services=[]),
+            _base_graph(services=[]),
             _minimal_extras({"layouts.json": layouts}),
         )
         v = GraphValidator(data_dir)
@@ -719,9 +696,7 @@ class TestGraphLayoutsAndProducts:
         data_dir = tmp_path / "d"
         _write_bundle(
             data_dir,
-            dict(
-                _base_graph(available_services=[]), edges={"p1": {"zones": [], "weight_tiers": []}}
-            ),
+            dict(_base_graph(services=[]), edges={"p1": {"zones": [], "weight_tiers": []}}),
             _minimal_extras(
                 {
                     "products.json": _product_letter_fixture(envelope_ids=["NO_SUCH_FORMAT"]),
@@ -736,7 +711,7 @@ class TestGraphLayoutsAndProducts:
 class TestGraphDependenciesAndCircular:
     def test_dependency_points_at_missing_file_warns(self, tmp_path):
         data_dir = tmp_path / "d"
-        graph = dict(_base_graph(available_services=[]))
+        graph = dict(_base_graph(services=[]))
         deps = dict(graph["dependencies"])
         deps["ghost"] = {"file": "ghost.json", "depends_on": []}
         graph["dependencies"] = deps

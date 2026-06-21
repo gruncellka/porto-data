@@ -5,8 +5,9 @@ corresponding JSON Schema definitions.
 """
 
 import json
+from pathlib import Path
 
-from jsonschema import Draft7Validator, ValidationError
+from jsonschema import Draft7Validator, RefResolver, ValidationError
 
 from scripts.data_files import get_all_schema_data_pairs, get_project_root
 
@@ -21,6 +22,18 @@ BUNDLE_ROOT_SCHEMA_PAIRS: tuple[tuple[str, str], ...] = (
 # ============================================================================
 
 
+def _schema_validator(schema_path: Path, schema: dict) -> Draft7Validator:
+    """Build a Draft7Validator that resolves sibling schema $ref files."""
+    schema_dir = schema_path.parent
+    base_uri = schema_dir.as_uri() + "/"
+    store: dict[str, dict] = {}
+    for sibling in schema_dir.glob("*.schema.json"):
+        with open(sibling, encoding="utf-8") as f:
+            store[sibling.name] = json.load(f)
+    resolver = RefResolver(base_uri=base_uri, referrer=schema, store=store)
+    return Draft7Validator(schema, resolver=resolver)
+
+
 def validate_file(schema_path: str, data_path: str) -> bool:
     """Validate a data file against its schema.
 
@@ -32,12 +45,13 @@ def validate_file(schema_path: str, data_path: str) -> bool:
         True if validation passes, False otherwise.
     """
     try:
-        with open(schema_path) as f:
+        schema_file = Path(schema_path)
+        with open(schema_file, encoding="utf-8") as f:
             schema = json.load(f)
-        with open(data_path) as f:
+        with open(data_path, encoding="utf-8") as f:
             data = json.load(f)
 
-        validator = Draft7Validator(schema)
+        validator = _schema_validator(schema_file, schema)
         validator.validate(data)
         print(f"✓ {data_path}")
         return True

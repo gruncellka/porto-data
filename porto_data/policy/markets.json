@@ -1,0 +1,45 @@
+{
+  "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/markets.schema.json",
+  "file_type": "markets",
+  "description": "Country-level currency, VAT, and international quote currencies. providers.json country resolves fiscal defaults via markets[COUNTRY].",
+  "unit": {
+    "country_code": "ISO 3166-1 alpha-2",
+    "currency": "ISO 4217"
+  },
+  "markets": {
+    "DE": {
+      "currency": "EUR",
+      "vat": {
+        "exempt": true
+      }
+    },
+    "FR": {
+      "currency": "EUR",
+      "vat": {
+        "inclusive": true
+      }
+    },
+    "CH": {
+      "currency": "CHF",
+      "vat": {
+        "inclusive": true
+      }
+    },
+    "UA": {
+      "currency": "UAH",
+      "intl_ccy": [
+        "USD"
+      ],
+      "vat": {
+        "rate": 0.2,
+        "inclusive": true,
+        "intl_excl": true
+      },
+      "settlement": {
+        "currency": "UAH",
+        "fx": "NBU",
+        "fx_date": "service"
+      }
+    }
+  }
+}

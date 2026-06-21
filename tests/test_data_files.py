@@ -290,7 +290,7 @@ class TestListProviderIds:
 
     def test_includes_laposte_swisspost_deutschepost(self):
         ids = data_files.list_provider_ids()
-        assert ids == sorted(ids)
+        assert ids == ["deutschepost", "ukrposhta", "laposte", "swisspost"]
         assert "deutschepost" in ids
         assert "swisspost" in ids
         assert "laposte" in ids
