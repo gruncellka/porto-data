@@ -32,6 +32,11 @@ class TestExtractEntityName:
         path = Path("schemas/test.schema.json")
         assert extract_entity_name(path) == "test"
 
+    def test_extract_entity_name_from_price_schema(self):
+        """Price schemas must not collapse to catalog entity names."""
+        assert extract_entity_name(Path("schemas/product_prices.schema.json")) == "product_prices"
+        assert extract_entity_name(Path("schemas/service_prices.schema.json")) == "service_prices"
+
 
 class TestGetFileInfo:
     """Test get_file_info function."""
@@ -263,6 +268,20 @@ class TestGenerateMetadata:
         assert isinstance(metadata["generated_at"], str)
         # Should be ISO format with Z suffix
         assert metadata["generated_at"].endswith("Z") or "+" in metadata["generated_at"]
+
+    def test_generate_metadata_keeps_catalog_and_price_entities_distinct(self):
+        """Regression: prices/products.json must not overwrite catalog products.json."""
+        metadata = generate_metadata()
+        dp = metadata["providers"]["deutschepost"]
+
+        assert dp["products"]["data"]["path"] == "providers/deutschepost/products.json"
+        assert dp["products"]["schema"]["path"] == "schemas/products.schema.json"
+        assert dp["services"]["data"]["path"] == "providers/deutschepost/services.json"
+        assert dp["services"]["schema"]["path"] == "schemas/services.schema.json"
+        assert dp["product_prices"]["data"]["path"] == "providers/deutschepost/prices/products.json"
+        assert dp["product_prices"]["schema"]["path"] == "schemas/product_prices.schema.json"
+        assert dp["service_prices"]["data"]["path"] == "providers/deutschepost/prices/services.json"
+        assert dp["service_prices"]["schema"]["path"] == "schemas/service_prices.schema.json"
 
     @patch("scripts.generate_metadata.get_all_file_checksums")
     @patch("scripts.generate_metadata.get_all_schema_data_pairs")

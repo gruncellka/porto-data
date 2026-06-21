@@ -96,7 +96,7 @@ def _schema_url(schema_path: Path) -> str:
 
 
 def _entity_name_from_path(path: Path) -> str:
-    """e.g. products.json -> products; products.schema.json -> products."""
+    """Entity key from a schema path stem (e.g. product_prices.schema.json -> product_prices)."""
     name = path.stem
     return name[:-7] if name.endswith(".schema") else name
 
@@ -127,7 +127,7 @@ def generate_metadata() -> dict[str, Any]:
         data_path = root / data_rel
         if not schema_path.exists() or not data_path.exists():
             continue
-        name = _entity_name_from_path(data_path)
+        name = _entity_name_from_path(schema_path)
         schema_info = _file_info(schema_path, root, checksums)
         schema_info["url"] = _schema_url(schema_path)
         entity = {

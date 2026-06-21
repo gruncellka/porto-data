@@ -43,6 +43,14 @@ repos:
             pass_filenames: false
             always_run: false
 
+          - id: validate-limits
+            name: Validate limits.json (letter scope)
+            entry: bash -c 'if [ -f venv/bin/activate ]; then . venv/bin/activate; fi && PYTHONPATH=. python -m cli.main validate --type limits'
+            language: system
+            files: ^porto_data/providers/.*/limits\.json$|^porto_data/providers\.json$|^porto_data/policy/jurisdictions\.json$|^porto_data/schemas/limits\.schema\.json$
+            pass_filenames: false
+            always_run: false
+
           - id: validate-graph
             name: Validate graph.json consistency
             entry: bash -c 'if [ -f venv/bin/activate ]; then . venv/bin/activate; fi && PYTHONPATH=. python -m cli.main validate --type graph'
