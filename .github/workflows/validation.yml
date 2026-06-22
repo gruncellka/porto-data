@@ -22,7 +22,7 @@ jobs:
             - name: Validate JSON files against schemas
               run: |
                   . venv/bin/activate 2>/dev/null || true
-                  make ensure-venv
+                  make venv
                   . venv/bin/activate && PYTHONPATH=. python -m cli.main validate --type schema
 
     lint-json:
@@ -49,7 +49,7 @@ jobs:
                   cache: 'pip'
             - name: Validate mappings.json, providers registry, metadata alignment
               run: |
-                  make ensure-venv
+                  make venv
                   . venv/bin/activate && PYTHONPATH=. python -m cli.main validate --type mappings
 
     validate-limits:
@@ -64,7 +64,7 @@ jobs:
                   cache: 'pip'
             - name: Validate providers/*/limits.json
               run: |
-                  make ensure-venv
+                  make venv
                   . venv/bin/activate && PYTHONPATH=. python -m cli.main validate --type limits
 
     validate-markets:
@@ -79,7 +79,7 @@ jobs:
                   cache: 'pip'
             - name: Validate markets vs provider countries
               run: |
-                  make ensure-venv
+                  make venv
                   . venv/bin/activate && PYTHONPATH=. python -m cli.main validate --type markets
 
     validate-porto-ids:
@@ -94,8 +94,15 @@ jobs:
                   cache: 'pip'
             - name: Validate porto_id enums and native-id refs
               run: |
-                  make ensure-venv
+                  make venv
                   . venv/bin/activate && PYTHONPATH=. python -m cli.main validate --type porto_ids
+                  if [ -n "$(git diff docs/porto_id.md)" ]; then
+                    echo "❌ docs/porto_id.md is out of date. The file must be regenerated and committed."
+                    echo "Run 'porto validate --type porto_ids' locally, then commit the updated docs/porto_id.md file."
+                    git diff docs/porto_id.md
+                    exit 1
+                  fi
+                  echo "✓ docs/porto_id.md is up to date"
 
     validate-graph:
         name: Validate provider graph.json

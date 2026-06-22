@@ -1,4 +1,4 @@
-.PHONY: help ensure-venv install-hooks
+.PHONY: help venv install-hooks
 .PHONY: validate-json validate-graph format-json lint-json format-code lint-code type-check
 .PHONY: validate format lint metadata test test-cov quality test-publish
 
@@ -20,6 +20,8 @@ help:
 	@echo "Default:"
 	@echo "  make               - validate + format + lint + type-check (creates venv if needed)"
 	@echo "  make help          - Show this help"
+	@echo "Setup:"
+	@echo "  make venv           - Create venv + install dev deps (also runs automatically)"
 	@echo ""
 	@echo "Most Common Commands:"
 	@echo "  make validate      - Validate all JSON (schema → mappings → markets → limits → porto_ids → graph)"
@@ -52,7 +54,7 @@ help:
 # ==========================================
 # Virtualenv (internal — triggered by other targets)
 # ==========================================
-ensure-venv:
+venv:
 	@if [ ! -x "$(VENV_PYTHON)" ] || [ ! -f "$(VENV_MARKER)" ]; then \
 		echo "Setting up porto-data (venv + dev deps)..."; \
 		$(PYTHON3) -m venv $(VENV) || (echo "Error: need Python >=3.13 ($(PYTHON3) failed)" && exit 1); \
@@ -67,16 +69,16 @@ ensure-venv:
 # ==========================================
 # Most Common Commands
 # ==========================================
-validate: ensure-venv validate-json
+validate: venv validate-json
 
-format: ensure-venv format-json format-code
+format: venv format-json format-code
 
-lint: ensure-venv lint-json lint-code
+lint: venv lint-json lint-code
 
 # ==========================================
 # JSON Commands
 # ==========================================
-validate-json: ensure-venv
+validate-json: venv
 	@echo "Validating JSON against schemas..."
 	@. $(VENV)/bin/activate && PYTHONPATH=. python -m cli.main validate --type schema
 	@echo "Validating mappings (mappings.json, registry, metadata, stray files)..."
@@ -87,10 +89,18 @@ validate-json: ensure-venv
 	@. $(VENV)/bin/activate && PYTHONPATH=. python -m cli.main validate --type limits
 	@echo "Validating porto_id vocabulary and native-id refs..."
 	@. $(VENV)/bin/activate && PYTHONPATH=. python -m cli.main validate --type porto_ids
+	@if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then \
+		if [ -n "$$(git diff docs/porto_id.md)" ]; then \
+			echo "❌ docs/porto_id.md is out of date. Run 'porto validate --type porto_ids' and commit the updated file."; \
+			git diff docs/porto_id.md; \
+			exit 1; \
+		fi; \
+		echo "✓ docs/porto_id.md is up to date"; \
+	fi
 	@echo "Validating graph.json..."
 	@. $(VENV)/bin/activate && PYTHONPATH=. python -m cli.main validate --type graph
 
-validate-graph: ensure-venv
+validate-graph: venv
 	@echo "Validating graph.json consistency..."
 	@. $(VENV)/bin/activate && PYTHONPATH=. python -m cli.main validate --type graph
 
@@ -119,7 +129,7 @@ lint-json:
 # ==========================================
 # Code Commands
 # ==========================================
-format-code: ensure-venv
+format-code: venv
 	@if [ -n "$(CHECK)" ]; then \
 		echo "Checking Python code formatting..."; \
 		. $(VENV)/bin/activate && ruff format --check . || (echo "✗ Code is not properly formatted. Run 'make format-code' to fix." && exit 1); \
@@ -131,12 +141,12 @@ format-code: ensure-venv
 		echo "✓ Code formatted"; \
 	fi
 
-lint-code: ensure-venv
+lint-code: venv
 	@echo "Linting Python code..."
 	@. $(VENV)/bin/activate && ruff check . || (echo "✗ Code linting failed. Fix issues before committing." && exit 1)
 	@echo "✓ Code linting complete"
 
-type-check: ensure-venv
+type-check: venv
 	@echo "Type checking Python code..."
 	@. $(VENV)/bin/activate && PYTHONPATH=. mypy scripts/ cli/
 	@echo "✓ Type check complete"
@@ -144,12 +154,12 @@ type-check: ensure-venv
 # ==========================================
 # Testing
 # ==========================================
-test: ensure-venv
+test: venv
 	@echo "Running tests..."
 	@. $(VENV)/bin/activate && PYTHONPATH=. pytest
 	@echo "✓ Tests complete"
 
-test-cov: ensure-venv
+test-cov: venv
 	@echo "Running tests with coverage..."
 	@. $(VENV)/bin/activate && PYTHONPATH=. pytest --cov-report=html --cov-report=xml
 	@echo "✓ Coverage report complete (see htmlcov/index.html for detailed report)"
@@ -157,13 +167,13 @@ test-cov: ensure-venv
 # ==========================================
 # Metadata
 # ==========================================
-metadata: ensure-venv
+metadata: venv
 	@. $(VENV)/bin/activate && PYTHONPATH=. python -m cli.main metadata
 
 # ==========================================
-# Hooks (internal — run from ensure-venv)
+# Hooks (internal — run from venv setup)
 # ==========================================
-install-hooks: ensure-venv
+install-hooks: venv
 	@echo "Installing pre-commit hooks..."
 	@if [ -f $(VENV)/bin/pre-commit ]; then \
 		$(VENV)/bin/pre-commit install; \
@@ -176,10 +186,10 @@ install-hooks: ensure-venv
 # ==========================================
 # Quality
 # ==========================================
-quality: ensure-venv validate format lint type-check
+quality: venv validate format lint type-check
 
 # ==========================================
 # Test before publish (npm + PyPI)
 # ==========================================
-test-publish: ensure-venv
+test-publish: venv
 	@./tests/test_publish.sh

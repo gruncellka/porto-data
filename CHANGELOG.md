@@ -4,10 +4,15 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- **`marks.zones`:** Required provider-wide zone → lane profile map (one object per `marks.json`).
+
 ### Changed
 
-- **Graph:** Explicit `mark_profile_by_zone` on La Poste and Swiss Post domestic edges (parity with Deutsche Post).
-- **Docs:** `mark-profiles.md` SDK target aligns `postMark` with `layouts.schema.json` (anchor `x`/`y` only); `provider-template.md` documents `zones` vs `supported_zones`; naming cleanup (`international` not `intl` in prose).
+- **Mark layout data model:** Removed `graph.edges[].mark_profile_by_zone`, `services[].mark_profile` / `mark_profile_by_zone`, and `products.mark_profile`. Lane mapping lives in **`marks.zones`** only; registered footprint upgrade is **SDK resolver convention** (see [mark-profiles.md](docs/mark-profiles.md)).
+- **Marks `scope_notes`:** DE sizes flagged as sample-based; CH/FR registered documented as same footprint as lane until measured.
+- **Docs:** `mark-profiles.md`, `resolution.md`, `identity-map.md`, `provider-template.md` — data vs SDK split.
 
 ### Breaking
 
@@ -28,7 +33,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
-- **Mark profiles:** Measured sizes in `marks.json`; zone/service resolution via `graph.edges[].mark_profile_by_zone` and `services[].mark_profile` / `mark_profile_by_zone`. SDK target: single `markLayout` on `ResolvedData` (see [mark-profiles.md](docs/mark-profiles.md) § SDK contract).
+- **Mark profiles:** Measured sizes in `marks.json`; lane via `marks.zones`; SDK applies registered upgrade. See [mark-profiles.md](docs/mark-profiles.md).
 - **Operators:** Full letter catalogs for Deutsche Post, Ukrposhta, La Poste, and Swiss Post under **`providers/<id>/`**.
 - **Policy:** **`policy/jurisdictions.json`**, **`policy/restrictions.json`**, **`policy/markets.json`** (DE, FR, CH, UA fiscal defaults).
 - **Swiss Post:** Optional **`providers/swisspost/rules.json`** (e.g. thickness surcharge) where modeled.

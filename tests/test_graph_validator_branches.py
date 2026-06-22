@@ -92,6 +92,7 @@ def _default_marks():
         "file_type": "marks",
         "provider": "deutschepost",
         "default_profile": "p",
+        "zones": {"domestic": "p"},
         "profiles": [{"id": "p", "mark_type": "stamp", "label": "P"}],
     }
 
@@ -231,6 +232,7 @@ class TestGraphExecutionSemantics:
                     "file_type": "marks",
                     "provider": "deutschepost",
                     "default_profile": "p",
+                    "zones": {"domestic": "p"},
                     "profiles": [{"id": "p", "mark_type": "label", "label": "P"}],
                 },
             }
@@ -309,6 +311,7 @@ class TestGraphMarksAndRules:
                     "file_type": "marks",
                     "provider": "deutschepost",
                     "default_profile": "a",
+                    "zones": {"domestic": "a"},
                     "profiles": [
                         {"id": "a", "mark_type": "stamp", "label": "A"},
                         {"id": "a", "mark_type": "stamp", "label": "Dup"},

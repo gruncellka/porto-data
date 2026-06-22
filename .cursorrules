@@ -82,7 +82,7 @@ CI (`.github/workflows/validation.yml`) must run the same chain; include a **`va
 
 ## Workflow
 
-- **No `make setup`.** First **`make`** (default = `quality`) or any target that needs the venv runs **`ensure-venv`** (creates `venv`, installs `.[dev]`, installs pre-commit hooks in git checkouts).
+- **No `make setup`.** Run **`make venv`** once, or let any quality target create the venv automatically (installs `.[dev]`, pre-commit hooks in git checkouts).
 - After JSON or schema edits: **`make validate`** and **`make format`** (or bare **`make`** for the full gate).
 - If `metadata.json` regenerates, **stage it in the same commit** as the data/schema/mappings change.
 - New validation behavior → **tests** in `tests/` (**100%** coverage on `make test-cov` for `scripts/` + `cli/`).

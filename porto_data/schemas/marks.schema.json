@@ -2,12 +2,13 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/marks.schema.json",
   "title": "Provider mark profiles",
-  "description": "Per-provider catalog of mark geometry and payload type for SDK layout. mime_type is an array of IANA media types the carrier may return for that profile (e.g. PNG and/or PDF). Physical printing is the application\u2019s concern\u2014not modeled here. Profile size (width \u00d7 height) is the nominal footprint in file unit.dimension (mm). Verify against live carrier output. Resolution order: graph.edges[product_id].mark_profile_by_zone[zone], then services[].mark_profile / mark_profile_by_zone, then products.mark_profile, then marks.default_profile.",
+  "description": "Per-provider catalog of mark geometry and payload type. Profile size (width \u00d7 height) is nominal footprint in mm. Lane mapping: marks.zones (zone id \u2192 profile id). Registered footprint upgrade when a registered service is selected is defined in docs/mark-profiles.md for SDK consumers \u2014 not implemented in this package.",
   "type": "object",
   "required": [
     "file_type",
     "provider",
     "default_profile",
+    "zones",
     "profiles"
   ],
   "properties": {
@@ -43,7 +44,19 @@
     "default_profile": {
       "type": "string",
       "pattern": "^[a-z0-9_]+$",
-      "description": "Profile id used when product.mark_profile is omitted"
+      "description": "Profile id used when marks.zones has no entry for a zone (should match domestic lane today)"
+    },
+    "zones": {
+      "type": "object",
+      "minProperties": 1,
+      "patternProperties": {
+        "^[a-z0-9_]+$": {
+          "type": "string",
+          "pattern": "^[a-z0-9_]+$"
+        }
+      },
+      "additionalProperties": false,
+      "description": "Provider-wide zone id \u2192 marks.profiles[].id for destination lane. Keys must exist in zones.json. Validated in this repo; read by Porto SDK at runtime."
     },
     "profiles": {
       "type": "array",
@@ -59,7 +72,7 @@
           "id": {
             "type": "string",
             "pattern": "^[a-z0-9_]+$",
-            "description": "Stable profile id; referenced from products.mark_profile"
+            "description": "Stable profile id; referenced from marks.zones"
           },
           "mark_type": {
             "type": "string",

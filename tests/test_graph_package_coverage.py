@@ -473,6 +473,7 @@ class TestGraphValidatorEarlyReturnsAndBranches:
                     "file_type": "marks",
                     "provider": "x",
                     "default_profile": "p",
+                    "zones": {"domestic": "p"},
                     "profiles": [{"id": "p", "mark_type": "stamp"}],
                 }
             ),
@@ -569,6 +570,7 @@ class TestGraphValidatorEarlyReturnsAndBranches:
                     "file_type": "marks",
                     "provider": "deutschepost",
                     "default_profile": "p",
+                    "zones": {"domestic": "p"},
                     "profiles": [{"id": "p", "mark_type": "stamp"}],
                 }
             ),
@@ -673,6 +675,7 @@ class TestGraphValidatorMoreBranches:
                     "file_type": "marks",
                     "provider": "deutschepost",
                     "default_profile": "p",
+                    "zones": {"domestic": "p"},
                     "profiles": [{"id": "p", "mark_type": "stamp"}],
                 }
             ),
@@ -861,6 +864,7 @@ class TestGraphValidatorMoreBranches:
                     "file_type": "marks",
                     "provider": "deutschepost",
                     "default_profile": "p",
+                    "zones": {"domestic": "p"},
                     "profiles": [{"id": "p", "mark_type": "stamp"}],
                 }
             ),

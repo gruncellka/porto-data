@@ -6,13 +6,18 @@
     "dimension": "mm"
   },
   "default_profile": "domestic",
+  "zones": {
+    "domestic": "domestic",
+    "zone_1_eu": "international",
+    "world": "international"
+  },
   "profiles": [
     {
       "id": "domestic",
       "mark_type": "stamp",
       "label": "WebStamp domestic",
       "description": "Domestic WebStamp franking graphic",
-      "scope_notes": "Nominal footprint; print medium selected at order time may adjust layout",
+      "scope_notes": "Nominal footprint; registered WebStamp uses same size as domestic until measured separately",
       "size": {
         "width": 40,
         "height": 40
@@ -27,7 +32,7 @@
       "mark_type": "stamp",
       "label": "WebStamp international",
       "description": "International WebStamp franking graphic",
-      "scope_notes": "Nominal footprint; registered variants not yet measured separately",
+      "scope_notes": "Same as domestic; registered WebStamp uses same size until measured separately",
       "size": {
         "width": 40,
         "height": 40

@@ -105,7 +105,7 @@
     "marks": {
       "file": "marks.json",
       "depends_on": [],
-      "description": "Provider mark/stamp/label physical defaults; referenced optionally from products.mark_profile"
+      "description": "Franking profile catalog: profiles[] (sizes) and zones (zone to lane profile id)"
     },
     "rules": {
       "file": "rules.json",
@@ -128,10 +128,7 @@
         "W0020",
         "W0050",
         "W0100"
-      ],
-      "mark_profile_by_zone": {
-        "domestic": "domestic"
-      }
+      ]
     },
     "a_post_grossbrief": {
       "zones": [
@@ -141,10 +138,7 @@
         "W0250",
         "W0500",
         "W1000"
-      ],
-      "mark_profile_by_zone": {
-        "domestic": "domestic"
-      }
+      ]
     },
     "b_post_standardbrief": {
       "zones": [
@@ -154,10 +148,7 @@
         "W0020",
         "W0050",
         "W0100"
-      ],
-      "mark_profile_by_zone": {
-        "domestic": "domestic"
-      }
+      ]
     },
     "b_post_grossbrief": {
       "zones": [
@@ -167,10 +158,7 @@
         "W0250",
         "W0500",
         "W1000"
-      ],
-      "mark_profile_by_zone": {
-        "domestic": "domestic"
-      }
+      ]
     },
     "international_standardbrief": {
       "zones": [
@@ -181,11 +169,7 @@
         "W0020",
         "W0050",
         "W0100"
-      ],
-      "mark_profile_by_zone": {
-        "zone_1_eu": "international",
-        "world": "international"
-      }
+      ]
     },
     "international_grossbrief": {
       "zones": [
@@ -195,11 +179,7 @@
       "weight_tiers": [
         "W0250",
         "W0500"
-      ],
-      "mark_profile_by_zone": {
-        "zone_1_eu": "international",
-        "world": "international"
-      }
+      ]
     },
     "international_maxibrief": {
       "zones": [
@@ -210,11 +190,7 @@
         "W0500",
         "W1000",
         "W2000"
-      ],
-      "mark_profile_by_zone": {
-        "zone_1_eu": "international",
-        "world": "international"
-      }
+      ]
     }
   },
   "services": [

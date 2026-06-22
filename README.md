@@ -53,6 +53,7 @@ E-commerce and logistics (multi-carrier quotes, letters), compliance (sanctions,
 | `features.json`             | Operator-scoped **`id`**, unified **`porto_id`**, native **`name`**, English **`label`**                                                                                                                                                               |
 | `limits.json`               | Provider operational overlay on global policy (**`limits[]` often empty**; see [docs/policy.md](docs/policy.md)) |
 | `graph.json`                | **`dependencies`** (file load order), **`edges`** (per product: allowed zones + weight tiers), **`services`**, **`unit`**                                                                                                   |
+| `marks.json`                | Franking footprint catalog: **`profiles[]`** (size, `mark_type`), **`zones`** (zone → lane profile id)                                                                                                              |
 | `formats/layouts.json`        | Jurisdiction-keyed print/window geometry (**DE / CH / FR**) per envelope **`id`** (`file_type` **`layouts`**); optional **`standard`** (norm token, e.g. **DIN678**, **SN010130**, **NFEN13850**); physical sizes remain in **`formats/envelopes.json`** |
 | `formats/envelopes.json`      | Physical envelope catalog: **`envelopes[]`** with **`id`**, **`width`/`height`**, **`standard`** `ISO269`, **`sheets[]`** (ISO 216 **`sheet`** + **`fold`**)                                                                                           |
 | `policy/restrictions.json`  | Sanctions-style restrictions and compliance frameworks                                                                                                                                                                                                 |
@@ -85,6 +86,7 @@ All JSON validates against **`schemas/`**; **`mappings.json`** maps entities to 
 
 ## Related resources
 
+- **Mark profiles:** [docs/mark-profiles.md](docs/mark-profiles.md) — sizes and `zones`.
 - **Policy & fiscal defaults:** [docs/policy.md](docs/policy.md)
 - **Unified `porto_id`:** [docs/id.md](docs/id.md) · [docs/porto_id.md](docs/porto_id.md) · [docs/resolution.md](docs/resolution.md) · [docs/provider-template.md](docs/provider-template.md)
 - **Tariff reconciliation:** [docs/tariff-verification.md](docs/tariff-verification.md)

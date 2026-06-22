@@ -105,7 +105,7 @@
     "marks": {
       "file": "marks.json",
       "depends_on": [],
-      "description": "Provider mark/stamp/label physical defaults; referenced optionally from products.mark_profile"
+      "description": "Franking profile catalog: profiles[] (sizes) and zones (zone to lane profile id)"
     }
   },
   "edges": {
@@ -120,10 +120,7 @@
         "W0500",
         "W1000",
         "W2000"
-      ],
-      "mark_profile_by_zone": {
-        "domestic": "domestic"
-      }
+      ]
     },
     "lettre_verte_suivie": {
       "zones": [
@@ -139,13 +136,7 @@
         "W0500",
         "W1000",
         "W2000"
-      ],
-      "mark_profile_by_zone": {
-        "domestic": "domestic",
-        "zone_1_eu": "international",
-        "zone_2_europe": "international",
-        "world": "international"
-      }
+      ]
     },
     "lettre_services_plus": {
       "zones": [
@@ -158,10 +149,7 @@
         "W0500",
         "W1000",
         "W2000"
-      ],
-      "mark_profile_by_zone": {
-        "domestic": "domestic"
-      }
+      ]
     },
     "lettre_recommandee_r_un": {
       "zones": [
@@ -175,10 +163,7 @@
         "W0500",
         "W1000",
         "W2000"
-      ],
-      "mark_profile_by_zone": {
-        "domestic": "domestic"
-      }
+      ]
     },
     "lettre_recommandee_r_deux": {
       "zones": [
@@ -192,10 +177,7 @@
         "W0500",
         "W1000",
         "W2000"
-      ],
-      "mark_profile_by_zone": {
-        "domestic": "domestic"
-      }
+      ]
     },
     "lettre_recommandee_r_trois": {
       "zones": [
@@ -209,10 +191,7 @@
         "W0500",
         "W1000",
         "W2000"
-      ],
-      "mark_profile_by_zone": {
-        "domestic": "domestic"
-      }
+      ]
     },
     "lettre_recommandee_inter_r_un": {
       "zones": [
@@ -228,12 +207,7 @@
         "W0500",
         "W1000",
         "W2000"
-      ],
-      "mark_profile_by_zone": {
-        "zone_1_eu": "international",
-        "zone_2_europe": "international",
-        "world": "international"
-      }
+      ]
     },
     "lettre_recommandee_inter_r_deux": {
       "zones": [
@@ -249,12 +223,7 @@
         "W0500",
         "W1000",
         "W2000"
-      ],
-      "mark_profile_by_zone": {
-        "zone_1_eu": "international",
-        "zone_2_europe": "international",
-        "world": "international"
-      }
+      ]
     }
   },
   "services": [

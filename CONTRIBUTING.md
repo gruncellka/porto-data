@@ -2,9 +2,18 @@
 
 ## Published packages vs this repo
 
-**npm** (`@gruncellka/porto-data`) and **PyPI** (`gruncellka-porto-data`) carry the **same** dataset: `porto_data/policy/`, `porto_data/formats/`, `porto_data/providers/<id>/`, `porto_data/schemas/`, `mappings.json`, `metadata.json`. It is **cross-platform** (JSON + schemas only, no compiled code).
+**npm** (`@gruncellka/porto-data`) and **PyPI** (`gruncellka-porto-data`) ship **only** the dataset: `porto_data/policy/`, `porto_data/formats/`, `porto_data/providers/<id>/`, `porto_data/schemas/`, `mappings.json`, `metadata.json`. Cross-platform JSON + schemas — **no resolver, no SDK logic**.
 
-The **`porto` CLI**, **`cli/`**, and **`scripts/`** validators run **only here** (and in CI)—they are **not** included in the published packages. Consumers read the JSON; contributors use this repo to edit and validate.
+**This repository** adds contributor tooling that is **not** published:
+
+| In repo | In published package |
+|---------|----------------------|
+| JSON data + schemas | Yes |
+| `scripts/` validators | No (CI + `make validate` only) |
+| `cli/` (`porto validate`, …) | No |
+| Resolution / `markLayout` code | No — **Porto SDK** repos |
+
+Consumers (SDK, apps) read the JSON. Contributors edit data here and run validators before release.
 
 **Invariant:** keys in **`providers.json`** must match directory names under **`porto_data/providers/<id>/`** and keys under **`mappings.json` → `providers`**.
 
@@ -14,7 +23,7 @@ The **`porto` CLI**, **`cli/`**, and **`scripts/`** validators run **only here**
 make
 ```
 
-First run of **`make`** (or any target that needs the venv) creates `venv`, installs dev dependencies, and runs the full quality gate (validate → format → lint → type-check). There is no separate **`make setup`** — use **`make`** or **`make help`**.
+First run of **`make`** (or any target that needs the venv) creates `venv`, installs dev dependencies, and runs the full quality gate (validate → format → lint → type-check). Or run **`make venv`** explicitly. There is no separate **`make setup`** — use **`make`** or **`make help`**.
 
 Pre-commit hooks install automatically on first venv setup when run inside a git checkout.
 
@@ -56,7 +65,7 @@ Disambiguation when multiple native rows share one `porto_id`: [docs/resolution.
 
 1. Edit JSON and/or schemas.
 2. `make validate` then `make format` (or just `make` for the full gate).
-3. Commit. If hooks regenerate metadata, include it: `git add porto_data/metadata.json`.
+3. Commit. If hooks regenerate **`porto_data/metadata.json`** or **`docs/porto_id.md`**, include those files in the commit (pre-commit stages both when catalog data changes).
 
 ## Commands
 
@@ -69,7 +78,7 @@ Disambiguation when multiple native rows share one `porto_id`: [docs/resolution.
 | `porto validate --type mappings`        | `mappings.json`, provider dirs, registry, metadata |
 | `porto validate --type markets`         | `policy/markets.json` vs provider countries        |
 | `porto validate --type limits`          | `providers/*/limits.json`                          |
-| `porto validate --type porto_ids`       | `porto_id` enums and native-id cross-file refs     |
+| `porto validate --type porto_ids`       | `porto_id` enums, native-id cross-file refs; regenerates **`docs/porto_id.md`** (must be committed) |
 | `porto validate --type graph`           | `graph.json` (incl. `edges`)                       |
 | `porto validate --type graph --analyze` | Verbose graph report                               |
 | `porto metadata`                        | Regenerate `metadata.json`                         |

@@ -243,6 +243,7 @@ class TestServicePriceConsistency:
                 "file_type": "marks",
                 "provider": "deutschepost",
                 "default_profile": "test_stamp",
+                "zones": {"domestic": "test_stamp"},
                 "profiles": [
                     {"id": "test_stamp", "mark_type": "stamp", "label": "Test stamp profile"}
                 ],
@@ -394,6 +395,7 @@ class TestServicePriceConsistency:
                 "file_type": "marks",
                 "provider": "deutschepost",
                 "default_profile": "test_stamp",
+                "zones": {"domestic": "test_stamp"},
                 "profiles": [
                     {"id": "test_stamp", "mark_type": "stamp", "label": "Test stamp profile"}
                 ],

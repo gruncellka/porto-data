@@ -113,11 +113,6 @@
             },
             "description": "Zones where this product is available (must align with graph.edges for this product_id)"
           },
-          "mark_profile": {
-            "type": "string",
-            "pattern": "^[a-z0-9_]+$",
-            "description": "Optional id of a profile in providers/<provider>/marks.json; when omitted, marks.default_profile applies."
-          },
           "weight_tier": {
             "type": "string",
             "pattern": "^W[0-9]+$",

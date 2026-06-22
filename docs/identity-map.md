@@ -1,6 +1,8 @@
 # Identity map — names, ids, variables, relations
 
-One-page map of **who names what** across **porto-data**, **porto-sdk**, and **carrier APIs**.
+One-page map of **who names what** across **porto-data** (JSON + schemas), **Porto SDK** (separate product), and **carrier APIs**.
+
+**porto-data** ships facts and validates them. **Porto SDK** loads the bundle and resolves. This repo has no resolver implementation.
 
 **See also:** [id.md](id.md) · [mark-profiles.md](mark-profiles.md) · [resolution.md](resolution.md) · [SDK_ARCHITECTURE.md](../../docs/sdks/SDK_ARCHITECTURE.md)
 
@@ -21,8 +23,8 @@ One-page map of **who names what** across **porto-data**, **porto-sdk**, and **c
 └───────────────────────────────────┬─────────────────────────────────────────┘
                                     │ reads bundle only via loader/resolvers
 ┌───────────────────────────────────▼─────────────────────────────────────────┐
-│  PORTO-DATA (JSON bundle)                                                    │
-│  providers/<id>/…  policy/…  formats/…  schemas/…                           │
+│  PORTO-DATA (this repo — published JSON + schemas)                            │
+│  providers/<id>/…  policy/…  formats/…  schemas/…  validators (repo only)   │
 └───────────────────────────────────┬─────────────────────────────────────────┘
                                     │ adapters only
 ┌───────────────────────────────────▼─────────────────────────────────────────┐
@@ -59,7 +61,7 @@ flowchart TB
   end
 
   subgraph SDK_OUT["SDK output vars"]
-    RD["ResolvedData<br/>product.id = standardbrief<br/>zone.id = world<br/>weightTier = W0020<br/>markType, trackingMode<br/>markLayout <i>target</i>"]
+    RD["ResolvedData<br/>product.id = standardbrief<br/>zone.id = world<br/>weightTier = W0020<br/>markType, trackingMode<br/>markLayout <i>SDK resolver</i>"]
     PM["PortoMark <i>after purchase</i><br/>id, content, tracking_number<br/>external_id"]
   end
 
@@ -71,12 +73,12 @@ flowchart TB
 
   subgraph DATA_CAT["Provider catalog<br/>providers/&lt;id&gt;/"]
     PROD["products.json<br/>id · porto_id · native_id<br/>zones · weight_tier<br/>mark_type · tracking_mode<br/>envelope_ids"]
-    SVC["services.json<br/>id · porto_id<br/>features[] · mark_profile"]
+    SVC["services.json<br/>id · porto_id<br/>features[]"]
     FEAT["features.json<br/>id · porto_id"]
     ZON["zones.json<br/>zone ids"]
     WGT["weights.json<br/>W0020 tiers"]
-    MRK["marks.json<br/>profiles[].id = mark_profile<br/>size · mark_type"]
-    GRF["graph.json<br/>edges[product_id]<br/>zones · weight_tiers<br/>mark_profile_by_zone"]
+    MRK["marks.json<br/>profiles[] · zones map<br/>size · mark_type"]
+    GRF["graph.json<br/>edges[product_id]<br/>zones · weight_tiers"]
     PRC_P["prices/products.json<br/>product_id × zone × tier"]
     PRC_S["prices/services.json<br/>service_id"]
     ENV["formats/envelopes.json<br/>DL · C6 · C5…"]
@@ -172,20 +174,19 @@ products.json
 graph.json
   edges[product_id].zones[] ──────► zones used for that product
   edges[product_id].weight_tiers[] ► tiers allowed
-  edges[product_id].mark_profile_by_zone[zone] ──► marks.profiles[].id
   services[] (native service ids) ► services.json id list
 
 services.json
   id ─────────────────────────────► prices/services.json service_id
   id ─────────────────────────────► graph.services[]
-  porto_id ◄────────────────────── SDK service input
-  mark_profile / mark_profile_by_zone ──► marks.profiles[].id
+  porto_id ◄────────────────────── SDK service input (registered → layout upgrade in SDK)
   features[] ─────────────────────► features.json
 
 marks.json
+  marks.zones[zone] ────────────────► lane profile id (SDK step 1)
   profiles[].id = mark_profile
   profiles[].size ────────────────► SDK markLayout widthMm / heightMm
-  default_profile ────────────────► fallback when no zone/service map
+  default_profile ────────────────► fallback when marks.zones omits a key
 
 formats/layouts.json
   jurisdictions[DE].post_mark ────► envelope anchor (mm), not stamp size
@@ -208,8 +209,9 @@ letterType: small         →    porto_id: small
 services: [registered]    →    porto_id: registered
                           →    service.id: einschreiben
 
-zone + product + services →    mark_profile: registered_international
-                          →    size 57×30, mark_type stamp   ResolvedData.markLayout (target)
+zone + services           →    SDK: marks.zones[zone] + registered upgrade
+                          →    mark_profile: registered_international
+                          →    size 57×30, mark_type stamp   ResolvedData.markLayout (SDK)
 
 adapter purchase          →    native_id: 10001 + API payload
                           →    PDF bytes                      PortoMark.content
@@ -228,7 +230,7 @@ adapter purchase          →    native_id: 10001 + API payload
 | `weights` tier | `weight_tier` | `weightTier` | |
 | `products.mark_type` | on product / execution | `markType` | |
 | `products.tracking_mode` | on product / execution | `trackingMode` | |
-| `marks` resolved | `mark_layout` *(target)* | `markLayout` *(target)* | not yet implemented |
+| `marks` resolved | `mark_layout` *(SDK)* | `markLayout` *(SDK)* | Porto SDK reads `marks.zones` + `profiles[]` |
 | — | — | — | |
 | API response | `PortoMark` | `PortoMark` | not in porto-data |
 

@@ -281,12 +281,13 @@ class GraphValidator:
         )
 
     def validate_marks_profiles(self) -> None:
-        """Validate marks.json default_profile, unique ids, and product.mark_profile references."""
+        """Validate marks.json profiles, zones map, and default_profile."""
         run_validate_marks_profiles(
             self.results,
             graph=self.graph,
             products=self.products,
             marks=self.marks,
+            zones=self.zones,
             services=self.services,
         )
 

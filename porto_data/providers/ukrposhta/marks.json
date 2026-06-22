@@ -6,6 +6,10 @@
     "dimension": "mm"
   },
   "default_profile": "domestic",
+  "zones": {
+    "domestic": "domestic",
+    "world": "domestic"
+  },
   "profiles": [
     {
       "id": "domestic",

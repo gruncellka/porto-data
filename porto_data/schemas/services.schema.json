@@ -110,23 +110,6 @@
           "enables_tracking": {
             "type": "boolean",
             "description": "When true, ordering this service activates tracking on the execution result (product tracking_mode must be optional or included)."
-          },
-          "mark_profile": {
-            "type": "string",
-            "pattern": "^[a-z0-9_]+$",
-            "description": "marks.json profile id when this service changes the franking graphic footprint (e.g. registered domestic). Overrides graph mark_profile_by_zone when set."
-          },
-          "mark_profile_by_zone": {
-            "type": "object",
-            "minProperties": 1,
-            "patternProperties": {
-              "^[a-z0-9_]+$": {
-                "type": "string",
-                "pattern": "^[a-z0-9_]+$"
-              }
-            },
-            "additionalProperties": false,
-            "description": "Zone-specific mark profile override when registered footprint differs by lane (e.g. domestic vs international). Keys must be a subset of supported_zones or all product zones when supported_zones is omitted."
           }
         },
         "additionalProperties": false
