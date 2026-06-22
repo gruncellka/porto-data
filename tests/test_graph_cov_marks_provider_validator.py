@@ -11,7 +11,11 @@ from scripts.validators.graph.constants import (
     PROVIDER_RULE_METRIC_THICKNESS,
     RULE_KIND_BAND,
 )
-from scripts.validators.graph.edge_access import validate_edges_container
+from scripts.validators.graph.edge_access import (
+    mark_edges,
+    product_edges,
+    validate_edges_container,
+)
 from scripts.validators.graph.mark_edges import run_validate_mark_edges
 from scripts.validators.graph.marks_profiles import run_validate_marks_profiles
 from scripts.validators.graph.provider_rules import run_validate_provider_rules
@@ -100,6 +104,27 @@ class TestMarksProfilesCoverage:
 
 
 class TestEdgeAccessCoverage:
+    def test_product_edges_empty_when_no_edges_root(self) -> None:
+        assert product_edges(None) == {}
+        assert product_edges({}) == {}
+        assert product_edges({"edges": "bad"}) == {}
+
+    def test_mark_edges_empty_when_no_edges_root(self) -> None:
+        assert mark_edges(None) == {}
+        assert mark_edges({}) == {}
+
+    def test_validate_edges_container_none_or_non_object_graph(self) -> None:
+        r = _empty_results()
+        assert validate_edges_container(r, graph=None) is False
+        assert validate_edges_container(r, graph="bad") is False
+        assert r["errors"] == []
+
+    def test_validate_edges_container_missing_edges_object(self) -> None:
+        r = _empty_results()
+        ok = validate_edges_container(r, graph={})
+        assert not ok
+        assert any("edges must be an object" in e for e in r["errors"])
+
     def test_validate_edges_container_legacy_mark_edges(self) -> None:
         r = _empty_results()
         ok = validate_edges_container(
