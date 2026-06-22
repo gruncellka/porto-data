@@ -64,6 +64,19 @@
         "USD"
       ]
     },
+    "vat_lane": {
+      "type": "object",
+      "required": [
+        "inclusive"
+      ],
+      "properties": {
+        "inclusive": {
+          "type": "boolean",
+          "description": "When true, published tariff amounts for this lane include VAT."
+        }
+      },
+      "additionalProperties": false
+    },
     "vat": {
       "type": "object",
       "properties": {
@@ -73,17 +86,17 @@
           "maximum": 1,
           "description": "Standard VAT rate as a fraction (e.g. 0.2 for 20%)."
         },
-        "inclusive": {
-          "type": "boolean",
-          "description": "When true, domestic consumer prices in this market include VAT."
-        },
         "exempt": {
           "type": "boolean",
-          "description": "When true, universal letter service is VAT-exempt in this market."
+          "description": "When true, universal letter service is VAT-exempt in this market (all lanes)."
         },
-        "intl_excl": {
-          "type": "boolean",
-          "description": "When true, international tariff tables are quoted ex-VAT."
+        "domestic": {
+          "$ref": "#/definitions/vat_lane",
+          "description": "VAT presentation for domestic-zone tariff rows."
+        },
+        "international": {
+          "$ref": "#/definitions/vat_lane",
+          "description": "VAT presentation for international-zone tariff rows."
         }
       },
       "additionalProperties": false
@@ -123,7 +136,7 @@
           "$ref": "#/definitions/currency_code",
           "description": "Default domestic postal quote currency for this market."
         },
-        "intl_ccy": {
+        "international_currency": {
           "type": "array",
           "minItems": 1,
           "uniqueItems": true,

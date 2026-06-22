@@ -61,8 +61,8 @@ Resolve the provider’s market from `providers.json` → `country` → `policy/
 | Field | Resolution |
 |-------|------------|
 | **Currency** | `row.currency` → `prices/*.json` `unit.currency` → `markets[CC].currency` |
-| **VAT** | `markets[CC].vat` (`rate`, `inclusive`, `exempt`, `intl_excl`) |
-| **Intl row currency** | Must be listed in `markets[CC].intl_ccy` when it differs from file default |
+| **VAT** | `markets[CC].vat` (`rate`, `exempt`, `domestic.inclusive`, `international.inclusive`) |
+| **Intl row currency** | Must be listed in `markets[CC].international_currency` when it differs from file default |
 
 `graph.json` `unit.currency` mirrors `markets[CC].currency` (validated in CI). Row-level `currency` is only for intl tariff rows (e.g. Ukrposhta `world` zone in USD while file default is UAH).
 

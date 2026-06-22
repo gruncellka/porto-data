@@ -32,8 +32,10 @@ def test_markets_json_invariants() -> None:
         assert cc in markets
         assert markets[cc]["currency"] in ("EUR", "CHF", "UAH", "USD")
     ua = markets["UA"]
-    assert ua["intl_ccy"] == ["USD"]
+    assert ua["international_currency"] == ["USD"]
     assert ua["vat"]["rate"] == 0.2
+    assert ua["vat"]["domestic"]["inclusive"] is True
+    assert ua["vat"]["international"]["inclusive"] is False
     assert ua["settlement"]["fx"] == "NBU"
 
 

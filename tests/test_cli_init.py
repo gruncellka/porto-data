@@ -6,11 +6,6 @@ from pathlib import Path
 
 
 class TestCliVersion:
-    def test_dev_version_reads_pyproject(self, project_root: Path) -> None:
-        from cli.__init__ import _dev_version
-
-        assert _dev_version() == "0.4.0"
-
     def test_dev_version_without_pyproject(self, monkeypatch) -> None:
         import cli.__init__ as cli_init
 

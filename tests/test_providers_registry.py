@@ -25,7 +25,8 @@ class TestLoadProvidersRegistry:
         markets = load_markets()["markets"]
         ua = markets["UA"]
         assert ua["vat"]["rate"] == 0.2
-        assert ua["vat"]["inclusive"] is True
+        assert ua["vat"]["domestic"]["inclusive"] is True
+        assert ua["vat"]["international"]["inclusive"] is False
 
 
 class TestGetDataFiles:

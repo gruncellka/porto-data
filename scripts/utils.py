@@ -33,7 +33,7 @@ def compute_checksum(file_path: str) -> str:
 def get_all_file_checksums() -> dict[str, str]:
     """Get checksums for all schema and data files (for metadata generation).
 
-    Uses get_all_schema_data_pairs to include all providers (deutschepost, swisspost, etc.).
+    Uses get_all_schema_data_pairs to include all providers (deutschepost, ukrposhta, laposte, swisspost, …).
     """
     root = get_project_root()
     checksums = {}

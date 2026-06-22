@@ -48,7 +48,7 @@ Cross-file refs (graph, prices, rules) use **native `id`**. SDK input uses **`po
 
 | native `id` | `porto_id` |
 |-------------|------------|
-| `recommended_intl` | `registered` |
+| `recommended_international` | `registered` |
 | `return_receipt_electronic` | `return_receipt` |
 | `return_receipt_paper` | `return_receipt` |
 

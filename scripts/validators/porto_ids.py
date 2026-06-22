@@ -150,6 +150,11 @@ def validate_porto_ids(*, write_mapping_doc: bool = True) -> int:
                 continue
             native_id = p.get("id")
             porto_id = p.get("porto_id")
+            if isinstance(native_id, str) and native_id.endswith("_intl"):
+                errors.append(
+                    f"{pid}: product id '{native_id}' uses deprecated _intl suffix; "
+                    f"use international (carrier-mirrored ids like inter_r are OK)"
+                )
             if native_id and porto_id:
                 doc_data[pid]["products"].append((str(native_id), str(porto_id)))
             if porto_id and porto_id not in enums["product_porto_id"]:
@@ -163,6 +168,11 @@ def validate_porto_ids(*, write_mapping_doc: bool = True) -> int:
                 continue
             native_id = s.get("id")
             porto_id = s.get("porto_id")
+            if isinstance(native_id, str) and native_id.endswith("_intl"):
+                errors.append(
+                    f"{pid}: service id '{native_id}' uses deprecated _intl suffix; "
+                    f"use international (carrier-mirrored ids like inter_r are OK)"
+                )
             if native_id and porto_id:
                 doc_data[pid]["services"].append((str(native_id), str(porto_id)))
             if porto_id and porto_id not in enums["service_porto_id"]:

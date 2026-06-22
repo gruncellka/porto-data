@@ -116,7 +116,7 @@ class TestUnitsEarlyReturns:
 
     def test_row_currency_market_rules(self) -> None:
         r = _empty_results()
-        market = {"currency": "UAH", "intl_ccy": ["USD"]}
+        market = {"currency": "UAH", "international_currency": ["USD"]}
         run_validate_row_ccy(
             r,
             graph={"unit": {"currency": "UAH"}},
@@ -139,7 +139,7 @@ class TestUnitsEarlyReturns:
         )
         assert any("must set currency in ['USD']" in e for e in r["errors"])
         assert any("omit the override" in e for e in r["errors"])
-        assert any("must be in market intl_ccy" in e for e in r["errors"])
+        assert any("must be in market international_currency" in e for e in r["errors"])
 
     def test_row_currency_service_prices_and_non_dict_rows(self) -> None:
         r = _empty_results()
@@ -155,7 +155,7 @@ class TestUnitsEarlyReturns:
                     {"service_id": "s2", "currency": "USD"},
                 ],
             },
-            market={"currency": "EUR", "intl_ccy": ["USD"]},
+            market={"currency": "EUR", "international_currency": ["USD"]},
         )
         assert any("omit the override" in e for e in r["errors"])
 

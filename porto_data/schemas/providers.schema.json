@@ -18,15 +18,21 @@
       "additionalProperties": {
         "type": "object",
         "required": [
+          "label",
           "name",
           "country",
           "mark_types"
         ],
         "properties": {
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Short display name (UI / prose)"
+          },
           "name": {
             "type": "string",
             "minLength": 1,
-            "description": "Display name"
+            "description": "Registered legal entity name"
           },
           "country": {
             "type": "string",

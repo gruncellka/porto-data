@@ -163,15 +163,15 @@ def run_validate_row_ccy(
         return
 
     graph_currency = graph.get("unit", {}).get("currency")
-    intl_ccy: list[str] = []
+    international_currencies: list[str] = []
     market_currency: str | None = None
     if market:
         market_currency = (
             market.get("currency") if isinstance(market.get("currency"), str) else None
         )
-        raw_intl = market.get("intl_ccy")
+        raw_intl = market.get("international_currency")
         if isinstance(raw_intl, list):
-            intl_ccy = [str(c) for c in raw_intl if isinstance(c, str)]
+            international_currencies = [str(c) for c in raw_intl if isinstance(c, str)]
 
     def _check_rows(
         rows: list[Any] | None,
@@ -190,13 +190,13 @@ def run_validate_row_ccy(
                 if (
                     zone_key
                     and row.get(zone_key) == "world"
-                    and intl_ccy
+                    and international_currencies
                     and file_currency == market_currency
                 ):
                     row_ref = row.get(row_id_key, idx)
                     results["errors"].append(
                         f"{file_label}[{idx}] ({row_id_key}={row_ref!r}, zone=world): "
-                        f"must set currency in {intl_ccy!r} (international rows)"
+                        f"must set currency in {international_currencies!r} (international rows)"
                     )
                 continue
             if row_ccy == file_currency:
@@ -205,11 +205,11 @@ def run_validate_row_ccy(
                     f"{file_label}[{idx}] ({row_id_key}={row_ref!r}): "
                     f"row currency {row_ccy!r} matches file unit.currency; omit the override"
                 )
-            elif intl_ccy and row_ccy not in intl_ccy:
+            elif international_currencies and row_ccy not in international_currencies:
                 row_ref = row.get(row_id_key, idx)
                 results["errors"].append(
                     f"{file_label}[{idx}] ({row_id_key}={row_ref!r}): "
-                    f"row currency {row_ccy!r} must be in market intl_ccy {intl_ccy!r}"
+                    f"row currency {row_ccy!r} must be in market international_currency {international_currencies!r}"
                 )
             if graph_currency and row_ccy == graph_currency and row_ccy != file_currency:
                 row_ref = row.get(row_id_key, idx)

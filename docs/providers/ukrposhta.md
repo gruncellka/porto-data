@@ -37,7 +37,7 @@ Reference for **reconciling JSON with official letter/document tariffs** (not a 
 
 ## Known pitfalls
 
-- **Two currencies:** domestic **UAH** (`markets.UA.currency`, VAT inclusive); international **letters** quoted in **USD** (`markets.UA.intl_ccy`) without VAT on tariff table — paid in **UAH** at [NBU rate](https://www.ukrposhta.ua/en/faq-oplata-posluhi) on service date (`markets.UA.settlement`). Use row-level `currency: "USD"` for intl rows; do not convert to UAH in JSON.
+- **Two currencies:** domestic **UAH** (`markets.UA.currency`, VAT inclusive); international **letters** quoted in **USD** (`markets.UA.international_currency`) without VAT on tariff table — paid in **UAH** at [NBU rate](https://www.ukrposhta.ua/en/faq-oplata-posluhi) on service date (`markets.UA.settlement`). Use row-level `currency: "USD"` for international rows; do not convert to UAH in JSON.
 - **Letters vs parcels:** [taryfy](https://www.ukrposhta.ua/ua/taryfy) **parcel** tables are **per-country** (USD). **Letter** table is a **flat** ladder (easy to miss — bottom of page). Do not use parcel matrices for letter products.
 - **VAT footnotes:** domestic site shows **грн з ПДВ**; intl letter table **без ПДВ**. Registered intl has separate VAT rules on domestic portion (80 UAH portion cited on site for e-label flows).
 - **Personal delivery (intl):** official letter table has a second column (“з особистим врученням”) — **not modeled** yet (e.g. ≤50 g **6 USD** vs **2.5 USD** standard).
@@ -118,7 +118,7 @@ Reference for **reconciling JSON with official letter/document tariffs** (not a 
 |--------------|-------:|----------|
 | `return_receipt_paper` | 4800 | UAH |
 | `return_receipt_electronic` | 2400 | UAH |
-| `recommended_intl` | 350 | USD |
+| `recommended_international` | 350 | USD |
 
 **Graph:** `graph.json` `unit.currency` = **UAH** (default); intl price rows carry **`currency: "USD"`**.
 
@@ -140,5 +140,5 @@ Reference for **reconciling JSON with official letter/document tariffs** (not a 
 
 1. Domestic: [taryfy-ukrposhta-dokumenty](https://www.ukrposhta.ua/uk/taryfy-ukrposhta-dokumenty) → `prices/products.json` + `prices/services.json` (UAH).
 2. Intl letters: [taryfy](https://www.ukrposhta.ua/ua/taryfy) letter table → `world` rows (USD).
-3. Registered intl: PDF / taryfy footnotes → `recommended_intl`.
+3. Registered intl: PDF / taryfy footnotes → `recommended_international`.
 4. `make validate` → `make metadata`.

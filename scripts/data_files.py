@@ -10,6 +10,7 @@ mappings.providers keys must match that registry. Layout: policy/, formats/, pro
 """
 
 import json
+from collections.abc import Iterable, Mapping
 from pathlib import Path
 from typing import Any, Final, cast
 
@@ -425,9 +426,26 @@ def list_provider_ids() -> list[str]:
     data = load_providers_registry()
     prov = data["providers"]
     assert isinstance(prov, dict)
-    ordered = [pid for pid in PROVIDER_IDS_ORDER if pid in prov]
-    extra = sorted(pid for pid in prov if pid not in PROVIDER_IDS_ORDER)
+    return expected_provider_key_order(prov.keys())
+
+
+def expected_provider_key_order(keys: Mapping[str, Any] | Iterable[str]) -> list[str]:
+    """Canonical key order: ``PROVIDER_IDS_ORDER`` prefix, then sorted extras."""
+    key_list = list(keys.keys()) if isinstance(keys, Mapping) else list(keys)
+    ordered = [pid for pid in PROVIDER_IDS_ORDER if pid in key_list]
+    extra = sorted(pid for pid in key_list if pid not in PROVIDER_IDS_ORDER)
     return ordered + extra
+
+
+def provider_key_order_error(label: str, keys: list[str]) -> str | None:
+    """Return an error message when *keys* are not in bundle order."""
+    expected = expected_provider_key_order(keys)
+    if keys != expected:
+        return (
+            f"{label}: provider keys must follow bundle order "
+            f"{list(PROVIDER_IDS_ORDER)} (+ sorted extras); got {keys!r}"
+        )
+    return None
 
 
 def get_mappings_provider_ids(mappings_path: str | None = None) -> set[str]:

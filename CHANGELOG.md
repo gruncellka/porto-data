@@ -11,14 +11,14 @@ All notable changes to this project will be documented in this file.
 - **Weights:** **`weight_tiers.json`** → **`weights.json`**.
 - **Products:** **`supported_zones`** → **`zones`**; physical sizes via **`envelope_ids`** + **`formats/envelopes.json`**; product **`unit`** is **`weight`** (`g`) only.
 - **Features:** Operator-scoped **`providers/<id>/features.json`** only (no global features file).
-- **Registry:** Four operators — **`deutschepost`**, **`ukrposhta`**, **`laposte`**, **`swisspost`** — in **`providers.json`** and **`mappings.json`**; keys must match **`providers/<id>/`** folder names.
+- **Registry:** Four operators — **`deutschepost`**, **`ukrposhta`**, **`laposte`**, **`swisspost`** — in **`providers.json`** and **`mappings.json`**; keys must match **`providers/<id>/`** folder names. Registry **`label`** = display name; **`name`** = legal entity (replaces former display **`name`** + **`legal_name`**).
 - **`graph.json`:** Removed **`lookup_rules`**, **`global_settings`**, and **`price_lookup`**. **`services`** is top-level. Price paths from **`dependencies`**; join keys from price schemas (`product_id`, `zone`, `weight_tier` / `service_id`).
 - **`porto_id` contract:** Enum-locked in **`schemas/porto_ids.schema.json`**. **`products.porto_id`** required on every product row.
 - **Ukrposhta native ids:** `letter_standard` → **`lyst_standartnyi`**, `ukrposhta_document` → **`dokument`**.
 - **Service refs:** Graph and prices use native **`services[].id`** only (not `porto_id` in graph **`services`** or `service_id`).
-- **`policy/markets.json`:** Country-level **currency**, **VAT**, and **`intl_ccy`**. **`providers.json`** no longer carries `vat`.
+- **`policy/markets.json`:** Country-level **currency**, **VAT**, and **`international_currency`**. **`providers.json`** no longer carries `vat`.
 - **Currency resolution:** SDK default is **`markets[country].currency`** (`row.currency` → file `unit.currency` → market).
-- **Field names (shorter keys):** `available_services` → **`services`** (graph); `compliance_frameworks` → **`frameworks`** (limits); `integration_supported` → **`integrations`** (services); `provider_context`/`national_policy` → **`context`**/**`national`**; `intl_currencies` → **`intl_ccy`**; `exempt_letters`/`intl_exclusive` → **`exempt`**/**`intl_excl`** (under `vat`); `metric_band_attach_service` → **`band_attach`** (rules); `severely_restricted` → **`severe`**; `disputed_territory` → **`disputed`**; `legal_reference` → **`reference`** (limits); `effective_partial` → **`partial`**; framework types `operational_*` → **`infrastructure`**/**`political`**/**`conflict`**.
+- **Field names (shorter keys):** `available_services` → **`services`** (graph); `compliance_frameworks` → **`frameworks`** (limits); `integration_supported` → **`integrations`** (services); `provider_context`/`national_policy` → **`context`**/**`national`**; `intl_currencies` → **`international_currency`**; `exempt_letters` → **`exempt`** (under `vat`); top-level `vat.inclusive` / `intl_excl` → **`vat.domestic.inclusive`** / **`vat.international.inclusive`**; Porto-assigned native ids: **`recommended_international`** (not `_intl`); `metric_band_attach_service` → **`band_attach`** (rules); `severely_restricted` → **`severe`**; `disputed_territory` → **`disputed`**; `legal_reference` → **`reference`** (limits); `effective_partial` → **`partial`**; framework types `operational_*` → **`infrastructure`**/**`political`**/**`conflict`**.
 
 ### Added
 

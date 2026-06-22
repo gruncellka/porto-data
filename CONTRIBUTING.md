@@ -28,17 +28,19 @@ Pre-commit hooks install automatically on first venv setup when run inside a git
 | Which entities exist per provider | `porto_data/mappings.json`                                                                                       |
 | Generated manifest + checksums    | `porto_data/metadata.json` — **never edit by hand**; run `make metadata`                                         |
 
-Cross-file structure and product→zone→tier wiring live in each provider’s **`graph.json`** (`file_type`: `graph`), including top-level **`edges`** (not `links`) and **`services`**. Price paths and join keys come from **`dependencies`** and price schemas — not from removed `global_settings`, `lookup_rules`, or `price_lookup`. Legacy flat `porto_data/data/` and `data_links.json` are gone.
+Cross-file structure lives in each provider’s **`graph.json`** (`edges`, `services`, `dependencies`). Legacy paths (`porto_data/data/`, `data_links.json`, graph `links` / `lookup_rules` / …) are removed — see `.cursorrules` layout.
 
 ## Vocabulary (canonical names)
 
 | Concept | Name |
 | ------- | ---- |
 | Weight bracket file | `weights.json` (`file_type`: `weights`) |
-| Tier map object | `weights` |
 | Single tier field | `weight_tier` |
-| Tier list in edges | `weight_tiers` |
 | Conditional rules file | `rules.json` (`file_type`: `provider_rules`) |
+
+**Provider order:** `deutschepost` → `ukrposhta` → `laposte` → `swisspost` in prose, tables, and JSON keys — see `.cursorrules`.
+
+**JSON naming (Porto-owned keys):** `.cursorrules` § JSON naming doctrine — enforced by validators and Bugbot rules 19–21.
 
 ## Reference direction (frozen)
 

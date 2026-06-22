@@ -15,7 +15,8 @@ from scripts.validators.limits_scope import (
 )
 
 _ACME_REG = {
-    "name": "Acme",
+    "label": "Acme",
+    "name": "Acme Ltd",
     "country": "XX",
     "mark_types": ["stamp"],
     "tracking_model": "mixed",

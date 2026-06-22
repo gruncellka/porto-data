@@ -26,7 +26,7 @@
     "provider": {
       "type": "string",
       "pattern": "^[a-z_]+$",
-      "description": "Provider identifier (e.g. deutschepost, swisspost)"
+      "description": "Provider identifier (e.g. deutschepost, ukrposhta, laposte, swisspost)"
     },
     "unit": {
       "type": "object",

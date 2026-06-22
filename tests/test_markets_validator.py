@@ -13,7 +13,8 @@ from scripts.validators.markets import validate_markets
 
 def _write_registry(tmp_path, *, countries: dict[str, str]) -> None:
     providers = {
-        pid: {"name": pid, "country": cc, "mark_types": ["stamp"]} for pid, cc in countries.items()
+        pid: {"label": pid, "name": f"{pid} entity", "country": cc, "mark_types": ["stamp"]}
+        for pid, cc in countries.items()
     }
     (tmp_path / "providers.json").write_text(
         json.dumps({"providers": providers}),
@@ -107,7 +108,7 @@ class TestValidateMarketsBranches:
             {
                 "DE": {
                     "currency": "BAD",
-                    "intl_ccy": ["EUR"],
+                    "international_currency": ["EUR"],
                     "vat": {"exempt": True, "rate": 0.2},
                     "settlement": "not-a-dict",
                 }
@@ -120,14 +121,14 @@ class TestValidateMarketsBranches:
         assert "vat.rate must be omitted" in out
         assert "settlement must be an object" in out
 
-    def test_intl_ccy_validation(self, tmp_path, capsys):
+    def test_international_currency_validation(self, tmp_path, capsys):
         _write_registry(tmp_path, countries={"deutschepost": "DE"})
         _write_markets(
             tmp_path,
             {
                 "DE": {
                     "currency": "EUR",
-                    "intl_ccy": ["EUR"],
+                    "international_currency": ["EUR"],
                 }
             },
         )
@@ -159,6 +160,40 @@ class TestValidateMarketsBranches:
         assert validate_markets() == 1
         assert "missing 'markets' object" in capsys.readouterr().out
 
+    def test_deprecated_market_keys(self, tmp_path, capsys):
+        _write_registry(tmp_path, countries={"deutschepost": "DE"})
+        _write_markets(
+            tmp_path,
+            {
+                "DE": {
+                    "currency": "EUR",
+                    "intl_ccy": ["USD"],
+                    "vat": {"inclusive": True, "intl_excl": True},
+                }
+            },
+        )
+        with patch.object(data_files, "_get_project_root", return_value=tmp_path):
+            assert validate_markets() == 1
+        out = capsys.readouterr().out
+        assert "deprecated key 'intl_ccy'" in out
+        assert "deprecated vat.inclusive" in out
+        assert "deprecated vat.intl_excl" in out
+
+    def test_vat_exempt_with_domestic_lane(self, tmp_path, capsys):
+        _write_registry(tmp_path, countries={"deutschepost": "DE"})
+        _write_markets(
+            tmp_path,
+            {
+                "DE": {
+                    "currency": "EUR",
+                    "vat": {"exempt": True, "domestic": {"inclusive": True}},
+                }
+            },
+        )
+        with patch.object(data_files, "_get_project_root", return_value=tmp_path):
+            assert validate_markets() == 1
+        assert "vat.domestic/international must be omitted" in capsys.readouterr().out
+
     def test_vat_not_dict(self, tmp_path, capsys):
         _write_registry(tmp_path, countries={"deutschepost": "DE"})
         _write_markets(tmp_path, {"DE": {"currency": "EUR", "vat": "bad"}})
@@ -166,19 +201,19 @@ class TestValidateMarketsBranches:
             assert validate_markets() == 1
         assert "vat must be an object" in capsys.readouterr().out
 
-    def test_empty_intl_ccy_array(self, tmp_path, capsys):
+    def test_empty_international_currency_array(self, tmp_path, capsys):
         _write_registry(tmp_path, countries={"deutschepost": "DE"})
-        _write_markets(tmp_path, {"DE": {"currency": "EUR", "intl_ccy": []}})
+        _write_markets(tmp_path, {"DE": {"currency": "EUR", "international_currency": []}})
         with patch.object(data_files, "_get_project_root", return_value=tmp_path):
             assert validate_markets() == 1
-        assert "intl_ccy must be a non-empty array" in capsys.readouterr().out
+        assert "international_currency must be a non-empty array" in capsys.readouterr().out
 
-    def test_invalid_intl_currency_entry(self, tmp_path, capsys):
+    def test_invalid_international_currency_entry(self, tmp_path, capsys):
         _write_registry(tmp_path, countries={"deutschepost": "DE"})
-        _write_markets(tmp_path, {"DE": {"currency": "EUR", "intl_ccy": ["BAD"]}})
+        _write_markets(tmp_path, {"DE": {"currency": "EUR", "international_currency": ["BAD"]}})
         with patch.object(data_files, "_get_project_root", return_value=tmp_path):
             assert validate_markets() == 1
-        assert "intl_ccy entry" in capsys.readouterr().out
+        assert "international_currency entry" in capsys.readouterr().out
 
     def test_provider_countries_not_dict(self, tmp_path, capsys, monkeypatch):
         monkeypatch.setattr(
@@ -210,7 +245,12 @@ class TestValidateMarketsBranches:
             "scripts.validators.markets.load_providers_registry",
             lambda: {
                 "providers": {
-                    "deutschepost": {"name": "DP", "country": "DE", "mark_types": ["stamp"]},
+                    "deutschepost": {
+                        "label": "DP",
+                        "name": "DP AG",
+                        "country": "DE",
+                        "mark_types": ["stamp"],
+                    },
                     "ghost": "bad",
                 }
             },

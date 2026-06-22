@@ -36,7 +36,12 @@ def _write_registry(tmp_path: Path, provider_id: str = "testco") -> Path:
         json.dumps(
             {
                 "providers": {
-                    provider_id: {"name": "T", "country": "DE", "mark_types": ["stamp"]},
+                    provider_id: {
+                        "label": "T",
+                        "name": "Test AG",
+                        "country": "DE",
+                        "mark_types": ["stamp"],
+                    },
                 }
             }
         ),
@@ -254,6 +259,20 @@ class TestPortoIdsValidator:
         graph = json.loads((prov / "graph.json").read_text(encoding="utf-8"))
         graph["services"] = ["missing_svc"]
         (prov / "graph.json").write_text(json.dumps(graph), encoding="utf-8")
+        assert validate_porto_ids(write_mapping_doc=False) == 1
+
+    def test_rejects_intl_suffix_on_native_product_id(self, porto_ids_sandbox) -> None:
+        _tmp, _root, prov = porto_ids_sandbox
+        products = json.loads((prov / "products.json").read_text(encoding="utf-8"))
+        products["products"][0]["id"] = "letter_intl"
+        (prov / "products.json").write_text(json.dumps(products), encoding="utf-8")
+        assert validate_porto_ids(write_mapping_doc=False) == 1
+
+    def test_rejects_intl_suffix_on_native_service_id(self, porto_ids_sandbox) -> None:
+        _tmp, _root, prov = porto_ids_sandbox
+        services = json.loads((prov / "services.json").read_text(encoding="utf-8"))
+        services["services"][0]["id"] = "registered_intl"
+        (prov / "services.json").write_text(json.dumps(services), encoding="utf-8")
         assert validate_porto_ids(write_mapping_doc=False) == 1
 
     def test_rejects_porto_id_in_product_prices(self, porto_ids_sandbox) -> None:

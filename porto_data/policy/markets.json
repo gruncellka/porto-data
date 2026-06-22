@@ -16,24 +16,38 @@
     "FR": {
       "currency": "EUR",
       "vat": {
-        "inclusive": true
+        "domestic": {
+          "inclusive": true
+        },
+        "international": {
+          "inclusive": true
+        }
       }
     },
     "CH": {
       "currency": "CHF",
       "vat": {
-        "inclusive": true
+        "domestic": {
+          "inclusive": true
+        },
+        "international": {
+          "inclusive": true
+        }
       }
     },
     "UA": {
       "currency": "UAH",
-      "intl_ccy": [
+      "international_currency": [
         "USD"
       ],
       "vat": {
         "rate": 0.2,
-        "inclusive": true,
-        "intl_excl": true
+        "domestic": {
+          "inclusive": true
+        },
+        "international": {
+          "inclusive": false
+        }
       },
       "settlement": {
         "currency": "UAH",

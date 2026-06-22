@@ -11,6 +11,15 @@ from scripts.data_files import (
 
 _VALID_CURRENCIES = frozenset({"EUR", "CHF", "UAH", "USD"})
 
+_DEPRECATED_MARKET_KEYS: dict[str, str] = {
+    "intl_ccy": "international_currency",
+}
+
+_DEPRECATED_VAT_KEYS: dict[str, str] = {
+    "intl_excl": "vat.international.inclusive",
+    "inclusive": "vat.domestic.inclusive / vat.international.inclusive",
+}
+
 
 def _provider_countries() -> dict[str, str]:
     reg = load_providers_registry()
@@ -29,19 +38,25 @@ def _validate_market_row(country: str, row: dict[str, Any], errors: list[str]) -
     if not isinstance(currency, str) or currency not in _VALID_CURRENCIES:
         errors.append(f"markets.{country}: currency must be one of {sorted(_VALID_CURRENCIES)}")
 
-    intl = row.get("intl_ccy")
-    if intl is not None:
-        if not isinstance(intl, list) or not intl:
-            errors.append(f"markets.{country}: intl_ccy must be a non-empty array when set")
+    for deprecated, replacement in _DEPRECATED_MARKET_KEYS.items():
+        if deprecated in row:
+            errors.append(f"markets.{country}: deprecated key {deprecated!r}; use {replacement!r}")
+
+    intl_currencies = row.get("international_currency")
+    if intl_currencies is not None:
+        if not isinstance(intl_currencies, list) or not intl_currencies:
+            errors.append(
+                f"markets.{country}: international_currency must be a non-empty array when set"
+            )
         else:
-            for code in intl:
+            for code in intl_currencies:
                 if not isinstance(code, str) or code not in _VALID_CURRENCIES:
                     errors.append(
-                        f"markets.{country}: intl_ccy entry {code!r} is not a valid currency"
+                        f"markets.{country}: international_currency entry {code!r} is not a valid currency"
                     )
                 elif isinstance(currency, str) and code == currency:
                     errors.append(
-                        f"markets.{country}: intl_ccy must not include domestic currency {currency!r}"
+                        f"markets.{country}: international_currency must not include domestic currency {currency!r}"
                     )
 
     vat = row.get("vat")
@@ -49,9 +64,20 @@ def _validate_market_row(country: str, row: dict[str, Any], errors: list[str]) -
         if not isinstance(vat, dict):
             errors.append(f"markets.{country}: vat must be an object when set")
         else:
+            for deprecated, replacement in _DEPRECATED_VAT_KEYS.items():
+                if deprecated in vat:
+                    errors.append(
+                        f"markets.{country}: deprecated vat.{deprecated}; use {replacement}"
+                    )
             if vat.get("exempt") is True and vat.get("rate") is not None:
                 errors.append(
                     f"markets.{country}: vat.rate must be omitted when vat.exempt is true"
+                )
+            if vat.get("exempt") is True and (
+                vat.get("domestic") is not None or vat.get("international") is not None
+            ):
+                errors.append(
+                    f"markets.{country}: vat.domestic/international must be omitted when vat.exempt is true"
                 )
 
     settlement = row.get("settlement")

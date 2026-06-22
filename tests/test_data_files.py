@@ -297,6 +297,40 @@ class TestListProviderIds:
         assert "ukrposhta" in ids
 
 
+class TestProviderKeyOrder:
+    def test_expected_provider_key_order(self) -> None:
+        assert data_files.expected_provider_key_order(
+            ["swisspost", "deutschepost", "ukrposhta", "laposte"]
+        ) == ["deutschepost", "ukrposhta", "laposte", "swisspost"]
+
+    def test_expected_provider_key_order_accepts_dict(self) -> None:
+        assert data_files.expected_provider_key_order(
+            {
+                "swisspost": {},
+                "deutschepost": {},
+                "ukrposhta": {},
+                "laposte": {},
+            }
+        ) == ["deutschepost", "ukrposhta", "laposte", "swisspost"]
+
+    def test_provider_key_order_error_message(self) -> None:
+        err = data_files.provider_key_order_error(
+            "providers.json providers",
+            ["swisspost", "deutschepost", "ukrposhta", "laposte"],
+        )
+        assert err is not None
+        assert "bundle order" in err
+
+    def test_provider_key_order_error_none_when_correct(self) -> None:
+        assert (
+            data_files.provider_key_order_error(
+                "providers.json providers",
+                ["deutschepost", "ukrposhta", "laposte", "swisspost"],
+            )
+            is None
+        )
+
+
 class TestLoadProvidersRegistryErrors:
     def test_raises_file_not_found_when_registry_missing(self, tmp_path):
         with (
@@ -347,7 +381,8 @@ class TestGetDataFilePathProjectRoot:
                 {
                     "providers": {
                         "acme": {
-                            "name": "A",
+                            "label": "A",
+                            "name": "A Ltd",
                             "country": "XX",
                             "mark_types": ["stamp"],
                             "tracking_model": "mixed",

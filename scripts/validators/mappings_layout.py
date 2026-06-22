@@ -20,6 +20,7 @@ from scripts.data_files import (
     _load_mappings_raw,
     get_project_root,
     load_providers_registry,
+    provider_key_order_error,
 )
 from scripts.validators.porto_ids import REQUIRED_PROVIDER_SCHEMAS
 
@@ -42,6 +43,10 @@ def validate_mappings_layout() -> int:
         return 1
 
     registry_ids = set(reg_doc["providers"])
+    registry_keys = list(reg_doc["providers"].keys())
+    order_err = provider_key_order_error(f"{PROVIDERS_REGISTRY_FILENAME} providers", registry_keys)
+    if order_err:
+        errors.append(order_err)
     try:
         raw_mappings = _load_mappings_raw()
     except (FileNotFoundError, ValueError) as e:
@@ -56,6 +61,11 @@ def validate_mappings_layout() -> int:
     else:
         mapping_ids = set(providers_block_raw.keys())
         providers_block = providers_block_raw
+        order_err = provider_key_order_error(
+            "mappings.json mappings.providers", list(providers_block_raw.keys())
+        )
+        if order_err:
+            errors.append(order_err)
 
     if registry_ids != mapping_ids:
         errors.append(
@@ -157,6 +167,11 @@ def validate_mappings_layout() -> int:
                         f"  metadata only: {sorted(meta_ids - registry_ids)}\n"
                         "  Regenerate: python -m cli.main metadata"
                     )
+                order_err = provider_key_order_error(
+                    "metadata.json providers", list(meta_prov.keys())
+                )
+                if order_err:
+                    errors.append(order_err)
     else:
         warnings.append(
             "metadata.json not found; skipped metadata provider-key check (run `porto metadata`)"

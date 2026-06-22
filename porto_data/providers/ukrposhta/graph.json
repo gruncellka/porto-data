@@ -133,6 +133,6 @@
   "services": [
     "return_receipt_paper",
     "return_receipt_electronic",
-    "recommended_intl"
+    "recommended_international"
   ]
 }

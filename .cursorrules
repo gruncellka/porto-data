@@ -31,7 +31,7 @@ There is **no** `porto_data/data/`, `data_links.json`, or `porto_data/global/` b
 | Layer | File | Role |
 | ----- | ---- | ---- |
 | Global sanctions / destination regimes | `policy/restrictions.json` | Shared legal-style rows; versioned with bundle |
-| Country fiscal defaults | `policy/markets.json` | `currency`, `vat`, `intl_ccy` per `markets[CC]` |
+| Country fiscal defaults | `policy/markets.json` | `currency`, `international_currency`, `vat`, `settlement` per `markets[CC]` |
 | Provider overlay | `providers/<id>/limits.json` | **Often empty** (`limits[]`: `[]`) — durable operator letter rules only |
 | Runtime | Porto SDK / app | Strikes, live suspensions, carrier API status |
 
@@ -42,6 +42,22 @@ Merge order documented in provider `limits.json` `context`: restrictions → lim
 - Indent **2 spaces**, no tab reformatting for style churn.
 - **Preserve key order** (do not sort keys).
 - All committed data must validate against the matching schema in `porto_data/schemas/`.
+
+## JSON naming doctrine
+
+**Porto schema keys:** full English words — `international`, not `intl`/`inter`; `currency`, not `ccy`.
+
+**Lane pairing:** use `domestic` and `international` together (markets VAT, docs). Zone ids stay `domestic`, `world`, `zone_*` — never `international` as a zone id.
+
+**Structure:**
+- Multi-facet fiscal rules → nest under domain: `vat.domestic`, `vat.international` (not `international_vat`, `intl_excl`, or top-level `vat.inclusive`).
+- Intl quote currencies on market → `international_currency` (not `intl_ccy`).
+
+**Market row key order:** `currency` → `international_currency` → `vat` → `settlement`. Inside `vat`: `rate` → `exempt` → `domestic` → `international`.
+
+**Native ids we assign:** prefer `recommended_international`, not `*_intl`. **Carrier-mirrored ids** (e.g. `lettre_recommandee_inter_r_un`, `international_standardbrief`) — keep operator tokens; do not global-rename.
+
+**Allowed abbreviations:** `porto_id`, `fx`/`fx_date`, ISO country/currency codes, weight tier codes (`W0050`), `zone_1_eu`.
 
 ## Python conventions
 
@@ -76,7 +92,7 @@ CI (`.github/workflows/validation.yml`) must run the same chain; include a **`va
 
 - **`porto_id`** — SDK normalization identifier; enum in `porto_ids.schema.json`.
 - **Native `id`** — operator catalog key; used in graph, prices, rules (not `porto_id`).
-- **Currency:** `row.currency` → file `unit.currency` → `markets[country].currency`.
+- **Currency:** `row.currency` → file `unit.currency` → `markets[country].currency`; intl overrides → `markets[country].international_currency`.
 - Country codes: **ISO 3166-1 alpha-2** where used.
 - Jurisdiction blocs: **`EU`**, **`UN`** in restrictions; operator letter overlays in **`limits.json`**.
 

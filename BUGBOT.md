@@ -7,6 +7,7 @@
 - **Resolution** (for SDKs/loaders) is anchored in each provider’s **`graph.json`**: **`dependencies`**, **`edges`** (product × zones × weight tiers), top-level **`services`**, plus **`porto_data/schemas/graph.schema.json`**. Price lookup uses **`dependencies`** paths and price-schema join keys (`product_id`, `zone`, `weight_tier` / `service_id`). Loaders must not assume removed layouts (`porto_data/data/`, `data_links.json`, top-level **`links`**, **`lookup_rules`**, **`global_settings`**, **`price_lookup`**, or graph key **`available_services`** — use **`services`**).
 - **Provider order** in docs and prose: **`deutschepost` → `ukrposhta` → `laposte` → `swisspost`**.
 - **`limits.json`** with empty **`limits[]`** is **valid** — global restrictions live in **`policy/restrictions.json`**; overlays are optional.
+- **JSON naming:** Porto-owned schema keys use full words (`international_currency`, `vat.domestic` / `vat.international`); see `.cursorrules` § JSON naming doctrine.
 - Align with `.cursorrules` and `CONTRIBUTING.md`.
 - Do not flag files, workflows, or policies outside this repository.
 
@@ -166,5 +167,37 @@ If a review comment treats **`limits[]`: []** or **`frameworks`: {}** in **`prov
 If a PR adds **`vat`** or per-provider default currency fields to **`providers.json`** instead of **`policy/markets.json`**:
 
 - **Title:** `Fiscal defaults must use policy/markets.json`
-- **Body:** `providers.json carries identity and country; markets[country].currency / vat / intl_ccy hold fiscal defaults.`
+- **Body:** `providers.json carries identity and country; markets[country].currency / vat / international_currency hold fiscal defaults.`
 - **Labels:** `data`, `consistency`
+
+### 19) Deprecated international/currency abbreviations in markets (blocking)
+
+If a PR adds or keeps **`intl_ccy`**, **`intl_excl`**, top-level **`vat.inclusive`** (without `vat.domestic` / `vat.international`), or other `intl`/`ccy` abbreviations in **`policy/markets.json`** or **`markets.schema.json`**:
+
+- **Title:** `Use full international/currency key names in markets`
+- **Body:** `Porto keys: international_currency (not intl_ccy); vat.domestic.inclusive and vat.international.inclusive (not intl_excl or flat vat.inclusive). See JSON naming doctrine in .cursorrules.`
+- **Labels:** `data`, `consistency`
+
+### 20) Porto-assigned native ids must not use _intl suffix (blocking)
+
+If a PR adds a **new** native product or service `id` ending in **`_intl`** (Porto-assigned naming; carrier tokens like `inter_r` are OK):
+
+- **Title:** `Native id uses deprecated _intl suffix`
+- **Body:** `Use international in ids we assign (e.g. recommended_international). Preserve carrier-mirrored ids (lettre_recommandee_inter_r_un, international_standardbrief). Enforced in scripts/validators/porto_ids.py.`
+- **Labels:** `data`, `consistency`
+
+### 21) Market row key order (non-blocking)
+
+If `markets[CC]` uses deprecated keys or puts `vat` before `currency`:
+
+- **Title:** `Market row key order / naming drift`
+- **Body:** `Order: currency → international_currency → vat → settlement. No intl_ccy.`
+- **Labels:** `maintainability`, `consistency`
+
+### 22) Provider order in registry, mappings, metadata, and docs (non-blocking)
+
+If a PR lists operators out of bundle order **`deutschepost` → `ukrposhta` → `laposte` → `swisspost`** (README carrier table, doc link rows, `providers.json` / `mappings.json` / `metadata.json` key order):
+
+- **Title:** `Provider order drift`
+- **Body:** `Use canonical order deutschepost → ukrposhta → laposte → swisspost in prose, tables, and JSON object keys. Enforced in mappings validation for registry/mappings/metadata.`
+- **Labels:** `maintainability`, `consistency`

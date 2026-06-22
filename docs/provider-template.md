@@ -41,6 +41,8 @@ Provider `graph.json` → `dependencies` may reference:
 
 ## Identity conventions
 
+- **`label`** — short display name in `providers.json` (UI / prose).
+- **`name`** — registered legal entity in `providers.json`.
 - **`id`** — native catalog key (operator-flavored snake_case); used in graph, prices, rules.
 - **`porto_id`** — canonical SDK bucket; enum in `schemas/porto_ids.schema.json`.
 - **`native_id`** — carrier API code when known.

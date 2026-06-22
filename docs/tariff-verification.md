@@ -32,9 +32,9 @@ There is **no automated tariff oracle** in CI. Wrong amounts that still satisfy 
 
 File-level default: `unit.currency` in each price file. Row override: optional **`currency`** on a `product_prices` or `service_prices` row when that row is quoted in another currency ([`product_prices.schema.json`](../porto_data/schemas/product_prices.schema.json)).
 
-**Market defaults:** `policy/markets.json` → `markets[providers.json country].currency`. Allowed intl row overrides: `markets[CC].intl_ccy` (array).
+**Market defaults:** `policy/markets.json` → `markets[providers.json country].currency`. Allowed intl row overrides: `markets[CC].international_currency` (array).
 
-**Ukrposhta:** domestic rows in **UAH** (`markets.UA.currency`); international **letters** in **USD** (`intl_ccy: ["USD"]`); settlement in UAH at NBU rate on service date — see `markets.UA.settlement`.
+**Ukrposhta:** domestic rows in **UAH** (`markets.UA.currency`); international **letters** in **USD** (`international_currency: ["USD"]`); settlement in UAH at NBU rate on service date — see `markets.UA.settlement`.
 
 ---
 

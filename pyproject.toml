@@ -1,10 +1,10 @@
 [project]
 name = "gruncellka-porto-data"
-version = "0.4.0"
-description = "Schema-driven postal data model for providers, pricing, services and restrictions"
+version = "0.3.1"
+description = "Multi-provider postal JSON: operator catalogs, pricing, shared policy (markets, restrictions), and schemas"
 readme = "README.md"
 license = {file = "LICENSE"}
-keywords = ["postal", "post", "shipping", "logistics", "deutsche post", "swiss post", "la poste", "pricing", "postal rates", "zones", "restrictions", "data model", "schema", "sdk"]
+keywords = ["postal", "post", "shipping", "logistics", "deutsche post", "ukrposhta", "la poste", "swiss post", "pricing", "postal rates", "postage", "tariffs", "zones", "restrictions", "data model", "schema", "sdk", "porto-data", "porto-sdk"]
 classifiers = [
     "License :: OSI Approved :: Apache Software License 2.0",
     "Programming Language :: Python :: 3",

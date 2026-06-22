@@ -1,6 +1,7 @@
 """Tests for mappings_layout validator."""
 
 import json
+import shutil
 from pathlib import Path
 
 import pytest
@@ -57,7 +58,8 @@ def _patch_bundle_root(monkeypatch: pytest.MonkeyPatch, root: Path) -> None:
 
 def _acme_row() -> dict:
     return {
-        "name": "Acme",
+        "label": "Acme",
+        "name": "Acme Ltd",
         "country": "XX",
         "mark_types": ["stamp"],
         "tracking_model": "mixed",
@@ -71,6 +73,75 @@ def test_validate_mappings_layout_passes_on_real_porto_data(
     assert root.is_dir()
     _patch_bundle_root(monkeypatch, root)
     assert validate_mappings_layout() == 0
+
+
+def test_validate_mappings_layout_errors_on_wrong_provider_key_order(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    root = Path(__file__).resolve().parent.parent / "porto_data"
+    bundle = tmp_path / "bundle"
+    shutil.copytree(root, bundle)
+    doc = json.loads((bundle / "providers.json").read_text(encoding="utf-8"))
+    prov = doc["providers"]
+    doc["providers"] = {
+        "swisspost": prov["swisspost"],
+        "deutschepost": prov["deutschepost"],
+        "ukrposhta": prov["ukrposhta"],
+        "laposte": prov["laposte"],
+    }
+    (bundle / "providers.json").write_text(
+        json.dumps(doc, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    _patch_bundle_root(monkeypatch, bundle)
+    assert validate_mappings_layout() == 1
+    assert "providers.json providers" in capsys.readouterr().out
+
+
+def test_validate_mappings_layout_errors_on_wrong_mappings_provider_key_order(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    root = Path(__file__).resolve().parent.parent / "porto_data"
+    bundle = tmp_path / "bundle"
+    shutil.copytree(root, bundle)
+    mappings = json.loads((bundle / "mappings.json").read_text(encoding="utf-8"))
+    prov_block = mappings["mappings"]["providers"]
+    mappings["mappings"]["providers"] = {
+        "swisspost": prov_block["swisspost"],
+        "deutschepost": prov_block["deutschepost"],
+        "ukrposhta": prov_block["ukrposhta"],
+        "laposte": prov_block["laposte"],
+    }
+    (bundle / "mappings.json").write_text(
+        json.dumps(mappings, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    _patch_bundle_root(monkeypatch, bundle)
+    assert validate_mappings_layout() == 1
+    assert "mappings.json mappings.providers" in capsys.readouterr().out
+
+
+def test_validate_mappings_layout_errors_on_wrong_metadata_provider_key_order(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    root = Path(__file__).resolve().parent.parent / "porto_data"
+    bundle = tmp_path / "bundle"
+    shutil.copytree(root, bundle)
+    meta = json.loads((bundle / "metadata.json").read_text(encoding="utf-8"))
+    prov_block = meta["providers"]
+    meta["providers"] = {
+        "swisspost": prov_block["swisspost"],
+        "deutschepost": prov_block["deutschepost"],
+        "ukrposhta": prov_block["ukrposhta"],
+        "laposte": prov_block["laposte"],
+    }
+    (bundle / "metadata.json").write_text(
+        json.dumps(meta, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    _patch_bundle_root(monkeypatch, bundle)
+    assert validate_mappings_layout() == 1
+    assert "metadata.json providers" in capsys.readouterr().out
 
 
 def test_validate_mappings_layout_errors_on_provider_mismatch(
