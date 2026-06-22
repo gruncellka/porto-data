@@ -6,11 +6,11 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
-- **`marks.zones`:** Required provider-wide zone → lane profile map (one object per `marks.json`).
+- **`graph.edges.marks`:** Zone → mark profile resolution under **`edges`** (`products` + `marks`). Catalog in `marks.json` → `profiles[]`.
 
 ### Changed
 
-- **Mark layout data model:** Removed `graph.edges[].mark_profile_by_zone`, `services[].mark_profile` / `mark_profile_by_zone`, and `products.mark_profile`. Lane mapping lives in **`marks.zones`** only; registered footprint upgrade is **SDK resolver convention** (see [mark-profiles.md](docs/mark-profiles.md)).
+- **Mark layout data model:** Removed `marks.zones` and top-level `mark_edges`. Resolution lives in **`graph.edges.marks`**; `marks.json` is catalog only.
 - **Marks `scope_notes`:** DE sizes flagged as sample-based; CH/FR registered documented as same footprint as lane until measured.
 - **Docs:** `mark-profiles.md`, `resolution.md`, `identity-map.md`, `provider-template.md` — data vs SDK split.
 
@@ -33,7 +33,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
-- **Mark profiles:** Measured sizes in `marks.json`; lane via `marks.zones`; SDK applies registered upgrade. See [mark-profiles.md](docs/mark-profiles.md).
+- **Mark profiles:** Measured sizes in `marks.json`; resolution via `graph.edges.marks`. See [mark-profiles.md](docs/mark-profiles.md).
 - **Operators:** Full letter catalogs for Deutsche Post, Ukrposhta, La Poste, and Swiss Post under **`providers/<id>/`**.
 - **Policy:** **`policy/jurisdictions.json`**, **`policy/restrictions.json`**, **`policy/markets.json`** (DE, FR, CH, UA fiscal defaults).
 - **Swiss Post:** Optional **`providers/swisspost/rules.json`** (e.g. thickness surcharge) where modeled.

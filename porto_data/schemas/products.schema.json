@@ -111,7 +111,7 @@
               "type": "string",
               "pattern": "^[a-z0-9_]+$"
             },
-            "description": "Zones where this product is available (must align with graph.edges for this product_id)"
+            "description": "Zones where this product is available (must align with graph.edges.products for this product_id)"
           },
           "weight_tier": {
             "type": "string",

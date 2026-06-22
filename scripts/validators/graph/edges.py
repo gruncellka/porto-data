@@ -7,6 +7,8 @@ from typing import Any
 from scripts.data_files import GRAPH_FILE, PRODUCTS_FILE, WEIGHTS_FILE, ZONES_FILE
 from scripts.validators.base import ValidationResults
 
+from .edge_access import product_edges, validate_edges_container
+
 
 def run_validate_edges(
     results: ValidationResults,
@@ -17,7 +19,9 @@ def run_validate_edges(
     weight_tier_ids: set[str],
     product_prices: list[dict[str, Any]],
 ) -> None:
-    edges = graph.get("edges", {})
+    if not validate_edges_container(results, graph=graph):
+        return
+    edges = product_edges(graph)
     for product_id, edge_data in edges.items():
         _validate_product_edge(
             results,
@@ -43,7 +47,7 @@ def _validate_product_edge(
     if product_id not in product_dict:
         results["errors"].append(
             f"Product '{product_id}' in edges does not exist in {PRODUCTS_FILE}. "
-            f"Found in: {GRAPH_FILE} -> edges -> {product_id}"
+            f"Found in: {GRAPH_FILE} -> edges -> products -> {product_id}"
         )
         return
 
@@ -77,7 +81,7 @@ def _validate_product_zones(
         if zone not in zone_ids:
             results["errors"].append(
                 f"Zone '{zone}' for product '{product_id}' does not exist in {ZONES_FILE}. "
-                f"Found in: {GRAPH_FILE} -> edges -> {product_id} -> zones"
+                f"Found in: {GRAPH_FILE} -> edges -> products -> {product_id} -> zones"
             )
 
     if link_zones == product_zones:
@@ -157,7 +161,9 @@ def run_validate_products_in_edges(
     graph: dict[str, Any],
     product_dict: dict[str, dict[str, Any]],
 ) -> None:
-    edges = graph.get("edges", {})
+    if not validate_edges_container(results, graph=graph):
+        return
+    edges = product_edges(graph)
     products_in_data = set(product_dict.keys())
     products_in_edges = set(edges.keys())
     missing_products = products_in_data - products_in_edges
@@ -177,7 +183,9 @@ def run_validate_edge_tiers(
     zone_ids: dict[str, dict[str, Any]],
     weight_tier_ids: set[str],
 ) -> None:
-    edges = graph.get("edges", {})
+    if not validate_edges_container(results, graph=graph):
+        return
+    edges = product_edges(graph)
 
     all_link_zones: set[str] = set()
     all_link_weight_tiers: set[str] = set()

@@ -31,7 +31,7 @@ def minimal_graph():
         "provider": "deutschepost",
         "unit": {"weight": "g", "dimension": "mm", "price": "cents", "currency": "EUR"},
         "dependencies": {},
-        "edges": {},
+        "edges": {"products": {}, "marks": {}},
         "services": ["einschreiben"],
     }
 
@@ -145,7 +145,6 @@ def minimal_data_files(
             "file_type": "marks",
             "provider": "deutschepost",
             "default_profile": "test_stamp",
-            "zones": {"domestic": "test_stamp"},
             "profiles": [
                 {
                     "id": "test_stamp",
@@ -239,7 +238,6 @@ def create_test_data_files(tmp_path, **file_data):
             "file_type": "marks",
             "provider": "deutschepost",
             "default_profile": "test_stamp",
-            "zones": {"domestic": "test_stamp"},
             "profiles": [
                 {
                     "id": "test_stamp",

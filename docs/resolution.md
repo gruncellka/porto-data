@@ -16,7 +16,7 @@ SDK and app code should pass **`porto_id`** (canonical bucket). The bundle resol
 
 1. Filter `products.json` rows where `porto_id` matches and `zones` contains the target zone.
 2. Resolve `weight_tier` from `weights.json` for the given `weight_g`.
-3. Intersect with `graph.json` → `edges[product_id].zones` and `edges[product_id].weight_tiers`.
+3. Intersect with `graph.json` → `edges.products[product_id].zones` and `edges.products[product_id].weight_tiers`.
 4. If exactly one product remains, use that `product.id`.
 5. If multiple products remain, apply provider-specific disambiguation below.
 6. Price lookup uses native `product_id` × `zone` × `weight_tier` in `prices/products.json`.
@@ -56,9 +56,9 @@ Disambiguation: prefer **zone** (domestic vs international) first, then **speed 
 
 Multiple `services[].id` rows may share one `porto_id` (e.g. two `registered` variants on Deutsche Post). SDK should select by native service id or operator-specific option once the user picks a variant.
 
-## Mark profile data (SDK consumes; not resolved in this repo)
+## Mark profile resolution
 
-Lane mapping: **`marks.zones[zone]`** in each provider’s **`marks.json`**. Graph edges and services have **no** mark fields. How the Porto SDK composes `markLayout` from zone + services is documented in [mark-profiles.md](mark-profiles.md) § Consumer behavior.
+Lane and service mark mapping: **`graph.edges.marks[zone]`**. Catalog sizes: **`marks.json`** → `profiles[]`. See [mark-profiles.md](mark-profiles.md).
 
 ## Currency and VAT
 

@@ -43,6 +43,7 @@ from .layouts import (
     run_validate_envelope_ids,
     run_validate_layout_refs,
 )
+from .mark_edges import run_validate_mark_edges
 from .marks_profiles import run_validate_marks_profiles
 from .provider_rules import run_validate_provider_rules
 from .services import run_validate_graph_services
@@ -281,7 +282,7 @@ class GraphValidator:
         )
 
     def validate_marks_profiles(self) -> None:
-        """Validate marks.json profiles, zones map, and default_profile."""
+        """Validate marks.json profile catalog and default_profile."""
         run_validate_marks_profiles(
             self.results,
             graph=self.graph,
@@ -289,6 +290,15 @@ class GraphValidator:
             marks=self.marks,
             zones=self.zones,
             services=self.services,
+        )
+
+    def validate_mark_edges(self) -> None:
+        """Validate graph.mark_edges zone and service mark profile resolution."""
+        run_validate_mark_edges(
+            self.results,
+            graph=self.graph,
+            marks=self.marks,
+            zones=self.zones,
         )
 
     def validate_provider_rules(self) -> None:
@@ -373,6 +383,7 @@ class GraphValidator:
         self.validate_services()
         self.validate_execution_semantics()
         self.validate_marks_profiles()
+        self.validate_mark_edges()
         self.validate_provider_rules()
         self.validate_dependencies()
         self.validate_units()

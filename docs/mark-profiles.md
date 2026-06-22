@@ -1,8 +1,8 @@
 # Mark profiles
 
-How franking **graphic footprints** are named and stored in **porto-data**. The **Porto SDK** (separate product) reads this data and produces `markLayout` at runtime — not implemented in this repo.
+How franking **graphic footprints** are named and stored in **porto-data**.
 
-**Not the same as `porto_id`.** `porto_id` (`small`, `registered`, …) is SDK **input**. `mark_profile` (`domestic`, `international`, …) is SDK **layout output** after zone + services are resolved.
+**Not the same as `porto_id`.** `porto_id` (`small`, `registered`, …) is cross-operator **input**. `mark_profile` (`domestic`, `international`, …) is **layout output** after zone + services are resolved.
 
 ## Three naming layers
 
@@ -19,65 +19,63 @@ Display-only: `marks.profiles[].label` — e.g. “Internetmarke domestic”.
 | File | Fields |
 |------|--------|
 | `marks.json` → `profiles[]` | `id`, `mark_type`, `size` (mm), `mime_type` |
-| `marks.json` → `zones` | One map: `zone_id → profile_id` (lane) |
-| `marks.json` → `default_profile` | Fallback when a zone key is missing |
-| `zones.json` | Zone catalog — every zone id must appear in **`marks.zones`** |
-| `graph.json` → `edges` | Product × zone × weight — **no mark fields** |
-| `services.json` | `porto_id`, features — **no mark fields** |
+| `marks.json` → `default_profile` | Fallback when `graph.edges.marks` omits a zone |
+| `graph.json` → `edges.marks` | Per zone: `profile` + optional `services` overrides |
+| `graph.json` → `edges.products` | Product × zone × weight (unchanged) |
+| `zones.json` | Zone catalog — every zone id must appear in **`edges.marks`** |
+| `services.json` | `porto_id`, features — no mark fields |
 | `formats/layouts.json` | Envelope `post_mark` anchor (x/y mm) |
 
-Validators in this repo check profile ids, `marks.zones` keys vs `zones.json`, and schema shape. **No resolution code.**
+Validators check profile ids, `edges.marks` keys vs `zones.json`, service ids vs `graph.services`, and schema shape.
 
-## `mark_profile` ladder (shared vocabulary)
+## `graph.edges` shape
 
-| `mark_profile` | Meaning |
-|----------------|---------|
-| `domestic` | Home-market franking graphic |
-| `international` | International lane |
-| `registered` | Registered domestic footprint (DE catalog only today) |
-| `registered_international` | Registered international footprint (DE only today) |
+```json
+"edges": {
+  "products": {
+    "standardbrief": {
+      "zones": ["domestic", "world"],
+      "weight_tiers": ["W0020"]
+    }
+  },
+  "marks": {
+    "domestic": {
+      "profile": "domestic",
+      "services": {
+        "einschreiben": "registered",
+        "einschreiben_einwurf": "registered",
+        "einschreiben_rueckschein": "registered"
+      }
+    },
+    "world": {
+      "profile": "international",
+      "services": {
+        "einschreiben": "registered_international"
+      }
+    }
+  }
+}
+```
 
-FR/CH/UA: no separate registered rows — lane size applies until measured.
+**Resolution (consumer):**
 
-### Do not confuse with `porto_id: registered`
+1. Read `graph.edges.marks[zone].profile` (else `marks.default_profile`).
+2. For each selected native service id, if `edges.marks[zone].services[service_id]` exists → use that profile.
+3. Look up `marks.profiles[id].size` and `formats/layouts.json` `post_mark`.
 
-| Field | Layer |
-|-------|-------|
-| `services[].porto_id: "registered"` | SDK input — user wants Einschreiben |
-| `mark_profile: "registered"` | Layout output — DE stamp footprint id in `marks.json` |
+Service keys are **native ids** from `graph.services` / `services.json`, not `porto_id`.
 
-## Consumer behavior (Porto SDK — documented, not coded here)
+## Deutsche Post examples
 
-SDKs that depend on `@gruncellka/porto-data` / `gruncellka-porto-data` should:
-
-1. Read `marks.zones[zone]` (else `default_profile`) for the lane profile id.
-2. When a selected service has `porto_id` `registered` or `registered_return_receipt`, upgrade to `registered` / `registered_international` if those profiles exist in `marks.profiles[]`.
-3. Look up `marks.profiles[id].size` and `formats/layouts.json` `post_mark` for placement.
-
-Implementation: **porto-sdk-python** / **porto-sdk-typescript** (`UnifiedResolverService`). See SDK docs in the lab monorepo.
-
-### Deutsche Post examples (expected SDK output)
-
-| Zone + services | Profile id |
-|-----------------|------------|
-| `domestic`, none | `domestic` |
-| `world`, none | `international` |
-| `domestic`, `einschreiben` | `registered` |
-| `world`, `einschreiben` | `registered_international` |
-
-## Sizes (nominal mm)
-
-| Provider | domestic | international | registered | registered_international |
-|----------|----------|---------------|------------|--------------------------|
-| deutschepost | 36×16 | 60×16 | 57×21 | 57×30 |
-| laposte | 64×34 | 64×34 | same as lane | same as lane |
-| swisspost | 40×40 | 40×40 | same as lane | same as lane |
-| ukrposhta | 148×210 (label) | same as domestic (`world` → `domestic`) | — | — |
-
-DE sizes from Internetmarke PDF samples (not official spec).
+| Zone | Selected services | Profile id |
+|------|-------------------|------------|
+| `domestic` | none | `domestic` |
+| `world` | none | `international` |
+| `domestic` | `einschreiben` | `registered` |
+| `world` | `einschreiben` | `registered_international` |
 
 ## See also
 
-- [resolution.md](resolution.md) — product disambiguation (SDK concern; data rules in graph)
+- [resolution.md](resolution.md) — product disambiguation via `graph.edges.products`
 - [id.md](id.md) — `porto_id` vocabulary
-- `porto_data/schemas/marks.schema.json`
+- `porto_data/schemas/marks.schema.json` · `porto_data/schemas/graph.schema.json`

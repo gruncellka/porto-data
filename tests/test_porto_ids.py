@@ -127,7 +127,10 @@ def _write_provider_files(
             "provider": "testco",
             "unit": {"weight": "g", "dimension": "mm", "price": "cents", "currency": "EUR"},
             "dependencies": {},
-            "edges": {"p1": {"zones": ["domestic"], "weight_tiers": ["W0020"]}},
+            "edges": {
+                "products": {"p1": {"zones": ["domestic"], "weight_tiers": ["W0020"]}},
+                "marks": {"domestic": {"profile": "p1"}},
+            },
             "services": ["svc_native"],
         },
         "product_prices": {

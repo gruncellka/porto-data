@@ -37,7 +37,7 @@ Pre-commit hooks install automatically on first venv setup when run inside a git
 | Which entities exist per provider | `porto_data/mappings.json`                                                                                       |
 | Generated manifest + checksums    | `porto_data/metadata.json` — **never edit by hand**; run `make metadata`                                         |
 
-Cross-file structure lives in each provider’s **`graph.json`** (`edges`, `services`, `dependencies`). Legacy paths (`porto_data/data/`, `data_links.json`, graph `links` / `lookup_rules` / …) are removed — see `.cursorrules` layout.
+Cross-file structure lives in each provider’s **`graph.json`** (`edges.products`, `edges.marks`, `services`, `dependencies`). Legacy paths (`porto_data/data/`, `data_links.json`, graph `links` / `lookup_rules` / …) are removed — see `.cursorrules` layout.
 
 ## Vocabulary (canonical names)
 
@@ -79,7 +79,7 @@ Disambiguation when multiple native rows share one `porto_id`: [docs/resolution.
 | `porto validate --type markets`         | `policy/markets.json` vs provider countries        |
 | `porto validate --type limits`          | `providers/*/limits.json`                          |
 | `porto validate --type porto_ids`       | `porto_id` enums, native-id cross-file refs; regenerates **`docs/porto_id.md`** (must be committed) |
-| `porto validate --type graph`           | `graph.json` (incl. `edges`)                       |
+| `porto validate --type graph`           | `graph.json` (incl. `edges.products`, `edges.marks`) |
 | `porto validate --type graph --analyze` | Verbose graph report                               |
 | `porto metadata`                        | Regenerate `metadata.json`                         |
 

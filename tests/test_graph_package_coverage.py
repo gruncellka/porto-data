@@ -28,7 +28,9 @@ def _results() -> ValidationResults:
 class TestGraphEdgesBranches:
     def test_weight_tier_on_product_missing_from_edges_fixes_needed(self) -> None:
         r = _results()
-        graph = {"edges": {"p1": {"zones": ["z1"], "weight_tiers": ["W1"]}}}
+        graph = {
+            "edges": {"products": {"p1": {"zones": ["z1"], "weight_tiers": ["W1"]}}, "marks": {}}
+        }
         product_dict = {
             "p1": {"id": "p1", "zones": ["z1"], "weight_tier": "W2"},
         }
@@ -44,7 +46,9 @@ class TestGraphEdgesBranches:
 
     def test_price_weight_tier_not_in_edges_fixes_needed(self) -> None:
         r = _results()
-        graph = {"edges": {"p1": {"zones": ["z1"], "weight_tiers": ["W1"]}}}
+        graph = {
+            "edges": {"products": {"p1": {"zones": ["z1"], "weight_tiers": ["W1"]}}, "marks": {}}
+        }
         product_dict = {"p1": {"id": "p1", "zones": ["z1"], "weight_tier": "W1"}}
         product_prices = [{"product_id": "p1", "zone": "z1", "weight_tier": "W9"}]
         run_validate_edges(
@@ -59,7 +63,12 @@ class TestGraphEdgesBranches:
 
     def test_all_price_weight_tiers_match_edges_correct(self) -> None:
         r = _results()
-        graph = {"edges": {"p1": {"zones": ["z1"], "weight_tiers": ["W1", "W2"]}}}
+        graph = {
+            "edges": {
+                "products": {"p1": {"zones": ["z1"], "weight_tiers": ["W1", "W2"]}},
+                "marks": {},
+            }
+        }
         product_dict = {"p1": {"id": "p1", "zones": ["z1"], "weight_tier": "W1"}}
         product_prices = [
             {"product_id": "p1", "weight_tier": "W1"},
@@ -449,7 +458,7 @@ class TestGraphValidatorEarlyReturnsAndBranches:
             "provider": "x",
             "unit": {"weight": "g", "dimension": "mm", "price": "cents", "currency": "EUR"},
             "dependencies": {"products": {"file": "products.json", "depends_on": []}},
-            "edges": {},
+            "edges": {"products": {}, "marks": {}},
             "services": ["svc"],
         }
         (data_dir / "graph.json").write_text(json.dumps(graph), encoding="utf-8")
@@ -473,7 +482,6 @@ class TestGraphValidatorEarlyReturnsAndBranches:
                     "file_type": "marks",
                     "provider": "x",
                     "default_profile": "p",
-                    "zones": {"domestic": "p"},
                     "profiles": [{"id": "p", "mark_type": "stamp"}],
                 }
             ),
@@ -545,7 +553,7 @@ class TestGraphValidatorEarlyReturnsAndBranches:
                 "restrictions": {"file": "restrictions.json", "depends_on": []},
                 "features": {"file": "features.json", "depends_on": []},
             },
-            "edges": {},
+            "edges": {"products": {}, "marks": {}},
             "services": ["einschreiben"],
         }
         (data_dir / "graph.json").write_text(json.dumps(graph), encoding="utf-8")
@@ -570,7 +578,6 @@ class TestGraphValidatorEarlyReturnsAndBranches:
                     "file_type": "marks",
                     "provider": "deutschepost",
                     "default_profile": "p",
-                    "zones": {"domestic": "p"},
                     "profiles": [{"id": "p", "mark_type": "stamp"}],
                 }
             ),
@@ -650,7 +657,7 @@ class TestGraphValidatorMoreBranches:
                 "restrictions": {"file": "restrictions.json", "depends_on": []},
                 "features": {"file": "features.json", "depends_on": []},
             },
-            "edges": {},
+            "edges": {"products": {}, "marks": {}},
             "services": ["einschreiben"],
         }
         (data_dir / "graph.json").write_text(json.dumps(graph), encoding="utf-8")
@@ -675,7 +682,6 @@ class TestGraphValidatorMoreBranches:
                     "file_type": "marks",
                     "provider": "deutschepost",
                     "default_profile": "p",
-                    "zones": {"domestic": "p"},
                     "profiles": [{"id": "p", "mark_type": "stamp"}],
                 }
             ),
@@ -752,7 +758,7 @@ class TestGraphValidatorMoreBranches:
                 "restrictions": {"file": "restrictions.json", "depends_on": []},
                 "features": {"file": "features.json", "depends_on": []},
             },
-            "edges": {},
+            "edges": {"products": {}, "marks": {}},
             "services": ["einschreiben"],
         }
         (data_dir / "graph.json").write_text(json.dumps(graph), encoding="utf-8")
@@ -839,7 +845,7 @@ class TestGraphValidatorMoreBranches:
                 "restrictions": {"file": "restrictions.json", "depends_on": []},
                 "features": {"file": "features.json", "depends_on": []},
             },
-            "edges": {},
+            "edges": {"products": {}, "marks": {}},
             "services": ["einschreiben"],
         }
         (data_dir / "graph.json").write_text(json.dumps(graph), encoding="utf-8")
@@ -864,7 +870,6 @@ class TestGraphValidatorMoreBranches:
                     "file_type": "marks",
                     "provider": "deutschepost",
                     "default_profile": "p",
-                    "zones": {"domestic": "p"},
                     "profiles": [{"id": "p", "mark_type": "stamp"}],
                 }
             ),

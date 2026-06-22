@@ -60,4 +60,4 @@ Products were renamed from `supported_zones` → `zones` in the multi-provider l
 
 ## Mark profiles on graph edges
 
-Set **`marks.zones`** with one entry per row in `zones.json` (zone id → lane profile id). Registered footprint upgrade is **SDK resolver convention** when `services[].porto_id` is `registered` — do not add mark fields to `graph.edges` or `services.json`. See [mark-profiles.md](mark-profiles.md).
+Set **`graph.edges.marks`** with one entry per row in `zones.json` (`profile` + optional `services` overrides). Catalog in **`marks.json`** → `profiles[]` only. See [mark-profiles.md](mark-profiles.md).

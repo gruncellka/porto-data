@@ -105,130 +105,146 @@
     "marks": {
       "file": "marks.json",
       "depends_on": [],
-      "description": "Franking profile catalog: profiles[] (sizes) and zones (zone to lane profile id)"
-    }
-  },
-  "edges": {
-    "lettre_verte": {
-      "zones": [
-        "domestic"
-      ],
-      "weight_tiers": [
-        "W0020",
-        "W0100",
-        "W0250",
-        "W0500",
-        "W1000",
-        "W2000"
-      ]
-    },
-    "lettre_verte_suivie": {
-      "zones": [
-        "domestic",
-        "zone_1_eu",
-        "zone_2_europe",
-        "world"
-      ],
-      "weight_tiers": [
-        "W0020",
-        "W0100",
-        "W0250",
-        "W0500",
-        "W1000",
-        "W2000"
-      ]
-    },
-    "lettre_services_plus": {
-      "zones": [
-        "domestic"
-      ],
-      "weight_tiers": [
-        "W0020",
-        "W0100",
-        "W0250",
-        "W0500",
-        "W1000",
-        "W2000"
-      ]
-    },
-    "lettre_recommandee_r_un": {
-      "zones": [
-        "domestic"
-      ],
-      "weight_tiers": [
-        "W0020",
-        "W0050",
-        "W0100",
-        "W0250",
-        "W0500",
-        "W1000",
-        "W2000"
-      ]
-    },
-    "lettre_recommandee_r_deux": {
-      "zones": [
-        "domestic"
-      ],
-      "weight_tiers": [
-        "W0020",
-        "W0050",
-        "W0100",
-        "W0250",
-        "W0500",
-        "W1000",
-        "W2000"
-      ]
-    },
-    "lettre_recommandee_r_trois": {
-      "zones": [
-        "domestic"
-      ],
-      "weight_tiers": [
-        "W0020",
-        "W0050",
-        "W0100",
-        "W0250",
-        "W0500",
-        "W1000",
-        "W2000"
-      ]
-    },
-    "lettre_recommandee_inter_r_un": {
-      "zones": [
-        "zone_1_eu",
-        "zone_2_europe",
-        "world"
-      ],
-      "weight_tiers": [
-        "W0020",
-        "W0050",
-        "W0100",
-        "W0250",
-        "W0500",
-        "W1000",
-        "W2000"
-      ]
-    },
-    "lettre_recommandee_inter_r_deux": {
-      "zones": [
-        "zone_1_eu",
-        "zone_2_europe",
-        "world"
-      ],
-      "weight_tiers": [
-        "W0020",
-        "W0050",
-        "W0100",
-        "W0250",
-        "W0500",
-        "W1000",
-        "W2000"
-      ]
+      "description": "Franking profile catalog: profiles[] (sizes); resolution in graph.edges.marks"
     }
   },
   "services": [
     "suivi_option",
     "avis_de_reception_national",
     "avis_de_reception_international"
-  ]
+  ],
+  "edges": {
+    "products": {
+      "lettre_verte": {
+        "zones": [
+          "domestic"
+        ],
+        "weight_tiers": [
+          "W0020",
+          "W0100",
+          "W0250",
+          "W0500",
+          "W1000",
+          "W2000"
+        ]
+      },
+      "lettre_verte_suivie": {
+        "zones": [
+          "domestic",
+          "zone_1_eu",
+          "zone_2_europe",
+          "world"
+        ],
+        "weight_tiers": [
+          "W0020",
+          "W0100",
+          "W0250",
+          "W0500",
+          "W1000",
+          "W2000"
+        ]
+      },
+      "lettre_services_plus": {
+        "zones": [
+          "domestic"
+        ],
+        "weight_tiers": [
+          "W0020",
+          "W0100",
+          "W0250",
+          "W0500",
+          "W1000",
+          "W2000"
+        ]
+      },
+      "lettre_recommandee_r_un": {
+        "zones": [
+          "domestic"
+        ],
+        "weight_tiers": [
+          "W0020",
+          "W0050",
+          "W0100",
+          "W0250",
+          "W0500",
+          "W1000",
+          "W2000"
+        ]
+      },
+      "lettre_recommandee_r_deux": {
+        "zones": [
+          "domestic"
+        ],
+        "weight_tiers": [
+          "W0020",
+          "W0050",
+          "W0100",
+          "W0250",
+          "W0500",
+          "W1000",
+          "W2000"
+        ]
+      },
+      "lettre_recommandee_r_trois": {
+        "zones": [
+          "domestic"
+        ],
+        "weight_tiers": [
+          "W0020",
+          "W0050",
+          "W0100",
+          "W0250",
+          "W0500",
+          "W1000",
+          "W2000"
+        ]
+      },
+      "lettre_recommandee_inter_r_un": {
+        "zones": [
+          "zone_1_eu",
+          "zone_2_europe",
+          "world"
+        ],
+        "weight_tiers": [
+          "W0020",
+          "W0050",
+          "W0100",
+          "W0250",
+          "W0500",
+          "W1000",
+          "W2000"
+        ]
+      },
+      "lettre_recommandee_inter_r_deux": {
+        "zones": [
+          "zone_1_eu",
+          "zone_2_europe",
+          "world"
+        ],
+        "weight_tiers": [
+          "W0020",
+          "W0050",
+          "W0100",
+          "W0250",
+          "W0500",
+          "W1000",
+          "W2000"
+        ]
+      }
+    },
+    "marks": {
+      "domestic": {
+        "profile": "domestic"
+      },
+      "zone_1_eu": {
+        "profile": "international"
+      },
+      "zone_2_europe": {
+        "profile": "international"
+      },
+      "world": {
+        "profile": "international"
+      }
+    }
+  }
 }

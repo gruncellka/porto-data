@@ -105,63 +105,7 @@
     "marks": {
       "file": "marks.json",
       "depends_on": [],
-      "description": "Franking profile catalog: profiles[] (sizes) and zones (zone to lane profile id)"
-    }
-  },
-  "edges": {
-    "standardbrief": {
-      "zones": [
-        "domestic",
-        "zone_1_eu",
-        "zone_2_europe",
-        "world"
-      ],
-      "weight_tiers": [
-        "W0020"
-      ]
-    },
-    "kompaktbrief": {
-      "zones": [
-        "domestic",
-        "zone_1_eu",
-        "zone_2_europe",
-        "world"
-      ],
-      "weight_tiers": [
-        "W0050"
-      ]
-    },
-    "grossbrief": {
-      "zones": [
-        "domestic",
-        "zone_1_eu",
-        "zone_2_europe",
-        "world"
-      ],
-      "weight_tiers": [
-        "W0500"
-      ]
-    },
-    "maxibrief": {
-      "zones": [
-        "domestic",
-        "zone_1_eu",
-        "zone_2_europe",
-        "world"
-      ],
-      "weight_tiers": [
-        "W1000"
-      ]
-    },
-    "maxibrief_international_heavy": {
-      "zones": [
-        "zone_1_eu",
-        "zone_2_europe",
-        "world"
-      ],
-      "weight_tiers": [
-        "W2000"
-      ]
+      "description": "Franking profile catalog: profiles[] (sizes); resolution in graph.edges.marks"
     }
   },
   "services": [
@@ -169,5 +113,91 @@
     "einschreiben_einwurf",
     "einschreiben_rueckschein",
     "zusatzversicherung"
-  ]
+  ],
+  "edges": {
+    "products": {
+      "standardbrief": {
+        "zones": [
+          "domestic",
+          "zone_1_eu",
+          "zone_2_europe",
+          "world"
+        ],
+        "weight_tiers": [
+          "W0020"
+        ]
+      },
+      "kompaktbrief": {
+        "zones": [
+          "domestic",
+          "zone_1_eu",
+          "zone_2_europe",
+          "world"
+        ],
+        "weight_tiers": [
+          "W0050"
+        ]
+      },
+      "grossbrief": {
+        "zones": [
+          "domestic",
+          "zone_1_eu",
+          "zone_2_europe",
+          "world"
+        ],
+        "weight_tiers": [
+          "W0500"
+        ]
+      },
+      "maxibrief": {
+        "zones": [
+          "domestic",
+          "zone_1_eu",
+          "zone_2_europe",
+          "world"
+        ],
+        "weight_tiers": [
+          "W1000"
+        ]
+      },
+      "maxibrief_international_heavy": {
+        "zones": [
+          "zone_1_eu",
+          "zone_2_europe",
+          "world"
+        ],
+        "weight_tiers": [
+          "W2000"
+        ]
+      }
+    },
+    "marks": {
+      "domestic": {
+        "profile": "domestic",
+        "services": {
+          "einschreiben": "registered",
+          "einschreiben_einwurf": "registered",
+          "einschreiben_rueckschein": "registered"
+        }
+      },
+      "zone_1_eu": {
+        "profile": "international",
+        "services": {
+          "einschreiben": "registered_international"
+        }
+      },
+      "zone_2_europe": {
+        "profile": "international",
+        "services": {
+          "einschreiben": "registered_international"
+        }
+      },
+      "world": {
+        "profile": "international",
+        "services": {
+          "einschreiben": "registered_international"
+        }
+      }
+    }
+  }
 }

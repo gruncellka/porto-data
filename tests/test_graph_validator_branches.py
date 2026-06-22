@@ -41,7 +41,7 @@ def _base_graph(**overrides):
             "layouts": {"file": "layouts.json", "depends_on": ["envelopes.json"]},
             "restrictions": {"file": "restrictions.json", "depends_on": []},
         },
-        "edges": {},
+        "edges": {"products": {}, "marks": {}},
         "services": ["einschreiben"],
     }
     graph.update(overrides)
@@ -92,7 +92,6 @@ def _default_marks():
         "file_type": "marks",
         "provider": "deutschepost",
         "default_profile": "p",
-        "zones": {"domestic": "p"},
         "profiles": [{"id": "p", "mark_type": "stamp", "label": "P"}],
     }
 
@@ -232,12 +231,18 @@ class TestGraphExecutionSemantics:
                     "file_type": "marks",
                     "provider": "deutschepost",
                     "default_profile": "p",
-                    "zones": {"domestic": "p"},
                     "profiles": [{"id": "p", "mark_type": "label", "label": "P"}],
                 },
             }
         )
-        _write_bundle(data_dir, _base_graph(services=[]), docs)
+        _write_bundle(
+            data_dir,
+            _base_graph(
+                services=[],
+                edges={"products": {}, "marks": {"domestic": {"profile": "p"}}},
+            ),
+            docs,
+        )
         v = GraphValidator(data_dir)
         v.validate_all()
         assert any("label" in e and "none" in e for e in v.results["errors"])
@@ -311,7 +316,6 @@ class TestGraphMarksAndRules:
                     "file_type": "marks",
                     "provider": "deutschepost",
                     "default_profile": "a",
-                    "zones": {"domestic": "a"},
                     "profiles": [
                         {"id": "a", "mark_type": "stamp", "label": "A"},
                         {"id": "a", "mark_type": "stamp", "label": "Dup"},
@@ -448,7 +452,10 @@ class TestGraphEdgesRefs:
     def test_edges_unknown_product_errors(self, tmp_path):
         data_dir = tmp_path / "d"
         graph = dict(_base_graph(services=[]))
-        graph["edges"] = {"ghost": {"zones": ["domestic"], "weight_tiers": ["W1"]}}
+        graph["edges"] = {
+            "products": {"ghost": {"zones": ["domestic"], "weight_tiers": ["W1"]}},
+            "marks": {},
+        }
         docs = _minimal_extras(
             {
                 "zones.json": {"file_type": "zones", "zones": [{"id": "domestic", "label": "D"}]},
@@ -467,7 +474,10 @@ class TestGraphEdgesRefs:
     def test_edges_unknown_zone_errors(self, tmp_path):
         data_dir = tmp_path / "d"
         graph = dict(_base_graph(services=[]))
-        graph["edges"] = {"p1": {"zones": ["nowhere"], "weight_tiers": ["W1"]}}
+        graph["edges"] = {
+            "products": {"p1": {"zones": ["nowhere"], "weight_tiers": ["W1"]}},
+            "marks": {},
+        }
         docs = _minimal_extras(
             {
                 "products.json": _product_letter_fixture(),
@@ -487,7 +497,10 @@ class TestGraphEdgesRefs:
     def test_edges_unknown_weight_tier_errors(self, tmp_path):
         data_dir = tmp_path / "d"
         graph = dict(_base_graph(services=[]))
-        graph["edges"] = {"p1": {"zones": ["domestic"], "weight_tiers": ["W999"]}}
+        graph["edges"] = {
+            "products": {"p1": {"zones": ["domestic"], "weight_tiers": ["W999"]}},
+            "marks": {},
+        }
         docs = _minimal_extras(
             {
                 "products.json": _product_letter_fixture(),
