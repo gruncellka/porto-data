@@ -1,6 +1,6 @@
 # Porto ID naming policy (letters & services)
 
-**See also:** [porto_id.md](porto_id.md) (live tables) · [resolution.md](resolution.md) (disambiguation) · `porto_data/schemas/porto_ids.schema.json` (enum source of truth)
+**See also:** [porto_id.md](porto_id.md) (live tables) · [resolution.md](resolution.md) (disambiguation) · [identity-map.md](identity-map.md) (full id/name diagram) · `porto_data/schemas/porto_ids.schema.json` (enum source of truth)
 
 Purpose: unify `porto_id` names across providers (letters-only scope) so that size/weight tiers and services are consistent. Provider native `id` and `native_id` stay operator-specific; **`porto_id` is the SDK normalization identifier**.
 

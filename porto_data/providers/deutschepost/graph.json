@@ -79,7 +79,7 @@
     "markets": {
       "file": "policy/markets.json",
       "depends_on": [],
-      "description": "Country-level currency, VAT, and intl quote currencies for providers.json country"
+      "description": "Country-level currency, VAT, and international quote currencies for providers.json country"
     },
     "restrictions": {
       "file": "policy/restrictions.json",

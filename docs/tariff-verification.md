@@ -32,7 +32,7 @@ There is **no automated tariff oracle** in CI. Wrong amounts that still satisfy 
 
 File-level default: `unit.currency` in each price file. Row override: optional **`currency`** on a `product_prices` or `service_prices` row when that row is quoted in another currency ([`product_prices.schema.json`](../porto_data/schemas/product_prices.schema.json)).
 
-**Market defaults:** `policy/markets.json` → `markets[providers.json country].currency`. Allowed intl row overrides: `markets[CC].international_currency` (array).
+**Market defaults:** `policy/markets.json` → `markets[providers.json country].currency`. Allowed international row overrides: `markets[CC].international_currency` (array).
 
 **Ukrposhta:** domestic rows in **UAH** (`markets.UA.currency`); international **letters** in **USD** (`international_currency: ["USD"]`); settlement in UAH at NBU rate on service date — see `markets.UA.settlement`.
 
@@ -58,9 +58,9 @@ Use **per-country or multi-zone** models when the official table is country- or 
 | Provider | Last checked (UTC) | Confidence | Notes |
 |----------|-------------------|------------|-------|
 | Deutsche Post | 2026-06-21 | verified | Letter ladder + Einschreiben surcharges vs deutschepost.de |
-| Ukrposhta | 2026-06-21 | partial | Domestic + intl **letters** verified; parcels / personal intl / extra services deferred |
+| Ukrposhta | 2026-06-21 | partial | Domestic + international **letters** verified; parcels / personal international / extra services deferred |
 | La Poste | 2026-06-21 | verified | Lettre verte / suivie / Services Plus / recommandée vs laposte.fr 2026 tables |
-| Swiss Post | 2026-06-21 | verified | A/B domestic + intl documents + thickness surcharge vs post.ch |
+| Swiss Post | 2026-06-21 | verified | A/B domestic + international documents + thickness surcharge vs post.ch |
 
 ---
 
@@ -69,7 +69,7 @@ Use **per-country or multi-zone** models when the official table is country- or 
 - **VAT vs net:** some sites show VAT-inclusive (Ukrposhta domestic page) vs VAT-exempt (Deutsche Post letters). Match the column the carrier uses for the product you model.
 - **Product vs surcharge:** registered / Einschreiben / AR are often **services** (`service_prices.json`), not separate products — unless the carrier sells them as standalone products (La Poste recommandée).
 - **Weight tier ids:** JSON uses `W0020`, `W0050`, … — must match `graph.json` edges and official weight breaks.
-- **Effective dating:** bundle baseline `effective_from: 2026-01-01` unless a row has a known later tariff start (e.g. Ukrposhta intl letters `2026-04-01`).
+- **Effective dating:** bundle baseline `effective_from: 2026-01-01` unless a row has a known later tariff start (e.g. Ukrposhta international letters `2026-04-01`).
 
 ---
 

@@ -11,7 +11,7 @@ Reference for **reconciling JSON with official letter tariffs** (not a legal tar
 | Field | Value |
 |-------|--------|
 | Last checked (UTC) | 2026-06-21 |
-| Confidence | **verified** — A/B domestic standard + large letters, intl document ladder, thickness surcharge |
+| Confidence | **verified** — A/B domestic standard + large letters, international document ladder, thickness surcharge |
 | Baseline | A/B letter prices **unchanged 2026-01-01** per Swiss Post press release; JSON `effective_from`: **2026-01-01** |
 
 ---

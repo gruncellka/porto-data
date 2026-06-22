@@ -48,3 +48,16 @@ Provider `graph.json` → `dependencies` may reference:
 - **`native_id`** — carrier API code when known.
 
 See [CONTRIBUTING.md](../CONTRIBUTING.md) and [id.md](id.md).
+
+## Zone field names
+
+| Entity | Field | Role |
+|--------|-------|------|
+| **products** | `zones[]` | Destination lanes where the product row applies |
+| **services** | `supported_zones[]` | Lanes where the service is orderable via API (may be narrower than product) |
+
+Products were renamed from `supported_zones` → `zones` in the multi-provider layout; services keep `supported_zones` (schema-stable).
+
+## Mark profiles on graph edges
+
+Set **`graph.edges[product_id].mark_profile_by_zone`** explicitly for every zone on that edge when the lane→profile mapping is known (do not rely only on `marks.default_profile`). Registered footprint overrides stay on **`services[].mark_profile`** / **`mark_profile_by_zone`**. See [mark-profiles.md](mark-profiles.md).

@@ -79,7 +79,7 @@
     "markets": {
       "file": "policy/markets.json",
       "depends_on": [],
-      "description": "Country-level currency, VAT, and intl quote currencies for providers.json country"
+      "description": "Country-level currency, VAT, and international quote currencies for providers.json country"
     },
     "restrictions": {
       "file": "policy/restrictions.json",
@@ -119,7 +119,11 @@
         "W0250",
         "W1000",
         "W2000"
-      ]
+      ],
+      "mark_profile_by_zone": {
+        "domestic": "domestic",
+        "world": "domestic"
+      }
     },
     "dokument": {
       "zones": [
@@ -127,7 +131,10 @@
       ],
       "weight_tiers": [
         "W1000"
-      ]
+      ],
+      "mark_profile_by_zone": {
+        "domestic": "domestic"
+      }
     }
   },
   "services": [

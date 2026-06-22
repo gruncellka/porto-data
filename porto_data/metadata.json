@@ -5,7 +5,7 @@
     "version": "0.3.1",
     "description": "Multi-provider postal JSON: operator catalogs, pricing, shared policy (markets, restrictions), and schemas"
   },
-  "generated_at": "2026-06-22T16:35:25.377261Z",
+  "generated_at": "2026-06-22T18:48:21.801625Z",
   "policy": {
     "jurisdictions": {
       "data": {
@@ -212,8 +212,8 @@
       "graph": {
         "data": {
           "path": "providers/deutschepost/graph.json",
-          "checksum": "2c3b50b5718d356ac817d4ae5dae1146d757e3dfbba117e00496a7dc7596dc22",
-          "size": 5525
+          "checksum": "df21541d349c4af0aabdb4e8cfff8fcdd6d5c5d8654029926100ed084cec1a58",
+          "size": 5534
         },
         "schema": {
           "path": "schemas/graph.schema.json",
@@ -344,8 +344,8 @@
       "graph": {
         "data": {
           "path": "providers/ukrposhta/graph.json",
-          "checksum": "b26862f3f2afae811b598f6d212bef8de38147bf10aa48dc3d9b016bd905fe2b",
-          "size": 3536
+          "checksum": "39882f740ebc9519a4bfb8af86dca4e5cbff2394c72cff107d7375fc9f0b8efb",
+          "size": 3718
         },
         "schema": {
           "path": "schemas/graph.schema.json",
@@ -359,8 +359,8 @@
       "marks": {
         "data": {
           "path": "providers/laposte/marks.json",
-          "checksum": "69f61ca8f68dfcecc3b73af3bdb23f92824af7994cb85e67e14dd645d2ff1d91",
-          "size": 1109
+          "checksum": "47c5fcc065d6eeca578f2c895128428274cc0c4c852fe888ae025a5556e7aba4",
+          "size": 1118
         },
         "schema": {
           "path": "schemas/marks.schema.json",
@@ -476,8 +476,8 @@
       "graph": {
         "data": {
           "path": "providers/laposte/graph.json",
-          "checksum": "2439ac98d7b36a118bd1c3de780e2c0a9922a5ddedc1fa391a91fc296afbb261",
-          "size": 6063
+          "checksum": "9eeb23c2c5ce3ca04965c2ef1b010a5717c833461df758c61b8af2ecfae8db7d",
+          "size": 6432
         },
         "schema": {
           "path": "schemas/graph.schema.json",
@@ -621,8 +621,8 @@
       "graph": {
         "data": {
           "path": "providers/swisspost/graph.json",
-          "checksum": "440343eb294adc380a183fbad5b0cc3eee0321d9bfcff18e1e60c53017a2c05a",
-          "size": 5368
+          "checksum": "ca9d475f19e2aba4bf5c52f23114086d6704ac526ddf0283be442f2b6723b303",
+          "size": 5665
         },
         "schema": {
           "path": "schemas/graph.schema.json",

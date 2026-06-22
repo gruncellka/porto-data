@@ -98,7 +98,7 @@ Then lookup `marks.profiles[id].size` and `mark_type`.
 | deutschepost | 36×16 | 60×16 | 57×21 | 57×30 |
 | laposte | 64×34 | 64×34 | — | — |
 | swisspost | 40×40 | 40×40 | — | — |
-| ukrposhta | 148×210 (label) | — | — | — |
+| ukrposhta | 148×210 (label) | same as domestic (`world` → `domestic` profile) | — | — |
 
 DE from Internetmarke PDF samples. La Poste from Avery L7159 (63.5×33.9 mm, stored as integers). Swiss nominal until WebStamp samples verified.
 
@@ -114,7 +114,7 @@ interface ResolvedMarkLayout {
   widthMm: number
   heightMm: number
   mimeTypes: string[]          // from marks.profiles[].mime_type
-  postMark?: { x: number; y: number; width: number; height: number }  // from layouts.json
+  postMark?: { x: number; y: number }  // envelope anchor from formats/layouts.json (mm)
 }
 
 interface ResolvedData {
@@ -131,8 +131,10 @@ class ResolvedMarkLayout(BaseModel):
     width_mm: int
     height_mm: int
     mime_types: list[str]
-    post_mark: dict[str, int] | None = None
+    post_mark: dict[str, int] | None = None  # {x, y} anchor only; size from width_mm/height_mm
 ```
+
+Graphic footprint size (`width_mm` / `height_mm`) comes from **`marks.profiles[].size`**. Envelope placement uses **`formats/layouts.json`** `post_mark` anchor (`x`, `y` only per `layouts.schema.json`) for the selected `envelope_id` and jurisdiction.
 
 **One resolver call → everything needed to place the graphic.** Adapters still use native `product_id` / API codes for purchase; layout uses `markLayout` only.
 

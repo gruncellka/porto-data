@@ -21,6 +21,8 @@ SDK and app code should pass **`porto_id`** (canonical bucket). The bundle resol
 5. If multiple products remain, apply provider-specific disambiguation below.
 6. Price lookup uses native `product_id` × `zone` × `weight_tier` in `prices/products.json`.
 
+When step 4 still leaves multiple products, the SDK or app must apply the provider-specific rules below (or an explicit user/operator hint). The bundle does not encode speed class or registered tier as separate `porto_id` values today.
+
 Cross-file refs (graph, prices, rules) always use **native `id`**, never `porto_id`. See [CONTRIBUTING.md](../CONTRIBUTING.md).
 
 ## Known ambiguous cases
@@ -73,9 +75,9 @@ Resolve the provider’s market from `providers.json` → `country` → `policy/
 |-------|------------|
 | **Currency** | `row.currency` → `prices/*.json` `unit.currency` → `markets[CC].currency` |
 | **VAT** | `markets[CC].vat` (`rate`, `exempt`, `domestic.inclusive`, `international.inclusive`) |
-| **Intl row currency** | Must be listed in `markets[CC].international_currency` when it differs from file default |
+| **International row currency** | Must be listed in `markets[CC].international_currency` when it differs from file default |
 
-`graph.json` `unit.currency` mirrors `markets[CC].currency` (validated in CI). Row-level `currency` is only for intl tariff rows (e.g. Ukrposhta `world` zone in USD while file default is UAH).
+`graph.json` `unit.currency` mirrors `markets[CC].currency` (validated in CI). Row-level `currency` is only for international tariff rows (e.g. Ukrposhta `world` zone in USD while file default is UAH).
 
 ## See also
 

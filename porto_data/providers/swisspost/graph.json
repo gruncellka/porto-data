@@ -79,7 +79,7 @@
     "markets": {
       "file": "policy/markets.json",
       "depends_on": [],
-      "description": "Country-level currency, VAT, and intl quote currencies for providers.json country"
+      "description": "Country-level currency, VAT, and international quote currencies for providers.json country"
     },
     "restrictions": {
       "file": "policy/restrictions.json",
@@ -128,7 +128,10 @@
         "W0020",
         "W0050",
         "W0100"
-      ]
+      ],
+      "mark_profile_by_zone": {
+        "domestic": "domestic"
+      }
     },
     "a_post_grossbrief": {
       "zones": [
@@ -138,7 +141,10 @@
         "W0250",
         "W0500",
         "W1000"
-      ]
+      ],
+      "mark_profile_by_zone": {
+        "domestic": "domestic"
+      }
     },
     "b_post_standardbrief": {
       "zones": [
@@ -148,7 +154,10 @@
         "W0020",
         "W0050",
         "W0100"
-      ]
+      ],
+      "mark_profile_by_zone": {
+        "domestic": "domestic"
+      }
     },
     "b_post_grossbrief": {
       "zones": [
@@ -158,7 +167,10 @@
         "W0250",
         "W0500",
         "W1000"
-      ]
+      ],
+      "mark_profile_by_zone": {
+        "domestic": "domestic"
+      }
     },
     "international_standardbrief": {
       "zones": [

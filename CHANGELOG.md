@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Changed
+
+- **Graph:** Explicit `mark_profile_by_zone` on La Poste and Swiss Post domestic edges (parity with Deutsche Post).
+- **Docs:** `mark-profiles.md` SDK target aligns `postMark` with `layouts.schema.json` (anchor `x`/`y` only); `provider-template.md` documents `zones` vs `supported_zones`; naming cleanup (`international` not `intl` in prose).
+
 ### Breaking
 
 - **Multi-provider layout:** Shared data under **`porto_data/policy/`** (restrictions, jurisdictions, **markets**) and **`porto_data/formats/`** (envelopes, layouts). Per-operator catalogs under **`porto_data/providers/<id>/`**. Root **`providers.json`** is the domain registry. Legacy flat **`porto_data/data/`** and **`data_links.json`** are removed.

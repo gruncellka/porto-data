@@ -39,7 +39,7 @@ Reference for **reconciling JSON with official letter tariffs** (not a legal tar
 
 - **Territories footnote:** métropole, Monaco, Andorre, secteurs militaires, OM — possible **complément aérien** OM above 100 g; encode per catalogue, don’t invent.
 - **International zones:** separate prices per weight; map destination → zone via **`zones.json`** + catalogue intégral if buckets are coarse.
-- **Recommandée as products:** R1–R3 / intl R1–R2 are **products** with own price rows, not only services.
+- **Recommandée as products:** R1–R3 / international R1–R2 are **products** with own price rows, not only services.
 - **MTEL discount:** online stamp **3 ct** below counter price — bundle uses **official table** (counter) amounts unless MTEL product is added.
 
 ---
@@ -47,7 +47,7 @@ Reference for **reconciling JSON with official letter tariffs** (not a legal tar
 ## Pricing & geography rules (how we model)
 
 - **Weight-first:** products and **`graph.json` edges** must match official **weight steps**.
-- **International:** `zone_1_eu`, `zone_2_europe`, `world` — replicate intl column where catalogue uses one intl bucket per product.
+- **International:** `zone_1_eu`, `zone_2_europe`, `world` — replicate international column where catalogue uses one international bucket per product.
 
 ## Service support (proof/signature/AR)
 

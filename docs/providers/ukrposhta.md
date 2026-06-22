@@ -12,7 +12,7 @@ Reference for **reconciling JSON with official letter/document tariffs** (not a 
 |-------|--------|
 | Last checked (UTC) | 2026-06-21 |
 | Confidence | **partial** — domestic + international **letters** aligned; several services and parcel flows deferred |
-| Baseline | `effective_from` **2026-01-01** (domestic); intl letter rows **2026-04-01** |
+| Baseline | `effective_from` **2026-01-01** (domestic); international letter rows **2026-04-01** |
 
 ---
 
@@ -39,8 +39,8 @@ Reference for **reconciling JSON with official letter/document tariffs** (not a 
 
 - **Two currencies:** domestic **UAH** (`markets.UA.currency`, VAT inclusive); international **letters** quoted in **USD** (`markets.UA.international_currency`) without VAT on tariff table — paid in **UAH** at [NBU rate](https://www.ukrposhta.ua/en/faq-oplata-posluhi) on service date (`markets.UA.settlement`). Use row-level `currency: "USD"` for international rows; do not convert to UAH in JSON.
 - **Letters vs parcels:** [taryfy](https://www.ukrposhta.ua/ua/taryfy) **parcel** tables are **per-country** (USD). **Letter** table is a **flat** ladder (easy to miss — bottom of page). Do not use parcel matrices for letter products.
-- **VAT footnotes:** domestic site shows **грн з ПДВ**; intl letter table **без ПДВ**. Registered intl has separate VAT rules on domestic portion (80 UAH portion cited on site for e-label flows).
-- **Personal delivery (intl):** official letter table has a second column (“з особистим врученням”) — **not modeled** yet (e.g. ≤50 g **6 USD** vs **2.5 USD** standard).
+- **VAT footnotes:** domestic site shows **грн з ПДВ**; international letter table **без ПДВ**. Registered international has separate VAT rules on domestic portion (80 UAH portion cited on site for e-label flows).
+- **Personal delivery (international):** official letter table has a second column (“з особистим врученням”) — **not modeled** yet (e.g. ≤50 g **6 USD** vs **2.5 USD** standard).
 - **Priority vs non-priority:** merged to single priority tariff from 2026 — no split in data.
 
 ---
@@ -49,7 +49,7 @@ Reference for **reconciling JSON with official letter/document tariffs** (not a 
 
 - **Domestic:** `lyst_standartnyi` (porto_id `small`) — ≤50 g and 50 g–2 kg steps; `dokument` (porto_id `large`) — flat document product to 1 kg.
 - **International letters:** single product `lyst_standartnyi` + zone **`world`** + USD amounts; flat table applies to all destinations in `zones.json` `world.country_codes`.
-- **Services:** AR paper/electronic and intl registered are **surcharges** in `prices/services.json`.
+- **Services:** AR paper/electronic and international registered are **surcharges** in `prices/services.json`.
 
 ---
 
@@ -58,7 +58,7 @@ Reference for **reconciling JSON with official letter/document tariffs** (not a 
 | Date (UTC) | Source | Use |
 |------------|--------|-----|
 | 2026-06-21 | [Тарифи листи та документи](https://www.ukrposhta.ua/uk/taryfy-ukrposhta-dokumenty) | Domestic letters, AR, Dokument (UAH with VAT) |
-| 2026-06-21 | [Тарифи / taryfy](https://www.ukrposhta.ua/ua/taryfy) → **Міжнародні листи та листівки, USD** | Flat intl letter ladder |
+| 2026-06-21 | [Тарифи / taryfy](https://www.ukrposhta.ua/ua/taryfy) → **Міжнародні листи та листівки, USD** | Flat international letter ladder |
 | 2026-06-21 | [Тарифи споживача 2026 (PDF)](https://www.ukrposhta.ua/doc/kutochok-spozhyvacha/taryfy_ukrposhty_na_2026_rik.pdf) | Consumer corner — cross-check domestic |
 | 2026-06-21 | [Міжнародні тарифи 01.01.2026 (PDF)](https://www.ukrposhta.ua/doc/tariffs/taryfy_mzhd_01012026.pdf) | Registered surcharge **3,50 USD**, parcel zones |
 | — | [dev.ukrposhta.ua documentation](https://dev.ukrposhta.ua/documentation) | API package types LETTER / PARCEL (integration) |
@@ -100,7 +100,7 @@ Reference for **reconciling JSON with official letter/document tariffs** (not a 
 
 ## In-repo alignment
 
-**`product_prices`** (`unit.currency`: **UAH**; intl rows override **USD**)
+**`product_prices`** (`unit.currency`: **UAH**; international rows override **USD**)
 
 | `product_id` | Zone | Tier | Amount | Currency | Notes |
 |--------------|------|------|-------:|----------|-------|
@@ -120,7 +120,7 @@ Reference for **reconciling JSON with official letter/document tariffs** (not a 
 | `return_receipt_electronic` | 2400 | UAH |
 | `recommended_international` | 350 | USD |
 
-**Graph:** `graph.json` `unit.currency` = **UAH** (default); intl price rows carry **`currency: "USD"`**.
+**Graph:** `graph.json` `unit.currency` = **UAH** (default); international price rows carry **`currency: "USD"`**.
 
 ---
 
@@ -140,5 +140,5 @@ Reference for **reconciling JSON with official letter/document tariffs** (not a 
 
 1. Domestic: [taryfy-ukrposhta-dokumenty](https://www.ukrposhta.ua/uk/taryfy-ukrposhta-dokumenty) → `prices/products.json` + `prices/services.json` (UAH).
 2. Intl letters: [taryfy](https://www.ukrposhta.ua/ua/taryfy) letter table → `world` rows (USD).
-3. Registered intl: PDF / taryfy footnotes → `recommended_international`.
+3. Registered international: PDF / taryfy footnotes → `recommended_international`.
 4. `make validate` → `make metadata`.
