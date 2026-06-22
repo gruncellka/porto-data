@@ -287,6 +287,7 @@ class GraphValidator:
             graph=self.graph,
             products=self.products,
             marks=self.marks,
+            services=self.services,
         )
 
     def validate_provider_rules(self) -> None:

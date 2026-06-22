@@ -44,7 +44,6 @@
       ],
       "effective_from": "2026-01-01",
       "effective_to": null,
-      "mark_profile": "mtel_international",
       "mark_type": "label",
       "tracking_mode": "included"
     },
@@ -142,7 +141,6 @@
       ],
       "effective_from": "2026-01-01",
       "effective_to": null,
-      "mark_profile": "mtel_international",
       "mark_type": "label",
       "tracking_mode": "included"
     },
@@ -164,7 +162,6 @@
       ],
       "effective_from": "2026-01-01",
       "effective_to": null,
-      "mark_profile": "mtel_international",
       "mark_type": "label",
       "tracking_mode": "included"
     }

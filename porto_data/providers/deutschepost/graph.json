@@ -118,7 +118,13 @@
       ],
       "weight_tiers": [
         "W0020"
-      ]
+      ],
+      "mark_profile_by_zone": {
+        "domestic": "domestic",
+        "zone_1_eu": "international",
+        "zone_2_europe": "international",
+        "world": "international"
+      }
     },
     "kompaktbrief": {
       "zones": [
@@ -129,7 +135,13 @@
       ],
       "weight_tiers": [
         "W0050"
-      ]
+      ],
+      "mark_profile_by_zone": {
+        "domestic": "domestic",
+        "zone_1_eu": "international",
+        "zone_2_europe": "international",
+        "world": "international"
+      }
     },
     "grossbrief": {
       "zones": [
@@ -140,7 +152,13 @@
       ],
       "weight_tiers": [
         "W0500"
-      ]
+      ],
+      "mark_profile_by_zone": {
+        "domestic": "domestic",
+        "zone_1_eu": "international",
+        "zone_2_europe": "international",
+        "world": "international"
+      }
     },
     "maxibrief": {
       "zones": [
@@ -151,7 +169,13 @@
       ],
       "weight_tiers": [
         "W1000"
-      ]
+      ],
+      "mark_profile_by_zone": {
+        "domestic": "domestic",
+        "zone_1_eu": "international",
+        "zone_2_europe": "international",
+        "world": "international"
+      }
     },
     "maxibrief_international_heavy": {
       "zones": [
@@ -161,7 +185,12 @@
       ],
       "weight_tiers": [
         "W2000"
-      ]
+      ],
+      "mark_profile_by_zone": {
+        "zone_1_eu": "international",
+        "zone_2_europe": "international",
+        "world": "international"
+      }
     }
   },
   "services": [

@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/marks.schema.json",
   "title": "Provider mark profiles",
-  "description": "Per-provider catalog of mark geometry and payload type for SDK layout. mime_type is an array of IANA media types the carrier may return for that profile (e.g. PNG and/or PDF). Physical printing is the application\u2019s concern\u2014not modeled here. Profile size (width \u00d7 height) is the nominal footprint in file unit.dimension (mm). Verify against live carrier output. Products may set mark_profile to pick a non-default profile (e.g. international). When omitted, marks.default_profile applies.",
+  "description": "Per-provider catalog of mark geometry and payload type for SDK layout. mime_type is an array of IANA media types the carrier may return for that profile (e.g. PNG and/or PDF). Physical printing is the application\u2019s concern\u2014not modeled here. Profile size (width \u00d7 height) is the nominal footprint in file unit.dimension (mm). Verify against live carrier output. Resolution order: graph.edges[product_id].mark_profile_by_zone[zone], then services[].mark_profile / mark_profile_by_zone, then products.mark_profile, then marks.default_profile.",
   "type": "object",
   "required": [
     "file_type",

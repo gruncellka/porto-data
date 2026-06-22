@@ -125,6 +125,18 @@
                 "pattern": "^W[0-9]+$"
               },
               "description": "Available weight tiers for this product"
+            },
+            "mark_profile_by_zone": {
+              "type": "object",
+              "minProperties": 1,
+              "patternProperties": {
+                "^[a-z0-9_]+$": {
+                  "type": "string",
+                  "pattern": "^[a-z0-9_]+$"
+                }
+              },
+              "additionalProperties": false,
+              "description": "Optional zone \u2192 marks.json profile id when footprint differs by destination lane. Keys must be a subset of zones. SDK falls back to products.mark_profile then marks.default_profile."
             }
           },
           "additionalProperties": false

@@ -19,9 +19,11 @@ All notable changes to this project will be documented in this file.
 - **`policy/markets.json`:** Country-level **currency**, **VAT**, and **`international_currency`**. **`providers.json`** no longer carries `vat`.
 - **Currency resolution:** SDK default is **`markets[country].currency`** (`row.currency` → file `unit.currency` → market).
 - **Field names (shorter keys):** `available_services` → **`services`** (graph); `compliance_frameworks` → **`frameworks`** (limits); `integration_supported` → **`integrations`** (services); `provider_context`/`national_policy` → **`context`**/**`national`**; `intl_currencies` → **`international_currency`**; `exempt_letters` → **`exempt`** (under `vat`); top-level `vat.inclusive` / `intl_excl` → **`vat.domestic.inclusive`** / **`vat.international.inclusive`**; Porto-assigned native ids: **`recommended_international`** (not `_intl`); `metric_band_attach_service` → **`band_attach`** (rules); `severely_restricted` → **`severe`**; `disputed_territory` → **`disputed`**; `legal_reference` → **`reference`** (limits); `effective_partial` → **`partial`**; framework types `operational_*` → **`infrastructure`**/**`political`**/**`conflict`**.
+- **Mark profile ids:** Provider-specific stamp ids (`internetmarke_*`, `mtel_*`, `webstamp_*`, `label_default`) replaced by shared layout ids (`domestic`, `international`, `registered`, `registered_international`) — not the same namespace as `porto_id: registered`. See [mark-profiles.md](docs/mark-profiles.md).
 
 ### Added
 
+- **Mark profiles:** Measured sizes in `marks.json`; zone/service resolution via `graph.edges[].mark_profile_by_zone` and `services[].mark_profile` / `mark_profile_by_zone`. SDK target: single `markLayout` on `ResolvedData` (see [mark-profiles.md](docs/mark-profiles.md) § SDK contract).
 - **Operators:** Full letter catalogs for Deutsche Post, Ukrposhta, La Poste, and Swiss Post under **`providers/<id>/`**.
 - **Policy:** **`policy/jurisdictions.json`**, **`policy/restrictions.json`**, **`policy/markets.json`** (DE, FR, CH, UA fiscal defaults).
 - **Swiss Post:** Optional **`providers/swisspost/rules.json`** (e.g. thickness surcharge) where modeled.

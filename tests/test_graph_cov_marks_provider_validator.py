@@ -120,6 +120,117 @@ class TestMarksProfilesCoverage:
         run_validate_marks_profiles(r, graph={}, products=products, marks=marks)
         assert any("default_profile" in e for e in r["errors"])
 
+    def test_graph_mark_profile_by_zone_unknown_zone(self) -> None:
+        r = _empty_results()
+        marks = {
+            "file_type": "marks",
+            "profiles": [{"id": "intl", "mark_type": "stamp"}],
+            "default_profile": "intl",
+        }
+        graph = {
+            "edges": {
+                "p1": {
+                    "zones": ["domestic"],
+                    "mark_profile_by_zone": {"world": "intl"},
+                }
+            }
+        }
+        products = {"products": [{"id": "p1", "mark_type": "stamp"}]}
+        run_validate_marks_profiles(r, graph=graph, products=products, marks=marks)
+        assert any("not in allowed zones" in e for e in r["errors"])
+
+    def test_service_mark_profile_ref(self) -> None:
+        r = _empty_results()
+        marks = {
+            "file_type": "marks",
+            "profiles": [{"id": "reg", "mark_type": "stamp"}],
+            "default_profile": "reg",
+        }
+        services = {
+            "services": [
+                {
+                    "id": "svc",
+                    "supported_zones": ["domestic"],
+                    "mark_profile": "missing",
+                }
+            ]
+        }
+        run_validate_marks_profiles(
+            r, graph={}, products={"products": []}, marks=marks, services=services
+        )
+        assert any("services['svc']" in e and "missing" in e for e in r["errors"])
+
+    def test_empty_mark_profile_by_zone_object(self) -> None:
+        r = _empty_results()
+        marks = {
+            "file_type": "marks",
+            "profiles": [{"id": "a", "mark_type": "stamp"}],
+            "default_profile": "a",
+        }
+        graph = {
+            "edges": {
+                "p1": {
+                    "zones": ["domestic"],
+                    "mark_profile_by_zone": {},
+                }
+            }
+        }
+        products = {"products": [{"id": "p1", "mark_type": "stamp"}]}
+        run_validate_marks_profiles(r, graph=graph, products=products, marks=marks)
+        assert any("non-empty object" in e for e in r["errors"])
+
+    def test_mark_profile_by_zone_bad_profile_value(self) -> None:
+        r = _empty_results()
+        marks = {
+            "file_type": "marks",
+            "profiles": [{"id": "a", "mark_type": "stamp"}],
+            "default_profile": "a",
+        }
+        graph = {
+            "edges": {
+                "p1": {
+                    "zones": ["domestic"],
+                    "mark_profile_by_zone": {"domestic": ""},
+                }
+            }
+        }
+        products = {"products": [{"id": "p1", "mark_type": "stamp"}]}
+        run_validate_marks_profiles(r, graph=graph, products=products, marks=marks)
+        assert any("non-empty profile id" in e for e in r["errors"])
+
+    def test_service_mark_profile_by_zone_without_supported_zones_warns(self) -> None:
+        r = _empty_results()
+        marks = {
+            "file_type": "marks",
+            "profiles": [{"id": "reg", "mark_type": "stamp"}],
+            "default_profile": "reg",
+        }
+        services = {
+            "services": [
+                {
+                    "id": "svc",
+                    "mark_profile_by_zone": {"domestic": "reg"},
+                },
+                "not-a-dict",
+            ]
+        }
+        run_validate_marks_profiles(
+            r, graph={}, products={"products": []}, marks=marks, services=services
+        )
+        assert any("supported_zones" in w for w in r["warnings"])
+
+    def test_graph_edge_not_dict_skipped(self) -> None:
+        r = _empty_results()
+        marks = {
+            "file_type": "marks",
+            "profiles": [{"id": "a", "mark_type": "stamp"}],
+            "default_profile": "a",
+        }
+        graph = {"edges": {"p1": "bad"}}
+        products = {"products": [{"id": "p1", "mark_type": "stamp"}]}
+        run_validate_marks_profiles(r, graph=graph, products=products, marks=marks)
+        assert not any("graph.edges" in e for e in r["errors"])
+
 
 class TestProviderRulesCoverage:
     def test_doc_none_returns(self) -> None:

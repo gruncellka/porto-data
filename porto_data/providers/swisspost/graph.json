@@ -169,7 +169,11 @@
         "W0020",
         "W0050",
         "W0100"
-      ]
+      ],
+      "mark_profile_by_zone": {
+        "zone_1_eu": "international",
+        "world": "international"
+      }
     },
     "international_grossbrief": {
       "zones": [
@@ -179,7 +183,11 @@
       "weight_tiers": [
         "W0250",
         "W0500"
-      ]
+      ],
+      "mark_profile_by_zone": {
+        "zone_1_eu": "international",
+        "world": "international"
+      }
     },
     "international_maxibrief": {
       "zones": [
@@ -190,7 +198,11 @@
         "W0500",
         "W1000",
         "W2000"
-      ]
+      ],
+      "mark_profile_by_zone": {
+        "zone_1_eu": "international",
+        "world": "international"
+      }
     }
   },
   "services": [

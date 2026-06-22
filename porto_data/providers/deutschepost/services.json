@@ -23,7 +23,13 @@
         "zone_1_eu",
         "zone_2_europe",
         "world"
-      ]
+      ],
+      "mark_profile_by_zone": {
+        "domestic": "registered",
+        "zone_1_eu": "registered_international",
+        "zone_2_europe": "registered_international",
+        "world": "registered_international"
+      }
     },
     {
       "id": "einschreiben_einwurf",
@@ -41,7 +47,8 @@
       },
       "supported_zones": [
         "domestic"
-      ]
+      ],
+      "mark_profile": "registered"
     },
     {
       "id": "einschreiben_rueckschein",
@@ -62,7 +69,8 @@
       },
       "supported_zones": [
         "domestic"
-      ]
+      ],
+      "mark_profile": "registered"
     },
     {
       "id": "zusatzversicherung",

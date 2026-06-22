@@ -54,6 +54,17 @@ Disambiguation: prefer **zone** (domestic vs international) first, then **speed 
 
 Multiple `services[].id` rows may share one `porto_id` (e.g. two `registered` variants on Deutsche Post). SDK should select by native service id or operator-specific option once the user picks a variant.
 
+## Mark profile resolution
+
+After native `product_id` is resolved, pick the franking footprint from `marks.json`:
+
+1. `graph.edges[product_id].mark_profile_by_zone[zone]` when present
+2. Else selected service `mark_profile_by_zone[zone]` or `mark_profile` (registered overrides lane)
+3. Else `products.mark_profile`
+4. Else `marks.default_profile`
+
+Profile `size` (mm) is the nominal graphic footprint; envelope placement uses `formats/layouts.json` `post_mark`. See [mark-profiles.md](mark-profiles.md).
+
 ## Currency and VAT
 
 Resolve the provider’s market from `providers.json` → `country` → `policy/markets.json` → `markets[CC]`.
