@@ -8,7 +8,7 @@ Purpose: unify `porto_id` names across providers (letters-only scope) so that si
 
 - `small` — smallest letter/postcard-sized (e.g., DP Standardbrief, La Poste Lettre verte, Swiss A-Post Standardbrief)
 - `medium` — mid-step (e.g., DP Kompaktbrief)
-- `large` — larger/C4 (~500 g range)
+- `large` — larger/C4 (~500 g range); on Ukrposhta, **only** `dokument` (domestic flat document letter, ≤1 kg) — not used for international rows
 - `extra_large` — up to 1–2 kg letters (maxibrief-like)
 - `postcard` — only when explicitly in scope; otherwise fold into `small`
 - `registered` — on **product** rows when the operator sells distinct registered-letter SKUs (e.g. La Poste recommandée R1/R2/R3)
@@ -27,6 +27,15 @@ Purpose: unify `porto_id` names across providers (letters-only scope) so that si
 
 - `tracking_number`, `proof_of_mailing`, `recipient_signature`, `return_receipt`, `proof_of_delivery`
 - `thickness_surcharge` — Swiss Post thickness capability on the feature row; **`thickness`** on the service row
+
+## Provider notes (Ukrposhta — letters only)
+
+| `porto_id` | Native product | Zones | Role |
+|------------|----------------|-------|------|
+| `small` | `lyst_standartnyi` | `domestic`, `world` | Standard letter; all international letter weight tiers |
+| `large` | `dokument` | `domestic` only | Ukrposhta “Документ” flat domestic document letter |
+
+No `medium`, `extra_large`, or `registered` **product** rows for Ukrposhta. International registered is a **service** (`recommended_international` → `porto_id: registered`).
 
 ## General rules
 

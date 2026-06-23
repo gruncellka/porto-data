@@ -153,7 +153,7 @@ adapter purchase          →    native_id: 10001 + API payload
 | `deutschepost` | DE | stamp | 4 (domestic … registered_international) |
 | `laposte` | FR | label | 2 (domestic, international) |
 | `swisspost` | CH | stamp | 2 |
-| `ukrposhta` | UA | label | 1 (`domestic`; `world` zone maps to same profile via `graph.edges.marks`) |
+| `ukrposhta` | UA | label | 1 (`domestic`; `world` zone maps to same profile via `graph.edges.marks`) — **letters only**; products `small` + domestic `large` (`dokument`) |
 
 Folder rule: **`providers.json` key = `providers/<key>/` directory = SDK `provider` string.**
 

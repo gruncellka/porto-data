@@ -33,9 +33,14 @@ Cross-file refs (graph, prices, rules) always use **native `id`**, never `porto_
 
 Disambiguation: **zone** and **weight_tier** (e.g. W2000 only on international heavy).
 
-### Ukrposhta
+### Ukrposhta — `small` vs `large` (letters only)
 
-`lyst_standartnyi` → `porto_id: small`; `dokument` → `porto_id: large`. Currently distinct at the `porto_id` level.
+| `porto_id` | `product.id` | Zones | Disambiguation |
+|------------|--------------|-------|----------------|
+| `small` | `lyst_standartnyi` | `domestic`, `world` | Default letter; all international letter postage |
+| `large` | `dokument` | `domestic` only | Flat domestic “Документ” letter (≤1 kg); never international |
+
+If `porto_id: large` is requested for a non-domestic zone, resolution fails — use `small`. Parcels and non-letter Ukrposhta SKUs are out of bundle scope.
 
 ### La Poste — registered letter tiers
 

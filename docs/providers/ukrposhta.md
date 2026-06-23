@@ -1,8 +1,22 @@
 # Ukrposhta — `porto_data/providers/ukrposhta/`
 
-Reference for **reconciling JSON with official letter/document tariffs** (not a legal tariff publication). Verify on [ukrposhta.ua](https://www.ukrposhta.ua) and current PDF tariffs before production changes.
+Reference for **reconciling JSON with official letter tariffs** (not a legal tariff publication). Verify on [ukrposhta.ua](https://www.ukrposhta.ua) and current PDF tariffs before production changes.
 
-**Related:** [deutschepost.md](deutschepost.md) · [laposte.md](laposte.md) · [swisspost.md](swisspost.md) · [tariff-verification.md](../tariff-verification.md)
+**Related:** [deutschepost.md](deutschepost.md) · [laposte.md](laposte.md) · [swisspost.md](swisspost.md) · [tariff-verification.md](../tariff-verification.md) · [porto_id.md](../porto_id.md)
+
+---
+
+## Bundle scope (letters only)
+
+This catalog models **letters only** — no parcels, postcards, personal-delivery letter columns, inventory-description variants, or EMS/SMALL_BAG flows.
+
+| Layer | In bundle |
+|-------|-----------|
+| Products | `lyst_standartnyi` (`porto_id` **`small`**) — domestic + international; `dokument` (`porto_id` **`large`**) — domestic flat document letter only |
+| Services | Return receipt (paper/electronic); international registered surcharge |
+| Zones | `domestic`, flat `world` (international letters) |
+
+**`porto_id`:** SDK input uses `small` or `large` only for Ukrposhta products. `large` is **only** `dokument` (domestic); international letter postage is always `small` on `lyst_standartnyi`. See [resolution.md](../resolution.md) § Ukrposhta.
 
 ---
 
@@ -11,7 +25,7 @@ Reference for **reconciling JSON with official letter/document tariffs** (not a 
 | Field | Value |
 |-------|--------|
 | Last checked (UTC) | 2026-06-21 |
-| Confidence | **partial** — domestic + international **letters** aligned; several services and parcel flows deferred |
+| Confidence | **verified** — domestic + international **letters** (in-scope products and services above) |
 | Baseline | `effective_from` **2026-01-01** (domestic); international letter rows **2026-04-01** |
 
 ---
@@ -40,14 +54,14 @@ Reference for **reconciling JSON with official letter/document tariffs** (not a 
 - **Two currencies:** domestic **UAH** (`markets.UA.currency`, VAT inclusive); international **letters** quoted in **USD** (`markets.UA.international_currency`) without VAT on tariff table — paid in **UAH** at [NBU rate](https://www.ukrposhta.ua/en/faq-oplata-posluhi) on service date (`markets.UA.settlement`). Use row-level `currency: "USD"` for international rows; do not convert to UAH in JSON.
 - **Letters vs parcels:** [taryfy](https://www.ukrposhta.ua/ua/taryfy) **parcel** tables are **per-country** (USD). **Letter** table is a **flat** ladder (easy to miss — bottom of page). Do not use parcel matrices for letter products.
 - **VAT footnotes:** domestic site shows **грн з ПДВ**; international letter table **без ПДВ**. Registered international has separate VAT rules on domestic portion (80 UAH portion cited on site for e-label flows).
-- **Personal delivery (international):** official letter table has a second column (“з особистим врученням”) — **not modeled** yet (e.g. ≤50 g **6 USD** vs **2.5 USD** standard).
+- **Personal delivery (international):** official letter table has a second column (“з особистим врученням”) — **out of scope** (letters-only bundle; e.g. ≤50 g **6 USD** vs **2.5 USD** standard).
 - **Priority vs non-priority:** merged to single priority tariff from 2026 — no split in data.
 
 ---
 
 ## Pricing & geography rules (how we model)
 
-- **Domestic:** `lyst_standartnyi` (porto_id `small`) — ≤50 g and 50 g–2 kg steps; `dokument` (porto_id `large`) — flat document product to 1 kg.
+- **Domestic:** `lyst_standartnyi` (`porto_id` **`small`**) — ≤50 g and 50 g–2 kg steps; `dokument` (`porto_id` **`large`**) — flat domestic document letter to 1 kg (Ukrposhta “Документ”; not a parcel SKU).
 - **International letters:** single product `lyst_standartnyi` + zone **`world`** + USD amounts; flat table applies to all destinations in `zones.json` `world.country_codes`.
 - **Services:** AR paper/electronic and international registered are **surcharges** in `prices/services.json`.
 
@@ -60,8 +74,8 @@ Reference for **reconciling JSON with official letter/document tariffs** (not a 
 | 2026-06-21 | [Тарифи листи та документи](https://www.ukrposhta.ua/uk/taryfy-ukrposhta-dokumenty) | Domestic letters, AR, Dokument (UAH with VAT) |
 | 2026-06-21 | [Тарифи / taryfy](https://www.ukrposhta.ua/ua/taryfy) → **Міжнародні листи та листівки, USD** | Flat international letter ladder |
 | 2026-06-21 | [Тарифи споживача 2026 (PDF)](https://www.ukrposhta.ua/doc/kutochok-spozhyvacha/taryfy_ukrposhty_na_2026_rik.pdf) | Consumer corner — cross-check domestic |
-| 2026-06-21 | [Міжнародні тарифи 01.01.2026 (PDF)](https://www.ukrposhta.ua/doc/tariffs/taryfy_mzhd_01012026.pdf) | Registered surcharge **3,50 USD**, parcel zones |
-| — | [dev.ukrposhta.ua documentation](https://dev.ukrposhta.ua/documentation) | API package types LETTER / PARCEL (integration) |
+| 2026-06-21 | [Міжнародні тарифи 01.01.2026 (PDF)](https://www.ukrposhta.ua/doc/tariffs/taryfy_mzhd_01012026.pdf) | Registered surcharge **3,50 USD** (letters); parcel tables ignored |
+| — | [dev.ukrposhta.ua documentation](https://dev.ukrposhta.ua/documentation) | API `LETTER` only for this bundle (`PARCEL` out of scope) |
 
 ---
 
@@ -124,14 +138,14 @@ Reference for **reconciling JSON with official letter/document tariffs** (not a 
 
 ---
 
-## Out of scope (not in JSON yet)
+## Out of scope (letters-only bundle)
 
 - Postcards (`листівки`) as separate product
 - Domestic **personal delivery** / declared-value letter variants (48 / 96 UAH)
 - International **personal delivery** letter column (6 / 7.5 / 18 / 32 USD)
 - **Inventory description** online / branch (24 / 48 UAH)
-- **Parcels**, SMALL_BAG, EMS — per-country USD matrices on taryfy
-- Ground vs avia split, zone_1/2/3 from API appendix (letters use flat `world` instead)
+- **Parcels**, SMALL_BAG, EMS — per-country USD matrices on [taryfy](https://www.ukrposhta.ua/ua/taryfy)
+- Ground vs avia split, zone_1/2/3 from API appendix (in-scope letters use flat `world` instead)
 - FX conversion to UAH at quote time (consumer/settlement concern)
 
 ---

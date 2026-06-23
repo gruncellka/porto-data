@@ -58,7 +58,7 @@ Use **per-country or multi-zone** models when the official table is country- or 
 | Provider | Last checked (UTC) | Confidence | Notes |
 |----------|-------------------|------------|-------|
 | Deutsche Post | 2026-06-21 | verified | Letter ladder + Einschreiben surcharges vs deutschepost.de |
-| Ukrposhta | 2026-06-21 | partial | Domestic + international **letters** verified; parcels / personal international / extra services deferred |
+| Ukrposhta | 2026-06-21 | verified | **Letters only** — domestic `small`/`large` + international `small` + AR / intl registered; parcels and non-letter variants out of scope |
 | La Poste | 2026-06-21 | verified | Lettre verte / suivie / Services Plus / recommandée vs laposte.fr 2026 tables |
 | Swiss Post | 2026-06-21 | verified | A/B domestic + international documents + thickness surcharge vs post.ch |
 
