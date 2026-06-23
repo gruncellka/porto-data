@@ -101,6 +101,13 @@ class TestValidateMarketsBranches:
         out = capsys.readouterr().out
         assert "markets.DE" in out or "DE" in out
 
+    def test_market_row_not_dict(self, tmp_path, capsys):
+        _write_registry(tmp_path, countries={"deutschepost": "DE"})
+        _write_markets(tmp_path, {"DE": "not-a-dict"})
+        with patch.object(data_files, "_get_project_root", return_value=tmp_path):
+            assert validate_markets() == 1
+        assert "markets.DE: entry must be an object" in capsys.readouterr().out
+
     def test_invalid_currency_and_intl_overlap(self, tmp_path, capsys):
         _write_registry(tmp_path, countries={"deutschepost": "DE"})
         _write_markets(

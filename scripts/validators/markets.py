@@ -112,6 +112,8 @@ def validate_markets() -> int:
         row = markets.get(cc)
         if isinstance(row, dict):
             _validate_market_row(cc, row, errors)
+        else:
+            errors.append(f"markets.{cc}: entry must be an object")
 
     for err in errors:
         print(f"❌ ERROR: {err}")
