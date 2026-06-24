@@ -4,12 +4,39 @@
 
 - Review rules for Bugbot in this `porto-data` tree only: data integrity, validation correctness, release safety.
 - **Consistency** means cross-file agreement: registry ↔ mappings ↔ disk, **`policy/markets.json`** ↔ provider countries, catalog JSON ↔ **`graph.json`**, units, services ↔ prices ↔ graph, **`porto_id`** ↔ native ids.
-- **Resolution** (for SDKs/loaders) is anchored in each provider’s **`graph.json`**: **`dependencies`**, **`edges`** (product × zones × weight tiers), top-level **`services`**, plus **`porto_data/schemas/graph.schema.json`**. Price lookup uses **`dependencies`** paths and price-schema join keys (`product_id`, `zone`, `weight_tier` / `service_id`). Loaders must not assume removed layouts (`porto_data/data/`, `data_links.json`, top-level **`links`**, **`lookup_rules`**, **`global_settings`**, **`price_lookup`**, or graph key **`available_services`** — use **`services`**).
+- **Resolution** (for SDKs/loaders) is anchored in each provider’s **`graph.json`**: **`dependencies`**, **`edges`** (product × zones × weight tiers), top-level **`services`**, plus **`porto_data/schemas/graph.schema.json`**. Price lookup uses **`dependencies`** paths and price schemas join keys (`product_id`, `zone`, `weight_tier` / `service_id`). Loaders must not assume removed layouts (`porto_data/data/`, `data_links.json`, top-level **`links`**, **`lookup_rules`**, **`global_settings`**, **`price_lookup`**, or graph key **`available_services`** — use **`services`**).
 - **Provider order** in docs and prose: **`deutschepost` → `ukrposhta` → `laposte` → `swisspost`**.
 - **`limits.json`** with empty **`limits[]`** is **valid** — global restrictions live in **`policy/restrictions.json`**; overlays are optional.
 - **JSON naming:** Porto-owned schema keys use full words (`international_currency`, `vat.domestic` / `vat.international`); see `.cursorrules` § JSON naming doctrine.
-- Align with `.cursorrules` and `CONTRIBUTING.md`.
+- Align with `.cursorrules`, **`.cursor/rules/catalog-layering-doctrine.mdc`**, and `CONTRIBUTING.md`.
 - Do not flag files, workflows, or policies outside this repository.
+
+## Catalog layering philosophy
+
+porto-data ships **catalog facts** and **contracts** — not product workflow, compose layout, or SDK resolution logic. Reviewers and Bugbot should enforce **layer separation**, not only individual field names.
+
+### Principles (apply to any PR touching catalog JSON or schemas)
+
+1. **One identifier, one layer.** Native `id` wires graph/prices/rules. `porto_id` is SDK input only. `mark_profile` is layout output. `native_id` is adapter/API. Do not use the same token in two layers unless `docs/identity-map.md` documents the trap.
+
+2. **Facts vs normalization vs workflow.** Tariff rows, mm geometry, and operator SKUs are facts. `porto_id` enums normalize cross-operator input. User choices (R1/R2, A-Post vs B-Post, sender placement) are resolved in SDK/app — **do not** encode them as new catalog fields when an existing layer already owns the fact.
+
+3. **Disjoint vocabularies beat clever reuse.** If an enum value could mean two entity types (product size vs registered add-on), **split layers** — do not share the token. Product/service/feature `porto_id` disjointness is the reference pattern; apply the same instinct to geometry and marks.
+
+4. **Validators > prose.** Invariants that matter for merge should fail in `scripts/validators/` + `tests/`. Flag PRs that document a rule only in markdown without CI enforcement.
+
+5. **Generated docs must not hide drift.** Tools that rewrite docs (`docs/porto_id.md`, `metadata.json`) must fail when output differs from git — local “green” validate must not leave silent uncommitted contract drift.
+
+### Canonical anti-patterns (already shipped fixes — do not reintroduce)
+
+| Anti-pattern | Why wrong | Correct layer |
+|--------------|-----------|---------------|
+| `registered` on `products.porto_id` | Service semantics on size bucket | `small` + native id, or `services.porto_id` |
+| `address_area` / `print_area` in layouts | Compose/workflow in catalog | `window` + `post_mark` only; compose in app |
+| `porto_id` in `graph.json` / `prices/*` keys | SDK token in wiring | Native `product_id` / `service_id` |
+| `mark_profile` id treated as `porto_id` | Layout vs input collapse | Resolve via `graph.edges.marks` |
+
+See `docs/identity-map.md`, `docs/id.md`, `docs/formats.md`.
 
 ## Severity
 
@@ -201,3 +228,59 @@ If a PR lists operators out of bundle order **`deutschepost` → `ukrposhta` →
 - **Title:** `Provider order drift`
 - **Body:** `Use canonical order deutschepost → ukrposhta → laposte → swisspost in prose, tables, and JSON object keys. Enforced in mappings validation for registry/mappings/metadata.`
 - **Labels:** `maintainability`, `consistency`
+
+### 23) Product `porto_id` is size-only — never service semantics (blocking)
+
+If a PR adds or changes **`products.json`** so any product row’s **`porto_id`** is **not** one of the current **`product_porto_id`** enum values in **`porto_ids.schema.json`**, or uses tokens that belong on services/features — including but not limited to **`registered`**, **`registered_letter`**, **`registered_return_receipt`**, **`tracking`**, **`insurance`**, **`return_receipt`**, **`proof_of_mailing`**, **`proof_of_delivery`**, **`thickness`**, **`tracking_number`**, **`thickness_surcharge`**:
+
+- **Title:** `Product row uses service/feature porto_id (or invented product token)`
+- **Body:** `products.porto_id is a letter SIZE bucket only (small, medium, large, extra_large, postcard). Registered / recommandée / Einschreiben / tracking semantics belong on services.json or features.json, or are implied by native product id (e.g. La Poste lettre_recommandee_* → porto_id: small). Never put registered on a product row to mean “registered mail”. See docs/id.md and docs/resolution.md.`
+- **Labels:** `data`, `consistency`, `resolution`
+
+### 24) `product_porto_id` enum must stay disjoint from service/feature (blocking)
+
+If a PR edits **`porto_ids.schema.json`** and **`product_porto_id`** shares any enum value with **`service_porto_id`** or **`feature_porto_id`**, or reintroduces **`registered`** (or any service/feature token) into the product enum:
+
+- **Title:** `porto_id enum overlap — product vs service/feature`
+- **Body:** `product_porto_id must not overlap service_porto_id or feature_porto_id. Service/feature may share tokens with each other where capability and priced add-on align (id.md). CI enforces via scripts/validators/porto_ids.py (_enum_overlap_errors) and test_live_schema_porto_id_enums_disjoint.`
+- **Labels:** `data`, `consistency`
+
+### 25) `porto_id` catalog changes need validator + mapping doc (blocking)
+
+If a PR changes **`porto_ids.schema.json`**, any **`products.json`** / **`services.json`** / **`features.json`** `porto_id` field, or **`scripts/validators/porto_ids.py`**, but does **not** run **`porto validate --type porto_ids`** (or full **`make validate`**) so **`docs/porto_id.md`** and tests stay current:
+
+- **Title:** `porto_id change without validation / mapping doc refresh`
+- **Body:** `Run porto validate --type porto_ids (or make validate). Commit regenerated docs/porto_id.md when drift is detected. Extend tests/test_porto_ids.py when validator behavior changes.`
+- **Labels:** `quality`, `consistency`
+
+### 26) Catalog must not encode compose / workflow semantics (blocking)
+
+If a PR adds or restores layout or format fields that describe **addressing workflow**, **sender/recipient placement**, **printable regions**, or other **app compose** concerns — e.g. **`address_area`**, **`print_area`**, `margins_mm` derived from invented print zones, or product fields that duplicate UI resolution:
+
+- **Title:** `Workflow semantics leaked into catalog JSON`
+- **Body:** `porto-data owns factual geometry (layouts: window, post_mark, standard) and tariff facts. Compose and addressing belong in SDK/app. Do not reintroduce removed layout zones or invent catalog fields to shortcut resolution.`
+- **Labels:** `data`, `architecture`, `consistency`
+
+### 27) Cross-layer identifier misuse (blocking)
+
+If a PR uses **`porto_id`** (or other SDK-normalization tokens) in **`graph.json`**, **`prices/*.json`**, or **`rules.json`** keys/refs where **native `id`** is required — or conflates **`mark_profile`** ids / **zone** ids with **`porto_id`** without updating `docs/identity-map.md`:
+
+- **Title:** `Wrong identifier layer in catalog wiring`
+- **Body:** `graph, prices, rules: native product_id / service_id only. porto_id is SDK input. mark_profile and zone are separate namespaces. See docs/identity-map.md.`
+- **Labels:** `data`, `resolution`, `consistency`
+
+### 28) New schema field without clear owning layer (non-blocking)
+
+If a PR adds properties to **`porto_data/schemas/**`** or new top-level keys in provider/catalog JSON without stating (in PR description or adjacent docs) **which layer** owns the fact (fact vs normalization vs layout output vs runtime):
+
+- **Title:** `New catalog field — confirm owning layer`
+- **Body:** `Apply catalog layering philosophy (BUGBOT.md § Catalog layering philosophy). Ask: is this a carrier fact, SDK porto_id, compose concern, or runtime-only? Prefer validators over prose-only rules.`
+- **Labels:** `architecture`, `maintainability`
+
+### 29) Invariant documented but not enforced in validators (non-blocking)
+
+If a PR adds normative rules only to **`docs/*.md`** or **`.cursorrules`** for catalog behavior that **`make validate` does not check**, and the invariant is machine-checkable:
+
+- **Title:** `Catalog rule lacks validator coverage`
+- **Body:** `Encode checkable invariants in scripts/validators/ + tests/ (make test-cov). Examples: porto_id enum disjointness, layout window-only geometry, native-id refs in prices/graph.`
+- **Labels:** `quality`, `tests`

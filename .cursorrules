@@ -96,6 +96,28 @@ CI (`.github/workflows/validation.yml`) must run the same chain; include a **`va
 - Country codes: **ISO 3166-1 alpha-2** where used.
 - Jurisdiction blocs: **`EU`**, **`UN`** in restrictions; operator letter overlays in **`limits.json`**.
 
+## Catalog layering doctrine (strict)
+
+**Full rule:** `.cursor/rules/catalog-layering-doctrine.mdc` · **Review mirror:** `BUGBOT.md` § Catalog layering philosophy · **Diagram:** `docs/identity-map.md`
+
+porto-data = **facts + contracts**. SDK/app = **resolution + workflow**. Do not collapse layers to “make validate pass” or “make the doc table pretty”.
+
+| Layer | Owns | Never owns |
+| ----- | ---- | ---------- |
+| **Catalog JSON** | Native ids, tariffs, zones, weights, factual mm geometry | Compose, sender placement, SDK porto_id in graph/prices |
+| **`porto_id` enums** | Narrow per-entity normalization (product = size only) | Same token on product + service; workflow picks |
+| **`formats/layouts`** | `window`, `post_mark`, `standard` | `address_area`, `print_area`, printable workflow |
+| **`marks` / `mark_profile`** | Stamp/label footprint | Product size or service semantics |
+| **Generated docs** | Drift detection (`porto_id.md`, `metadata.json`) | Hand-edited checksums |
+
+**`porto_id` (instance of the doctrine):**
+
+- Product enum: `small` … `extra_large`, `postcard` only — **disjoint** from service/feature enums (`_enum_overlap_errors` in CI).
+- Registered-letter SKUs → size `porto_id` + native `id` (La Poste recommandée → `small`).
+- Einschreiben → `registered` on **service** row only.
+
+When adding **any** catalog field or enum: name the owning layer, add a validator if checkable, run `make validate`, refresh generated artifacts. See BUGBOT rules 23–29.
+
 ## Assistant behavior
 
 - Prefer editing **`policy/`**, **`formats/`**, or **`providers/<id>/`** JSON, not inventing legacy paths.
