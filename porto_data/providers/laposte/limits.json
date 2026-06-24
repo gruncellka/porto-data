@@ -6,12 +6,12 @@
     "country_code": "ISO 3166-1 alpha-2",
     "date": "ISO 8601"
   },
-  "provider_context": {
-    "national_policy": {
+  "context": {
+    "national": {
       "description": "Letter-format products only (no colis). Letter destination gating: policy/restrictions.json + zones.json. limits[] only for La Poste\u2013documented operational blocks on letters (citable source).",
       "notes": "Do not mirror broad conflict lists here; add a row only when it changes letter acceptance or delivery for a destination you can reference."
     }
   },
   "limits": [],
-  "compliance_frameworks": {}
+  "frameworks": {}
 }

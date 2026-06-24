@@ -44,7 +44,6 @@
       ],
       "effective_from": "2026-01-01",
       "effective_to": null,
-      "mark_profile": "mtel_international",
       "mark_type": "label",
       "tracking_mode": "included"
     },
@@ -69,7 +68,7 @@
     },
     {
       "id": "lettre_recommandee_r_un",
-      "porto_id": "registered",
+      "porto_id": "small",
       "name": "Lettre recommand\u00e9e R1",
       "envelope_ids": [
         "DL",
@@ -88,7 +87,7 @@
     },
     {
       "id": "lettre_recommandee_r_deux",
-      "porto_id": "registered",
+      "porto_id": "small",
       "name": "Lettre recommand\u00e9e R2",
       "envelope_ids": [
         "DL",
@@ -107,7 +106,7 @@
     },
     {
       "id": "lettre_recommandee_r_trois",
-      "porto_id": "registered",
+      "porto_id": "small",
       "name": "Lettre recommand\u00e9e R3",
       "envelope_ids": [
         "DL",
@@ -126,7 +125,7 @@
     },
     {
       "id": "lettre_recommandee_inter_r_un",
-      "porto_id": "registered",
+      "porto_id": "small",
       "name": "Lettre recommand\u00e9e internationale R1",
       "envelope_ids": [
         "DL",
@@ -142,13 +141,12 @@
       ],
       "effective_from": "2026-01-01",
       "effective_to": null,
-      "mark_profile": "mtel_international",
       "mark_type": "label",
       "tracking_mode": "included"
     },
     {
       "id": "lettre_recommandee_inter_r_deux",
-      "porto_id": "registered",
+      "porto_id": "small",
       "name": "Lettre recommand\u00e9e internationale R2",
       "envelope_ids": [
         "DL",
@@ -164,7 +162,6 @@
       ],
       "effective_from": "2026-01-01",
       "effective_to": null,
-      "mark_profile": "mtel_international",
       "mark_type": "label",
       "tracking_mode": "included"
     }

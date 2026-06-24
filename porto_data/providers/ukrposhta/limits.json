@@ -6,12 +6,12 @@
     "country_code": "ISO 3166-1 alpha-2",
     "date": "ISO 8601"
   },
-  "provider_context": {
-    "national_policy": {
+  "context": {
+    "national": {
       "description": "Letter-format services; domestic acceptance in UA. International acceptance follows Ukrposhta operational status.",
       "notes": "Add rows when Ukrposhta publishes destination suspensions or operational limits for letters."
     }
   },
   "limits": [],
-  "compliance_frameworks": {}
+  "frameworks": {}
 }

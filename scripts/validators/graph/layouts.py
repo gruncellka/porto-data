@@ -9,7 +9,6 @@ from scripts.validators.base import ValidationResults
 
 from .envelope_geometry import (
     envelope_rect_complete,
-    envelope_rect_equal,
     envelope_validation_views,
     resolve_envelope_layout_row,
 )
@@ -25,51 +24,30 @@ def envelope_layout_geometry_errors(
     path: str,
     env: dict[str, Any],
 ) -> list[str]:
-    """Pure checks: address/print/window rectangles and consistency rules."""
+    """Pure checks: window.area when window.supported."""
     out: list[str] = []
     v = envelope_validation_views(env)
-    addr = v["addr"]
-    pa = v["pa"]
-    wa = v["wa"]
     has_w = v["has_w"]
     no_window = v["no_window"]
     force_window = v["force_window"]
     prefix = f"Layout '{layout_fingerprint_id}' ({path})"
 
-    if not envelope_rect_complete(addr):
-        out.append(f"{prefix}: address_area must have integer x, y, width, height")
-        return out
-    if not envelope_rect_complete(pa):
-        out.append(f"{prefix}: print_area must have integer x, y, width, height")
-        return out
     if no_window and force_window:
         out.append(f"{prefix}: supports_window is false but window_supported is true")
         return out
-    assert isinstance(addr, dict) and isinstance(pa, dict)
     if no_window:
         if has_w:
-            out.append(f"{prefix}: supports_window is false; omit window_area")
-        elif not envelope_rect_equal(addr, pa):
-            out.append(f"{prefix}: without window, address_area must equal print_area")
+            out.append(f"{prefix}: supports_window is false; omit window.area")
     elif force_window:
-        if not has_w:
-            out.append(f"{prefix}: window_supported true requires window_area")
-        elif not isinstance(wa, dict) or not envelope_rect_equal(addr, wa):
-            out.append(
-                f"{prefix}: address_area must equal window_area (identical x,y,width,height)"
-            )
-    elif has_w:
-        assert isinstance(wa, dict)
-        if not envelope_rect_equal(addr, wa):
-            out.append(
-                f"{prefix}: address_area must equal window_area (identical x,y,width,height)"
-            )
-    elif not envelope_rect_equal(addr, pa):
-        out.append(f"{prefix}: no window_area; address_area must equal print_area")
+        wa = v["wa"]
+        if wa is None:
+            out.append(f"{prefix}: window.supported true requires window.area")
+        elif not envelope_rect_complete(wa):
+            out.append(f"{prefix}: window.area must have integer x, y, width, height")
     return out
 
 
-def run_validate_envelope_layout_references(
+def run_validate_layout_refs(
     results: ValidationResults,
     *,
     envelope_layouts: dict[str, Any] | None,
@@ -135,7 +113,7 @@ def run_validate_envelope_address_window(
                 results["errors"].append(msg)
 
 
-def run_validate_product_envelope_format_ids(
+def run_validate_envelope_ids(
     results: ValidationResults,
     *,
     envelopes: dict[str, Any] | None,

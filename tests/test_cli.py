@@ -169,10 +169,25 @@ class TestCLICommandFunctions:
         monkeypatch.setattr("cli.commands.validate.validate_mappings", lambda: 1)
         assert validate_all() == 1
 
+    def test_validate_all_stops_on_markets_failure(self, monkeypatch):
+        monkeypatch.setattr("cli.commands.validate.validate_schema", lambda: 0)
+        monkeypatch.setattr("cli.commands.validate.validate_mappings", lambda: 0)
+        monkeypatch.setattr("cli.commands.validate.validate_markets_cmd", lambda: 1)
+        assert validate_all() == 1
+
     def test_validate_all_stops_on_limits_failure(self, monkeypatch):
         monkeypatch.setattr("cli.commands.validate.validate_schema", lambda: 0)
         monkeypatch.setattr("cli.commands.validate.validate_mappings", lambda: 0)
+        monkeypatch.setattr("cli.commands.validate.validate_markets_cmd", lambda: 0)
         monkeypatch.setattr("cli.commands.validate.validate_limits", lambda: 1)
+        assert validate_all() == 1
+
+    def test_validate_all_stops_on_porto_ids_failure(self, monkeypatch):
+        monkeypatch.setattr("cli.commands.validate.validate_schema", lambda: 0)
+        monkeypatch.setattr("cli.commands.validate.validate_mappings", lambda: 0)
+        monkeypatch.setattr("cli.commands.validate.validate_markets_cmd", lambda: 0)
+        monkeypatch.setattr("cli.commands.validate.validate_limits", lambda: 0)
+        monkeypatch.setattr("cli.commands.validate.validate_porto_ids", lambda: 1)
         assert validate_all() == 1
 
     def test_validate_mappings_and_limits_delegate(self, monkeypatch):

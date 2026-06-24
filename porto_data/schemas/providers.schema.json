@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/providers.schema.json",
   "title": "Provider registry",
-  "description": "Domain registry for postal providers. Folder providers/<id>/ is implementation storage only; authoritative ids and coarse metadata live here. IANA timezone for a provider is policy/jurisdictions.json \u2192 jurisdictions[country].timezone (not duplicated here). Product-level mark_type and tracking_mode remain the execution source of truth.",
+  "description": "Domain registry for postal providers. Folder providers/<id>/ is implementation storage only; authoritative ids and coarse metadata live here. IANA timezone: policy/jurisdictions.json \u2192 jurisdictions[country].timezone. Currency and VAT: policy/markets.json \u2192 markets[country]. Product-level mark_type and tracking_mode remain the execution source of truth.",
   "type": "object",
   "required": [
     "providers"
@@ -18,20 +18,26 @@
       "additionalProperties": {
         "type": "object",
         "required": [
+          "label",
           "name",
           "country",
           "mark_types"
         ],
         "properties": {
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Short display name (UI / prose)"
+          },
           "name": {
             "type": "string",
             "minLength": 1,
-            "description": "Display name"
+            "description": "Registered legal entity name"
           },
           "country": {
             "type": "string",
             "pattern": "^[A-Z]{2}$",
-            "description": "Primary country (ISO 3166-1 alpha-2). Timezone: policy/jurisdictions.json jurisdictions[this code].timezone."
+            "description": "Primary country (ISO 3166-1 alpha-2). Timezone: policy/jurisdictions.json jurisdictions[this code].timezone. Currency and VAT: policy/markets.json markets[this code]."
           },
           "mark_types": {
             "type": "array",
@@ -57,7 +63,7 @@
             "description": "Optional coarse provider-level tracking posture; products define tracking_mode precisely."
           }
         },
-        "additionalProperties": true
+        "additionalProperties": false
       }
     }
   },

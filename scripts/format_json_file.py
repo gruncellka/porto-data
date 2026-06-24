@@ -16,7 +16,7 @@ from pathlib import Path
 def format_json(content: str) -> str:
     """Format JSON with indent=2 (project standard; ``python -m json.tool`` uses 4)."""
     data = json.loads(content)
-    return json.dumps(data, indent=2) + "\n"
+    return json.dumps(data, indent=2, ensure_ascii=False) + "\n"
 
 
 def main() -> int:

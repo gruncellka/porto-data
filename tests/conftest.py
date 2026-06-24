@@ -31,34 +31,8 @@ def minimal_graph():
         "provider": "deutschepost",
         "unit": {"weight": "g", "dimension": "mm", "price": "cents", "currency": "EUR"},
         "dependencies": {},
-        "edges": {},
-        "lookup_rules": {
-            "price_lookup": "product_prices + service_prices",
-            "service_lookup": "by id",
-            "weight_resolution": "min<=weight<=max",
-            "zone_validation": "zone in edges",
-        },
-        "global_settings": {
-            "price_lookup": {
-                "product_prices": {
-                    "file": "prices/products.json",
-                    "array": "product_prices",
-                    "match": {
-                        "product_id": "x",
-                        "zone": "y",
-                        "weight_tier": "z",
-                    },
-                    "description": "test",
-                },
-                "service_prices": {
-                    "file": "prices/services.json",
-                    "array": "service_prices",
-                    "match": {"service_id": "x"},
-                    "description": "test",
-                },
-            },
-            "available_services": [],
-        },
+        "edges": {"products": {}, "marks": {}},
+        "services": ["einschreiben"],
     }
 
 
@@ -105,8 +79,6 @@ def minimal_envelope_layouts():
                     "C6": {
                         "orientation": "landscape",
                         "layout": {
-                            "print_area": {"x": 0, "y": 0, "width": 100, "height": 80},
-                            "address_area": {"x": 0, "y": 0, "width": 100, "height": 80},
                             "window": {"supported": False},
                             "post_mark": {"x": 90, "y": 5},
                         },
@@ -237,8 +209,6 @@ def create_test_data_files(tmp_path, **file_data):
                         "C6": {
                             "orientation": "landscape",
                             "layout": {
-                                "print_area": {"x": 0, "y": 0, "width": 100, "height": 80},
-                                "address_area": {"x": 0, "y": 0, "width": 100, "height": 80},
                                 "window": {"supported": False},
                                 "post_mark": {"x": 90, "y": 5},
                             },

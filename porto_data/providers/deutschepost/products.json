@@ -103,7 +103,6 @@
       "weight_tier": "W2000",
       "effective_from": "2026-01-01",
       "effective_to": null,
-      "mark_profile": "internetmarke_international",
       "mark_type": "stamp",
       "tracking_mode": "optional"
     }

@@ -3,6 +3,7 @@
   "mappings": {
     "policy": {
       "schemas/jurisdictions.schema.json": "policy/jurisdictions.json",
+      "schemas/markets.schema.json": "policy/markets.json",
       "schemas/restrictions.schema.json": "policy/restrictions.json"
     },
     "formats": {
@@ -25,18 +26,17 @@
         "schemas/limits.schema.json": "providers/deutschepost/limits.json",
         "schemas/graph.schema.json": "providers/deutschepost/graph.json"
       },
-      "swisspost": {
-        "schemas/marks.schema.json": "providers/swisspost/marks.json",
-        "schemas/rules.schema.json": "providers/swisspost/rules.json",
-        "schemas/products.schema.json": "providers/swisspost/products.json",
-        "schemas/features.schema.json": "providers/swisspost/features.json",
-        "schemas/services.schema.json": "providers/swisspost/services.json",
-        "schemas/product_prices.schema.json": "providers/swisspost/prices/products.json",
-        "schemas/service_prices.schema.json": "providers/swisspost/prices/services.json",
-        "schemas/zones.schema.json": "providers/swisspost/zones.json",
-        "schemas/weights.schema.json": "providers/swisspost/weights.json",
-        "schemas/limits.schema.json": "providers/swisspost/limits.json",
-        "schemas/graph.schema.json": "providers/swisspost/graph.json"
+      "ukrposhta": {
+        "schemas/marks.schema.json": "providers/ukrposhta/marks.json",
+        "schemas/products.schema.json": "providers/ukrposhta/products.json",
+        "schemas/features.schema.json": "providers/ukrposhta/features.json",
+        "schemas/services.schema.json": "providers/ukrposhta/services.json",
+        "schemas/product_prices.schema.json": "providers/ukrposhta/prices/products.json",
+        "schemas/service_prices.schema.json": "providers/ukrposhta/prices/services.json",
+        "schemas/zones.schema.json": "providers/ukrposhta/zones.json",
+        "schemas/weights.schema.json": "providers/ukrposhta/weights.json",
+        "schemas/limits.schema.json": "providers/ukrposhta/limits.json",
+        "schemas/graph.schema.json": "providers/ukrposhta/graph.json"
       },
       "laposte": {
         "schemas/marks.schema.json": "providers/laposte/marks.json",
@@ -50,17 +50,18 @@
         "schemas/limits.schema.json": "providers/laposte/limits.json",
         "schemas/graph.schema.json": "providers/laposte/graph.json"
       },
-      "ukrposhta": {
-        "schemas/marks.schema.json": "providers/ukrposhta/marks.json",
-        "schemas/products.schema.json": "providers/ukrposhta/products.json",
-        "schemas/features.schema.json": "providers/ukrposhta/features.json",
-        "schemas/services.schema.json": "providers/ukrposhta/services.json",
-        "schemas/product_prices.schema.json": "providers/ukrposhta/prices/products.json",
-        "schemas/service_prices.schema.json": "providers/ukrposhta/prices/services.json",
-        "schemas/zones.schema.json": "providers/ukrposhta/zones.json",
-        "schemas/weights.schema.json": "providers/ukrposhta/weights.json",
-        "schemas/limits.schema.json": "providers/ukrposhta/limits.json",
-        "schemas/graph.schema.json": "providers/ukrposhta/graph.json"
+      "swisspost": {
+        "schemas/marks.schema.json": "providers/swisspost/marks.json",
+        "schemas/rules.schema.json": "providers/swisspost/rules.json",
+        "schemas/products.schema.json": "providers/swisspost/products.json",
+        "schemas/features.schema.json": "providers/swisspost/features.json",
+        "schemas/services.schema.json": "providers/swisspost/services.json",
+        "schemas/product_prices.schema.json": "providers/swisspost/prices/products.json",
+        "schemas/service_prices.schema.json": "providers/swisspost/prices/services.json",
+        "schemas/zones.schema.json": "providers/swisspost/zones.json",
+        "schemas/weights.schema.json": "providers/swisspost/weights.json",
+        "schemas/limits.schema.json": "providers/swisspost/limits.json",
+        "schemas/graph.schema.json": "providers/swisspost/graph.json"
       }
     }
   }

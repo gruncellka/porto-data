@@ -59,20 +59,12 @@
     "layoutBody": {
       "type": "object",
       "required": [
-        "print_area",
         "post_mark",
-        "address_area",
         "window"
       ],
       "properties": {
-        "print_area": {
-          "$ref": "#/definitions/rectangleMm"
-        },
         "post_mark": {
           "$ref": "#/definitions/postMarkAnchorMm"
-        },
-        "address_area": {
-          "$ref": "#/definitions/rectangleMm"
         },
         "window": {
           "type": "object",

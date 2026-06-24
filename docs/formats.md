@@ -7,7 +7,7 @@ Shared **letter mail** data used by all operators: physical envelope formats and
 | File             | `file_type` | Role                                                                                                                                                                                    |
 | ---------------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `envelopes.json` | `envelopes` | Canonical envelope **`id`**, face **width/height** (mm), **`standard`** (e.g. ISO 269), **`sheets[]`** (ISO 216 sheet + fold hints).                                                    |
-| `layouts.json`   | `layouts`   | Per **ISO 3166-1 alpha-2** jurisdiction (e.g. DE, CH, FR), per envelope **`id`**: print area, address area, window, post mark anchor; optional **`standard`** norm token (e.g. DIN678). |
+| `layouts.json`   | `layouts`   | Per **ISO 3166-1 alpha-2** jurisdiction (e.g. DE, CH, FR), per envelope **`id`**: factual **`window`**, **`post_mark`** anchor; optional **`standard`** norm token (e.g. DIN678). Addressing/print composition is app/SDK — not catalog fields. |
 
 Physical sizes stay in **`envelopes.json`**; geometry on the face stays in **`layouts.json`**.
 

@@ -14,7 +14,7 @@
       ],
       "enables_tracking": true,
       "online_supported": true,
-      "integration_supported": {
+      "integrations": {
         "webstamp": true
       },
       "supported_zones": [

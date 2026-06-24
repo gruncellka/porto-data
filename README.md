@@ -5,17 +5,15 @@
 
 **Porto Data** is **JSON + schemas** for national postal operators under one shared layout and vocabulary. Published on **npm** and **PyPI** with the **same** `porto_data/` tree on every platform.
 
-The bundle covers **Deutsche Post**, **Swiss Post**, and **La Poste** with shared policy/formats data at the bundle root and **per-operator** catalogs under **`providers/<id>/`** (products, services, prices, zones, weight tiers, features, limits, **`graph.json`**).
+The bundle covers **Deutsche Post**, **Ukrposhta**, **La Poste**, and **Swiss Post** (Die Post) with shared policy/formats data at the bundle root and **per-operator** catalogs under **`providers/<id>/`** (products, services, prices, zones, weight tiers, features, limits, **`graph.json`**). Registry display names: **`providers.json`** → **`label`**; legal entities: **`name`**.
 
 ---
 
 ## Install
 
-**TypeScript / JavaScript (npm, scope: `@gruncellka`)**
+**TypeScript / JavaScript (npm)**
 
 ```bash
-pnpm add @gruncellka/porto-data
-yarn add @gruncellka/porto-data
 npm install @gruncellka/porto-data
 ```
 
@@ -23,8 +21,6 @@ npm install @gruncellka/porto-data
 
 ```bash
 pip install gruncellka-porto-data
-uv add gruncellka-porto-data
-poetry add gruncellka-porto-data
 ```
 
 Shipped layout: **`porto_data/policy/`**, **`porto_data/formats/`**, **`porto_data/providers/<id>/`**, **`porto_data/schemas/`**, **`mappings.json`**, **`metadata.json`**. Resolve paths via **`mappings.json`** / **`metadata.json`** (no legacy flat `data/` tree).
@@ -55,16 +51,20 @@ E-commerce and logistics (multi-carrier quotes, letters), compliance (sanctions,
 | `zones.json`                | Geographic zones and country mappings                                                                                                                                                                                                                  |
 | `weights.json`              | Weight brackets for pricing                                                                                                                                                                                                                            |
 | `features.json`             | Operator-scoped **`id`**, unified **`porto_id`**, native **`name`**, English **`label`**                                                                                                                                                               |
-| `limits.json`               | Operational limits and compliance framework metadata                                                                                                                                                                                                   |
-| `graph.json`                | **`dependencies`** (file load order), **`edges`** (per product: allowed zones + weight tiers), **`lookup_rules`**, **`global_settings`**, **`unit`**                                                                                                   |
+| `limits.json`               | Provider operational overlay on global policy (**`limits[]` often empty**; see [docs/policy.md](docs/policy.md)) |
+| `graph.json`                | **`dependencies`**, **`edges.products`**, **`edges.marks`**, **`services`**, **`unit`** |
+| `marks.json`                | Franking footprint **catalog**: **`profiles[]`** only; resolution in **`graph.edges.marks`** |
 | `formats/layouts.json`        | Jurisdiction-keyed print/window geometry (**DE / CH / FR**) per envelope **`id`** (`file_type` **`layouts`**); optional **`standard`** (norm token, e.g. **DIN678**, **SN010130**, **NFEN13850**); physical sizes remain in **`formats/envelopes.json`** |
 | `formats/envelopes.json`      | Physical envelope catalog: **`envelopes[]`** with **`id`**, **`width`/`height`**, **`standard`** `ISO269`, **`sheets[]`** (ISO 216 **`sheet`** + **`fold`**)                                                                                           |
 | `policy/restrictions.json`  | Sanctions-style restrictions and compliance frameworks                                                                                                                                                                                                 |
 | `policy/jurisdictions.json` | `jurisdictions.eu` / `jurisdictions.un` (ISO alpha-2; align with symbolic `EU` / `UN`)                                                                                                                                                                 |
+| `policy/markets.json`       | Per-country **`currency`**, **`vat`**, **`international_currency`**, optional **`settlement`** — via `providers.json` `country` → [docs/policy.md](docs/policy.md) · [docs/resolution.md](docs/resolution.md) |
 
 All JSON validates against **`schemas/`**; **`mappings.json`** maps entities to paths; **`metadata.json`** has checksums and schema URLs.
 
-**Cross-file rules:** **`graph.json` → `edges`** keys = **`products.json` `id`**. **`available_services`** and price rows reference native **`id`** (not **`porto_id`**) for **`product_id`** / **`service_id`**. **`porto_id`** is the **cross-operator** semantic id when native ids differ. **`services[].features`** may list feature **`id`** or **`porto_id`**.
+**Cross-file rules:** native **`id`** in graph/prices; **`porto_id`** for cross-operator input — see [docs/resolution.md](docs/resolution.md).
+
+**Tariff verification:** CI validates structure only — not that amounts match live carrier tables. See [docs/tariff-verification.md](docs/tariff-verification.md) and per-provider notes under [docs/providers/](docs/providers/).
 
 **Provider tariff dating (catalog baseline):** In **`providers/<id>/products.json`**, **`prices/products.json`**, and **`prices/services.json`**, **`effective_from`** is the **bundle baseline** (**`2026-01-01`**) for the modeled **2026** tariff snapshot. Use **`effective_to`**: **`null`** until a row is superseded by a newer **`price[]`** entry. (Other files, e.g. **`policy/restrictions.json`** or **`limits.json`**, keep their own effective-dating semantics.)
 
@@ -72,14 +72,9 @@ All JSON validates against **`schemas/`**; **`mappings.json`** maps entities to 
 
 ## Standards
 
-- **Country codes**: ISO 3166-1 alpha-2 (`DE`, `CH`, `FR`, …)
-- **Region codes**: ISO 3166-2 (`DE-BY`, `CH-ZH`, `FR-75`)
-- **Dates**: ISO 8601 (`2024-01-15`)
-- **Jurisdiction** (global restrictions): `EU`, `UN`, national codes on sanction or law frameworks—not an operator id.
-
-**`policy/restrictions.json`:** destination-oriented legal and sanctions regimes; framework metadata (`jurisdiction`, scope, optional IANA `timezone` for row `effective_*`). Row-level `effective_from` / `effective_to` drive activation.
-
-**`providers/<id>/limits.json`:** that operator’s execution rules; framework **`timezone`** should match **`providers.json`** for the same id.
+- **Country / region / dates:** ISO 3166-1 alpha-2, ISO 3166-2, ISO 8601.
+- **Policy vs operator overlays:** [docs/policy.md](docs/policy.md) (`restrictions`, `markets`, `jurisdictions` vs `limits.json`).
+- **Currency / VAT resolution:** [docs/resolution.md](docs/resolution.md) § Currency and VAT.
 
 ---
 
@@ -91,16 +86,19 @@ All JSON validates against **`schemas/`**; **`mappings.json`** maps entities to 
 
 ## Related resources
 
-- **Unified `porto_id` (cross-operator ids):** [docs/id.md](docs/id.md) (naming policy).
+- **Mark profiles:** [docs/mark-profiles.md](docs/mark-profiles.md) — sizes and `zones`.
+- **Policy & fiscal defaults:** [docs/policy.md](docs/policy.md)
+- **Unified `porto_id`:** [docs/id.md](docs/id.md) · [docs/porto_id.md](docs/porto_id.md) · [docs/resolution.md](docs/resolution.md) · [docs/provider-template.md](docs/provider-template.md)
+- **Tariff reconciliation:** [docs/tariff-verification.md](docs/tariff-verification.md)
 
 **Carriers in this bundle** — tariff / modeling notes, shipped JSON folder, and official site:
 
-| Provider (`providers.json` id) | Reconciliation doc                                               | Bundle data folder                   | Website                                        |
-| ------------------------------ | ---------------------------------------------------------------- | ------------------------------------ | ---------------------------------------------- |
-| Deutsche Post (`deutschepost`) | [docs/providers/deutschepost.md](docs/providers/deutschepost.md) | `porto_data/providers/deutschepost/` | [deutschepost.de](https://www.deutschepost.de) |
-| Swiss Post (`swisspost`)       | [docs/providers/swisspost.md](docs/providers/swisspost.md)       | `porto_data/providers/swisspost/`    | [post.ch](https://www.post.ch)                 |
-| La Poste (`laposte`)           | [docs/providers/laposte.md](docs/providers/laposte.md)           | `porto_data/providers/laposte/`      | [laposte.fr](https://www.laposte.fr)           |
-| Ukrposhta (`ukrposhta`)        | [docs/providers/ukrposhta.md](docs/providers/ukrposhta.md)       | `porto_data/providers/ukrposhta/`    | [ukrposhta.ua](https://ukrposhta.ua/)          |
+| Provider (`providers.json` id) | Label | Legal name (`name`) | Reconciliation doc                                               | Bundle data folder                   | Website                                        |
+| ------------------------------ | ----- | ------------------- | ---------------------------------------------------------------- | ------------------------------------ | ---------------------------------------------- |
+| `deutschepost` | Deutsche Post | Deutsche Post AG | [docs/providers/deutschepost.md](docs/providers/deutschepost.md) | `porto_data/providers/deutschepost/` | [deutschepost.de](https://www.deutschepost.de) |
+| `ukrposhta` | Ukrposhta | Ukrposhta JSC | [docs/providers/ukrposhta.md](docs/providers/ukrposhta.md)       | `porto_data/providers/ukrposhta/`    | [ukrposhta.ua](https://ukrposhta.ua/)          |
+| `laposte` | La Poste | La Poste S.A. | [docs/providers/laposte.md](docs/providers/laposte.md)           | `porto_data/providers/laposte/`      | [laposte.fr](https://www.laposte.fr)           |
+| `swisspost` | Swiss Post | Die Schweizerische Post AG | [docs/providers/swisspost.md](docs/providers/swisspost.md)       | `porto_data/providers/swisspost/`    | [post.ch](https://www.post.ch)                 |
 
 **Other references:** [EU Sanctions Map](https://www.sanctionsmap.eu/), [ISO 3166 country codes](https://www.iso.org/iso-3166-country-codes.html)
 

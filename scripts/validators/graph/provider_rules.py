@@ -7,8 +7,8 @@ from typing import Any
 from scripts.validators.base import ValidationResults
 
 from .constants import (
-    PROVIDER_RULE_KIND_METRIC_BAND_ATTACH,
     PROVIDER_RULE_METRIC_THICKNESS,
+    RULE_KIND_BAND,
 )
 from .services import service_refs_set
 
@@ -46,7 +46,7 @@ def run_validate_provider_rules(
     unit_block: dict[str, Any] = unit_raw if isinstance(unit_raw, dict) else {}
     uses_thickness_metric = any(
         isinstance(r, dict)
-        and r.get("kind") == PROVIDER_RULE_KIND_METRIC_BAND_ATTACH
+        and r.get("kind") == RULE_KIND_BAND
         and str(r.get("metric") or "") == PROVIDER_RULE_METRIC_THICKNESS
         for r in rules_raw
     )
@@ -62,7 +62,7 @@ def run_validate_provider_rules(
             continue
         rid = rule.get("id", "?")
         kind = rule.get("kind")
-        if kind != PROVIDER_RULE_KIND_METRIC_BAND_ATTACH:
+        if kind != RULE_KIND_BAND:
             results["errors"].append(f"rules.json rule {rid!r}: unsupported kind {kind!r}")
             continue
         metric = rule.get("metric")

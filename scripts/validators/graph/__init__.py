@@ -3,18 +3,18 @@
 Implementation is split under this package: ``validator`` (orchestrator),
 ``runner`` (CLI entry + printing), ``edges``, ``layouts``, ``services``,
 ``execution_semantics``, ``marks_profiles``, ``provider_rules``, ``dependencies``,
-``units``, ``price_lookup``, ``envelope_geometry``, ``constants``.
+``units``, ``envelope_geometry``, ``constants``.
 """
 
 from .constants import (
     EXPECTED_CURRENCY,
     EXPECTED_DIMENSION_UNIT,
     EXPECTED_PRICE_UNIT,
-    EXPECTED_PRODUCT_PRICES_ARRAY,
-    EXPECTED_SERVICE_PRICES_ARRAY,
     EXPECTED_WEIGHT_UNIT,
-    PROVIDER_RULE_KIND_METRIC_BAND_ATTACH,
+    PRICE_KEY_PRODUCTS,
+    PRICE_KEY_SERVICES,
     PROVIDER_RULE_METRIC_THICKNESS,
+    RULE_KIND_BAND,
 )
 from .envelope_geometry import envelope_validation_views
 from .runner import (
@@ -31,10 +31,10 @@ __all__ = [
     "EXPECTED_CURRENCY",
     "EXPECTED_DIMENSION_UNIT",
     "EXPECTED_PRICE_UNIT",
-    "EXPECTED_PRODUCT_PRICES_ARRAY",
-    "EXPECTED_SERVICE_PRICES_ARRAY",
+    "PRICE_KEY_PRODUCTS",
+    "PRICE_KEY_SERVICES",
     "EXPECTED_WEIGHT_UNIT",
-    "PROVIDER_RULE_KIND_METRIC_BAND_ATTACH",
+    "RULE_KIND_BAND",
     "PROVIDER_RULE_METRIC_THICKNESS",
     "GraphValidator",
     "_envelope_validation_views",

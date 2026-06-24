@@ -1,11 +1,54 @@
 """Tests for mappings_layout validator."""
 
 import json
+import shutil
 from pathlib import Path
 
 import pytest
 
 from scripts.validators.mappings_layout import validate_mappings_layout
+from scripts.validators.porto_ids import REQUIRED_PROVIDER_SCHEMAS
+
+
+def _full_provider_schema_map(provider_id: str, **extra: str) -> dict[str, str]:
+    """Minimal mappings block satisfying REQUIRED_PROVIDER_SCHEMAS."""
+    rel = {
+        "schemas/marks.schema.json": f"providers/{provider_id}/marks.json",
+        "schemas/products.schema.json": f"providers/{provider_id}/products.json",
+        "schemas/features.schema.json": f"providers/{provider_id}/features.json",
+        "schemas/services.schema.json": f"providers/{provider_id}/services.json",
+        "schemas/product_prices.schema.json": f"providers/{provider_id}/prices/products.json",
+        "schemas/service_prices.schema.json": f"providers/{provider_id}/prices/services.json",
+        "schemas/zones.schema.json": f"providers/{provider_id}/zones.json",
+        "schemas/weights.schema.json": f"providers/{provider_id}/weights.json",
+        "schemas/limits.schema.json": f"providers/{provider_id}/limits.json",
+        "schemas/graph.schema.json": f"providers/{provider_id}/graph.json",
+    }
+    assert set(rel) == set(REQUIRED_PROVIDER_SCHEMAS)
+    rel.update(extra)
+    return rel
+
+
+def _write_stub_provider_files(root: Path, provider_id: str) -> None:
+    """Write placeholder JSON files so mappings layout checks pass."""
+    prov = root / "providers" / provider_id
+    (prov / "prices").mkdir(parents=True, exist_ok=True)
+    rel_paths = [
+        "marks.json",
+        "products.json",
+        "features.json",
+        "services.json",
+        "zones.json",
+        "weights.json",
+        "limits.json",
+        "graph.json",
+        "prices/products.json",
+        "prices/services.json",
+    ]
+    for rel in rel_paths:
+        path = prov / rel
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps({"provider": provider_id}), encoding="utf-8")
 
 
 def _patch_bundle_root(monkeypatch: pytest.MonkeyPatch, root: Path) -> None:
@@ -15,7 +58,8 @@ def _patch_bundle_root(monkeypatch: pytest.MonkeyPatch, root: Path) -> None:
 
 def _acme_row() -> dict:
     return {
-        "name": "Acme",
+        "label": "Acme",
+        "name": "Acme Ltd",
         "country": "XX",
         "mark_types": ["stamp"],
         "tracking_model": "mixed",
@@ -29,6 +73,75 @@ def test_validate_mappings_layout_passes_on_real_porto_data(
     assert root.is_dir()
     _patch_bundle_root(monkeypatch, root)
     assert validate_mappings_layout() == 0
+
+
+def test_validate_mappings_layout_errors_on_wrong_provider_key_order(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    root = Path(__file__).resolve().parent.parent / "porto_data"
+    bundle = tmp_path / "bundle"
+    shutil.copytree(root, bundle)
+    doc = json.loads((bundle / "providers.json").read_text(encoding="utf-8"))
+    prov = doc["providers"]
+    doc["providers"] = {
+        "swisspost": prov["swisspost"],
+        "deutschepost": prov["deutschepost"],
+        "ukrposhta": prov["ukrposhta"],
+        "laposte": prov["laposte"],
+    }
+    (bundle / "providers.json").write_text(
+        json.dumps(doc, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    _patch_bundle_root(monkeypatch, bundle)
+    assert validate_mappings_layout() == 1
+    assert "providers.json providers" in capsys.readouterr().out
+
+
+def test_validate_mappings_layout_errors_on_wrong_mappings_provider_key_order(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    root = Path(__file__).resolve().parent.parent / "porto_data"
+    bundle = tmp_path / "bundle"
+    shutil.copytree(root, bundle)
+    mappings = json.loads((bundle / "mappings.json").read_text(encoding="utf-8"))
+    prov_block = mappings["mappings"]["providers"]
+    mappings["mappings"]["providers"] = {
+        "swisspost": prov_block["swisspost"],
+        "deutschepost": prov_block["deutschepost"],
+        "ukrposhta": prov_block["ukrposhta"],
+        "laposte": prov_block["laposte"],
+    }
+    (bundle / "mappings.json").write_text(
+        json.dumps(mappings, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    _patch_bundle_root(monkeypatch, bundle)
+    assert validate_mappings_layout() == 1
+    assert "mappings.json mappings.providers" in capsys.readouterr().out
+
+
+def test_validate_mappings_layout_errors_on_wrong_metadata_provider_key_order(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    root = Path(__file__).resolve().parent.parent / "porto_data"
+    bundle = tmp_path / "bundle"
+    shutil.copytree(root, bundle)
+    meta = json.loads((bundle / "metadata.json").read_text(encoding="utf-8"))
+    prov_block = meta["providers"]
+    meta["providers"] = {
+        "swisspost": prov_block["swisspost"],
+        "deutschepost": prov_block["deutschepost"],
+        "ukrposhta": prov_block["ukrposhta"],
+        "laposte": prov_block["laposte"],
+    }
+    (bundle / "metadata.json").write_text(
+        json.dumps(meta, indent=2) + "\n",
+        encoding="utf-8",
+    )
+    _patch_bundle_root(monkeypatch, bundle)
+    assert validate_mappings_layout() == 1
+    assert "metadata.json providers" in capsys.readouterr().out
 
 
 def test_validate_mappings_layout_errors_on_provider_mismatch(
@@ -219,7 +332,14 @@ def test_validate_mappings_layout_errors_when_provider_mappings_not_object(
     )
     (tmp_path / "mappings.json").write_text(
         json.dumps(
-            {"mappings": {"policy": {}, "formats": {}, "registry": {}, "providers": {"acme": "bad"}}}
+            {
+                "mappings": {
+                    "policy": {},
+                    "formats": {},
+                    "registry": {},
+                    "providers": {"acme": "bad"},
+                }
+            }
         ),
         encoding="utf-8",
     )
@@ -556,10 +676,12 @@ def test_validate_mappings_layout_skips_provider_field_check_for_non_json_mapped
                     "formats": {},
                     "registry": {},
                     "providers": {
-                        "acme": {
-                            "schemas/placeholder.schema.json": "providers/acme/notes.txt",
-                            "schemas/products.schema.json": "providers/acme/products.json",
-                        }
+                        "acme": _full_provider_schema_map(
+                            "acme",
+                            **{
+                                "schemas/placeholder.schema.json": "providers/acme/notes.txt",
+                            },
+                        ),
                     },
                 }
             }
@@ -567,11 +689,8 @@ def test_validate_mappings_layout_skips_provider_field_check_for_non_json_mapped
         encoding="utf-8",
     )
     (tmp_path / "providers" / "acme").mkdir(parents=True)
+    _write_stub_provider_files(tmp_path, "acme")
     (tmp_path / "providers" / "acme" / "notes.txt").write_text("x", encoding="utf-8")
-    (tmp_path / "providers" / "acme" / "products.json").write_text(
-        json.dumps({"provider": "acme", "products": []}),
-        encoding="utf-8",
-    )
     assert validate_mappings_layout() == 0
 
 
@@ -592,20 +711,14 @@ def test_validate_mappings_layout_ignores_nondirectory_entries_under_providers(
                     "formats": {},
                     "registry": {},
                     "providers": {
-                        "acme": {
-                            "schemas/products.schema.json": "providers/acme/products.json",
-                        }
+                        "acme": _full_provider_schema_map("acme"),
                     },
                 }
             }
         ),
         encoding="utf-8",
     )
-    (tmp_path / "providers" / "acme").mkdir(parents=True)
-    (tmp_path / "providers" / "acme" / "products.json").write_text(
-        json.dumps({"provider": "acme", "products": []}),
-        encoding="utf-8",
-    )
+    _write_stub_provider_files(tmp_path, "acme")
     (tmp_path / "providers" / "junk").write_text("", encoding="utf-8")
     assert validate_mappings_layout() == 0
 
@@ -628,20 +741,14 @@ def test_validate_mappings_layout_skips_dot_prefixed_provider_dirs(
                     "formats": {},
                     "registry": {},
                     "providers": {
-                        "acme": {
-                            "schemas/products.schema.json": "providers/acme/products.json",
-                        }
+                        "acme": _full_provider_schema_map("acme"),
                     },
                 }
             }
         ),
         encoding="utf-8",
     )
-    (tmp_path / "providers" / "acme").mkdir(parents=True)
-    (tmp_path / "providers" / "acme" / "products.json").write_text(
-        json.dumps({"provider": "acme", "products": []}),
-        encoding="utf-8",
-    )
+    _write_stub_provider_files(tmp_path, "acme")
     (tmp_path / "providers" / ".cache").mkdir()
     (tmp_path / "providers" / "__pycache__").mkdir()
     assert validate_mappings_layout() == 0
@@ -664,19 +771,13 @@ def test_validate_mappings_layout_warns_when_metadata_missing(
                     "formats": {},
                     "registry": {},
                     "providers": {
-                        "acme": {
-                            "schemas/products.schema.json": "providers/acme/products.json",
-                        }
+                        "acme": _full_provider_schema_map("acme"),
                     },
                 }
             }
         ),
         encoding="utf-8",
     )
-    (tmp_path / "providers" / "acme").mkdir(parents=True)
-    (tmp_path / "providers" / "acme" / "products.json").write_text(
-        json.dumps({"provider": "acme", "products": []}),
-        encoding="utf-8",
-    )
+    _write_stub_provider_files(tmp_path, "acme")
     assert validate_mappings_layout() == 0
     assert "metadata.json" in capsys.readouterr().out

@@ -15,7 +15,7 @@
       ],
       "enables_tracking": true,
       "online_supported": true,
-      "integration_supported": {
+      "integrations": {
         "internetmarke": true
       },
       "supported_zones": [
@@ -36,7 +36,7 @@
       ],
       "enables_tracking": true,
       "online_supported": true,
-      "integration_supported": {
+      "integrations": {
         "internetmarke": true
       },
       "supported_zones": [
@@ -57,7 +57,7 @@
       ],
       "enables_tracking": true,
       "online_supported": true,
-      "integration_supported": {
+      "integrations": {
         "internetmarke": true
       },
       "supported_zones": [
@@ -74,7 +74,7 @@
         "tracking_number"
       ],
       "online_supported": true,
-      "integration_supported": {
+      "integrations": {
         "internetmarke": true
       },
       "supported_zones": [

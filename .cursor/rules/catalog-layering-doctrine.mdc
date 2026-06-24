@@ -1,0 +1,62 @@
+---
+description: Catalog layering philosophy — one fact per layer; no cross-layer token smuggling
+alwaysApply: true
+---
+
+# Catalog layering doctrine (porto-data)
+
+**Hub:** `docs/identity-map.md` · `docs/id.md` · `BUGBOT.md` (philosophy + rules 23–28)
+
+porto-data is a **factual bundle** + **schemas** + **validators**. It is not the product UI, compose engine, or SDK resolver. When in doubt: **put the fact in one layer only**; let SDK/app **resolve** across layers.
+
+## The stack (do not collapse)
+
+```text
+SDK / app input     →  porto_id, country, weight, service picks
+Catalog facts       →  native id, zones, weights, prices, geometry (this repo)
+Layout output       →  mark_profile, window rect, post_mark anchor
+Runtime / adapter   →  native_id, PortoMark, tracking numbers
+```
+
+## Core principles
+
+1. **One identifier, one job.** Same English word in two layers is a bug unless explicitly documented (e.g. `domestic` as zone vs mark_profile; `registered` as service porto_id vs mark_profile id — never as product porto_id).
+
+2. **Facts vs normalization vs workflow.**
+   - **Facts** in JSON: carrier SKUs (`products.id`), mm geometry (`layouts.window`), stamp sizes (`marks.profiles`), tariff rows.
+   - **Normalization** (`porto_id`): cross-operator SDK input with **narrow** enums per entity type.
+   - **Workflow** (sender inside window, R1/R2 pick, speed class): **SDK / Licko compose** — not invented catalog fields.
+
+3. **Disjoint vocabularies where ambiguity hurts.** Product `porto_id` must not overlap service/feature enums. Do not “fix” ambiguity by reusing a service token on a product row.
+
+4. **Native `id` in wires; `porto_id` at the edge.** `graph.json`, `prices/*`, `rules.json` reference **native** `product_id` / `service_id`. Never `porto_id` in graph edges or price keys.
+
+5. **Geometry is factual, composition is not.** `formats/layouts.json`: `window`, `post_mark`, `standard` only — no `address_area`, `print_area`, sender/recipient zones, or printable-region workflow.
+
+6. **Validators encode philosophy.** If a rule matters for review, it should fail in `scripts/validators/` + `tests/` — not live only in prose.
+
+## Red flags (any of these → stop and re-layer)
+
+| Smell | Likely mistake | Fix |
+|-------|----------------|-----|
+| New product field describing *how to print* or *where to put sender* | Compose logic in catalog | Keep in Licko/SDK |
+| `porto_id` on a product that means a **service** (registered, tracking, …) | Layer collapse | Size on product; service on `services.json` |
+| Same enum value in product + service schemas | Token smuggling | Disjoint enums; disambiguate with native `id` |
+| `graph` or `prices` keyed by `porto_id` | Wrong identifier layer | Use native `id` |
+| New layout zone named like a product feature | Invented semantics | Only standard/provider geometry |
+| Docs say X but schema allows Y | Drift | Align schema, validator, `docs/id.md`, generated tables |
+
+## Examples (canonical)
+
+- **La Poste recommandée:** product `porto_id: small` + native `lettre_recommandee_r_un` — not `registered` on product.
+- **DE Einschreiben:** service `porto_id: registered` on `einschreiben` — not on `standardbrief`.
+- **Layouts:** C5 window mm rect — not “address block” split for compose.
+- **Marks:** `mark_profile: registered` — stamp footprint; third namespace from `porto_id`.
+
+## Before merge (any catalog/schema change)
+
+1. Name the **owning layer** for each new field or enum value.
+2. `make validate` (full chain).
+3. Regenerate `metadata.json` / `docs/porto_id.md` when tooling reports drift.
+4. Tests for new validator invariants (`make test-cov` — 100% on `scripts/` + `cli/`).
+5. `CHANGELOG.md` for consumer-facing contract changes.

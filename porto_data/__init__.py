@@ -1,4 +1,4 @@
-"""Porto data package: Deutsche Post shipping data, schemas, and metadata."""
+"""Porto data package: multi-provider postal JSON, schemas, and metadata."""
 
 from __future__ import annotations
 

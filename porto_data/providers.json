@@ -2,36 +2,36 @@
   "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/providers.schema.json",
   "providers": {
     "deutschepost": {
-      "name": "Deutsche Post",
+      "label": "Deutsche Post",
+      "name": "Deutsche Post AG",
       "country": "DE",
       "mark_types": [
         "stamp"
       ]
     },
-    "swisspost": {
-      "name": "Swiss Post",
-      "country": "CH",
+    "ukrposhta": {
+      "label": "Ukrposhta",
+      "name": "Ukrposhta JSC",
+      "country": "UA",
       "mark_types": [
-        "stamp"
+        "label"
       ]
     },
     "laposte": {
-      "name": "La Poste",
+      "label": "La Poste",
+      "name": "La Poste S.A.",
       "country": "FR",
       "mark_types": [
         "label"
       ]
     },
-    "ukrposhta": {
-      "name": "Ukrposhta",
-      "country": "UA",
+    "swisspost": {
+      "label": "Swiss Post",
+      "name": "Die Schweizerische Post AG",
+      "country": "CH",
       "mark_types": [
-        "label"
-      ],
-      "vat": {
-        "applicable": true,
-        "rate": 0.2
-      }
+        "stamp"
+      ]
     }
   }
 }

@@ -21,26 +21,32 @@ from scripts.data_files import (
     get_data_file_path,
     get_graph_dependency_file_refs,
     get_project_root,
+    load_providers_registry,
+    market_for_country,
 )
 from scripts.utils import load_json
 from scripts.validators.base import ValidationResults
 
-from .dependencies import run_validate_circular_dependencies, run_validate_dependencies
+from .dependencies import (
+    run_validate_cycles,
+    run_validate_dependencies,
+    run_validate_price_dependencies,
+)
 from .edges import (
+    run_validate_edge_tiers,
     run_validate_edges,
     run_validate_products_in_edges,
-    run_validate_zones_and_weight_tiers_in_edges,
 )
 from .execution_semantics import run_validate_execution_semantics
 from .layouts import (
     run_validate_envelope_address_window,
-    run_validate_envelope_layout_references,
-    run_validate_product_envelope_format_ids,
+    run_validate_envelope_ids,
+    run_validate_layout_refs,
 )
+from .mark_edges import run_validate_mark_edges
 from .marks_profiles import run_validate_marks_profiles
-from .price_lookup import run_price_lookup_validation
 from .provider_rules import run_validate_provider_rules
-from .services import run_validate_available_services
+from .services import run_validate_graph_services
 from .units import run_validate_units
 
 
@@ -109,6 +115,7 @@ class GraphValidator:
         self.envelopes: dict[str, Any] | None = None
         self.envelope_layouts: dict[str, Any] | None = None
         self.marks: dict[str, Any] | None = None
+        self.market: dict[str, Any] | None = None
 
         self.product_dict: dict[str, dict[str, Any]] = {}
         self.zone_ids: dict[str, dict[str, Any]] = {}
@@ -147,6 +154,7 @@ class GraphValidator:
                 self.provider_rules_doc = load_json(rules_path)
             else:
                 self.provider_rules_doc = None
+            self._load_market_for_provider()
         except FileNotFoundError as e:
             self.results["errors"].append(f"Missing file: {str(e)}")
             return
@@ -155,6 +163,19 @@ class GraphValidator:
             return
 
         self._build_lookup_structures()
+
+    def _load_market_for_provider(self) -> None:
+        """Resolve policy/markets.json row for this provider's registry country."""
+        if self.graph is None:
+            return
+        provider_id = self.graph.get("provider") or self.provider_dir.name
+        try:
+            reg = load_providers_registry()
+            row = reg.get("providers", {}).get(provider_id)
+            if isinstance(row, dict) and isinstance(row.get("country"), str):
+                self.market = market_for_country(str(row["country"]))
+        except (FileNotFoundError, ValueError):
+            self.market = None
 
     def _build_lookup_structures(self) -> None:
         """Build lookup dictionaries and sets from loaded data."""
@@ -172,12 +193,14 @@ class GraphValidator:
         self.services_by_id = (
             {s["id"]: s for s in self.services.get("services", [])} if self.services else {}
         )
-        self.product_prices = (
+        pp_raw = (
             self.product_prices_doc.get("product_prices", []) if self.product_prices_doc else []
         )
-        self.service_prices = (
+        sp_raw = (
             self.service_prices_doc.get("service_prices", []) if self.service_prices_doc else []
         )
+        self.product_prices = pp_raw if isinstance(pp_raw, list) else []
+        self.service_prices = sp_raw if isinstance(sp_raw, list) else []
         if self.shared_bundle_subdir == self._bundle_root:
             self.all_data_files = {
                 p.relative_to(self.data_dir).as_posix() for p in self.data_dir.rglob("*.json")
@@ -185,11 +208,11 @@ class GraphValidator:
         else:
             self.all_data_files = get_graph_dependency_file_refs(self.provider_dir.name)
 
-    def validate_lookup_method(self) -> None:
-        """Validate price_lookup configuration in global_settings."""
+    def validate_price_dependencies(self) -> None:
+        """Validate price file paths (dependencies) and price row join keys."""
         if self.graph is None:
             return
-        run_price_lookup_validation(
+        run_validate_price_dependencies(
             self.results,
             graph=self.graph,
             shared_bundle_subdir=self.shared_bundle_subdir,
@@ -229,18 +252,18 @@ class GraphValidator:
         """Verify all zones and weight_tiers referenced in edges exist."""
         if self.graph is None:
             return
-        run_validate_zones_and_weight_tiers_in_edges(
+        run_validate_edge_tiers(
             self.results,
             graph=self.graph,
             zone_ids=self.zone_ids,
             weight_tier_ids=self.weight_tier_ids,
         )
 
-    def validate_available_services(self) -> None:
-        """Validate available_services and service-price consistency."""
+    def validate_services(self) -> None:
+        """Validate services and service-price consistency."""
         if self.graph is None:
             return
-        run_validate_available_services(
+        run_validate_graph_services(
             self.results,
             graph=self.graph,
             services=self.services,
@@ -259,12 +282,23 @@ class GraphValidator:
         )
 
     def validate_marks_profiles(self) -> None:
-        """Validate marks.json default_profile, unique ids, and product.mark_profile references."""
+        """Validate marks.json profile catalog and default_profile."""
         run_validate_marks_profiles(
             self.results,
             graph=self.graph,
             products=self.products,
             marks=self.marks,
+            zones=self.zones,
+            services=self.services,
+        )
+
+    def validate_mark_edges(self) -> None:
+        """Validate graph.mark_edges zone and service mark profile resolution."""
+        run_validate_mark_edges(
+            self.results,
+            graph=self.graph,
+            marks=self.marks,
+            zones=self.zones,
         )
 
     def validate_provider_rules(self) -> None:
@@ -299,18 +333,19 @@ class GraphValidator:
             envelope_layouts=self.envelope_layouts,
             product_prices_doc=self.product_prices_doc,
             service_prices_doc=self.service_prices_doc,
+            market=self.market,
         )
 
     def validate_envelope_layout_references(self) -> None:
         """Jurisdiction keys, envelope ids, each row must define orientation+layout."""
-        run_validate_envelope_layout_references(
+        run_validate_layout_refs(
             self.results,
             envelope_layouts=self.envelope_layouts,
             envelopes=self.envelopes,
         )
 
     def validate_envelope_address_window(self) -> None:
-        """address_area must match window (or print_area when no window) for resolved layouts."""
+        """window.area consistency for resolved layouts."""
         run_validate_envelope_address_window(
             self.results,
             envelope_layouts=self.envelope_layouts,
@@ -318,7 +353,7 @@ class GraphValidator:
 
     def validate_product_envelope_format_ids(self) -> None:
         """products.envelope_ids must exist in global envelopes.json."""
-        run_validate_product_envelope_format_ids(
+        run_validate_envelope_ids(
             self.results,
             envelopes=self.envelopes,
             products=self.products,
@@ -328,7 +363,7 @@ class GraphValidator:
         """Check for circular dependencies."""
         if self.graph is None:
             return
-        run_validate_circular_dependencies(self.results, graph=self.graph)
+        run_validate_cycles(self.results, graph=self.graph)
 
     def validate_all(self) -> ValidationResults:
         """Run all validations in logical order.
@@ -341,13 +376,14 @@ class GraphValidator:
         if self.results["errors"]:
             return self.results
 
-        self.validate_lookup_method()
+        self.validate_price_dependencies()
         self.validate_edges()
         self.validate_products_in_edges()
         self.validate_zones_and_weight_tiers()
-        self.validate_available_services()
+        self.validate_services()
         self.validate_execution_semantics()
         self.validate_marks_profiles()
+        self.validate_mark_edges()
         self.validate_provider_rules()
         self.validate_dependencies()
         self.validate_units()

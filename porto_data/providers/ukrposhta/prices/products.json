@@ -8,7 +8,7 @@
   },
   "product_prices": [
     {
-      "product_id": "letter_standard",
+      "product_id": "lyst_standartnyi",
       "zone": "domestic",
       "weight_tier": "W0050",
       "price": [
@@ -20,7 +20,7 @@
       ]
     },
     {
-      "product_id": "letter_standard",
+      "product_id": "lyst_standartnyi",
       "zone": "domestic",
       "weight_tier": "W0250",
       "price": [
@@ -32,7 +32,7 @@
       ]
     },
     {
-      "product_id": "letter_standard",
+      "product_id": "lyst_standartnyi",
       "zone": "domestic",
       "weight_tier": "W1000",
       "price": [
@@ -44,7 +44,7 @@
       ]
     },
     {
-      "product_id": "letter_standard",
+      "product_id": "lyst_standartnyi",
       "zone": "domestic",
       "weight_tier": "W2000",
       "price": [
@@ -56,7 +56,7 @@
       ]
     },
     {
-      "product_id": "ukrposhta_document",
+      "product_id": "dokument",
       "zone": "domestic",
       "weight_tier": "W1000",
       "price": [
@@ -68,7 +68,7 @@
       ]
     },
     {
-      "product_id": "letter_standard",
+      "product_id": "lyst_standartnyi",
       "zone": "world",
       "weight_tier": "W0050",
       "currency": "USD",
@@ -81,7 +81,7 @@
       ]
     },
     {
-      "product_id": "letter_standard",
+      "product_id": "lyst_standartnyi",
       "zone": "world",
       "weight_tier": "W0250",
       "currency": "USD",
@@ -94,7 +94,7 @@
       ]
     },
     {
-      "product_id": "letter_standard",
+      "product_id": "lyst_standartnyi",
       "zone": "world",
       "weight_tier": "W1000",
       "currency": "USD",
@@ -107,7 +107,7 @@
       ]
     },
     {
-      "product_id": "letter_standard",
+      "product_id": "lyst_standartnyi",
       "zone": "world",
       "weight_tier": "W2000",
       "currency": "USD",

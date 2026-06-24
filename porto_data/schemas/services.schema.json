@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/services.schema.json",
   "title": "Services Schema",
-  "description": "Provider-scoped postal add-on services. Each row has unified Porto `porto_id` (cross-provider semantic, used in prices/graph when referencing the capability), provider `id` (catalog key in this bundle), native `name`, and English `label`.",
+  "description": "Provider-scoped postal add-on services. Each row has unified Porto `porto_id` (SDK input), provider `id` (native catalog key for graph/prices/rules), native `name`, and English `label`.",
   "type": "object",
   "required": [
     "file_type",
@@ -23,7 +23,7 @@
     "provider": {
       "type": "string",
       "pattern": "^[a-z_]+$",
-      "description": "Provider identifier (e.g. deutschepost, swisspost)"
+      "description": "Provider identifier (e.g. deutschepost, ukrposhta, laposte, swisspost)"
     },
     "services": {
       "type": "array",
@@ -45,9 +45,8 @@
             "description": "Provider-scoped service id in this catalog (may match operator naming; referenced from provider-specific tooling)"
           },
           "porto_id": {
-            "type": "string",
-            "pattern": "^[a-z_]+$",
-            "description": "Unified Porto service id for SDK/resolver across carriers. **graph.json** and **prices.service_id** use provider **`id`** (native); use `porto_id` in app logic when you need the same semantic across operators."
+            "$ref": "porto_ids.schema.json#/definitions/service_porto_id",
+            "description": "Unified Porto service id for SDK input and cross-operator resolution. graph.json and prices.service_id use native `id`, not `porto_id`."
           },
           "name": {
             "type": "string",
@@ -85,7 +84,7 @@
             "type": "boolean",
             "description": "Whether this service can be ordered via online provider flows (e.g. Internetmarke, WebStamp). Default: true if omitted. Set false for discontinued or offline-only services."
           },
-          "integration_supported": {
+          "integrations": {
             "type": "object",
             "additionalProperties": {
               "type": "boolean"

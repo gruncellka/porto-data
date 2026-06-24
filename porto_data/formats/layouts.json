@@ -11,18 +11,6 @@
           "standard": "DIN678",
           "orientation": "landscape",
           "layout": {
-            "print_area": {
-              "x": 10,
-              "y": 45,
-              "width": 200,
-              "height": 60
-            },
-            "address_area": {
-              "x": 20,
-              "y": 50,
-              "width": 90,
-              "height": 45
-            },
             "window": {
               "supported": true,
               "area": {
@@ -42,18 +30,6 @@
           "standard": "DIN678",
           "orientation": "landscape",
           "layout": {
-            "print_area": {
-              "x": 10,
-              "y": 45,
-              "width": 140,
-              "height": 60
-            },
-            "address_area": {
-              "x": 20,
-              "y": 54,
-              "width": 90,
-              "height": 45
-            },
             "window": {
               "supported": true,
               "area": {
@@ -73,18 +49,6 @@
           "standard": "DIN678",
           "orientation": "landscape",
           "layout": {
-            "print_area": {
-              "x": 10,
-              "y": 10,
-              "width": 209,
-              "height": 142
-            },
-            "address_area": {
-              "x": 20,
-              "y": 57,
-              "width": 90,
-              "height": 45
-            },
             "window": {
               "supported": true,
               "area": {
@@ -104,18 +68,6 @@
           "standard": "DIN678",
           "orientation": "landscape",
           "layout": {
-            "print_area": {
-              "x": 10,
-              "y": 10,
-              "width": 304,
-              "height": 209
-            },
-            "address_area": {
-              "x": 20,
-              "y": 55,
-              "width": 90,
-              "height": 55
-            },
             "window": {
               "supported": true,
               "area": {
@@ -135,18 +87,6 @@
           "standard": "DIN678",
           "orientation": "landscape",
           "layout": {
-            "print_area": {
-              "x": 15,
-              "y": 70,
-              "width": 320,
-              "height": 170
-            },
-            "address_area": {
-              "x": 15,
-              "y": 70,
-              "width": 320,
-              "height": 170
-            },
             "window": {
               "supported": false
             },
@@ -164,18 +104,6 @@
           "standard": "SN010130",
           "orientation": "landscape",
           "layout": {
-            "print_area": {
-              "x": 10,
-              "y": 45,
-              "width": 200,
-              "height": 60
-            },
-            "address_area": {
-              "x": 20,
-              "y": 50,
-              "width": 90,
-              "height": 45
-            },
             "window": {
               "supported": true,
               "area": {
@@ -195,18 +123,6 @@
           "standard": "SN010130",
           "orientation": "landscape",
           "layout": {
-            "print_area": {
-              "x": 10,
-              "y": 45,
-              "width": 140,
-              "height": 60
-            },
-            "address_area": {
-              "x": 20,
-              "y": 54,
-              "width": 90,
-              "height": 45
-            },
             "window": {
               "supported": true,
               "area": {
@@ -226,18 +142,6 @@
           "standard": "SN010130",
           "orientation": "landscape",
           "layout": {
-            "print_area": {
-              "x": 10,
-              "y": 10,
-              "width": 209,
-              "height": 142
-            },
-            "address_area": {
-              "x": 20,
-              "y": 57,
-              "width": 90,
-              "height": 45
-            },
             "window": {
               "supported": true,
               "area": {
@@ -257,18 +161,6 @@
           "standard": "SN010130",
           "orientation": "landscape",
           "layout": {
-            "print_area": {
-              "x": 10,
-              "y": 10,
-              "width": 304,
-              "height": 209
-            },
-            "address_area": {
-              "x": 20,
-              "y": 55,
-              "width": 90,
-              "height": 55
-            },
             "window": {
               "supported": true,
               "area": {
@@ -288,18 +180,6 @@
           "standard": "SN010130",
           "orientation": "landscape",
           "layout": {
-            "print_area": {
-              "x": 15,
-              "y": 70,
-              "width": 320,
-              "height": 170
-            },
-            "address_area": {
-              "x": 15,
-              "y": 70,
-              "width": 320,
-              "height": 170
-            },
             "window": {
               "supported": false
             },
@@ -317,18 +197,6 @@
           "standard": "NFZ10011",
           "orientation": "landscape",
           "layout": {
-            "print_area": {
-              "x": 10,
-              "y": 45,
-              "width": 200,
-              "height": 60
-            },
-            "address_area": {
-              "x": 20,
-              "y": 50,
-              "width": 90,
-              "height": 45
-            },
             "window": {
               "supported": true,
               "area": {
@@ -348,18 +216,6 @@
           "standard": "NFZ10011",
           "orientation": "landscape",
           "layout": {
-            "print_area": {
-              "x": 10,
-              "y": 45,
-              "width": 140,
-              "height": 60
-            },
-            "address_area": {
-              "x": 20,
-              "y": 54,
-              "width": 90,
-              "height": 45
-            },
             "window": {
               "supported": true,
               "area": {
@@ -379,18 +235,6 @@
           "standard": "NFZ10011",
           "orientation": "landscape",
           "layout": {
-            "print_area": {
-              "x": 10,
-              "y": 10,
-              "width": 209,
-              "height": 142
-            },
-            "address_area": {
-              "x": 20,
-              "y": 57,
-              "width": 90,
-              "height": 45
-            },
             "window": {
               "supported": true,
               "area": {
@@ -410,18 +254,6 @@
           "standard": "NFZ10011",
           "orientation": "landscape",
           "layout": {
-            "print_area": {
-              "x": 10,
-              "y": 10,
-              "width": 304,
-              "height": 209
-            },
-            "address_area": {
-              "x": 20,
-              "y": 55,
-              "width": 90,
-              "height": 55
-            },
             "window": {
               "supported": true,
               "area": {
@@ -441,18 +273,6 @@
           "standard": "NFZ10011",
           "orientation": "landscape",
           "layout": {
-            "print_area": {
-              "x": 15,
-              "y": 70,
-              "width": 320,
-              "height": 170
-            },
-            "address_area": {
-              "x": 15,
-              "y": 70,
-              "width": 320,
-              "height": 170
-            },
             "window": {
               "supported": false
             },

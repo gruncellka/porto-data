@@ -6,14 +6,15 @@ from __future__ import annotations
 from scripts.validators.base import ValidationResults
 from scripts.validators.graph.services import (
     get_service_by_ref,
-    run_validate_available_services,
-    run_validate_service_price_consistency,
+    run_validate_graph_services,
+    run_validate_service_prices,
     service_refs_set,
 )
 from scripts.validators.graph.units import (
     run_validate_currency_units,
     run_validate_dimension_units,
     run_validate_price_units,
+    run_validate_row_ccy,
     run_validate_weight_units,
 )
 
@@ -35,18 +36,18 @@ class TestServicesHelpersCoverage:
     def test_get_service_by_ref_empty(self) -> None:
         assert get_service_by_ref({"services": [{"id": "x"}]}, "") is None
 
-    def test_available_services_invalid_and_missing_price_warn(self) -> None:
+    def test_services_invalid_and_missing_price_warn(self) -> None:
         r = _empty_results()
-        graph = {"global_settings": {"available_services": ["ghost", "real"]}}
+        graph = {"services": ["ghost", "real"]}
         services = {"services": [{"id": "real", "porto_id": "r1"}]}
         prices = [{"service_id": "other"}]
-        run_validate_available_services(r, graph=graph, services=services, service_prices=prices)
+        run_validate_graph_services(r, graph=graph, services=services, service_prices=prices)
         assert any("ghost" in e for e in r["errors"])
         assert any("real" in w and "no row" in w for w in r["warnings"])
 
     def test_service_price_consistency_branches(self) -> None:
         r = _empty_results()
-        run_validate_service_price_consistency(
+        run_validate_service_prices(
             r,
             services={
                 "services": [
@@ -101,3 +102,85 @@ class TestUnitsEarlyReturns:
         run_validate_currency_units(
             r, graph={"unit": {"currency": "EUR"}}, product_prices_doc=None, service_prices_doc=None
         )
+
+    def test_currency_mismatch_with_market(self) -> None:
+        r = _empty_results()
+        run_validate_currency_units(
+            r,
+            graph={"unit": {"currency": "USD"}},
+            product_prices_doc={"unit": {"currency": "USD"}},
+            service_prices_doc=None,
+            market={"currency": "EUR"},
+        )
+        assert any("policy/markets.json" in e for e in r["errors"])
+
+    def test_row_currency_market_rules(self) -> None:
+        r = _empty_results()
+        market = {"currency": "UAH", "international_currency": ["USD"]}
+        run_validate_row_ccy(
+            r,
+            graph={"unit": {"currency": "UAH"}},
+            product_prices_doc={
+                "unit": {"currency": "UAH"},
+                "product_prices": [
+                    {"product_id": "p1", "zone": "world", "weight_tier": "W0020"},
+                    {
+                        "product_id": "p2",
+                        "zone": "world",
+                        "weight_tier": "W0020",
+                        "currency": "USD",
+                    },
+                    {"product_id": "p3", "zone": "domestic", "currency": "UAH"},
+                    {"product_id": "p4", "zone": "world", "currency": "EUR"},
+                ],
+            },
+            service_prices_doc=None,
+            market=market,
+        )
+        assert any("must set currency in ['USD']" in e for e in r["errors"])
+        assert any("omit the override" in e for e in r["errors"])
+        assert any("must be in market international_currency" in e for e in r["errors"])
+
+    def test_row_currency_service_prices_and_non_dict_rows(self) -> None:
+        r = _empty_results()
+        run_validate_row_ccy(
+            r,
+            graph={"unit": {"currency": "EUR"}},
+            product_prices_doc=None,
+            service_prices_doc={
+                "unit": {"currency": "EUR"},
+                "service_prices": [
+                    "bad",
+                    {"service_id": "s1", "currency": "EUR"},
+                    {"service_id": "s2", "currency": "USD"},
+                ],
+            },
+            market={"currency": "EUR", "international_currency": ["USD"]},
+        )
+        assert any("omit the override" in e for e in r["errors"])
+
+    def test_row_currency_mixed_file_warning(self) -> None:
+        r = _empty_results()
+        run_validate_row_ccy(
+            r,
+            graph={"unit": {"currency": "UAH"}},
+            product_prices_doc={
+                "unit": {"currency": "CHF"},
+                "product_prices": [
+                    {"product_id": "p1", "zone": "world", "currency": "UAH"},
+                ],
+            },
+            service_prices_doc=None,
+            market={"currency": "UAH"},
+        )
+        assert any("intentional mixed-currency" in w for w in r["warnings"])
+
+    def test_row_currency_skips_without_graph(self) -> None:
+        r = _empty_results()
+        run_validate_row_ccy(
+            r,
+            graph=None,
+            product_prices_doc={"unit": {"currency": "EUR"}, "product_prices": []},
+            service_prices_doc=None,
+        )
+        assert r["errors"] == []

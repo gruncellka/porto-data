@@ -44,9 +44,8 @@
             "description": "Provider-scoped feature id in this catalog; referenced from services.json feature lists within the same provider"
           },
           "porto_id": {
-            "type": "string",
-            "pattern": "^[a-z_]+$",
-            "description": "Unified Porto feature id for cross-provider resolution and tooling (stable across operators when the capability is the same)"
+            "$ref": "porto_ids.schema.json#/definitions/feature_porto_id",
+            "description": "Unified Porto feature id for cross-provider resolution and SDK semantics"
           },
           "name": {
             "type": "string",

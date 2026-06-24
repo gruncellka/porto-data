@@ -14,7 +14,7 @@
       ],
       "enables_tracking": true,
       "online_supported": true,
-      "integration_supported": {
+      "integrations": {
         "mon_timbre_en_ligne": true
       },
       "supported_zones": [
@@ -32,7 +32,7 @@
       ],
       "enables_tracking": false,
       "online_supported": true,
-      "integration_supported": {
+      "integrations": {
         "mon_timbre_en_ligne": true
       },
       "supported_zones": [
@@ -50,7 +50,7 @@
       ],
       "enables_tracking": false,
       "online_supported": true,
-      "integration_supported": {
+      "integrations": {
         "mon_timbre_en_ligne": true
       },
       "supported_zones": [

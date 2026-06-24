@@ -14,20 +14,14 @@ def envelope_rect_complete(r: Any) -> bool:
     return all(isinstance(r.get(k), int) for k in _RECT_KEYS)
 
 
-def envelope_rect_equal(a: dict[str, Any], b: dict[str, Any]) -> bool:
-    return all(a.get(k) == b.get(k) for k in _RECT_KEYS)
-
-
 def envelope_validation_views(env: dict[str, Any]) -> dict[str, Any]:
-    """Nested layout.* (print/stamp/address/window) or legacy top-level areas + window flags."""
+    """Nested layout.window or legacy top-level window flags."""
     rend = env.get("layout")
-    if isinstance(rend, dict) and isinstance(rend.get("print_area"), dict):
+    if isinstance(rend, dict):
         win = rend.get("window") or {}
         sup = win.get("supported")
         wa = win.get("area") if sup is True else None
         return {
-            "addr": rend.get("address_area"),
-            "pa": rend.get("print_area"),
             "wa": wa,
             "has_w": envelope_rect_complete(wa),
             "no_window": sup is False,
@@ -35,8 +29,6 @@ def envelope_validation_views(env: dict[str, Any]) -> dict[str, Any]:
         }
     wa_legacy = env.get("window_area")
     return {
-        "addr": env.get("address_area"),
-        "pa": env.get("print_area"),
         "wa": wa_legacy,
         "has_w": envelope_rect_complete(wa_legacy),
         "no_window": env.get("supports_window") is False,

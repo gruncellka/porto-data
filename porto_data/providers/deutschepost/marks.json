@@ -5,15 +5,17 @@
   "unit": {
     "dimension": "mm"
   },
-  "default_profile": "internetmarke_standard",
+  "default_profile": "domestic",
   "profiles": [
     {
-      "id": "internetmarke_standard",
+      "id": "domestic",
       "mark_type": "stamp",
-      "label": "Internetmarke",
+      "label": "Internetmarke domestic",
+      "description": "Standard domestic letter franking graphic",
+      "scope_notes": "Not from Deutsche Post official spec; measured from Internetmarke PDF samples (calibration samples/, not in git). Frankierzone placement max 74\u00d740 mm",
       "size": {
-        "width": 46,
-        "height": 22
+        "width": 36,
+        "height": 16
       },
       "mime_type": [
         "image/png",
@@ -21,12 +23,44 @@
       ]
     },
     {
-      "id": "internetmarke_international",
+      "id": "international",
       "mark_type": "stamp",
       "label": "Internetmarke international",
+      "description": "International letter franking graphic (wider footprint)",
+      "scope_notes": "Not from Deutsche Post official spec; measured from Internetmarke PDF samples. Includes Priority P.P. line when applicable",
       "size": {
-        "width": 46,
-        "height": 22
+        "width": 60,
+        "height": 16
+      },
+      "mime_type": [
+        "image/png",
+        "application/pdf"
+      ]
+    },
+    {
+      "id": "registered",
+      "mark_type": "stamp",
+      "label": "Internetmarke registered domestic",
+      "description": "Domestic registered (Einschreiben) franking graphic",
+      "scope_notes": "Not from Deutsche Post official spec; measured from Internetmarke PDF samples. Einschreiben Einwurf / R\u00fcckschein and domestic Einschreiben",
+      "size": {
+        "width": 57,
+        "height": 21
+      },
+      "mime_type": [
+        "image/png",
+        "application/pdf"
+      ]
+    },
+    {
+      "id": "registered_international",
+      "mark_type": "stamp",
+      "label": "Internetmarke registered international",
+      "description": "International registered franking graphic",
+      "scope_notes": "Not from Deutsche Post official spec; measured from Internetmarke PDF samples. International Einschreiben; taller footprint with barcode and service lines",
+      "size": {
+        "width": 57,
+        "height": 30
       },
       "mime_type": [
         "image/png",

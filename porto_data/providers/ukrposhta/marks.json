@@ -5,14 +5,14 @@
   "unit": {
     "dimension": "mm"
   },
-  "default_profile": "label_default",
+  "default_profile": "domestic",
   "profiles": [
     {
-      "id": "label_default",
+      "id": "domestic",
       "mark_type": "label",
-      "label": "Label PDF (A6/A5)",
-      "description": "Standard Ukrposhta label PDF for letters and documents",
-      "scope_notes": "Domestic labels; size negotiated via API (A5/A6)",
+      "label": "Shipment label PDF",
+      "description": "Standard Ukrposhta eCom sticker PDF for letters and documents",
+      "scope_notes": "Domestic and international letters share one label model (A5-class PDF from API)",
       "size": {
         "width": 148,
         "height": 210

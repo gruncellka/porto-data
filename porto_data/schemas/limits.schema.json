@@ -2,14 +2,14 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/limits.schema.json",
   "title": "Provider limits schema",
-  "description": "Provider-scoped operational limits: how this operator applies service (conflicts, infrastructure, internal policy). Not shared legal sanctions\u2014those live in policy/restrictions.json (country / EU / UN regimes, independent of any single carrier). Each limits file is keyed by provider; regime periods and calendar use the provider operational timezone (see compliance_frameworks.timezone, aligned with providers.json for the same provider id).",
+  "description": "Provider-scoped operational limits: how this operator applies service (conflicts, infrastructure, internal policy). Not shared legal sanctions\u2014those live in policy/restrictions.json (country / EU / UN regimes, independent of any single carrier). Each limits file is keyed by provider; regime periods and calendar use the provider operational timezone (see frameworks.timezone, aligned with providers.json for the same provider id).",
   "type": "object",
   "required": [
     "file_type",
     "provider",
     "unit",
     "limits",
-    "compliance_frameworks"
+    "frameworks"
   ],
   "properties": {
     "$schema": {
@@ -74,7 +74,7 @@
               "restricted",
               "limited",
               "prohibited",
-              "severely_restricted",
+              "severe",
               "operational"
             ]
           },
@@ -98,7 +98,7 @@
             "enum": [
               "country",
               "territory",
-              "disputed_territory"
+              "disputed"
             ]
           },
           "effective_from": {
@@ -115,10 +115,10 @@
             ],
             "format": "date"
           },
-          "effective_partial": {
+          "partial": {
             "type": "boolean"
           },
-          "legal_reference": {
+          "reference": {
             "type": [
               "string",
               "null"
@@ -129,11 +129,11 @@
         "additionalProperties": false
       }
     },
-    "provider_context": {
+    "context": {
       "type": "object",
       "description": "Provider-facing narrative only (this limits file\u2019s carrier). Do not use this object to stand in for legal regimes; policy/restrictions.json holds verifiable destination rows and EU/UN-style frameworks.",
       "properties": {
-        "national_policy": {
+        "national": {
           "type": "object",
           "required": [
             "description",
@@ -152,7 +152,7 @@
       },
       "additionalProperties": false
     },
-    "compliance_frameworks": {
+    "frameworks": {
       "type": "object",
       "description": "Operational regime metadata for this provider. Each framework documents the regime time window (effective_from / effective_to, nullable) interpreted in timezone (provider operational calendar\u2014must match providers.<id>.timezone). limits[] row effective_from/effective_to remain authoritative for SDK activation; framework dates are the documented span, usually aligned with the primary limit row.",
       "patternProperties": {
@@ -181,9 +181,9 @@
             "type": {
               "type": "string",
               "enum": [
-                "operational_conflict",
-                "operational_infrastructure",
-                "operational_political"
+                "conflict",
+                "infrastructure",
+                "political"
               ]
             },
             "applies_to": {
@@ -212,10 +212,10 @@
                 "additionalProperties": false
               }
             },
-            "operational_note": {
+            "note": {
               "type": "string"
             },
-            "legal_reference": {
+            "reference": {
               "type": [
                 "string",
                 "null"

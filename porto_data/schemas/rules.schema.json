@@ -58,7 +58,7 @@
           "kind": {
             "type": "string",
             "enum": [
-              "metric_band_attach_service"
+              "band_attach"
             ],
             "description": "When the resolved metric value lies in (min_exclusive, max_inclusive], attach service_id surcharge"
           },

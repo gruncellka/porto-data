@@ -24,7 +24,7 @@
     "provider": {
       "type": "string",
       "pattern": "^[a-z_]+$",
-      "description": "Provider identifier (e.g. deutschepost, swisspost)"
+      "description": "Provider identifier (e.g. deutschepost, ukrposhta, laposte, swisspost)"
     },
     "unit": {
       "type": "object",
@@ -47,6 +47,7 @@
         "type": "object",
         "required": [
           "id",
+          "porto_id",
           "name",
           "envelope_ids",
           "zones",
@@ -80,11 +81,8 @@
             ]
           },
           "porto_id": {
-            "type": [
-              "string",
-              "null"
-            ],
-            "description": "Unified Porto product id for cross-provider resolution. Often equals `id` when the operator\u2019s tariff id already matches Porto vocabulary (e.g. Deutsche Post); may differ when the native id is operator-specific (e.g. Swiss Post) while the graph/resolver still keys on one shared semantic."
+            "$ref": "porto_ids.schema.json#/definitions/product_porto_id",
+            "description": "Unified Porto letter size bucket (small … extra_large). Not service semantics — use services.json for registered/tracking add-ons. Graph and prices use native `id`, not `porto_id`."
           },
           "envelope_ids": {
             "type": "array",
@@ -113,12 +111,7 @@
               "type": "string",
               "pattern": "^[a-z0-9_]+$"
             },
-            "description": "Zones where this product is available (must align with graph.edges for this product_id)"
-          },
-          "mark_profile": {
-            "type": "string",
-            "pattern": "^[a-z0-9_]+$",
-            "description": "Optional id of a profile in providers/<provider>/marks.json; when omitted, marks.default_profile applies."
+            "description": "Zones where this product is available (must align with graph.edges.products for this product_id)"
           },
           "weight_tier": {
             "type": "string",

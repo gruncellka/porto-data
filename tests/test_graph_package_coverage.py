@@ -7,6 +7,7 @@ from pathlib import Path
 
 from scripts.validators.base import ValidationResults
 from scripts.validators.graph import GraphValidator
+from scripts.validators.graph.dependencies import run_validate_price_dependencies
 from scripts.validators.graph.edges import run_validate_edges
 from scripts.validators.graph.envelope_geometry import (
     envelope_rect_complete,
@@ -15,10 +16,9 @@ from scripts.validators.graph.envelope_geometry import (
 from scripts.validators.graph.layouts import (
     envelope_layout_geometry_errors,
     run_validate_envelope_address_window,
-    run_validate_envelope_layout_references,
-    run_validate_product_envelope_format_ids,
+    run_validate_envelope_ids,
+    run_validate_layout_refs,
 )
-from scripts.validators.graph.price_lookup import run_price_lookup_validation
 
 
 def _results() -> ValidationResults:
@@ -28,7 +28,9 @@ def _results() -> ValidationResults:
 class TestGraphEdgesBranches:
     def test_weight_tier_on_product_missing_from_edges_fixes_needed(self) -> None:
         r = _results()
-        graph = {"edges": {"p1": {"zones": ["z1"], "weight_tiers": ["W1"]}}}
+        graph = {
+            "edges": {"products": {"p1": {"zones": ["z1"], "weight_tiers": ["W1"]}}, "marks": {}}
+        }
         product_dict = {
             "p1": {"id": "p1", "zones": ["z1"], "weight_tier": "W2"},
         }
@@ -44,7 +46,9 @@ class TestGraphEdgesBranches:
 
     def test_price_weight_tier_not_in_edges_fixes_needed(self) -> None:
         r = _results()
-        graph = {"edges": {"p1": {"zones": ["z1"], "weight_tiers": ["W1"]}}}
+        graph = {
+            "edges": {"products": {"p1": {"zones": ["z1"], "weight_tiers": ["W1"]}}, "marks": {}}
+        }
         product_dict = {"p1": {"id": "p1", "zones": ["z1"], "weight_tier": "W1"}}
         product_prices = [{"product_id": "p1", "zone": "z1", "weight_tier": "W9"}]
         run_validate_edges(
@@ -59,7 +63,12 @@ class TestGraphEdgesBranches:
 
     def test_all_price_weight_tiers_match_edges_correct(self) -> None:
         r = _results()
-        graph = {"edges": {"p1": {"zones": ["z1"], "weight_tiers": ["W1", "W2"]}}}
+        graph = {
+            "edges": {
+                "products": {"p1": {"zones": ["z1"], "weight_tiers": ["W1", "W2"]}},
+                "marks": {},
+            }
+        }
         product_dict = {"p1": {"id": "p1", "zones": ["z1"], "weight_tier": "W1"}}
         product_prices = [
             {"product_id": "p1", "weight_tier": "W1"},
@@ -97,39 +106,26 @@ class TestEnvelopeGeometryResolve:
 
 
 class TestLayoutsPureAndRunners:
-    def test_geometry_bad_address_and_print(self) -> None:
+    def test_geometry_bad_window_area(self) -> None:
         err = envelope_layout_geometry_errors(
             layout_fingerprint_id="F",
             path="layouts.json (DE, F)",
             env={
                 "layout": {
-                    "address_area": "bad",
-                    "print_area": {"x": 0, "y": 0, "width": 1, "height": 1},
+                    "window": {
+                        "supported": True,
+                        "area": {"x": 0.5, "y": 0, "width": 1, "height": 1},
+                    },
                 }
             },
         )
-        assert len(err) == 1 and "address_area" in err[0]
-
-        err2 = envelope_layout_geometry_errors(
-            layout_fingerprint_id="F",
-            path="p",
-            env={
-                "layout": {
-                    "address_area": {"x": 0, "y": 0, "width": 1, "height": 1},
-                    "print_area": {"x": 0.5, "y": 0, "width": 1, "height": 1},
-                    "window": {"supported": False},
-                }
-            },
-        )
-        assert any("print_area" in m for m in err2)
+        assert len(err) == 1 and "window.area" in err[0]
 
     def test_geometry_no_window_and_force_window_legacy(self) -> None:
         err = envelope_layout_geometry_errors(
             layout_fingerprint_id="F",
             path="p",
             env={
-                "address_area": {"x": 0, "y": 0, "width": 10, "height": 10},
-                "print_area": {"x": 0, "y": 0, "width": 10, "height": 10},
                 "supports_window": False,
                 "window_supported": True,
             },
@@ -141,25 +137,11 @@ class TestLayoutsPureAndRunners:
             layout_fingerprint_id="F",
             path="p",
             env={
-                "address_area": {"x": 0, "y": 0, "width": 10, "height": 10},
-                "print_area": {"x": 0, "y": 0, "width": 10, "height": 10},
                 "supports_window": False,
                 "window_area": {"x": 0, "y": 0, "width": 5, "height": 5},
             },
         )
-        assert any("omit window_area" in m for m in err)
-
-    def test_geometry_no_window_address_ne_print_legacy(self) -> None:
-        err = envelope_layout_geometry_errors(
-            layout_fingerprint_id="F",
-            path="p",
-            env={
-                "address_area": {"x": 1, "y": 0, "width": 10, "height": 10},
-                "print_area": {"x": 0, "y": 0, "width": 10, "height": 10},
-                "supports_window": False,
-            },
-        )
-        assert any("without window" in m for m in err)
+        assert any("omit window" in m for m in err)
 
     def test_geometry_force_window_requires_area_nested(self) -> None:
         err = envelope_layout_geometry_errors(
@@ -167,57 +149,23 @@ class TestLayoutsPureAndRunners:
             path="p",
             env={
                 "layout": {
-                    "address_area": {"x": 0, "y": 0, "width": 10, "height": 10},
-                    "print_area": {"x": 0, "y": 0, "width": 10, "height": 10},
                     "window": {"supported": True},
                 }
             },
         )
-        assert any("requires window_area" in m for m in err)
+        assert any("requires window.area" in m for m in err)
 
-    def test_geometry_force_window_addr_mismatch_nested(self) -> None:
+    def test_geometry_valid_no_window_nested(self) -> None:
         err = envelope_layout_geometry_errors(
             layout_fingerprint_id="F",
             path="p",
             env={
                 "layout": {
-                    "address_area": {"x": 0, "y": 0, "width": 10, "height": 10},
-                    "print_area": {"x": 0, "y": 0, "width": 10, "height": 10},
-                    "window": {
-                        "supported": True,
-                        "area": {"x": 1, "y": 0, "width": 10, "height": 10},
-                    },
+                    "window": {"supported": False},
                 }
             },
         )
-        assert any("address_area must equal window_area" in m for m in err)
-
-    def test_geometry_no_explicit_window_addr_must_match_print_nested(self) -> None:
-        err = envelope_layout_geometry_errors(
-            layout_fingerprint_id="F",
-            path="p",
-            env={
-                "layout": {
-                    "address_area": {"x": 1, "y": 0, "width": 10, "height": 10},
-                    "print_area": {"x": 0, "y": 0, "width": 10, "height": 10},
-                    "window": {},
-                }
-            },
-        )
-        assert any("no window_area" in m for m in err)
-
-    def test_geometry_legacy_window_area_must_match_address(self) -> None:
-        """Legacy layout: optional window_area without explicit supports_window flags."""
-        err = envelope_layout_geometry_errors(
-            layout_fingerprint_id="F",
-            path="p",
-            env={
-                "address_area": {"x": 0, "y": 0, "width": 10, "height": 10},
-                "print_area": {"x": 0, "y": 0, "width": 10, "height": 10},
-                "window_area": {"x": 1, "y": 0, "width": 10, "height": 10},
-            },
-        )
-        assert any("address_area must equal window_area" in m for m in err)
+        assert err == []
 
     def test_run_address_window_skips_non_dict_jurisdiction_blocks(self) -> None:
         r = _results()
@@ -234,14 +182,14 @@ class TestLayoutsPureAndRunners:
 
     def test_run_layout_references_skips_malformed_blocks(self) -> None:
         r = _results()
-        run_validate_envelope_layout_references(r, envelope_layouts=None, envelopes={})
+        run_validate_layout_refs(r, envelope_layouts=None, envelopes={})
         assert not r["errors"]
-        run_validate_envelope_layout_references(
+        run_validate_layout_refs(
             r,
             envelope_layouts={"jurisdictions": []},
             envelopes={"envelopes": [{"id": "C6"}]},
         )
-        run_validate_envelope_layout_references(
+        run_validate_layout_refs(
             r,
             envelope_layouts={
                 "jurisdictions": {
@@ -272,9 +220,8 @@ class TestLayoutsPureAndRunners:
                             "C6": {
                                 "orientation": "landscape",
                                 "layout": {
-                                    "print_area": {"x": 0, "y": 0, "width": 10, "height": 10},
-                                    "address_area": {"x": 0, "y": 0, "width": 3, "height": 3},
-                                    "window": {},
+                                    "window": {"supported": True},
+                                    "post_mark": {"x": 0, "y": 0},
                                 },
                             }
                         }
@@ -286,9 +233,9 @@ class TestLayoutsPureAndRunners:
 
     def test_run_product_envelope_ids_skips_and_errors(self) -> None:
         r = _results()
-        run_validate_product_envelope_format_ids(r, envelopes=None, products={})
+        run_validate_envelope_ids(r, envelopes=None, products={})
         assert not r["errors"]
-        run_validate_product_envelope_format_ids(
+        run_validate_envelope_ids(
             r,
             envelopes={"envelopes": [{"id": "C6"}]},
             products={"products": ["not-a-dict", {"id": "p1", "envelope_ids": ["Nope"]}]},
@@ -296,12 +243,19 @@ class TestLayoutsPureAndRunners:
         assert any("Nope" in e for e in r["errors"])
 
 
-class TestPriceLookupRunner:
-    def test_price_lookup_skips_when_not_dict(self) -> None:
+class TestPriceDependenciesRunner:
+    _deps_graph = {
+        "dependencies": {
+            "product_prices": {"file": "prices/products.json", "depends_on": []},
+            "service_prices": {"file": "prices/services.json", "depends_on": []},
+        }
+    }
+
+    def test_price_dependencies_skips_when_dependencies_not_dict(self) -> None:
         r = _results()
-        run_price_lookup_validation(
+        run_validate_price_dependencies(
             r,
-            graph={"global_settings": {"price_lookup": []}},
+            graph={"dependencies": []},
             shared_bundle_subdir=Path("/a"),
             bundle_root=Path("/a"),
             provider_dir=Path("/a/p"),
@@ -315,24 +269,9 @@ class TestPriceLookupRunner:
 
     def test_file_reference_missing_on_disk_error(self) -> None:
         r = _results()
-        run_price_lookup_validation(
+        run_validate_price_dependencies(
             r,
-            graph={
-                "global_settings": {
-                    "price_lookup": {
-                        "product_prices": {
-                            "file": "prices/products.json",
-                            "array": "product_prices",
-                            "match": {"product_id": "x"},
-                        },
-                        "service_prices": {
-                            "file": "prices/services.json",
-                            "array": "service_prices",
-                            "match": {"service_id": "x"},
-                        },
-                    }
-                }
-            },
+            graph=self._deps_graph,
             shared_bundle_subdir=Path("/tmp"),
             bundle_root=Path("/tmp"),
             provider_dir=Path("/tmp/deutschepost"),
@@ -342,28 +281,13 @@ class TestPriceLookupRunner:
             product_prices=[],
             service_prices=[],
         )
-        assert any("doesn't exist" in e for e in r["errors"])
+        assert any("does not exist" in e for e in r["errors"])
 
-    def test_lookup_array_structure_mismatch_errors(self) -> None:
+    def test_price_array_structure_mismatch_errors(self) -> None:
         r = _results()
-        run_price_lookup_validation(
+        run_validate_price_dependencies(
             r,
-            graph={
-                "global_settings": {
-                    "price_lookup": {
-                        "product_prices": {
-                            "file": "prices/products.json",
-                            "array": "product_prices",
-                            "match": {"product_id": "x"},
-                        },
-                        "service_prices": {
-                            "file": "prices/services.json",
-                            "array": "service_prices",
-                            "match": {"service_id": "x"},
-                        },
-                    }
-                }
-            },
+            graph=self._deps_graph,
             shared_bundle_subdir=Path("/x"),
             bundle_root=Path("/x"),
             provider_dir=Path("/x"),
@@ -373,28 +297,13 @@ class TestPriceLookupRunner:
             product_prices=[],
             service_prices=[],
         )
-        assert any("structure doesn't match" in e for e in r["errors"])
+        assert any("Price file for product_prices missing" in e for e in r["errors"])
 
-    def test_match_keys_empty_product_prices_warns(self) -> None:
+    def test_empty_product_prices_rows_warns(self) -> None:
         r = _results()
-        run_price_lookup_validation(
+        run_validate_price_dependencies(
             r,
-            graph={
-                "global_settings": {
-                    "price_lookup": {
-                        "product_prices": {
-                            "file": "prices/products.json",
-                            "array": "product_prices",
-                            "match": {"product_id": "x"},
-                        },
-                        "service_prices": {
-                            "file": "prices/services.json",
-                            "array": "service_prices",
-                            "match": {"service_id": "x"},
-                        },
-                    }
-                }
-            },
+            graph=self._deps_graph,
             shared_bundle_subdir=Path("/x"),
             bundle_root=Path("/x"),
             provider_dir=Path("/x"),
@@ -404,28 +313,13 @@ class TestPriceLookupRunner:
             product_prices=[],
             service_prices=[{"service_id": "s", "price": []}],
         )
-        assert any("No product prices" in w for w in r["warnings"])
+        assert any("No product_prices rows" in w for w in r["warnings"])
 
-    def test_match_keys_empty_service_prices_warns(self) -> None:
+    def test_empty_service_prices_rows_warns(self) -> None:
         r = _results()
-        run_price_lookup_validation(
+        run_validate_price_dependencies(
             r,
-            graph={
-                "global_settings": {
-                    "price_lookup": {
-                        "product_prices": {
-                            "file": "prices/products.json",
-                            "array": "product_prices",
-                            "match": {"product_id": "x"},
-                        },
-                        "service_prices": {
-                            "file": "prices/services.json",
-                            "array": "service_prices",
-                            "match": {"service_id": "x"},
-                        },
-                    }
-                }
-            },
+            graph=self._deps_graph,
             shared_bundle_subdir=Path("/x"),
             bundle_root=Path("/x"),
             provider_dir=Path("/x"),
@@ -439,7 +333,44 @@ class TestPriceLookupRunner:
             product_prices=[{"product_id": "p", "zone": "z", "weight_tier": "w", "price": []}],
             service_prices=[],
         )
-        assert any("No service prices" in w for w in r["warnings"])
+        assert any("No service_prices rows" in w for w in r["warnings"])
+
+    def test_wrong_dependency_path_errors(self) -> None:
+        r = _results()
+        run_validate_price_dependencies(
+            r,
+            graph={
+                "dependencies": {
+                    "product_prices": {"file": "prices/wrong.json", "depends_on": []},
+                    "service_prices": {"file": "prices/services.json", "depends_on": []},
+                }
+            },
+            shared_bundle_subdir=Path("/x"),
+            bundle_root=Path("/x"),
+            provider_dir=Path("/x"),
+            all_data_files={"prices/products.json", "prices/services.json"},
+            product_prices_doc={"product_prices": []},
+            service_prices_doc={"service_prices": []},
+            product_prices=[],
+            service_prices=[],
+        )
+        assert any("should be" in e for e in r["errors"])
+
+    def test_missing_row_keys_errors(self) -> None:
+        r = _results()
+        run_validate_price_dependencies(
+            r,
+            graph=self._deps_graph,
+            shared_bundle_subdir=Path("/x"),
+            bundle_root=Path("/x"),
+            provider_dir=Path("/x"),
+            all_data_files={"prices/products.json", "prices/services.json"},
+            product_prices_doc={"product_prices": [{"product_id": "p", "zone": "z"}]},
+            service_prices_doc={"service_prices": []},
+            product_prices=[{"product_id": "p", "zone": "z"}],
+            service_prices=[],
+        )
+        assert any("weight_tier" in e for e in r["errors"])
 
 
 class TestGraphValidatorEarlyReturnsAndBranches:
@@ -448,11 +379,11 @@ class TestGraphValidatorEarlyReturnsAndBranches:
         data_dir.mkdir()
         v = GraphValidator(data_dir=data_dir)
         v.graph = None
-        v.validate_lookup_method()
+        v.validate_price_dependencies()
         v.validate_edges()
         v.validate_products_in_edges()
         v.validate_zones_and_weight_tiers()
-        v.validate_available_services()
+        v.validate_services()
         v.validate_dependencies()
         v.validate_circular_dependencies()
         assert not v.results["errors"] and not v.results["warnings"]
@@ -465,8 +396,8 @@ class TestGraphValidatorEarlyReturnsAndBranches:
             "provider": "x",
             "unit": {"weight": "g", "dimension": "mm", "price": "cents", "currency": "EUR"},
             "dependencies": {"products": {"file": "products.json", "depends_on": []}},
-            "edges": {},
-            "global_settings": {"price_lookup": {}},
+            "edges": {"products": {}, "marks": {}},
+            "services": ["svc"],
         }
         (data_dir / "graph.json").write_text(json.dumps(graph), encoding="utf-8")
         (data_dir / "products.json").write_text(
@@ -560,22 +491,8 @@ class TestGraphValidatorEarlyReturnsAndBranches:
                 "restrictions": {"file": "restrictions.json", "depends_on": []},
                 "features": {"file": "features.json", "depends_on": []},
             },
-            "edges": {},
-            "global_settings": {
-                "price_lookup": {
-                    "product_prices": {
-                        "file": "prices/products.json",
-                        "array": "product_prices",
-                        "match": {"product_id": "x"},
-                    },
-                    "service_prices": {
-                        "file": "prices/services.json",
-                        "array": "service_prices",
-                        "match": {"service_id": "x"},
-                    },
-                },
-                "available_services": [],
-            },
+            "edges": {"products": {}, "marks": {}},
+            "services": ["einschreiben"],
         }
         (data_dir / "graph.json").write_text(json.dumps(graph), encoding="utf-8")
         (data_dir / "products.json").write_text(
@@ -678,22 +595,8 @@ class TestGraphValidatorMoreBranches:
                 "restrictions": {"file": "restrictions.json", "depends_on": []},
                 "features": {"file": "features.json", "depends_on": []},
             },
-            "edges": {},
-            "global_settings": {
-                "price_lookup": {
-                    "product_prices": {
-                        "file": "prices/products.json",
-                        "array": "product_prices",
-                        "match": {"product_id": "x"},
-                    },
-                    "service_prices": {
-                        "file": "prices/services.json",
-                        "array": "service_prices",
-                        "match": {"service_id": "x"},
-                    },
-                },
-                "available_services": [],
-            },
+            "edges": {"products": {}, "marks": {}},
+            "services": ["einschreiben"],
         }
         (data_dir / "graph.json").write_text(json.dumps(graph), encoding="utf-8")
         (data_dir / "products.json").write_text(
@@ -793,22 +696,8 @@ class TestGraphValidatorMoreBranches:
                 "restrictions": {"file": "restrictions.json", "depends_on": []},
                 "features": {"file": "features.json", "depends_on": []},
             },
-            "edges": {},
-            "global_settings": {
-                "price_lookup": {
-                    "product_prices": {
-                        "file": "prices/products.json",
-                        "array": "product_prices",
-                        "match": {"product_id": "x"},
-                    },
-                    "service_prices": {
-                        "file": "prices/services.json",
-                        "array": "service_prices",
-                        "match": {"service_id": "x"},
-                    },
-                },
-                "available_services": [],
-            },
+            "edges": {"products": {}, "marks": {}},
+            "services": ["einschreiben"],
         }
         (data_dir / "graph.json").write_text(json.dumps(graph), encoding="utf-8")
         (data_dir / "products.json").write_text(
@@ -894,22 +783,8 @@ class TestGraphValidatorMoreBranches:
                 "restrictions": {"file": "restrictions.json", "depends_on": []},
                 "features": {"file": "features.json", "depends_on": []},
             },
-            "edges": {},
-            "global_settings": {
-                "price_lookup": {
-                    "product_prices": {
-                        "file": "prices/products.json",
-                        "array": "product_prices",
-                        "match": {"product_id": "x"},
-                    },
-                    "service_prices": {
-                        "file": "prices/services.json",
-                        "array": "service_prices",
-                        "match": {"service_id": "x"},
-                    },
-                },
-                "available_services": [],
-            },
+            "edges": {"products": {}, "marks": {}},
+            "services": ["einschreiben"],
         }
         (data_dir / "graph.json").write_text(json.dumps(graph), encoding="utf-8")
         (data_dir / "products.json").write_text(

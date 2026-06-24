@@ -6,18 +6,36 @@
 - **Multi-provider:** under `porto_data/providers/<id>/` (see `providers.json` at bundle root + `mappings.json`).
 - **Not** an app server; changes are mostly JSON and schema contracts.
 
+## Provider order (canonical)
+
+When listing operators in docs, tables, or cross-links, use:
+
+**`deutschepost` → `ukrposhta` → `laposte` → `swisspost`**
+
+Registry keys, `PROVIDER_IDS_ORDER`, and `mappings.json` follow this order. Extra registry ids are allowed but must still validate (e.g. markets coverage).
+
 ## Layout (current)
 
-- `porto_data/global/` — shared reference JSON (`jurisdictions.json`, …).
-- `porto_data/providers.json` — provider id registry.
-- `porto_data/policy/restrictions.json` — destination restrictions (EU/UN/CH buckets under `destinations[]`).
-- `porto_data/envelopes/` — physical formats, profiles, support matrix, `envelope_rules.json`.
-- `porto_data/providers/<provider_id>/` — per-operator JSON (`products`, `services`, `prices`, `zones`, `weight_tiers`, **`graph.json`**, `limits.json`, `features.json`, …).
-- `porto_data/schemas/` — JSON Schema for the above.
+- `porto_data/policy/` — shared policy JSON (`jurisdictions.json`, `restrictions.json`, **`markets.json`**).
+- `porto_data/formats/` — shared envelope catalog and print layouts (`envelopes.json`, `layouts.json`).
+- `porto_data/providers.json` — provider id registry (**no `vat`** — fiscal defaults live in **`markets.json`**).
+- `porto_data/providers/<provider_id>/` — per-operator JSON (`products`, `services`, `prices`, `zones`, `weights.json`, **`graph.json`**, **`limits.json`**, `features.json`, optional `rules.json`, …).
+- `porto_data/schemas/` — JSON Schema (including `porto_ids.schema.json`, `markets.schema.json`).
 - `porto_data/mappings.json` — which logical entities exist for each provider (paths are authoritative for tooling).
 - `porto_data/metadata.json` — **generated** (checksums, manifest). Regenerate with `make metadata` / `porto metadata`; do not edit by hand.
 
-There is **no** `porto_data/data/` bundle anymore. Cross-file dependencies and product resolution wiring live in each provider’s **`graph.json`** (`file_type`: `graph`), including **`edges`** (product → zones × weight tiers). Do not use removed names `links` (as top-level key), `data_links.json`, or flat single-bundle paths in new work.
+There is **no** `porto_data/data/`, `data_links.json`, or `porto_data/global/` bundle. Cross-file wiring lives in each provider’s **`graph.json`** (`file_type`: `graph`): **`dependencies`**, **`edges`**, top-level **`services`**. Price paths come from **`dependencies`**; join keys from price schemas. Do not use removed names: top-level **`links`**, **`lookup_rules`**, **`global_settings`**, **`price_lookup`**, **`available_services`** (use **`services`** on graph).
+
+## Policy vs limits (restrictions model)
+
+| Layer | File | Role |
+| ----- | ---- | ---- |
+| Global sanctions / destination regimes | `policy/restrictions.json` | Shared legal-style rows; versioned with bundle |
+| Country fiscal defaults | `policy/markets.json` | `currency`, `international_currency`, `vat`, `settlement` per `markets[CC]` |
+| Provider overlay | `providers/<id>/limits.json` | **Often empty** (`limits[]`: `[]`) — durable operator letter rules only |
+| Runtime | Porto SDK / app | Strikes, live suspensions, carrier API status |
+
+Merge order documented in provider `limits.json` `context`: restrictions → limits → SDK overlay. See [docs/policy.md](docs/policy.md).
 
 ## JSON conventions
 
@@ -25,36 +43,85 @@ There is **no** `porto_data/data/` bundle anymore. Cross-file dependencies and p
 - **Preserve key order** (do not sort keys).
 - All committed data must validate against the matching schema in `porto_data/schemas/`.
 
+## JSON naming doctrine
+
+**Porto schema keys:** full English words — `international`, not `intl`/`inter`; `currency`, not `ccy`.
+
+**Lane pairing:** use `domestic` and `international` together (markets VAT, docs). Zone ids stay `domestic`, `world`, `zone_*` — never `international` as a zone id.
+
+**Structure:**
+- Multi-facet fiscal rules → nest under domain: `vat.domestic`, `vat.international` (not `international_vat`, `intl_excl`, or top-level `vat.inclusive`).
+- Intl quote currencies on market → `international_currency` (not `intl_ccy`).
+
+**Market row key order:** `currency` → `international_currency` → `vat` → `settlement`. Inside `vat`: `rate` → `exempt` → `domestic` → `international`.
+
+**Native ids we assign:** prefer `recommended_international`, not `*_intl`. **Carrier-mirrored ids** (e.g. `lettre_recommandee_inter_r_un`, `international_standardbrief`) — keep operator tokens; do not global-rename.
+
+**Allowed abbreviations:** `porto_id`, `fx`/`fx_date`, ISO country/currency codes, weight tier codes (`W0050`), `zone_1_eu`.
+
 ## Python conventions
 
 - **Ruff** format + lint; **MyPy** strict; **Python 3.13+**.
 - Imports: `from scripts....` / `from cli....` — **no** `sys.path` hacks.
 - Paths: use `scripts/data_files.py` (project root, mappings-driven paths).
+- `cli/__init__.py` resolves `__version__` from installed package metadata or `pyproject.toml` when running from a clone (no `pip install` required).
 
 ## Validation stack (for code changes)
 
-- `scripts.validators.schema` — JSON Schema validation.
-- `scripts.validators.mappings_layout` — `mappings.json`, registry, stray files, metadata presence.
-- `scripts.validators.limits_scope` — `limits.json` letter-scope rules.
-- `scripts/validators/graph/` — package for `graph.json`: `validator` (orchestrator), `runner` (`validate_graph` + printing), plus `edges`, `services`, `execution_semantics`, `marks_profiles`, `provider_rules`, `dependencies`, `units`, `layouts`, `price_lookup`, `envelope_geometry`, `constants`. Import as `scripts.validators.graph`.
+- `scripts.validators.schema` — JSON Schema validation (with `$ref` to sibling schemas).
+- `scripts.validators.mappings_layout` — `mappings.json`, registry, stray files, metadata presence, required provider template.
+- `scripts.validators.markets` — `policy/markets.json` vs **every** `providers.json` country and fiscal shape.
+- `scripts.validators.limits_scope` — `providers/*/limits.json` letter-scope rules (empty `limits[]` is valid).
+- `scripts.validators.porto_ids` — canonical `porto_id` enums and native-id cross-file refs.
+- `scripts/validators/graph/` — package for `graph.json` (`validator`, `runner`, `edges`, `services`, `units`, `dependencies`, …). Import as `scripts.validators.graph`.
 - Results shape: `ValidationResults` in `scripts.validators.base`.
 
-CLI / default order: **schema → mappings → limits → graph** (`porto validate`).
+CLI / default order: **schema → mappings → markets → limits → porto_ids → graph** (`porto validate` / `make validate`).
+
+CI (`.github/workflows/validation.yml`) must run the same chain; include a **`validate-markets`** job between mappings and limits.
 
 ## Workflow
 
-- After JSON or schema edits: **`make validate`** and **`make format`**.
+- **No `make setup`.** Run **`make venv`** once, or let any quality target create the venv automatically (installs `.[dev]`, pre-commit hooks in git checkouts).
+- After JSON or schema edits: **`make validate`** and **`make format`** (or bare **`make`** for the full gate).
 - If `metadata.json` regenerates, **stage it in the same commit** as the data/schema/mappings change.
-- New validation behavior → **tests** in `tests/` (target **90%** coverage on full `make test`).
+- New validation behavior → **tests** in `tests/` (**100%** coverage on `make test-cov` for `scripts/` + `cli/`).
+- Pre-commit **`format-json`** uses `require_serial: true` — do not run parallel `git add` per file inside hooks (submodule index.lock races).
 
 ## Domain tokens (high level)
 
+- **`porto_id`** — SDK normalization identifier; enum in `porto_ids.schema.json`.
+- **Native `id`** — operator catalog key; used in graph, prices, rules (not `porto_id`).
+- **Currency:** `row.currency` → file `unit.currency` → `markets[country].currency`; intl overrides → `markets[country].international_currency`.
 - Country codes: **ISO 3166-1 alpha-2** where used.
-- Jurisdiction blocs in data: e.g. **`EU`**, **`UN`**; operator-specific postal rules belong in **`limits.json`**, not pseudo-jurisdictions in global restrictions.
+- Jurisdiction blocs: **`EU`**, **`UN`** in restrictions; operator letter overlays in **`limits.json`**.
+
+## Catalog layering doctrine (strict)
+
+**Full rule:** `.cursor/rules/catalog-layering-doctrine.mdc` · **Review mirror:** `BUGBOT.md` § Catalog layering philosophy · **Diagram:** `docs/identity-map.md`
+
+porto-data = **facts + contracts**. SDK/app = **resolution + workflow**. Do not collapse layers to “make validate pass” or “make the doc table pretty”.
+
+| Layer | Owns | Never owns |
+| ----- | ---- | ---------- |
+| **Catalog JSON** | Native ids, tariffs, zones, weights, factual mm geometry | Compose, sender placement, SDK porto_id in graph/prices |
+| **`porto_id` enums** | Narrow per-entity normalization (product = size only) | Same token on product + service; workflow picks |
+| **`formats/layouts`** | `window`, `post_mark`, `standard` | `address_area`, `print_area`, printable workflow |
+| **`marks` / `mark_profile`** | Stamp/label footprint | Product size or service semantics |
+| **Generated docs** | Drift detection (`porto_id.md`, `metadata.json`) | Hand-edited checksums |
+
+**`porto_id` (instance of the doctrine):**
+
+- Product enum: `small` … `extra_large`, `postcard` only — **disjoint** from service/feature enums (`_enum_overlap_errors` in CI).
+- Registered-letter SKUs → size `porto_id` + native `id` (La Poste recommandée → `small`).
+- Einschreiben → `registered` on **service** row only.
+
+When adding **any** catalog field or enum: name the owning layer, add a validator if checkable, run `make validate`, refresh generated artifacts. See BUGBOT rules 23–29.
 
 ## Assistant behavior
 
-- Prefer editing **`global/`** or **`providers/<id>/`** JSON, not inventing legacy paths.
-- When touching **`graph.json`**, keep **`edges`** and schema `graph.schema.json` aligned.
+- Prefer editing **`policy/`**, **`formats/`**, or **`providers/<id>/`** JSON, not inventing legacy paths.
+- When touching **`graph.json`**, keep **`edges`**, **`services`**, and `graph.schema.json` aligned.
 - Do not hand-edit **`metadata.json`**.
+- Do not flag empty **`limits[]`** as missing data — intentional until a citable provider overlay exists.
 - Match existing style in `scripts/` and `cli/`; add types and tests for new logic.

@@ -1,4 +1,4 @@
-"""``marks.json`` profiles and product ``mark_profile`` references."""
+"""``marks.json`` profile catalog (sizes, mark_type). Resolution: ``graph.edges.marks``."""
 
 from __future__ import annotations
 
@@ -14,9 +14,10 @@ def run_validate_marks_profiles(
     graph: dict[str, Any] | None,
     products: dict[str, Any] | None,
     marks: dict[str, Any] | None,
+    zones: dict[str, Any] | None = None,
+    services: dict[str, Any] | None = None,
 ) -> None:
-    if products is None:
-        return
+    _ = products, services, zones
     if not marks or not isinstance(marks, dict):
         results["errors"].append(f"Missing or invalid {MARKS_FILE} (expected file_type marks)")
         return
@@ -55,24 +56,7 @@ def run_validate_marks_profiles(
             f"{MARKS_FILE}: default_profile {default_id!r} not found in profiles"
         )
 
-    for product in products.get("products", []):
-        if not isinstance(product, dict):
-            continue
-        product_id = product.get("id", "?")
-        mp = product.get("mark_profile")
-        chosen = str(mp) if isinstance(mp, str) and mp.strip() else default_id
-        if not chosen:
-            continue
-        prof = by_id.get(chosen)
-        if not prof:
-            results["errors"].append(
-                f"Product '{product_id}': mark_profile {chosen!r} not found in {MARKS_FILE}"
-            )
-            continue
-        p_mark = product.get("mark_type")
-        pr_mark = prof.get("mark_type")
-        if p_mark != pr_mark:
-            results["errors"].append(
-                f"Product '{product_id}': mark_type {p_mark!r} does not match "
-                f"marks profile {chosen!r} mark_type {pr_mark!r}"
-            )
+    if marks.get("zones") is not None:
+        results["errors"].append(
+            f"{MARKS_FILE}: zones is removed; use graph.json edges.marks for resolution"
+        )

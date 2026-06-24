@@ -1,0 +1,159 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/markets.schema.json",
+  "title": "Markets (country fiscal policy)",
+  "description": "Per-country currency, VAT, and international quote currencies. providers.json country resolves fiscal defaults via markets[COUNTRY]. All operators in the same country share one market row.",
+  "type": "object",
+  "required": [
+    "file_type",
+    "unit",
+    "markets"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "format": "uri"
+    },
+    "file_type": {
+      "type": "string",
+      "const": "markets"
+    },
+    "description": {
+      "type": "string"
+    },
+    "unit": {
+      "type": "object",
+      "description": "Encoding hints for country_code and currency fields in this file.",
+      "required": [
+        "country_code",
+        "currency"
+      ],
+      "properties": {
+        "country_code": {
+          "type": "string",
+          "const": "ISO 3166-1 alpha-2"
+        },
+        "currency": {
+          "type": "string",
+          "const": "ISO 4217"
+        }
+      },
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "markets": {
+      "type": "object",
+      "minProperties": 1,
+      "patternProperties": {
+        "^[A-Z]{2}$": {
+          "$ref": "#/definitions/market"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "definitions": {
+    "currency_code": {
+      "type": "string",
+      "enum": [
+        "EUR",
+        "CHF",
+        "UAH",
+        "USD"
+      ]
+    },
+    "vat_lane": {
+      "type": "object",
+      "required": [
+        "inclusive"
+      ],
+      "properties": {
+        "inclusive": {
+          "type": "boolean",
+          "description": "When true, published tariff amounts for this lane include VAT."
+        }
+      },
+      "additionalProperties": false
+    },
+    "vat": {
+      "type": "object",
+      "properties": {
+        "rate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Standard VAT rate as a fraction (e.g. 0.2 for 20%)."
+        },
+        "exempt": {
+          "type": "boolean",
+          "description": "When true, universal letter service is VAT-exempt in this market (all lanes)."
+        },
+        "domestic": {
+          "$ref": "#/definitions/vat_lane",
+          "description": "VAT presentation for domestic-zone tariff rows."
+        },
+        "international": {
+          "$ref": "#/definitions/vat_lane",
+          "description": "VAT presentation for international-zone tariff rows."
+        }
+      },
+      "additionalProperties": false
+    },
+    "settlement": {
+      "type": "object",
+      "required": [
+        "currency",
+        "fx",
+        "fx_date"
+      ],
+      "properties": {
+        "currency": {
+          "$ref": "#/definitions/currency_code",
+          "description": "Currency charged at checkout or service date."
+        },
+        "fx": {
+          "type": "string",
+          "minLength": 1,
+          "description": "FX rate source when quoted amount differs from settlement currency (e.g. NBU)."
+        },
+        "fx_date": {
+          "type": "string",
+          "minLength": 1,
+          "description": "When FX applies (e.g. service for service-date rate)."
+        }
+      },
+      "additionalProperties": false
+    },
+    "market": {
+      "type": "object",
+      "required": [
+        "currency"
+      ],
+      "properties": {
+        "currency": {
+          "$ref": "#/definitions/currency_code",
+          "description": "Default domestic postal quote currency for this market."
+        },
+        "international_currency": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/definitions/currency_code"
+          },
+          "description": "Allowed row-level quote currencies when a tariff row differs from currency."
+        },
+        "vat": {
+          "$ref": "#/definitions/vat"
+        },
+        "settlement": {
+          "$ref": "#/definitions/settlement"
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
