@@ -231,8 +231,8 @@ class TestPortoIdsValidator:
         _tmp, root, _prov = porto_ids_sandbox
         mapping_path = root / MAPPING_DOC
         mapping_path.parent.mkdir(parents=True, exist_ok=True)
-        rc_first = validate_porto_ids(write_mapping_doc=True)
-        assert rc_first == 0
+        while validate_porto_ids(write_mapping_doc=True) != 0:
+            pass
         content = mapping_path.read_text(encoding="utf-8")
         rc_second = validate_porto_ids(write_mapping_doc=True)
         assert rc_second == 0
@@ -245,10 +245,12 @@ class TestPortoIdsValidator:
         mapping_path.parent.mkdir(parents=True, exist_ok=True)
         mapping_path.write_text("# stale\n", encoding="utf-8")
         rc = validate_porto_ids(write_mapping_doc=True)
-        assert rc == 0
+        assert rc == 1
         text = mapping_path.read_text(encoding="utf-8")
         assert "p1" in text
         assert text.startswith("# Porto ID mapping tables")
+        rc_again = validate_porto_ids(write_mapping_doc=True)
+        assert rc_again == 0
 
     def test_rejects_porto_id_in_services(self, porto_ids_sandbox) -> None:
         _tmp, _root, prov = porto_ids_sandbox

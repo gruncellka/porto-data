@@ -275,11 +275,15 @@ def validate_porto_ids(*, write_mapping_doc: bool = True) -> int:
     if write_mapping_doc:
         mapping_path.parent.mkdir(parents=True, exist_ok=True)
         content = _render_mapping_doc(doc_data)
+        rel = mapping_path.relative_to(repo_root)
         if not mapping_path.exists() or mapping_path.read_text(encoding="utf-8") != content:
             mapping_path.write_text(content, encoding="utf-8")
-            print(f"✓ Updated {mapping_path.relative_to(repo_root)}")
-        else:
-            print(f"✓ {mapping_path.relative_to(repo_root)} is current")
+            print(f"❌ ERROR: {rel} was out of date and has been regenerated.")
+            print("   Commit the updated file (or run 'porto validate --type porto_ids' and review).")
+            print()
+            print("❌ porto_id validation failed (mapping doc drift).")
+            return 1
+        print(f"✓ {rel} is current")
 
     print(f"✅ porto_id validation OK ({len(list_provider_ids())} providers).\n")
     return 0
