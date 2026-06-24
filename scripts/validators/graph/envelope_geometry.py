@@ -14,10 +14,6 @@ def envelope_rect_complete(r: Any) -> bool:
     return all(isinstance(r.get(k), int) for k in _RECT_KEYS)
 
 
-def envelope_rect_equal(a: dict[str, Any], b: dict[str, Any]) -> bool:
-    return all(a.get(k) == b.get(k) for k in _RECT_KEYS)
-
-
 def envelope_validation_views(env: dict[str, Any]) -> dict[str, Any]:
     """Nested layout.window or legacy top-level window flags."""
     rend = env.get("layout")

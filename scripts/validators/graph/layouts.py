@@ -39,13 +39,11 @@ def envelope_layout_geometry_errors(
         if has_w:
             out.append(f"{prefix}: supports_window is false; omit window.area")
     elif force_window:
-        if not has_w:
+        wa = v["wa"]
+        if wa is None:
             out.append(f"{prefix}: window.supported true requires window.area")
-        else:
-            wa = v["wa"]
-            assert isinstance(wa, dict)
-            if not envelope_rect_complete(wa):
-                out.append(f"{prefix}: window.area must have integer x, y, width, height")
+        elif not envelope_rect_complete(wa):
+            out.append(f"{prefix}: window.area must have integer x, y, width, height")
     return out
 
 
