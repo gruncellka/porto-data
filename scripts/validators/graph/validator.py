@@ -345,7 +345,7 @@ class GraphValidator:
         )
 
     def validate_envelope_address_window(self) -> None:
-        """address_area must match window (or print_area when no window) for resolved layouts."""
+        """window.area consistency for resolved layouts."""
         run_validate_envelope_address_window(
             self.results,
             envelope_layouts=self.envelope_layouts,

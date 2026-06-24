@@ -75,8 +75,6 @@ def _layouts_fixture():
                     "C6": {
                         "orientation": "landscape",
                         "layout": {
-                            "print_area": {"x": 0, "y": 0, "width": 100, "height": 80},
-                            "address_area": {"x": 0, "y": 0, "width": 100, "height": 80},
                             "window": {"supported": False},
                             "post_mark": {"x": 90, "y": 5},
                         },
@@ -626,8 +624,6 @@ class TestGraphLayoutsAndProducts:
                         "NOT_IN_ENVELOPES": {
                             "orientation": "landscape",
                             "layout": {
-                                "print_area": {"x": 0, "y": 0, "width": 1, "height": 1},
-                                "address_area": {"x": 0, "y": 0, "width": 1, "height": 1},
                                 "window": {"supported": False},
                                 "post_mark": {"x": 0, "y": 0},
                             },
@@ -657,8 +653,6 @@ class TestGraphLayoutsAndProducts:
                     "envelopes": {
                         "C6": {
                             "layout": {
-                                "print_area": {"x": 0, "y": 0, "width": 100, "height": 80},
-                                "address_area": {"x": 0, "y": 0, "width": 100, "height": 80},
                                 "window": {"supported": False},
                                 "post_mark": {"x": 90, "y": 5},
                             },
@@ -676,7 +670,7 @@ class TestGraphLayoutsAndProducts:
         v.validate_all()
         assert any("orientation" in e.lower() or "layout" in e.lower() for e in v.results["errors"])
 
-    def test_layout_address_area_non_integer_errors(self, tmp_path):
+    def test_layout_window_area_non_integer_errors(self, tmp_path):
         data_dir = tmp_path / "d"
         layouts = {
             "file_type": "layouts",
@@ -687,9 +681,10 @@ class TestGraphLayoutsAndProducts:
                         "C6": {
                             "orientation": "landscape",
                             "layout": {
-                                "print_area": {"x": 0, "y": 0, "width": 100, "height": 80},
-                                "address_area": {"x": 0.5, "y": 0, "width": 100, "height": 80},
-                                "window": {"supported": False},
+                                "window": {
+                                    "supported": True,
+                                    "area": {"x": 0.5, "y": 0, "width": 100, "height": 80},
+                                },
                                 "post_mark": {"x": 90, "y": 5},
                             },
                         }
@@ -705,7 +700,7 @@ class TestGraphLayoutsAndProducts:
         v = GraphValidator(data_dir)
         v.validate_all()
         assert any(
-            "address_area" in e.lower() and "integer" in e.lower() for e in v.results["errors"]
+            "window.area" in e.lower() and "integer" in e.lower() for e in v.results["errors"]
         )
 
     def test_product_envelope_id_missing_in_envelopes_errors(self, tmp_path):
@@ -740,8 +735,6 @@ class TestGraphDependenciesAndCircular:
 class TestGraphEnvelopeHelpers:
     def test_envelope_validation_views_legacy_top_level_window(self):
         env = {
-            "address_area": {"x": 0, "y": 0, "width": 10, "height": 10},
-            "print_area": {"x": 0, "y": 0, "width": 10, "height": 10},
             "window_area": {"x": 0, "y": 0, "width": 10, "height": 10},
             "window_supported": True,
         }

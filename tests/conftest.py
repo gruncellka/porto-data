@@ -79,8 +79,6 @@ def minimal_envelope_layouts():
                     "C6": {
                         "orientation": "landscape",
                         "layout": {
-                            "print_area": {"x": 0, "y": 0, "width": 100, "height": 80},
-                            "address_area": {"x": 0, "y": 0, "width": 100, "height": 80},
                             "window": {"supported": False},
                             "post_mark": {"x": 90, "y": 5},
                         },
@@ -211,8 +209,6 @@ def create_test_data_files(tmp_path, **file_data):
                         "C6": {
                             "orientation": "landscape",
                             "layout": {
-                                "print_area": {"x": 0, "y": 0, "width": 100, "height": 80},
-                                "address_area": {"x": 0, "y": 0, "width": 100, "height": 80},
                                 "window": {"supported": False},
                                 "post_mark": {"x": 90, "y": 5},
                             },

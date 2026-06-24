@@ -216,8 +216,6 @@ class TestServicePriceConsistency:
                             "C6": {
                                 "orientation": "landscape",
                                 "layout": {
-                                    "print_area": {"x": 0, "y": 0, "width": 100, "height": 80},
-                                    "address_area": {"x": 0, "y": 0, "width": 100, "height": 80},
                                     "window": {"supported": False},
                                     "post_mark": {"x": 90, "y": 5},
                                 },
@@ -367,8 +365,6 @@ class TestServicePriceConsistency:
                             "C6": {
                                 "orientation": "landscape",
                                 "layout": {
-                                    "print_area": {"x": 0, "y": 0, "width": 100, "height": 80},
-                                    "address_area": {"x": 0, "y": 0, "width": 100, "height": 80},
                                     "window": {"supported": False},
                                     "post_mark": {"x": 90, "y": 5},
                                 },

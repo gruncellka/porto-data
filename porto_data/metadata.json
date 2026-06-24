@@ -5,7 +5,7 @@
     "version": "0.3.1",
     "description": "Multi-provider postal JSON: operator catalogs, pricing, shared policy (markets, restrictions), and schemas"
   },
-  "generated_at": "2026-06-23T07:54:54.605409Z",
+  "generated_at": "2026-06-24T09:28:04.057864Z",
   "policy": {
     "jurisdictions": {
       "data": {
@@ -64,13 +64,13 @@
     "layouts": {
       "data": {
         "path": "formats/layouts.json",
-        "checksum": "4ae280daeef753745c9ab327ba90646749197965dfe965e2e120da476d2e0696",
-        "size": 10857
+        "checksum": "eaacc7486f2924113780eec2870301da6f172a66a31ce428de2c981241487785",
+        "size": 6507
       },
       "schema": {
         "path": "schemas/layouts.schema.json",
-        "checksum": "f80174565c611b898e22b6a26c52eb7cc394c56d23533db9e06855a2e21dfdd1",
-        "size": 3721,
+        "checksum": "63c869b4400d63b65bda23f2bd9ffe24cb15ee56f3538a6b55475ff194e8ed1f",
+        "size": 3511,
         "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/layouts.schema.json"
       }
     }

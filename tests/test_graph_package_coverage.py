@@ -106,39 +106,26 @@ class TestEnvelopeGeometryResolve:
 
 
 class TestLayoutsPureAndRunners:
-    def test_geometry_bad_address_and_print(self) -> None:
+    def test_geometry_bad_window_area(self) -> None:
         err = envelope_layout_geometry_errors(
             layout_fingerprint_id="F",
             path="layouts.json (DE, F)",
             env={
                 "layout": {
-                    "address_area": "bad",
-                    "print_area": {"x": 0, "y": 0, "width": 1, "height": 1},
+                    "window": {
+                        "supported": True,
+                        "area": {"x": 0.5, "y": 0, "width": 1, "height": 1},
+                    },
                 }
             },
         )
-        assert len(err) == 1 and "address_area" in err[0]
-
-        err2 = envelope_layout_geometry_errors(
-            layout_fingerprint_id="F",
-            path="p",
-            env={
-                "layout": {
-                    "address_area": {"x": 0, "y": 0, "width": 1, "height": 1},
-                    "print_area": {"x": 0.5, "y": 0, "width": 1, "height": 1},
-                    "window": {"supported": False},
-                }
-            },
-        )
-        assert any("print_area" in m for m in err2)
+        assert len(err) == 1 and "window.area" in err[0]
 
     def test_geometry_no_window_and_force_window_legacy(self) -> None:
         err = envelope_layout_geometry_errors(
             layout_fingerprint_id="F",
             path="p",
             env={
-                "address_area": {"x": 0, "y": 0, "width": 10, "height": 10},
-                "print_area": {"x": 0, "y": 0, "width": 10, "height": 10},
                 "supports_window": False,
                 "window_supported": True,
             },
@@ -150,25 +137,11 @@ class TestLayoutsPureAndRunners:
             layout_fingerprint_id="F",
             path="p",
             env={
-                "address_area": {"x": 0, "y": 0, "width": 10, "height": 10},
-                "print_area": {"x": 0, "y": 0, "width": 10, "height": 10},
                 "supports_window": False,
                 "window_area": {"x": 0, "y": 0, "width": 5, "height": 5},
             },
         )
-        assert any("omit window_area" in m for m in err)
-
-    def test_geometry_no_window_address_ne_print_legacy(self) -> None:
-        err = envelope_layout_geometry_errors(
-            layout_fingerprint_id="F",
-            path="p",
-            env={
-                "address_area": {"x": 1, "y": 0, "width": 10, "height": 10},
-                "print_area": {"x": 0, "y": 0, "width": 10, "height": 10},
-                "supports_window": False,
-            },
-        )
-        assert any("without window" in m for m in err)
+        assert any("omit window" in m for m in err)
 
     def test_geometry_force_window_requires_area_nested(self) -> None:
         err = envelope_layout_geometry_errors(
@@ -176,57 +149,23 @@ class TestLayoutsPureAndRunners:
             path="p",
             env={
                 "layout": {
-                    "address_area": {"x": 0, "y": 0, "width": 10, "height": 10},
-                    "print_area": {"x": 0, "y": 0, "width": 10, "height": 10},
                     "window": {"supported": True},
                 }
             },
         )
-        assert any("requires window_area" in m for m in err)
+        assert any("requires window.area" in m for m in err)
 
-    def test_geometry_force_window_addr_mismatch_nested(self) -> None:
+    def test_geometry_valid_no_window_nested(self) -> None:
         err = envelope_layout_geometry_errors(
             layout_fingerprint_id="F",
             path="p",
             env={
                 "layout": {
-                    "address_area": {"x": 0, "y": 0, "width": 10, "height": 10},
-                    "print_area": {"x": 0, "y": 0, "width": 10, "height": 10},
-                    "window": {
-                        "supported": True,
-                        "area": {"x": 1, "y": 0, "width": 10, "height": 10},
-                    },
+                    "window": {"supported": False},
                 }
             },
         )
-        assert any("address_area must equal window_area" in m for m in err)
-
-    def test_geometry_no_explicit_window_addr_must_match_print_nested(self) -> None:
-        err = envelope_layout_geometry_errors(
-            layout_fingerprint_id="F",
-            path="p",
-            env={
-                "layout": {
-                    "address_area": {"x": 1, "y": 0, "width": 10, "height": 10},
-                    "print_area": {"x": 0, "y": 0, "width": 10, "height": 10},
-                    "window": {},
-                }
-            },
-        )
-        assert any("no window_area" in m for m in err)
-
-    def test_geometry_legacy_window_area_must_match_address(self) -> None:
-        """Legacy layout: optional window_area without explicit supports_window flags."""
-        err = envelope_layout_geometry_errors(
-            layout_fingerprint_id="F",
-            path="p",
-            env={
-                "address_area": {"x": 0, "y": 0, "width": 10, "height": 10},
-                "print_area": {"x": 0, "y": 0, "width": 10, "height": 10},
-                "window_area": {"x": 1, "y": 0, "width": 10, "height": 10},
-            },
-        )
-        assert any("address_area must equal window_area" in m for m in err)
+        assert err == []
 
     def test_run_address_window_skips_non_dict_jurisdiction_blocks(self) -> None:
         r = _results()
@@ -281,9 +220,8 @@ class TestLayoutsPureAndRunners:
                             "C6": {
                                 "orientation": "landscape",
                                 "layout": {
-                                    "print_area": {"x": 0, "y": 0, "width": 10, "height": 10},
-                                    "address_area": {"x": 0, "y": 0, "width": 3, "height": 3},
-                                    "window": {},
+                                    "window": {"supported": True},
+                                    "post_mark": {"x": 0, "y": 0},
                                 },
                             }
                         }
