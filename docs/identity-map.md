@@ -42,7 +42,7 @@ One-page map of **who names what** across **porto-data** (JSON + schemas), **Por
 | **`provider`** | Porto registry | `deutschepost` | SDK context, folder path | graph price keys |
 | **`label` / `name`** | Display / legal | `"Deutsche Post"`, `"Deutsche Post AG"` | UI, docs | resolution |
 | **`country`** | Registry → markets | `DE`, `FR`, `UA`, `CH` | VAT, currency, layouts | product id |
-| **`porto_id`** (product) | Porto enum | `small`, `extra_large`, `registered`* | **SDK input** | graph, prices |
+| **`porto_id`** (product) | Porto enum | `small`, `medium`, `large`, `extra_large`, `postcard` | **SDK input** | graph, prices |
 | **`porto_id`** (service) | Porto enum | `registered`, `insurance` | **SDK input** | graph.services list |
 | **`porto_id`** (feature) | Porto enum | `tracking_number` | semantics | prices |
 | **`id`** (product/service) | Provider native | `standardbrief`, `einschreiben` | **graph, prices, rules** | SDK input |
@@ -56,17 +56,21 @@ One-page map of **who names what** across **porto-data** (JSON + schemas), **Por
 | **`PortoMark.id`** | SDK runtime | `deutschepost:abc-123` | execution result | porto-data |
 | **`features[].id`** | Provider | `tracking_number` row | services link | cross-provider |
 
-\* `registered` as **product** `porto_id` (La Poste R1/R2/R3 SKUs) vs **service** `porto_id` (Einschreiben add-on) — same word, different rows.
+Product and service `porto_id` enums are **disjoint** — products are size buckets only; `registered` is a **service** add-on (e.g. DE Einschreiben, UA intl registered surcharge).
 
 ---
 
 ## Same word, different layer (common traps)
 
 ```text
-"registered"
-  ├─ porto_id on SERVICE row     → user wants Einschreiben add-on     (SDK input)
-  ├─ porto_id on PRODUCT row     → La Poste recommandée SKU          (SDK input)
-  └─ mark_profile: "registered"  → domestic registered STAMP size    (layout output)
+"registered" (service porto_id)
+  └─ porto_id on SERVICE row     → Einschreiben / intl registered surcharge (SDK input)
+
+"registered" (mark_profile id)
+  └─ mark_profile in marks.json  → domestic registered STAMP size (layout output)
+
+La Poste recommandée
+  └─ products.porto_id: small    → full registered-letter SKU; pick native id (R1/R2/R3)
 
 "domestic"
   ├─ zone id                     → destination lane in prices/graph

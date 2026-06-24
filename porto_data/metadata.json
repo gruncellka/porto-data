@@ -5,7 +5,7 @@
     "version": "0.3.1",
     "description": "Multi-provider postal JSON: operator catalogs, pricing, shared policy (markets, restrictions), and schemas"
   },
-  "generated_at": "2026-06-24T09:28:04.057864Z",
+  "generated_at": "2026-06-24T10:50:05.447556Z",
   "policy": {
     "jurisdictions": {
       "data": {
@@ -113,8 +113,8 @@
         },
         "schema": {
           "path": "schemas/products.schema.json",
-          "checksum": "bfe48366a096d8895136f117c69fc0c7c88c4bc6be2cfad287bd22d11ee6ac6f",
-          "size": 5633,
+          "checksum": "069cba42d1cfd2758d461626b5fd52b62078e7aeee17d71be889dea26528aef2",
+          "size": 5698,
           "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/products.schema.json"
         }
       },
@@ -245,8 +245,8 @@
         },
         "schema": {
           "path": "schemas/products.schema.json",
-          "checksum": "bfe48366a096d8895136f117c69fc0c7c88c4bc6be2cfad287bd22d11ee6ac6f",
-          "size": 5633,
+          "checksum": "069cba42d1cfd2758d461626b5fd52b62078e7aeee17d71be889dea26528aef2",
+          "size": 5698,
           "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/products.schema.json"
         }
       },
@@ -372,13 +372,13 @@
       "products": {
         "data": {
           "path": "providers/laposte/products.json",
-          "checksum": "f44c881498216864d817c3cb6c76cf233e81d53c7babb66750433080c23f9674",
-          "size": 3600
+          "checksum": "a0cbd25d27f86cd35de9706880ab6ab8abf236f93c1c5209666b74df98ca1f69",
+          "size": 3575
         },
         "schema": {
           "path": "schemas/products.schema.json",
-          "checksum": "bfe48366a096d8895136f117c69fc0c7c88c4bc6be2cfad287bd22d11ee6ac6f",
-          "size": 5633,
+          "checksum": "069cba42d1cfd2758d461626b5fd52b62078e7aeee17d71be889dea26528aef2",
+          "size": 5698,
           "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/products.schema.json"
         }
       },
@@ -522,8 +522,8 @@
         },
         "schema": {
           "path": "schemas/products.schema.json",
-          "checksum": "bfe48366a096d8895136f117c69fc0c7c88c4bc6be2cfad287bd22d11ee6ac6f",
-          "size": 5633,
+          "checksum": "069cba42d1cfd2758d461626b5fd52b62078e7aeee17d71be889dea26528aef2",
+          "size": 5698,
           "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/products.schema.json"
         }
       },

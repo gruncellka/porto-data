@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/porto_ids.schema.json",
   "title": "Porto ID vocabulary",
-  "description": "Canonical porto_id enums for cross-provider SDK normalization. Normative list: docs/id.md. Do not add values without semver-major review.",
+  "description": "Canonical porto_id enums for cross-provider SDK normalization. Normative list: docs/id.md. Disjointness: product_porto_id (size buckets) must not overlap service_porto_id or feature_porto_id; service and feature may share tokens where capability and priced add-on align (see id.md). Do not add values without semver-major review.",
   "definitions": {
     "product_porto_id": {
       "type": "string",
@@ -11,10 +11,9 @@
         "medium",
         "large",
         "extra_large",
-        "registered",
         "postcard"
       ],
-      "description": "Unified product size/role bucket for SDK input and cross-operator resolution"
+      "description": "Letter size bucket for SDK product input only (no service semantics: registered, tracking, return_receipt, … belong on services/features)"
     },
     "service_porto_id": {
       "type": "string",

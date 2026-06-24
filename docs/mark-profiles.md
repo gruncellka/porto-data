@@ -2,14 +2,14 @@
 
 How franking **graphic footprints** are named and stored in **porto-data**.
 
-**Not the same as `porto_id`.** `porto_id` (`small`, `registered`, …) is cross-operator **input**. `mark_profile` (`domestic`, `international`, …) is **layout output** after zone + services are resolved.
+**Not the same as `porto_id`.** Product `porto_id` is size-only (`small` … `extra_large`). Service `porto_id` covers add-ons (`registered`, `tracking`, …). `mark_profile` (`domestic`, `international`, …) is **layout output** after zone + services are resolved.
 
 ## Three naming layers
 
 | Layer | Where defined | Examples |
 |-------|---------------|----------|
 | **Carrier native** | `products.json`, adapters | `standardbrief`, `native_id: 10001` |
-| **Porto `porto_id`** | `schemas/porto_ids.schema.json` | `small`, `registered` (service) |
+| **Porto `porto_id`** | `schemas/porto_ids.schema.json` | `small` … `extra_large` (product); `registered` (service) |
 | **Porto `mark_profile`** | `marks.json` → `profiles[].id` | `domestic`, `registered_international` |
 
 Display-only: `marks.profiles[].label` — e.g. “Internetmarke domestic”.

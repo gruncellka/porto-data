@@ -7,7 +7,7 @@ SDK and app code should pass **`porto_id`** (canonical bucket). The bundle resol
 | Input | Role |
 |-------|------|
 | `provider` | Operator id (`deutschepost`, `ukrposhta`, `laposte`, `swisspost`, …) |
-| `porto_id` | Canonical product bucket (`small`, `registered`, …) |
+| `porto_id` | Canonical product size bucket (`small`, `large`, …) |
 | `zone` | Resolved from destination country |
 | `weight_g` | Actual weight in grams → `weight_tier` via `weights.json` |
 | `services[]` | Optional selected service native ids or porto_ids (SDK layer) |
@@ -44,9 +44,9 @@ If `porto_id: large` is requested for a non-domestic zone, resolution fails — 
 
 ### La Poste — registered letter tiers
 
-Several products use `porto_id: registered` (`lettre_recommandee_r_un`, `r_deux`, `r_trois`, international variants).
+Several products share `porto_id: small` (`lettre_verte`, `lettre_recommandee_r_un`, `r_deux`, `r_trois`, international variants, …).
 
-Disambiguation: match **registered tier** from user selection or service bundle (R1/R2/R3), not from `porto_id` alone.
+Disambiguation: **native product id** and **registered tier** (R1/R2/R3), not `porto_id` alone. Recommandée is a distinct product SKU at the same letter size — not a `registered` service add-on like Deutsche Post Einschreiben.
 
 ### Swiss Post — same `porto_id`, different speed class
 

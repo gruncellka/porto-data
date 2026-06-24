@@ -82,7 +82,7 @@
           },
           "porto_id": {
             "$ref": "porto_ids.schema.json#/definitions/product_porto_id",
-            "description": "Unified Porto product id for cross-provider resolution and SDK input. Graph and prices use native `id`, not `porto_id`."
+            "description": "Unified Porto letter size bucket (small … extra_large). Not service semantics — use services.json for registered/tracking add-ons. Graph and prices use native `id`, not `porto_id`."
           },
           "envelope_ids": {
             "type": "array",

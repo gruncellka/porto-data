@@ -23,12 +23,14 @@ All notable changes to this project will be documented in this file.
 - **Marks `scope_notes`:** DE sizes flagged as sample-based; CH/FR registered documented as same footprint as lane until measured.
 - **Docs:** `mark-profiles.md`, `resolution.md`, `identity-map.md`, `provider-template.md` — data vs SDK split.
 - **Validation order:** schema → mappings → **markets** → limits → **porto_ids** → graph.
+- **`porto_ids.schema.json`:** Validator rejects **product** enum overlap with **service** or **feature** tokens; products are size buckets only.
 - **`metadata.json`:** Generated with 2-space indent (matches data JSON).
 - **2026 tariff snapshot:** Catalog baseline **`effective_from`: `2026-01-01`** on products and price rows where applicable (see per-provider docs under **`docs/providers/`**).
 
 ### Breaking
 
 - **Layout geometry (`formats/layouts.json`):** Removed **`address_area`** and **`print_area`**. Layout rows expose factual **`window`** and **`post_mark`** only; sender/recipient placement and printable regions are compose-layer concerns, not catalog fields.
+- **Product `porto_id`:** Size buckets only (`small` … `extra_large`, `postcard`). La Poste recommandée rows use **`small`** like other letter products; **`registered`** is service-only (removed from product enum).
 - **Multi-provider layout:** Shared data under **`porto_data/policy/`** (restrictions, jurisdictions, **markets**) and **`porto_data/formats/`** (envelopes, layouts). Per-operator catalogs under **`porto_data/providers/<id>/`**. Root **`providers.json`** is the domain registry. Legacy flat **`porto_data/data/`** and **`data_links.json`** are removed.
 - **Prices:** **`providers/<id>/prices.json`** → **`prices/products.json`** (`product_prices`) and **`prices/services.json`** (`service_prices`).
 - **Weights:** **`weight_tiers.json`** → **`weights.json`**.

@@ -81,6 +81,20 @@ def _porto_ids_by_entity(
     return dict(grouped)
 
 
+def _enum_overlap_errors(enums: dict[str, set[str]]) -> list[str]:
+    """Product porto_id must not share tokens with service or feature enums."""
+    errors: list[str] = []
+    for other_key in ("service_porto_id", "feature_porto_id"):
+        overlap = enums["product_porto_id"] & enums[other_key]
+        if overlap:
+            joined = ", ".join(f"'{v}'" for v in sorted(overlap))
+            errors.append(
+                f"porto_ids.schema.json: product_porto_id and {other_key} overlap on {joined}; "
+                "products are size buckets only — move service/feature semantics to the correct enum"
+            )
+    return errors
+
+
 def _render_mapping_doc(providers_data: dict[str, dict[str, list[tuple[str, str]]]]) -> str:
     """Build porto_id.md from collected provider rows."""
     lines = [
@@ -105,7 +119,8 @@ def _render_mapping_doc(providers_data: dict[str, dict[str, list[tuple[str, str]
                 continue
             lines.append(f"### {entity}")
             lines.append("")
-            lines.append("| native `id` | `porto_id` |")
+            porto_col = f"{entity} `porto_id`"
+            lines.append(f"| native `id` | {porto_col} |")
             lines.append("|-------------|------------|")
             for native_id, porto_id in sorted(rows):
                 lines.append(f"| `{native_id}` | `{porto_id}` |")
@@ -122,7 +137,7 @@ def validate_porto_ids(*, write_mapping_doc: bool = True) -> int:
     print("Validating porto_id vocabulary and native-id references...\n")
 
     enums = _load_porto_id_enums(root)
-    errors: list[str] = []
+    errors: list[str] = _enum_overlap_errors(enums)
     warnings: list[str] = []
     doc_data: dict[str, dict[str, list[tuple[str, str]]]] = {}
 

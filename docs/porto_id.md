@@ -8,7 +8,7 @@ Cross-file refs (graph, prices, rules) use **native `id`**. SDK input uses **`po
 
 ### products
 
-| native `id` | `porto_id` |
+| native `id` | products `porto_id` |
 |-------------|------------|
 | `grossbrief` | `large` |
 | `kompaktbrief` | `medium` |
@@ -18,7 +18,7 @@ Cross-file refs (graph, prices, rules) use **native `id`**. SDK input uses **`po
 
 ### services
 
-| native `id` | `porto_id` |
+| native `id` | services `porto_id` |
 |-------------|------------|
 | `einschreiben` | `registered` |
 | `einschreiben_einwurf` | `registered` |
@@ -27,7 +27,7 @@ Cross-file refs (graph, prices, rules) use **native `id`**. SDK input uses **`po
 
 ### features
 
-| native `id` | `porto_id` |
+| native `id` | features `porto_id` |
 |-------------|------------|
 | `einliefernachweis` | `proof_of_mailing` |
 | `rueckschein` | `return_receipt` |
@@ -39,14 +39,14 @@ Cross-file refs (graph, prices, rules) use **native `id`**. SDK input uses **`po
 
 ### products
 
-| native `id` | `porto_id` |
+| native `id` | products `porto_id` |
 |-------------|------------|
 | `dokument` | `large` |
 | `lyst_standartnyi` | `small` |
 
 ### services
 
-| native `id` | `porto_id` |
+| native `id` | services `porto_id` |
 |-------------|------------|
 | `recommended_international` | `registered` |
 | `return_receipt_electronic` | `return_receipt` |
@@ -54,7 +54,7 @@ Cross-file refs (graph, prices, rules) use **native `id`**. SDK input uses **`po
 
 ### features
 
-| native `id` | `porto_id` |
+| native `id` | features `porto_id` |
 |-------------|------------|
 | `recipient_signature` | `recipient_signature` |
 | `return_receipt_electronic` | `return_receipt` |
@@ -64,20 +64,20 @@ Cross-file refs (graph, prices, rules) use **native `id`**. SDK input uses **`po
 
 ### products
 
-| native `id` | `porto_id` |
+| native `id` | products `porto_id` |
 |-------------|------------|
-| `lettre_recommandee_inter_r_deux` | `registered` |
-| `lettre_recommandee_inter_r_un` | `registered` |
-| `lettre_recommandee_r_deux` | `registered` |
-| `lettre_recommandee_r_trois` | `registered` |
-| `lettre_recommandee_r_un` | `registered` |
+| `lettre_recommandee_inter_r_deux` | `small` |
+| `lettre_recommandee_inter_r_un` | `small` |
+| `lettre_recommandee_r_deux` | `small` |
+| `lettre_recommandee_r_trois` | `small` |
+| `lettre_recommandee_r_un` | `small` |
 | `lettre_services_plus` | `small` |
 | `lettre_verte` | `small` |
 | `lettre_verte_suivie` | `small` |
 
 ### services
 
-| native `id` | `porto_id` |
+| native `id` | services `porto_id` |
 |-------------|------------|
 | `avis_de_reception_international` | `return_receipt` |
 | `avis_de_reception_national` | `return_receipt` |
@@ -85,7 +85,7 @@ Cross-file refs (graph, prices, rules) use **native `id`**. SDK input uses **`po
 
 ### features
 
-| native `id` | `porto_id` |
+| native `id` | features `porto_id` |
 |-------------|------------|
 | `avis_reception` | `return_receipt` |
 | `numero_suivi` | `tracking_number` |
@@ -97,7 +97,7 @@ Cross-file refs (graph, prices, rules) use **native `id`**. SDK input uses **`po
 
 ### products
 
-| native `id` | `porto_id` |
+| native `id` | products `porto_id` |
 |-------------|------------|
 | `a_post_grossbrief` | `large` |
 | `a_post_standardbrief` | `small` |
@@ -109,14 +109,14 @@ Cross-file refs (graph, prices, rules) use **native `id`**. SDK input uses **`po
 
 ### services
 
-| native `id` | `porto_id` |
+| native `id` | services `porto_id` |
 |-------------|------------|
 | `a_mail_plus` | `tracking` |
 | `brief_dicke_zuschlag` | `thickness` |
 
 ### features
 
-| native `id` | `porto_id` |
+| native `id` | features `porto_id` |
 |-------------|------------|
 | `brief_dicke_band` | `thickness_surcharge` |
 | `sendungsnummer` | `tracking_number` |

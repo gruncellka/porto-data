@@ -11,6 +11,7 @@ import pytest
 from scripts.validators.porto_ids import (
     MAPPING_DOC,
     REQUIRED_PROVIDER_SCHEMAS,
+    _enum_overlap_errors,
     _porto_ids_by_entity,
     _product_ids,
     _render_mapping_doc,
@@ -218,6 +219,37 @@ class TestPortoIdsValidator:
         assert "deutschepost" in doc
         assert "`standardbrief`" in doc
         assert "`small`" in doc
+        assert "products `porto_id`" in doc
+
+    def test_product_service_enum_must_not_overlap(self) -> None:
+        overlap = _enum_overlap_errors(
+            {
+                "product_porto_id": {"small", "registered"},
+                "service_porto_id": {"registered", "tracking"},
+                "feature_porto_id": {"tracking_number"},
+            }
+        )
+        assert len(overlap) == 1
+        assert "product_porto_id and service_porto_id overlap" in overlap[0]
+
+    def test_product_feature_enum_must_not_overlap(self) -> None:
+        overlap = _enum_overlap_errors(
+            {
+                "product_porto_id": {"small", "return_receipt"},
+                "service_porto_id": {"registered"},
+                "feature_porto_id": {"return_receipt", "tracking_number"},
+            }
+        )
+        assert len(overlap) == 1
+        assert "product_porto_id and feature_porto_id overlap" in overlap[0]
+
+    def test_live_schema_porto_id_enums_disjoint(self) -> None:
+        defs = json.loads(_SCHEMA_SRC.read_text(encoding="utf-8"))["definitions"]
+        enums = {
+            key: set(defs[key]["enum"])
+            for key in ("product_porto_id", "service_porto_id", "feature_porto_id")
+        }
+        assert _enum_overlap_errors(enums) == []
 
     def test_validate_porto_ids_live_bundle(self, project_root: Path) -> None:
         rc = validate_porto_ids(write_mapping_doc=True)

@@ -11,11 +11,10 @@ Purpose: unify `porto_id` names across providers (letters-only scope) so that si
 - `large` — larger/C4 (~500 g range); on Ukrposhta, **only** `dokument` (domestic flat document letter, ≤1 kg) — not used for international rows
 - `extra_large` — up to 1–2 kg letters (maxibrief-like)
 - `postcard` — only when explicitly in scope; otherwise fold into `small`
-- `registered` — on **product** rows when the operator sells distinct registered-letter SKUs (e.g. La Poste recommandée R1/R2/R3)
 
 ## Services (no prefix)
 
-- `registered` — registered/track+signature base (Einschreiben, Recommandée, etc.)
+- `registered` — registered/track+signature **service** add-on (e.g. DE Einschreiben, UA intl registered surcharge). La Poste recommandée is a **product** at `porto_id: small`, not this service token.
 - `registered_return_receipt` — registered with return receipt/AR
 - `tracking` — tracking add-on (when sold separately from the product)
 - `insurance` — additional insurance
@@ -35,11 +34,11 @@ Purpose: unify `porto_id` names across providers (letters-only scope) so that si
 | `small` | `lyst_standartnyi` | `domestic`, `world` | Standard letter; all international letter weight tiers |
 | `large` | `dokument` | `domestic` only | Ukrposhta “Документ” flat domestic document letter |
 
-No `medium`, `extra_large`, or `registered` **product** rows for Ukrposhta. International registered is a **service** (`recommended_international` → `porto_id: registered`).
+No `medium` or `extra_large` **product** rows for Ukrposhta. International registered is a **service** (`recommended_international` → `porto_id: registered`).
 
 ## General rules
 
-- Products carry base postage only, except where the carrier only sells registered letters as separate products (`porto_id: registered` on those product rows).
+- Products carry base postage only and use **size** `porto_id` buckets (`small` … `extra_large`). Registered / recommandée / Einschreiben semantics come from **native product id**, **services**, or **features** — not a separate product `porto_id`.
 - Services carry surcharges/add-ons; prices belong in `prices/services.json`.
 - Multiple native `id` rows may share one `porto_id`; see [resolution.md](resolution.md).
 - **`porto_id` values must match the enum in `porto_ids.schema.json`.** Extend the enum only with semver-major review.

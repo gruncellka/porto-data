@@ -67,7 +67,7 @@ Use **per-country or multi-zone** models when the official table is country- or 
 ## Common pitfalls (all carriers)
 
 - **VAT vs net:** some sites show VAT-inclusive (Ukrposhta domestic page) vs VAT-exempt (Deutsche Post letters). Match the column the carrier uses for the product you model.
-- **Product vs surcharge:** registered / Einschreiben / AR are often **services** (`service_prices.json`), not separate products — unless the carrier sells them as standalone products (La Poste recommandée).
+- **Product vs surcharge:** registered / Einschreiben / AR are **services** (`service_prices.json`) when sold as add-ons. Carriers may also sell registered letters as **standalone product SKUs** — still use size `porto_id` (e.g. La Poste recommandée → `small`; disambiguate by native `id`).
 - **Weight tier ids:** JSON uses `W0020`, `W0050`, … — must match `graph.json` edges and official weight breaks.
 - **Effective dating:** bundle baseline `effective_from: 2026-01-01` unless a row has a known later tariff start (e.g. Ukrposhta international letters `2026-04-01`).
 
