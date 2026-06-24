@@ -4,22 +4,31 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-### Changed
-
-- **Ukrposhta docs:** Letters-only bundle scope; verification **verified** for in-scope letter products; `porto_id` **`large`** = domestic `dokument` documented in [id.md](docs/id.md), [resolution.md](docs/resolution.md), [providers/ukrposhta.md](docs/providers/ukrposhta.md).
-
 ### Added
 
 - **`graph.edges.marks`:** Zone → mark profile resolution under **`edges`** (`products` + `marks`). Catalog in `marks.json` → `profiles[]`.
+- **Mark profiles:** Measured sizes in `marks.json`; resolution via `graph.edges.marks`. See [mark-profiles.md](docs/mark-profiles.md).
+- **Operators:** Full letter catalogs for Deutsche Post, Ukrposhta, La Poste, and Swiss Post under **`providers/<id>/`**.
+- **Policy:** **`policy/jurisdictions.json`**, **`policy/restrictions.json`**, **`policy/markets.json`** (DE, FR, CH, UA fiscal defaults).
+- **Swiss Post:** Optional **`providers/swisspost/rules.json`** (e.g. thickness surcharge) where modeled.
+- **Validation:** **`porto validate --type porto_ids`** — enum checks, native-id cross-file refs, duplicate `porto_id` warnings.
+- **Validation:** **`porto validate --type markets`** — registry ↔ markets coverage and fiscal shape checks.
+- **Docs:** [docs/providers/](docs/providers/) tariff notes per operator; [resolution.md](docs/resolution.md), [provider-template.md](docs/provider-template.md), [porto_id.md](docs/porto_id.md), [tariff-verification.md](docs/tariff-verification.md); [id.md](docs/id.md), [policy.md](docs/policy.md), [formats.md](docs/formats.md).
+- **Mappings:** Required provider template schemas enforced in mappings validation.
 
 ### Changed
 
+- **Ukrposhta docs:** Letters-only bundle scope; verification **verified** for in-scope letter products; `porto_id` **`large`** = domestic `dokument` documented in [id.md](docs/id.md), [resolution.md](docs/resolution.md), [providers/ukrposhta.md](docs/providers/ukrposhta.md).
 - **Mark layout data model:** Removed `marks.zones` and top-level `mark_edges`. Resolution lives in **`graph.edges.marks`**; `marks.json` is catalog only.
 - **Marks `scope_notes`:** DE sizes flagged as sample-based; CH/FR registered documented as same footprint as lane until measured.
 - **Docs:** `mark-profiles.md`, `resolution.md`, `identity-map.md`, `provider-template.md` — data vs SDK split.
+- **Validation order:** schema → mappings → **markets** → limits → **porto_ids** → graph.
+- **`metadata.json`:** Generated with 2-space indent (matches data JSON).
+- **2026 tariff snapshot:** Catalog baseline **`effective_from`: `2026-01-01`** on products and price rows where applicable (see per-provider docs under **`docs/providers/`**).
 
 ### Breaking
 
+- **Layout geometry (`formats/layouts.json`):** Removed **`address_area`** and **`print_area`**. Layout rows expose factual **`window`** and **`post_mark`** only; sender/recipient placement and printable regions are compose-layer concerns, not catalog fields.
 - **Multi-provider layout:** Shared data under **`porto_data/policy/`** (restrictions, jurisdictions, **markets**) and **`porto_data/formats/`** (envelopes, layouts). Per-operator catalogs under **`porto_data/providers/<id>/`**. Root **`providers.json`** is the domain registry. Legacy flat **`porto_data/data/`** and **`data_links.json`** are removed.
 - **Prices:** **`providers/<id>/prices.json`** → **`prices/products.json`** (`product_prices`) and **`prices/services.json`** (`service_prices`).
 - **Weights:** **`weight_tiers.json`** → **`weights.json`**.
@@ -34,23 +43,6 @@ All notable changes to this project will be documented in this file.
 - **Currency resolution:** SDK default is **`markets[country].currency`** (`row.currency` → file `unit.currency` → market).
 - **Field names (shorter keys):** `available_services` → **`services`** (graph); `compliance_frameworks` → **`frameworks`** (limits); `integration_supported` → **`integrations`** (services); `provider_context`/`national_policy` → **`context`**/**`national`**; `intl_currencies` → **`international_currency`**; `exempt_letters` → **`exempt`** (under `vat`); top-level `vat.inclusive` / `intl_excl` → **`vat.domestic.inclusive`** / **`vat.international.inclusive`**; Porto-assigned native ids: **`recommended_international`** (not `_intl`); `metric_band_attach_service` → **`band_attach`** (rules); `severely_restricted` → **`severe`**; `disputed_territory` → **`disputed`**; `legal_reference` → **`reference`** (limits); `effective_partial` → **`partial`**; framework types `operational_*` → **`infrastructure`**/**`political`**/**`conflict`**.
 - **Mark profile ids:** Provider-specific stamp ids (`internetmarke_*`, `mtel_*`, `webstamp_*`, `label_default`) replaced by shared layout ids (`domestic`, `international`, `registered`, `registered_international`) — not the same namespace as `porto_id: registered`. See [mark-profiles.md](docs/mark-profiles.md).
-
-### Added
-
-- **Mark profiles:** Measured sizes in `marks.json`; resolution via `graph.edges.marks`. See [mark-profiles.md](docs/mark-profiles.md).
-- **Operators:** Full letter catalogs for Deutsche Post, Ukrposhta, La Poste, and Swiss Post under **`providers/<id>/`**.
-- **Policy:** **`policy/jurisdictions.json`**, **`policy/restrictions.json`**, **`policy/markets.json`** (DE, FR, CH, UA fiscal defaults).
-- **Swiss Post:** Optional **`providers/swisspost/rules.json`** (e.g. thickness surcharge) where modeled.
-- **Validation:** **`porto validate --type porto_ids`** — enum checks, native-id cross-file refs, duplicate `porto_id` warnings.
-- **Validation:** **`porto validate --type markets`** — registry ↔ markets coverage and fiscal shape checks.
-- **Docs:** [docs/providers/](docs/providers/) tariff notes per operator; [resolution.md](docs/resolution.md), [provider-template.md](docs/provider-template.md), [porto_id.md](docs/porto_id.md), [tariff-verification.md](docs/tariff-verification.md); [id.md](docs/id.md), [policy.md](docs/policy.md), [formats.md](docs/formats.md).
-- **Mappings:** Required provider template schemas enforced in mappings validation.
-
-### Changed
-
-- **Validation order:** schema → mappings → **markets** → limits → **porto_ids** → graph.
-- **`metadata.json`:** Generated with 2-space indent (matches data JSON).
-- **2026 tariff snapshot:** Catalog baseline **`effective_from`: `2026-01-01`** on products and price rows where applicable (see per-provider docs under **`docs/providers/`**).
 
 ## [0.3.1]
 
