@@ -1,4 +1,4 @@
-"""Branch coverage for scripts/validators/products_delivery.py."""
+"""Branch coverage for scripts/validators/delivery.py."""
 
 from __future__ import annotations
 
@@ -6,7 +6,7 @@ import json
 from unittest.mock import patch
 
 import scripts.data_files as data_files
-from scripts.validators.products_delivery import validate_products_delivery
+from scripts.validators.delivery import validate_delivery
 
 _WORKING_DAYS = {"weekdays": "mon_sat", "exclude_public_holidays": True}
 
@@ -81,12 +81,12 @@ def _write_minimal_bundle(
     )
 
 
-class TestValidateProductsDeliveryRealTree:
+class TestValidateDeliveryRealTree:
     def test_real_tree_passes(self) -> None:
-        assert validate_products_delivery() == 0
+        assert validate_delivery() == 0
 
 
-class TestValidateProductsDeliveryBranches:
+class TestValidateDeliveryBranches:
     def test_missing_delivery(self, tmp_path, capsys) -> None:
         _write_minimal_bundle(
             tmp_path,
@@ -98,7 +98,7 @@ class TestValidateProductsDeliveryBranches:
             ],
         )
         with patch.object(data_files, "_get_project_root", return_value=tmp_path):
-            assert validate_products_delivery() == 1
+            assert validate_delivery() == 1
         assert "delivery must be a non-empty array" in capsys.readouterr().out
 
     def test_zone_partition_missing(self, tmp_path, capsys) -> None:
@@ -113,7 +113,7 @@ class TestValidateProductsDeliveryBranches:
             ],
         )
         with patch.object(data_files, "_get_project_root", return_value=tmp_path):
-            assert validate_products_delivery() == 1
+            assert validate_delivery() == 1
         assert "delivery missing zones ['world']" in capsys.readouterr().out
 
     def test_zone_overlap_across_entries(self, tmp_path, capsys) -> None:
@@ -131,7 +131,7 @@ class TestValidateProductsDeliveryBranches:
             ],
         )
         with patch.object(data_files, "_get_project_root", return_value=tmp_path):
-            assert validate_products_delivery() == 1
+            assert validate_delivery() == 1
         out = capsys.readouterr().out
         assert "appear in more than one delivery entry" in out
 
@@ -149,7 +149,7 @@ class TestValidateProductsDeliveryBranches:
             ],
         )
         with patch.object(data_files, "_get_project_root", return_value=tmp_path):
-            assert validate_products_delivery() == 1
+            assert validate_delivery() == 1
         out = capsys.readouterr().out
         assert "span next requires days_max === 1" in out
         assert "span next must not include days_min" in out
@@ -168,7 +168,7 @@ class TestValidateProductsDeliveryBranches:
             ],
         )
         with patch.object(data_files, "_get_project_root", return_value=tmp_path):
-            assert validate_products_delivery() == 1
+            assert validate_delivery() == 1
         assert "span between requires days_min" in capsys.readouterr().out
 
     def test_between_days_min_gt_max(self, tmp_path, capsys) -> None:
@@ -190,7 +190,7 @@ class TestValidateProductsDeliveryBranches:
             ],
         )
         with patch.object(data_files, "_get_project_root", return_value=tmp_path):
-            assert validate_products_delivery() == 1
+            assert validate_delivery() == 1
         assert "days_min must be <= days_max" in capsys.readouterr().out
 
     def test_unknown_zone_in_delivery_entry(self, tmp_path, capsys) -> None:
@@ -207,7 +207,7 @@ class TestValidateProductsDeliveryBranches:
             ],
         )
         with patch.object(data_files, "_get_project_root", return_value=tmp_path):
-            assert validate_products_delivery() == 1
+            assert validate_delivery() == 1
         out = capsys.readouterr().out
         assert "is not in product.zones" in out
 
@@ -227,7 +227,7 @@ class TestValidateProductsDeliveryBranches:
             ],
         )
         with patch.object(data_files, "_get_project_root", return_value=tmp_path):
-            assert validate_products_delivery() == 1
+            assert validate_delivery() == 1
         assert "b_post_* domestic delivery must set weekdays mon_fri" in capsys.readouterr().out
 
     def test_swisspost_a_post_no_weekdays_override(self, tmp_path, capsys) -> None:
@@ -251,7 +251,7 @@ class TestValidateProductsDeliveryBranches:
             ],
         )
         with patch.object(data_files, "_get_project_root", return_value=tmp_path):
-            assert validate_products_delivery() == 1
+            assert validate_delivery() == 1
         assert "a_post_* must not override weekdays" in capsys.readouterr().out
 
     def test_missing_products_file(self, tmp_path, capsys) -> None:
@@ -261,7 +261,7 @@ class TestValidateProductsDeliveryBranches:
         )
         (tmp_path / "providers" / "deutschepost" / "products.json").unlink()
         with patch.object(data_files, "_get_project_root", return_value=tmp_path):
-            assert validate_products_delivery() == 1
+            assert validate_delivery() == 1
         assert "products.json" in capsys.readouterr().out
 
     def test_products_not_array(self, tmp_path, capsys) -> None:
@@ -274,19 +274,19 @@ class TestValidateProductsDeliveryBranches:
             encoding="utf-8",
         )
         with patch.object(data_files, "_get_project_root", return_value=tmp_path):
-            assert validate_products_delivery() == 1
+            assert validate_delivery() == 1
         assert "missing products array" in capsys.readouterr().out
 
     def test_provider_without_country(self, tmp_path, capsys, monkeypatch) -> None:
         monkeypatch.setattr(
-            "scripts.validators.products_delivery.load_providers_registry",
+            "scripts.validators.delivery.load_providers_registry",
             lambda: {"providers": {"deutschepost": {"label": "x"}}},
         )
         monkeypatch.setattr(
-            "scripts.validators.products_delivery.list_provider_ids",
+            "scripts.validators.delivery.list_provider_ids",
             lambda: ["deutschepost"],
         )
-        assert validate_products_delivery() == 1
+        assert validate_delivery() == 1
         assert "no country in providers.json" in capsys.readouterr().out
 
     def test_invalid_entry_type(self, tmp_path, capsys) -> None:
@@ -301,7 +301,7 @@ class TestValidateProductsDeliveryBranches:
             ],
         )
         with patch.object(data_files, "_get_project_root", return_value=tmp_path):
-            assert validate_products_delivery() == 1
+            assert validate_delivery() == 1
         assert "delivery[0]: must be an object" in capsys.readouterr().out
 
     def test_within_must_not_have_days_min(self, tmp_path, capsys) -> None:
@@ -323,7 +323,7 @@ class TestValidateProductsDeliveryBranches:
             ],
         )
         with patch.object(data_files, "_get_project_root", return_value=tmp_path):
-            assert validate_products_delivery() == 1
+            assert validate_delivery() == 1
         assert "span within must not include days_min" in capsys.readouterr().out
 
     def test_invalid_weekdays(self, tmp_path, capsys) -> None:
@@ -345,7 +345,7 @@ class TestValidateProductsDeliveryBranches:
             ],
         )
         with patch.object(data_files, "_get_project_root", return_value=tmp_path):
-            assert validate_products_delivery() == 1
+            assert validate_delivery() == 1
         assert "weekdays must be one of" in capsys.readouterr().out
 
     def test_product_zones_not_array(self, tmp_path, capsys) -> None:
@@ -360,7 +360,7 @@ class TestValidateProductsDeliveryBranches:
             ],
         )
         with patch.object(data_files, "_get_project_root", return_value=tmp_path):
-            assert validate_products_delivery() == 1
+            assert validate_delivery() == 1
         assert "zones must be an array" in capsys.readouterr().out
 
     def test_empty_zones_in_entry(self, tmp_path, capsys) -> None:
@@ -375,7 +375,7 @@ class TestValidateProductsDeliveryBranches:
             ],
         )
         with patch.object(data_files, "_get_project_root", return_value=tmp_path):
-            assert validate_products_delivery() == 1
+            assert validate_delivery() == 1
         assert "zones must be a non-empty array" in capsys.readouterr().out
 
     def test_duplicate_zone_within_entry(self, tmp_path, capsys) -> None:
@@ -392,7 +392,7 @@ class TestValidateProductsDeliveryBranches:
             ],
         )
         with patch.object(data_files, "_get_project_root", return_value=tmp_path):
-            assert validate_products_delivery() == 1
+            assert validate_delivery() == 1
         assert "duplicate zone" in capsys.readouterr().out
 
     def test_invalid_days_max(self, tmp_path, capsys) -> None:
@@ -407,7 +407,7 @@ class TestValidateProductsDeliveryBranches:
             ],
         )
         with patch.object(data_files, "_get_project_root", return_value=tmp_path):
-            assert validate_products_delivery() == 1
+            assert validate_delivery() == 1
         assert "days_max must be an integer >= 1" in capsys.readouterr().out
 
     def test_invalid_span_value(self, tmp_path, capsys) -> None:
@@ -422,7 +422,7 @@ class TestValidateProductsDeliveryBranches:
             ],
         )
         with patch.object(data_files, "_get_project_root", return_value=tmp_path):
-            assert validate_products_delivery() == 1
+            assert validate_delivery() == 1
         assert "span must be one of" in capsys.readouterr().out
 
     def test_non_string_zone_id(self, tmp_path, capsys) -> None:
@@ -437,7 +437,7 @@ class TestValidateProductsDeliveryBranches:
             ],
         )
         with patch.object(data_files, "_get_project_root", return_value=tmp_path):
-            assert validate_products_delivery() == 1
+            assert validate_delivery() == 1
         out = capsys.readouterr().out
         assert "zone ids must be strings" in out
 
@@ -463,19 +463,19 @@ class TestValidateProductsDeliveryBranches:
             ],
         )
         with patch.object(data_files, "_get_project_root", return_value=tmp_path):
-            assert validate_products_delivery() == 1
+            assert validate_delivery() == 1
         assert "delivery[0]: must be an object" in capsys.readouterr().out
 
     def test_provider_countries_not_dict(self, tmp_path, monkeypatch) -> None:
         monkeypatch.setattr(
-            "scripts.validators.products_delivery.load_providers_registry",
+            "scripts.validators.delivery.load_providers_registry",
             lambda: {"providers": "bad"},
         )
         monkeypatch.setattr(
-            "scripts.validators.products_delivery.list_provider_ids",
+            "scripts.validators.delivery.list_provider_ids",
             lambda: [],
         )
-        assert validate_products_delivery() == 0
+        assert validate_delivery() == 0
 
 
 def _write_laposte_bundle(
@@ -563,7 +563,7 @@ class TestProductsIndemnityAndFeatures:
             ],
         )
         with patch.object(data_files, "_get_project_root", return_value=tmp_path):
-            assert validate_products_delivery() == 1
+            assert validate_delivery() == 1
         assert "not found in providers/laposte/features.json" in capsys.readouterr().out
 
     def test_recommandee_requires_indemnity(self, tmp_path, capsys) -> None:
@@ -581,7 +581,7 @@ class TestProductsIndemnityAndFeatures:
             ],
         )
         with patch.object(data_files, "_get_project_root", return_value=tmp_path):
-            assert validate_products_delivery() == 1
+            assert validate_delivery() == 1
         assert "must include indemnity" in capsys.readouterr().out
 
     def test_non_recommandee_must_not_have_indemnity(self, tmp_path, capsys) -> None:
@@ -601,7 +601,7 @@ class TestProductsIndemnityAndFeatures:
             ],
         )
         with patch.object(data_files, "_get_project_root", return_value=tmp_path):
-            assert validate_products_delivery() == 1
+            assert validate_delivery() == 1
         assert "only lettre_recommandee_*" in capsys.readouterr().out
 
     def test_wrong_indemnity_tier(self, tmp_path, capsys) -> None:
@@ -623,7 +623,7 @@ class TestProductsIndemnityAndFeatures:
             ],
         )
         with patch.object(data_files, "_get_project_root", return_value=tmp_path):
-            assert validate_products_delivery() == 1
+            assert validate_delivery() == 1
         assert "indemnity.tier must be 'R2'" in capsys.readouterr().out
 
     def test_twin_identical_fingerprint_fails(self, tmp_path, capsys) -> None:
@@ -652,7 +652,7 @@ class TestProductsIndemnityAndFeatures:
             },
         )
         with patch.object(data_files, "_get_project_root", return_value=tmp_path):
-            assert validate_products_delivery() == 1
+            assert validate_delivery() == 1
         assert "identical resolution fingerprint" in capsys.readouterr().out
 
     def test_included_features_not_array(self, tmp_path, capsys) -> None:
@@ -669,7 +669,7 @@ class TestProductsIndemnityAndFeatures:
             ],
         )
         with patch.object(data_files, "_get_project_root", return_value=tmp_path):
-            assert validate_products_delivery() == 1
+            assert validate_delivery() == 1
         assert "included_features must be an array" in capsys.readouterr().out
 
     def test_indemnity_invalid_amount(self, tmp_path, capsys) -> None:
@@ -688,11 +688,11 @@ class TestProductsIndemnityAndFeatures:
             ],
         )
         with patch.object(data_files, "_get_project_root", return_value=tmp_path):
-            assert validate_products_delivery() == 1
+            assert validate_delivery() == 1
         assert "indemnity.max.amount must be an integer >= 1" in capsys.readouterr().out
 
     def test_delivery_zone_signature_none(self) -> None:
-        from scripts.validators.products_delivery import _delivery_zone_signature
+        from scripts.validators.delivery import _delivery_zone_signature
 
         assert _delivery_zone_signature({"delivery": "bad"}, "domestic") is None
         assert (
@@ -721,7 +721,7 @@ class TestProductsIndemnityAndFeatures:
             ],
         )
         with patch.object(data_files, "_get_project_root", return_value=tmp_path):
-            assert validate_products_delivery() == 1
+            assert validate_delivery() == 1
         out = capsys.readouterr().out
         assert "included_features entries must be strings" in out
         assert "duplicate included_features entry 'numero_suivi'" in out
@@ -739,7 +739,7 @@ class TestProductsIndemnityAndFeatures:
             ],
         )
         with patch.object(data_files, "_get_project_root", return_value=tmp_path):
-            assert validate_products_delivery() == 1
+            assert validate_delivery() == 1
         assert "indemnity must be an object" in capsys.readouterr().out
 
     def test_indemnity_empty_tier(self, tmp_path, capsys) -> None:
@@ -758,7 +758,7 @@ class TestProductsIndemnityAndFeatures:
             ],
         )
         with patch.object(data_files, "_get_project_root", return_value=tmp_path):
-            assert validate_products_delivery() == 1
+            assert validate_delivery() == 1
         assert "indemnity.tier must be a non-empty string" in capsys.readouterr().out
 
     def test_indemnity_max_not_object(self, tmp_path, capsys) -> None:
@@ -777,7 +777,7 @@ class TestProductsIndemnityAndFeatures:
             ],
         )
         with patch.object(data_files, "_get_project_root", return_value=tmp_path):
-            assert validate_products_delivery() == 1
+            assert validate_delivery() == 1
         assert "indemnity.max must be an object" in capsys.readouterr().out
 
     def test_non_dict_product_skipped(self, tmp_path, capsys) -> None:
@@ -794,7 +794,7 @@ class TestProductsIndemnityAndFeatures:
             ],
         )
         with patch.object(data_files, "_get_project_root", return_value=tmp_path):
-            assert validate_products_delivery() == 0
+            assert validate_delivery() == 0
 
     def test_twin_guard_skips_bad_graph_edges(self, tmp_path, capsys) -> None:
         delivery = [{"zones": ["domestic"], "span": "within", "days_max": 3}]
@@ -864,10 +864,10 @@ class TestProductsIndemnityAndFeatures:
         )
         products_path.write_text(json.dumps(doc), encoding="utf-8")
         with patch.object(data_files, "_get_project_root", return_value=tmp_path):
-            assert validate_products_delivery() == 0
+            assert validate_delivery() == 0
 
     def test_load_feature_ids_not_list(self, tmp_path) -> None:
-        from scripts.validators.products_delivery import _load_feature_ids
+        from scripts.validators.delivery import _load_feature_ids
 
         prov_dir = tmp_path / "providers" / "laposte"
         prov_dir.mkdir(parents=True)
@@ -893,7 +893,7 @@ class TestProductsIndemnityAndFeatures:
             assert _load_feature_ids("laposte", tmp_path) == set()
 
     def test_load_graph_edges_not_dict(self, tmp_path) -> None:
-        from scripts.validators.products_delivery import _load_graph_product_edges
+        from scripts.validators.delivery import _load_graph_product_edges
 
         prov_dir = tmp_path / "providers" / "laposte"
         prov_dir.mkdir(parents=True)

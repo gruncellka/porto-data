@@ -115,7 +115,7 @@ If new/changed code adds `TODO` or `FIXME` without an issue reference (`#123`, `
 
 ## Data consistency and resolution
 
-These rules align reviews with validators under `scripts/validators/` and **`make validate`** (same order as **`porto validate`**: schema → mappings → markets → limits → porto_ids → products_delivery → graph). Graph logic lives in package **`scripts/validators/graph/`** (not a single `graph.py` file).
+These rules align reviews with validators under `scripts/validators/` and **`make validate`** (same order as **`porto validate`**: schema → mappings → markets → limits → porto_ids → delivery → graph). Graph logic lives in package **`scripts/validators/graph/`** (not a single `graph.py` file).
 
 ### 9) Graph uses `edges` and `services`, not legacy keys (blocking)
 
@@ -290,7 +290,7 @@ If a PR adds normative rules only to **`docs/*.md`** or **`.cursorrules`** for c
 If a PR adds or changes **`products.json`** and any product’s **`delivery[]`** zones do not **exactly partition** **`product.zones`** (missing zone, extra zone, or duplicate zone across entries):
 
 - **Title:** `Product delivery zone coverage mismatch`
-- **Body:** `Each product.delivery[] entry lists zone ids; union must equal product.zones exactly once each. CI: porto validate --type products_delivery. See docs/resolution.md § Delivery hints.`
+- **Body:** `Each product.delivery[] entry lists zone ids; union must equal product.zones exactly once each. CI: porto validate --type delivery. See docs/resolution.md § Delivery hints.`
 - **Labels:** `data`, `consistency`
 
 ### 31) No SDK speed-class `lane` on products (blocking)
@@ -310,5 +310,5 @@ If a PR adds or changes **`products.json`** and:
 - **`included_features[]`** references an id missing from provider **`features.json`**:
 
 - **Title:** `Product resolution facts invalid or ambiguous twins`
-- **Body:** `Recommandée must carry indemnity; twins must differ on delivery, indemnity.tier, included_features, or tracking_mode. CI: porto validate --type products_delivery. See docs/resolution.md § Candidate enrichment.`
+- **Body:** `Recommandée must carry indemnity; twins must differ on delivery, indemnity.tier, included_features, or tracking_mode. CI: porto validate --type delivery. See docs/resolution.md § Candidate enrichment.`
 - **Labels:** `data`, `consistency`, `resolution`

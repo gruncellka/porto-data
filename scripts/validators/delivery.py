@@ -369,9 +369,9 @@ def _validate_twin_disambiguation(
             )
 
 
-def validate_products_delivery() -> int:
+def validate_delivery() -> int:
     """Validate delivery[], included_features, indemnity, and twin disambiguation on products.json."""
-    print("Validating products delivery (zone SLAs)...\n")
+    print("Validating delivery (zone SLAs)...\n")
 
     errors: list[str] = []
     root = get_project_root()
@@ -428,8 +428,8 @@ def validate_products_delivery() -> int:
         print(f"❌ ERROR: {err}")
     if errors:
         print()
-        print("❌ Products delivery validation failed.")
+        print("❌ Delivery validation failed.")
         return 1
 
-    print(f"✅ Products delivery OK ({len(list_provider_ids())} providers).\n")
+    print(f"✅ Delivery OK ({len(list_provider_ids())} providers).\n")
     return 0
