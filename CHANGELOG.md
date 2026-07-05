@@ -4,9 +4,15 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-## [0.4.0] - 2026-07-05
+## [0.4.1] - 2026-07-05
 
 Release since **v0.3.1**: multi-provider bundle layout, **`policy/markets.json`**, delivery/indemnity resolution contract, and npm publish tarball checks for the new paths.
+
+### Fixed
+
+- **PyPI:** PEP 639 `license = "Apache-2.0"` + `license-files` (removed invalid `License ::` classifier).
+- **npm:** Exclude `docs/` from published tarball.
+- **JSON:** Store UTF-8 literals instead of `\u` escapes in catalog files.
 
 ### Added
 
