@@ -3,15 +3,15 @@ name = "gruncellka-porto-data"
 version = "0.4.0"
 description = "Multi-provider postal JSON: operator catalogs, pricing, shared policy (markets, restrictions), and schemas"
 readme = "README.md"
-license = {file = "LICENSE"}
+license = "Apache-2.0"
+license-files = ["LICENSE"]
 keywords = ["postal", "post", "shipping", "logistics", "deutsche post", "ukrposhta", "la poste", "swiss post", "pricing", "postal rates", "postage", "tariffs", "zones", "restrictions", "data model", "schema", "sdk", "porto-data", "porto-sdk"]
 classifiers = [
-    "License :: OSI Approved :: Apache Software License 2.0",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3 :: Only",
 ]
 authors = [
-    {name = "Oleksandr Tsyba (gruncellka)"},
+    {name = "Oleksandr Tsyba"},
 ]
 requires-python = ">=3.13"
 dependencies = []
