@@ -37,6 +37,8 @@ All notable changes to this project will be documented in this file.
 
 ### Breaking
 
+- **CLI:** **`porto validate --type products_delivery`** removed; use **`--type delivery`**.
+- **La Poste catalog:** **`lettre_recommandee_inter_r_deux`** removed (international R2 retired **2026-04-01**).
 - **Layout geometry (`formats/layouts.json`):** Removed **`address_area`** and **`print_area`**. Layout rows expose factual **`window`** and **`post_mark`** only; sender/recipient placement and printable regions are compose-layer concerns, not catalog fields.
 - **Product `porto_id`:** Size buckets only (`small` … `extra_large`, `postcard`). La Poste recommandée rows use **`small`** like other letter products; **`registered`** is service-only (removed from product enum).
 - **Multi-provider layout:** Shared data under **`porto_data/policy/`** (restrictions, jurisdictions, **markets**) and **`porto_data/formats/`** (envelopes, layouts). Per-operator catalogs under **`porto_data/providers/<id>/`**. Root **`providers.json`** is the domain registry. Legacy flat **`porto_data/data/`** and **`data_links.json`** are removed.
