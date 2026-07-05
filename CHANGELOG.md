@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-07-05
+
+Release since **v0.3.1**: multi-provider bundle layout, **`policy/markets.json`**, delivery/indemnity resolution contract, and npm publish tarball checks for the new paths.
+
 ### Added
 
 **Multi-provider catalog**
