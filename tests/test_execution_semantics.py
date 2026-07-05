@@ -14,6 +14,10 @@ def _products_schema_path() -> Path:
     return root / "schemas" / "products.schema.json"
 
 
+def _minimal_delivery() -> list[dict]:
+    return [{"zones": ["domestic"], "span": "within", "days_max": 2}]
+
+
 class TestProductsSchemaExecutionSemantics:
     """JSON Schema: required execution fields and label/none rejection."""
 
@@ -33,6 +37,7 @@ class TestProductsSchemaExecutionSemantics:
                     "effective_from": None,
                     "effective_to": None,
                     "tracking_mode": "none",
+                    "delivery": _minimal_delivery(),
                 }
             ],
         }
@@ -56,6 +61,7 @@ class TestProductsSchemaExecutionSemantics:
                     "effective_to": None,
                     "mark_type": "label",
                     "tracking_mode": "none",
+                    "delivery": _minimal_delivery(),
                 }
             ],
         }
@@ -80,6 +86,7 @@ class TestProductsSchemaExecutionSemantics:
                     "effective_to": None,
                     "mark_type": "stamp",
                     "tracking_mode": "none",
+                    "delivery": _minimal_delivery(),
                 }
             ],
         }

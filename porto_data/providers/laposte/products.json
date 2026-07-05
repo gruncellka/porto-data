@@ -23,7 +23,16 @@
       "effective_from": "2026-01-01",
       "effective_to": null,
       "mark_type": "label",
-      "tracking_mode": "optional"
+      "tracking_mode": "optional",
+      "delivery": [
+        {
+          "zones": [
+            "domestic"
+          ],
+          "span": "within",
+          "days_max": 3
+        }
+      ]
     },
     {
       "id": "lettre_verte_suivie",
@@ -45,7 +54,28 @@
       "effective_from": "2026-01-01",
       "effective_to": null,
       "mark_type": "label",
-      "tracking_mode": "included"
+      "tracking_mode": "included",
+      "included_features": [
+        "numero_suivi"
+      ],
+      "delivery": [
+        {
+          "zones": [
+            "domestic"
+          ],
+          "span": "within",
+          "days_max": 3
+        },
+        {
+          "zones": [
+            "zone_1_eu",
+            "zone_2_europe",
+            "world"
+          ],
+          "span": "within",
+          "days_max": 8
+        }
+      ]
     },
     {
       "id": "lettre_services_plus",
@@ -64,12 +94,25 @@
       "effective_from": "2026-01-01",
       "effective_to": null,
       "mark_type": "label",
-      "tracking_mode": "included"
+      "tracking_mode": "included",
+      "included_features": [
+        "numero_suivi"
+      ],
+      "delivery": [
+        {
+          "zones": [
+            "domestic"
+          ],
+          "span": "between",
+          "days_min": 1,
+          "days_max": 2
+        }
+      ]
     },
     {
       "id": "lettre_recommandee_r_un",
       "porto_id": "small",
-      "name": "Lettre recommand\u00e9e R1",
+      "name": "Lettre recommandée R1",
       "envelope_ids": [
         "DL",
         "C6",
@@ -83,12 +126,33 @@
       "effective_from": "2026-01-01",
       "effective_to": null,
       "mark_type": "label",
-      "tracking_mode": "included"
+      "tracking_mode": "included",
+      "included_features": [
+        "preuve_depot",
+        "signature_destinataire",
+        "numero_suivi"
+      ],
+      "indemnity": {
+        "tier": "R1",
+        "max": {
+          "amount": 1600
+        }
+      },
+      "delivery": [
+        {
+          "zones": [
+            "domestic"
+          ],
+          "span": "between",
+          "days_min": 1,
+          "days_max": 2
+        }
+      ]
     },
     {
       "id": "lettre_recommandee_r_deux",
       "porto_id": "small",
-      "name": "Lettre recommand\u00e9e R2",
+      "name": "Lettre recommandée R2",
       "envelope_ids": [
         "DL",
         "C6",
@@ -102,12 +166,33 @@
       "effective_from": "2026-01-01",
       "effective_to": null,
       "mark_type": "label",
-      "tracking_mode": "included"
+      "tracking_mode": "included",
+      "included_features": [
+        "preuve_depot",
+        "signature_destinataire",
+        "numero_suivi"
+      ],
+      "indemnity": {
+        "tier": "R2",
+        "max": {
+          "amount": 15300
+        }
+      },
+      "delivery": [
+        {
+          "zones": [
+            "domestic"
+          ],
+          "span": "between",
+          "days_min": 1,
+          "days_max": 2
+        }
+      ]
     },
     {
       "id": "lettre_recommandee_r_trois",
       "porto_id": "small",
-      "name": "Lettre recommand\u00e9e R3",
+      "name": "Lettre recommandée R3",
       "envelope_ids": [
         "DL",
         "C6",
@@ -121,12 +206,33 @@
       "effective_from": "2026-01-01",
       "effective_to": null,
       "mark_type": "label",
-      "tracking_mode": "included"
+      "tracking_mode": "included",
+      "included_features": [
+        "preuve_depot",
+        "signature_destinataire",
+        "numero_suivi"
+      ],
+      "indemnity": {
+        "tier": "R3",
+        "max": {
+          "amount": 45800
+        }
+      },
+      "delivery": [
+        {
+          "zones": [
+            "domestic"
+          ],
+          "span": "between",
+          "days_min": 1,
+          "days_max": 2
+        }
+      ]
     },
     {
       "id": "lettre_recommandee_inter_r_un",
       "porto_id": "small",
-      "name": "Lettre recommand\u00e9e internationale R1",
+      "name": "Lettre recommandée internationale R1",
       "envelope_ids": [
         "DL",
         "C6",
@@ -142,28 +248,29 @@
       "effective_from": "2026-01-01",
       "effective_to": null,
       "mark_type": "label",
-      "tracking_mode": "included"
-    },
-    {
-      "id": "lettre_recommandee_inter_r_deux",
-      "porto_id": "small",
-      "name": "Lettre recommand\u00e9e internationale R2",
-      "envelope_ids": [
-        "DL",
-        "C6",
-        "C5",
-        "C4",
-        "B4"
+      "tracking_mode": "included",
+      "included_features": [
+        "preuve_depot",
+        "signature_destinataire",
+        "numero_suivi"
       ],
-      "zones": [
-        "zone_1_eu",
-        "zone_2_europe",
-        "world"
-      ],
-      "effective_from": "2026-01-01",
-      "effective_to": null,
-      "mark_type": "label",
-      "tracking_mode": "included"
+      "indemnity": {
+        "tier": "R1",
+        "max": {
+          "amount": 4500
+        }
+      },
+      "delivery": [
+        {
+          "zones": [
+            "zone_1_eu",
+            "zone_2_europe",
+            "world"
+          ],
+          "span": "within",
+          "days_max": 8
+        }
+      ]
     }
   ]
 }

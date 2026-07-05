@@ -1,8 +1,8 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/markets.schema.json",
-  "title": "Markets (country fiscal policy)",
-  "description": "Per-country currency, VAT, and international quote currencies. providers.json country resolves fiscal defaults via markets[COUNTRY]. All operators in the same country share one market row.",
+  "title": "Markets (country fiscal and calendar policy)",
+  "description": "Per-country currency, VAT, international quote currencies, and postal working-day calendar. providers.json country resolves fiscal and working_days defaults via markets[COUNTRY]. All operators in the same country share one market row.",
   "type": "object",
   "required": [
     "file_type",
@@ -126,15 +126,42 @@
       },
       "additionalProperties": false
     },
+    "working_days": {
+      "type": "object",
+      "required": [
+        "weekdays",
+        "exclude_public_holidays"
+      ],
+      "properties": {
+        "weekdays": {
+          "type": "string",
+          "enum": [
+            "mon_fri",
+            "mon_sat"
+          ],
+          "description": "Which weekdays count toward operator-stated delivery SLAs in this market."
+        },
+        "exclude_public_holidays": {
+          "type": "boolean",
+          "description": "When true, public holidays of this market do not count as delivery days."
+        }
+      },
+      "additionalProperties": false
+    },
     "market": {
       "type": "object",
       "required": [
-        "currency"
+        "currency",
+        "working_days"
       ],
       "properties": {
         "currency": {
           "$ref": "#/definitions/currency_code",
           "description": "Default domestic postal quote currency for this market."
+        },
+        "working_days": {
+          "$ref": "#/definitions/working_days",
+          "description": "Default postal working-day calendar for operator delivery SLAs in this market."
         },
         "international_currency": {
           "type": "array",

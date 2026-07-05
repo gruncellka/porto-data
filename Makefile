@@ -24,7 +24,7 @@ help:
 	@echo "  make venv           - Create venv + install dev deps (also runs automatically)"
 	@echo ""
 	@echo "Most Common Commands:"
-	@echo "  make validate      - Validate all JSON (schema → mappings → markets → limits → porto_ids → graph)"
+	@echo "  make validate      - Validate all JSON (schema → mappings → markets → limits → porto_ids → delivery → graph)"
 	@echo "  make format        - Format JSON and Python"
 	@echo "  make lint          - Lint JSON and Python"
 	@echo "  make quality       - Same as default make"
@@ -97,6 +97,8 @@ validate-json: venv
 		fi; \
 		echo "✓ docs/porto_id.md is up to date"; \
 	fi
+	@echo "Validating delivery (zone SLAs)..."
+	@. $(VENV)/bin/activate && PYTHONPATH=. python -m cli.main validate --type delivery
 	@echo "Validating graph.json..."
 	@. $(VENV)/bin/activate && PYTHONPATH=. python -m cli.main validate --type graph
 

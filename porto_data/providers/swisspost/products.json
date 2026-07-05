@@ -20,7 +20,16 @@
       "effective_from": "2026-01-01",
       "effective_to": null,
       "mark_type": "stamp",
-      "tracking_mode": "optional"
+      "tracking_mode": "optional",
+      "delivery": [
+        {
+          "zones": [
+            "domestic"
+          ],
+          "span": "next",
+          "days_max": 1
+        }
+      ]
     },
     {
       "id": "a_post_grossbrief",
@@ -36,7 +45,16 @@
       "effective_from": "2026-01-01",
       "effective_to": null,
       "mark_type": "stamp",
-      "tracking_mode": "optional"
+      "tracking_mode": "optional",
+      "delivery": [
+        {
+          "zones": [
+            "domestic"
+          ],
+          "span": "next",
+          "days_max": 1
+        }
+      ]
     },
     {
       "id": "b_post_standardbrief",
@@ -52,7 +70,17 @@
       "effective_from": "2026-01-01",
       "effective_to": null,
       "mark_type": "stamp",
-      "tracking_mode": "optional"
+      "tracking_mode": "optional",
+      "delivery": [
+        {
+          "zones": [
+            "domestic"
+          ],
+          "span": "within",
+          "days_max": 3,
+          "weekdays": "mon_fri"
+        }
+      ]
     },
     {
       "id": "b_post_grossbrief",
@@ -68,7 +96,17 @@
       "effective_from": "2026-01-01",
       "effective_to": null,
       "mark_type": "stamp",
-      "tracking_mode": "optional"
+      "tracking_mode": "optional",
+      "delivery": [
+        {
+          "zones": [
+            "domestic"
+          ],
+          "span": "within",
+          "days_max": 3,
+          "weekdays": "mon_fri"
+        }
+      ]
     },
     {
       "id": "international_standardbrief",
@@ -86,7 +124,17 @@
       "effective_from": "2026-01-01",
       "effective_to": null,
       "mark_type": "stamp",
-      "tracking_mode": "none"
+      "tracking_mode": "none",
+      "delivery": [
+        {
+          "zones": [
+            "zone_1_eu",
+            "world"
+          ],
+          "span": "within",
+          "days_max": 8
+        }
+      ]
     },
     {
       "id": "international_grossbrief",
@@ -103,7 +151,17 @@
       "effective_from": "2026-01-01",
       "effective_to": null,
       "mark_type": "stamp",
-      "tracking_mode": "none"
+      "tracking_mode": "none",
+      "delivery": [
+        {
+          "zones": [
+            "zone_1_eu",
+            "world"
+          ],
+          "span": "within",
+          "days_max": 8
+        }
+      ]
     },
     {
       "id": "international_maxibrief",
@@ -119,7 +177,17 @@
       "effective_from": "2026-01-01",
       "effective_to": null,
       "mark_type": "stamp",
-      "tracking_mode": "none"
+      "tracking_mode": "none",
+      "delivery": [
+        {
+          "zones": [
+            "zone_1_eu",
+            "world"
+          ],
+          "span": "within",
+          "days_max": 8
+        }
+      ]
     }
   ]
 }

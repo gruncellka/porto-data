@@ -1,7 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/markets.schema.json",
   "file_type": "markets",
-  "description": "Country-level currency, VAT, and international quote currencies. providers.json country resolves fiscal defaults via markets[COUNTRY].",
+  "description": "Country-level currency, VAT, international quote currencies, and postal working-day calendar. providers.json country resolves fiscal defaults via markets[COUNTRY].",
   "unit": {
     "country_code": "ISO 3166-1 alpha-2",
     "currency": "ISO 4217"
@@ -9,12 +9,20 @@
   "markets": {
     "DE": {
       "currency": "EUR",
+      "working_days": {
+        "weekdays": "mon_sat",
+        "exclude_public_holidays": true
+      },
       "vat": {
         "exempt": true
       }
     },
     "FR": {
       "currency": "EUR",
+      "working_days": {
+        "weekdays": "mon_fri",
+        "exclude_public_holidays": true
+      },
       "vat": {
         "domestic": {
           "inclusive": true
@@ -26,6 +34,10 @@
     },
     "CH": {
       "currency": "CHF",
+      "working_days": {
+        "weekdays": "mon_sat",
+        "exclude_public_holidays": true
+      },
       "vat": {
         "domestic": {
           "inclusive": true
@@ -37,6 +49,10 @@
     },
     "UA": {
       "currency": "UAH",
+      "working_days": {
+        "weekdays": "mon_fri",
+        "exclude_public_holidays": true
+      },
       "international_currency": [
         "USD"
       ],

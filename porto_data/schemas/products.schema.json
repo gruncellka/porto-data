@@ -54,7 +54,8 @@
           "effective_from",
           "effective_to",
           "mark_type",
-          "tracking_mode"
+          "tracking_mode",
+          "delivery"
         ],
         "properties": {
           "id": {
@@ -68,7 +69,7 @@
             "description": "Official product name (original language)"
           },
           "native_id": {
-            "description": "Carrier API product identifier for this row (contract catalog / ordering). Not the bundle `id` and not unified `porto_id`. Examples: DHL Internetmarke REST `productCode` (integer). Values must match the operator\u2019s live catalog (e.g. `/app/catalog` contract products).",
+            "description": "Carrier API product identifier for this row (contract catalog / ordering). Not the bundle `id` and not unified `porto_id`. Examples: DHL Internetmarke REST `productCode` (integer). Values must match the operator’s live catalog (e.g. `/app/catalog` contract products).",
             "oneOf": [
               {
                 "type": "integer",
@@ -150,6 +151,27 @@
               "included"
             ],
             "description": "Whether tracking is expected on the execution result; actual tracking numbers are runtime-only (PortoMark), never stored in porto-data."
+          },
+          "delivery": {
+            "type": "array",
+            "minItems": 1,
+            "description": "Operator-stated delivery SLA per zone group. Union of all entry zones must equal product.zones exactly.",
+            "items": {
+              "$ref": "#/definitions/delivery_entry"
+            }
+          },
+          "included_features": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z_]+$"
+            },
+            "description": "Provider feature ids bundled in base postage (see features.json). Optional add-ons remain in services.json."
+          },
+          "indemnity": {
+            "$ref": "#/definitions/indemnity",
+            "description": "Operator-stated loss/damage indemnity cap when the product tier defines one."
           }
         },
         "additionalProperties": false,
@@ -178,6 +200,150 @@
           }
         ]
       }
+    }
+  },
+  "definitions": {
+    "indemnity_max": {
+      "type": "object",
+      "required": [
+        "amount"
+      ],
+      "properties": {
+        "amount": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Indemnification cap in provider market minor units (markets[country].currency)."
+        }
+      },
+      "additionalProperties": false
+    },
+    "indemnity": {
+      "type": "object",
+      "required": [
+        "tier",
+        "max"
+      ],
+      "properties": {
+        "tier": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Operator-native indemnity"
+        },
+        "max": {
+          "$ref": "#/definitions/indemnity_max",
+          "description": "Maximum indemnification in case of loss or damage per operator tariff."
+        }
+      },
+      "additionalProperties": false
+    },
+    "delivery_entry": {
+      "type": "object",
+      "required": [
+        "zones",
+        "span",
+        "days_max"
+      ],
+      "properties": {
+        "zones": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z0-9_]+$"
+          },
+          "description": "Zone ids from this product's zones[]; each product zone must appear in exactly one delivery entry."
+        },
+        "span": {
+          "type": "string",
+          "enum": [
+            "next",
+            "within",
+            "between"
+          ],
+          "description": "How to read days_max: next (exactly 1 day), within (up to days_max), between (days_min..days_max)."
+        },
+        "days_max": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Maximum counted delivery days for this zone group per operator tariff wording."
+        },
+        "days_min": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Minimum counted delivery days when span is between."
+        },
+        "weekdays": {
+          "type": "string",
+          "enum": [
+            "mon_fri",
+            "mon_sat"
+          ],
+          "description": "Optional override when operator text narrows or widens weekdays vs markets[country].working_days."
+        }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "span": {
+                "const": "next"
+              }
+            },
+            "required": [
+              "span"
+            ]
+          },
+          "then": {
+            "properties": {
+              "days_max": {
+                "const": 1
+              }
+            },
+            "not": {
+              "required": [
+                "days_min"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "span": {
+                "const": "within"
+              }
+            },
+            "required": [
+              "span"
+            ]
+          },
+          "then": {
+            "not": {
+              "required": [
+                "days_min"
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "span": {
+                "const": "between"
+              }
+            },
+            "required": [
+              "span"
+            ]
+          },
+          "then": {
+            "required": [
+              "days_min"
+            ]
+          }
+        }
+      ]
     }
   },
   "additionalProperties": false

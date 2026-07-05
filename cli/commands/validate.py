@@ -1,6 +1,7 @@
 """Validate command for porto CLI - thin wrapper around validators."""
 
 from scripts.data_files import list_provider_ids
+from scripts.validators.delivery import validate_delivery
 from scripts.validators.graph import validate_graph as _validate_provider_graph
 from scripts.validators.limits_scope import validate_limits_scope
 from scripts.validators.mappings_layout import validate_mappings_layout
@@ -35,6 +36,11 @@ def validate_markets_cmd() -> int:
     return validate_markets()
 
 
+def validate_delivery_cmd() -> int:
+    """Validate zone-scoped delivery SLAs on providers/*/products.json."""
+    return validate_delivery()
+
+
 def validate_graph(analyze: bool = False, provider: str | None = None) -> int:
     """Validate provider graph for one provider or all providers in mappings."""
     if provider is not None:
@@ -48,7 +54,7 @@ def validate_graph(analyze: bool = False, provider: str | None = None) -> int:
 
 
 def validate_all() -> int:
-    """Validate data bundle: schema → mappings → markets → limits → porto_ids → graph."""
+    """Validate data bundle: schema → mappings → markets → limits → porto_ids → delivery → graph."""
     schema_result = validate_schema()
     if schema_result != 0:
         return schema_result
@@ -64,4 +70,7 @@ def validate_all() -> int:
     porto_ids_result = validate_porto_ids()
     if porto_ids_result != 0:
         return porto_ids_result
+    delivery_result = validate_delivery_cmd()
+    if delivery_result != 0:
+        return delivery_result
     return validate_graph(analyze=False)

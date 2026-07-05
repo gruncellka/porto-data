@@ -33,6 +33,26 @@ def _provider_countries() -> dict[str, str]:
     return out
 
 
+_VALID_WEEKDAYS = frozenset({"mon_fri", "mon_sat"})
+
+
+def _validate_working_days(country: str, row: dict[str, Any], errors: list[str]) -> None:
+    wd = row.get("working_days")
+    if wd is None:
+        errors.append(f"markets.{country}: working_days is required")
+        return
+    if not isinstance(wd, dict):
+        errors.append(f"markets.{country}: working_days must be an object")
+        return
+    weekdays = wd.get("weekdays")
+    if weekdays not in _VALID_WEEKDAYS:
+        errors.append(
+            f"markets.{country}: working_days.weekdays must be one of {sorted(_VALID_WEEKDAYS)}"
+        )
+    if not isinstance(wd.get("exclude_public_holidays"), bool):
+        errors.append(f"markets.{country}: working_days.exclude_public_holidays must be a boolean")
+
+
 def _validate_market_row(country: str, row: dict[str, Any], errors: list[str]) -> None:
     currency = row.get("currency")
     if not isinstance(currency, str) or currency not in _VALID_CURRENCIES:
@@ -83,6 +103,8 @@ def _validate_market_row(country: str, row: dict[str, Any], errors: list[str]) -
     settlement = row.get("settlement")
     if settlement is not None and not isinstance(settlement, dict):
         errors.append(f"markets.{country}: settlement must be an object when set")
+
+    _validate_working_days(country, row, errors)
 
 
 def validate_markets() -> int:

@@ -71,6 +71,14 @@ repos:
             pass_filenames: false
             always_run: false
 
+          - id: validate-delivery
+            name: Validate products delivery
+            entry: bash -c 'if [ -f venv/bin/activate ]; then . venv/bin/activate; fi && PYTHONPATH=. python -m cli.main validate --type delivery'
+            language: system
+            files: ^porto_data/providers/[^/]+/(products|features|graph)\.json$|^porto_data/schemas/products\.schema\.json$|^porto_data/policy/markets\.json$|^porto_data/providers\.json$
+            pass_filenames: false
+            always_run: false
+
           - id: validate-graph
             name: Validate graph.json consistency
             entry: bash -c 'if [ -f venv/bin/activate ]; then . venv/bin/activate; fi && PYTHONPATH=. python -m cli.main validate --type graph'

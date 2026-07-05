@@ -115,7 +115,7 @@ If new/changed code adds `TODO` or `FIXME` without an issue reference (`#123`, `
 
 ## Data consistency and resolution
 
-These rules align reviews with validators under `scripts/validators/` and **`make validate`** (same order as **`porto validate`**: schema → mappings → markets → limits → porto_ids → graph). Graph logic lives in package **`scripts/validators/graph/`** (not a single `graph.py` file).
+These rules align reviews with validators under `scripts/validators/` and **`make validate`** (same order as **`porto validate`**: schema → mappings → markets → limits → porto_ids → delivery → graph). Graph logic lives in package **`scripts/validators/graph/`** (not a single `graph.py` file).
 
 ### 9) Graph uses `edges` and `services`, not legacy keys (blocking)
 
@@ -284,3 +284,31 @@ If a PR adds normative rules only to **`docs/*.md`** or **`.cursorrules`** for c
 - **Title:** `Catalog rule lacks validator coverage`
 - **Body:** `Encode checkable invariants in scripts/validators/ + tests/ (make test-cov). Examples: porto_id enum disjointness, layout window-only geometry, native-id refs in prices/graph.`
 - **Labels:** `quality`, `tests`
+
+### 30) Product delivery must cover every zone (blocking)
+
+If a PR adds or changes **`products.json`** and any product’s **`delivery[]`** zones do not **exactly partition** **`product.zones`** (missing zone, extra zone, or duplicate zone across entries):
+
+- **Title:** `Product delivery zone coverage mismatch`
+- **Body:** `Each product.delivery[] entry lists zone ids; union must equal product.zones exactly once each. CI: porto validate --type delivery. See docs/resolution.md § Delivery hints.`
+- **Labels:** `data`, `consistency`
+
+### 31) No SDK speed-class `lane` on products (blocking)
+
+If a PR adds **`lane`**, **`priority`**, **`economy`**, or similar interpreter enums on **`products.json`** or **`products.schema.json`** to mean carrier speed class:
+
+- **Title:** `Speed class belongs in SDK, not catalog`
+- **Body:** `Catalog stores operator time facts (delivery span + days per zone) and markets.working_days calendar. Disambiguation (A-Post vs B-Post) uses native product id or delivery hints — not a normalized lane enum.`
+- **Labels:** `data`, `architecture`, `consistency`
+
+### 32) Product indemnity and twin disambiguation (blocking)
+
+If a PR adds or changes **`products.json`** and:
+
+- any La Poste **`lettre_recommandee_*`** row lacks **`indemnity`**, or a non-recommandée La Poste row sets **`indemnity`**, or **`indemnity.tier`** does not match the product id (R1/R2/R3), or
+- two products share the same **`(porto_id, zone, weight_tier)`** graph edge and identical resolution fingerprint (`delivery[]` sig, **`indemnity.tier`**, **`included_features`**, **`tracking_mode`**), or
+- **`included_features[]`** references an id missing from provider **`features.json`**:
+
+- **Title:** `Product resolution facts invalid or ambiguous twins`
+- **Body:** `Recommandée must carry indemnity; twins must differ on delivery, indemnity.tier, included_features, or tracking_mode. CI: porto validate --type delivery. See docs/resolution.md § Candidate enrichment.`
+- **Labels:** `data`, `consistency`, `resolution`

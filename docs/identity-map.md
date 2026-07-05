@@ -96,9 +96,16 @@ products.json
   porto_id ◄────────────────────── SDK letterType / porto_id input
   native_id ──────────────────────► adapter API (when present)
   zones[] ────────────────────────► zones.json (subset)
-  weight_tier ────────────────────► weights.json
+  weight_tier? (optional) ──────► hint only (Deutsche Post); resolve weight via weights.json + graph
   envelope_ids[] ─────────────────► formats/envelopes.json
   mark_type ──────────────────────► marks.profiles[].mark_type (must match)
+  delivery[] (zones, span, days) ─► operator SLA per zone group
+  delivery[].weekdays? ───────────► override of markets[CC].working_days.weekdays
+  included_features[] ────────────► features.json (bundled capabilities, not services)
+  indemnity { tier, max.amount } ─► operator tier cap; currency from markets[CC]
+
+policy/markets.json
+  markets[CC].working_days ───────► default postal calendar for delivery hints
 
 graph.json
   edges.products[product_id].zones[] ──► zones used for that product

@@ -66,7 +66,6 @@ Cross-file refs (graph, prices, rules) use **native `id`**. SDK input uses **`po
 
 | native `id` | products `porto_id` |
 |-------------|------------|
-| `lettre_recommandee_inter_r_deux` | `small` |
 | `lettre_recommandee_inter_r_un` | `small` |
 | `lettre_recommandee_r_deux` | `small` |
 | `lettre_recommandee_r_trois` | `small` |

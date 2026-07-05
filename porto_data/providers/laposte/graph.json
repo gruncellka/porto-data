@@ -214,22 +214,6 @@
           "W1000",
           "W2000"
         ]
-      },
-      "lettre_recommandee_inter_r_deux": {
-        "zones": [
-          "zone_1_eu",
-          "zone_2_europe",
-          "world"
-        ],
-        "weight_tiers": [
-          "W0020",
-          "W0050",
-          "W0100",
-          "W0250",
-          "W0500",
-          "W1000",
-          "W2000"
-        ]
       }
     },
     "marks": {
