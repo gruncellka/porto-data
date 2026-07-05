@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/weights.schema.json",
   "title": "Weights schema",
-  "description": "Provider weight brackets (tier ids W* \u2192 min/max g) for pricing and resolution",
+  "description": "Provider weight brackets (tier ids W* → min/max g) for pricing and resolution",
   "type": "object",
   "required": [
     "file_type",

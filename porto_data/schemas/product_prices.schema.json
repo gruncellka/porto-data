@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/product_prices.schema.json",
   "title": "Product postage prices",
-  "description": "Base letter/postage grid: product_id \u00d7 zone \u00d7 weight_tier. Amounts in cents. Convention: price[].effective_from uses the catalog baseline date (currently 2026-01-01) as bundle snapshot start, not carrier historical introduction dates.",
+  "description": "Base letter/postage grid: product_id × zone × weight_tier. Amounts in cents. Convention: price[].effective_from uses the catalog baseline date (currently 2026-01-01) as bundle snapshot start, not carrier historical introduction dates.",
   "type": "object",
   "required": [
     "file_type",
@@ -81,7 +81,7 @@
               "UAH",
               "USD"
             ],
-            "description": "Row override when this amount is not in unit.currency. Omit when same as file default. SDK priority: row \u2192 file unit \u2192 markets[country].currency."
+            "description": "Row override when this amount is not in unit.currency. Omit when same as file default. SDK priority: row → file unit → markets[country].currency."
           },
           "price": {
             "type": "array",

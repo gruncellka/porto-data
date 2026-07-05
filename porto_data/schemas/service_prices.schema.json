@@ -71,7 +71,7 @@
               "UAH",
               "USD"
             ],
-            "description": "Row override when this amount is not in unit.currency. Omit when same as file default. SDK priority: row \u2192 file unit \u2192 markets[country].currency."
+            "description": "Row override when this amount is not in unit.currency. Omit when same as file default. SDK priority: row → file unit → markets[country].currency."
           },
           "price": {
             "type": "array",

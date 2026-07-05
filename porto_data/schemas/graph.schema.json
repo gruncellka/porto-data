@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/graph.schema.json",
   "title": "Graph schema",
-  "description": "Provider graph: data file dependencies, resolution edges (products \u00d7 zone \u00d7 weight; marks \u00d7 zone \u00d7 service), and service list",
+  "description": "Provider graph: data file dependencies, resolution edges (products × zone × weight; marks × zone × service), and service list",
   "type": "object",
   "required": [
     "file_type",
@@ -106,7 +106,7 @@
       "properties": {
         "products": {
           "type": "object",
-          "description": "Per-product edges: each key is a **product `id`** from products.json. Maps product \u2192 allowed zones and weight tiers.",
+          "description": "Per-product edges: each key is a **product `id`** from products.json. Maps product → allowed zones and weight tiers.",
           "patternProperties": {
             "^[a-z_]+$": {
               "type": "object",
@@ -164,7 +164,7 @@
                     }
                   },
                   "additionalProperties": false,
-                  "description": "Native service id \u2192 marks.profiles[].id when that service is selected"
+                  "description": "Native service id → marks.profiles[].id when that service is selected"
                 }
               },
               "additionalProperties": false

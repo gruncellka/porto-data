@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/features.schema.json",
   "title": "Features Schema",
-  "description": "Provider-scoped service feature catalog. Each row has a unified Porto `porto_id` (cross-provider vocabulary) and a provider `id` (this bundle\u2019s primary key; `services[].features` references `id`, and may match `porto_id` when vocabulary aligns). Native-market `name` and English `label`.",
+  "description": "Provider-scoped service feature catalog. Each row has a unified Porto `porto_id` (cross-provider vocabulary) and a provider `id` (this bundle’s primary key; `services[].features` references `id`, and may match `porto_id` when vocabulary aligns). Native-market `name` and English `label`.",
   "type": "object",
   "required": [
     "file_type",

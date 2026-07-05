@@ -30,7 +30,7 @@
             "quarter",
             "trifold"
           ],
-          "description": "Fold style for this sheets[] entry (outcome-oriented). flat=no crease; half=one crease (~\u00bd area); quarter=two creases to ~\u00bc sheet area (e.g. A4\u2192C6); trifold=two parallel creases, three panels (DL / business letter). quarter and trifold both use two creases; geometry differs."
+          "description": "Fold style for this sheets[] entry (outcome-oriented). flat=no crease; half=one crease (~½ area); quarter=two creases to ~¼ sheet area (e.g. A4→C6); trifold=two parallel creases, three panels (DL / business letter). quarter and trifold both use two creases; geometry differs."
         },
         "description": {
           "type": "string",

@@ -12,7 +12,7 @@
       "mark_type": "label",
       "label": "Mon Timbre en ligne domestic",
       "description": "MTEL stamp label for France and Outre-mer",
-      "scope_notes": "Nominal Avery L7159 label 63.5\u00d733.9 mm; registered MTEL uses same stamp size (no separate profile until measured) plus paper liasse",
+      "scope_notes": "Nominal Avery L7159 label 63.5×33.9 mm; registered MTEL uses same stamp size (no separate profile until measured) plus paper liasse",
       "size": {
         "width": 64,
         "height": 34

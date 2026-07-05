@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/providers.schema.json",
   "title": "Provider registry",
-  "description": "Domain registry for postal providers. Folder providers/<id>/ is implementation storage only; authoritative ids and coarse metadata live here. IANA timezone: policy/jurisdictions.json \u2192 jurisdictions[country].timezone. Currency and VAT: policy/markets.json \u2192 markets[country]. Product-level mark_type and tracking_mode remain the execution source of truth.",
+  "description": "Domain registry for postal providers. Folder providers/<id>/ is implementation storage only; authoritative ids and coarse metadata live here. IANA timezone: policy/jurisdictions.json → jurisdictions[country].timezone. Currency and VAT: policy/markets.json → markets[country]. Product-level mark_type and tracking_mode remain the execution source of truth.",
   "type": "object",
   "required": [
     "providers"

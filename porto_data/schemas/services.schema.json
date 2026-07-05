@@ -97,7 +97,7 @@
               "type": "string",
               "pattern": "^[a-z0-9_]+$"
             },
-            "description": "Zone IDs where this service is orderable via API. When omitted, service is available for all zones the product supports. Used for API restrictions (e.g. Einschreiben Einwurf/R\u00fcckschein only domestic via Internetmarke)."
+            "description": "Zone IDs where this service is orderable via API. When omitted, service is available for all zones the product supports. Used for API restrictions (e.g. Einschreiben Einwurf/Rückschein only domestic via Internetmarke)."
           },
           "combinable_with": {
             "type": "array",

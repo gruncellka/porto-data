@@ -35,7 +35,7 @@
         "zones.json",
         "weights.json"
       ],
-      "description": "Base postage grid (product_id \u00d7 zone \u00d7 weight_tier); file providers/<id>/prices/products.json (file_type product_prices)"
+      "description": "Base postage grid (product_id × zone × weight_tier); file providers/<id>/prices/products.json (file_type product_prices)"
     },
     "service_prices": {
       "file": "prices/services.json",

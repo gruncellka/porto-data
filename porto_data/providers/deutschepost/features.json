@@ -20,14 +20,14 @@
     {
       "id": "unterschrift_empfanger",
       "porto_id": "recipient_signature",
-      "name": "Empf\u00e4ngerunterschrift",
+      "name": "Empfängerunterschrift",
       "label": "Recipient signature required",
       "description": "Recipient must sign upon delivery"
     },
     {
       "id": "rueckschein",
       "porto_id": "return_receipt",
-      "name": "R\u00fcckschein",
+      "name": "Rückschein",
       "label": "Return receipt to sender",
       "description": "Receipt returned to sender as proof of delivery"
     },

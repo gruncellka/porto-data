@@ -8,7 +8,7 @@
   },
   "context": {
     "national": {
-      "description": "Letter-format products only. Letter destination gating: policy/restrictions.json + zones.json. Switzerland is not in the EU; CH is domestic when posting from CH. limits[] only for Swiss Post\u2013documented letter operational blocks.",
+      "description": "Letter-format products only. Letter destination gating: policy/restrictions.json + zones.json. Switzerland is not in the EU; CH is domestic when posting from CH. limits[] only for Swiss Post–documented letter operational blocks.",
       "notes": "Keep limits[] minimal; add a row only when Post CH materially restricts or suspends letters to a destination (verifiable). No parcel-only or generic geopolitical inventories."
     }
   },

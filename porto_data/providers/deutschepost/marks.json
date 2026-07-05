@@ -12,7 +12,7 @@
       "mark_type": "stamp",
       "label": "Internetmarke domestic",
       "description": "Standard domestic letter franking graphic",
-      "scope_notes": "Not from Deutsche Post official spec; measured from Internetmarke PDF samples (calibration samples/, not in git). Frankierzone placement max 74\u00d740 mm",
+      "scope_notes": "Not from Deutsche Post official spec; measured from Internetmarke PDF samples (calibration samples/, not in git). Frankierzone placement max 74×40 mm",
       "size": {
         "width": 36,
         "height": 16
@@ -42,7 +42,7 @@
       "mark_type": "stamp",
       "label": "Internetmarke registered domestic",
       "description": "Domestic registered (Einschreiben) franking graphic",
-      "scope_notes": "Not from Deutsche Post official spec; measured from Internetmarke PDF samples. Einschreiben Einwurf / R\u00fcckschein and domestic Einschreiben",
+      "scope_notes": "Not from Deutsche Post official spec; measured from Internetmarke PDF samples. Einschreiben Einwurf / Rückschein and domestic Einschreiben",
       "size": {
         "width": 57,
         "height": 21

@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/marks.schema.json",
   "title": "Provider mark profiles",
-  "description": "Per-provider catalog of mark geometry and payload type. Profile size (width \u00d7 height) is nominal footprint in mm. Resolution paths live in graph.json edges.marks.",
+  "description": "Per-provider catalog of mark geometry and payload type. Profile size (width × height) is nominal footprint in mm. Resolution paths live in graph.json edges.marks.",
   "type": "object",
   "required": [
     "file_type",
@@ -86,7 +86,7 @@
           },
           "size": {
             "type": "object",
-            "description": "Nominal width \u00d7 height of the franking graphic in file unit.dimension (mm); optional until verified from API/spec",
+            "description": "Nominal width × height of the franking graphic in file unit.dimension (mm); optional until verified from API/spec",
             "required": [
               "width",
               "height"

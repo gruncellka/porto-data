@@ -46,7 +46,7 @@
     {
       "id": "einschreiben_rueckschein",
       "porto_id": "registered_return_receipt",
-      "name": "Einschreiben R\u00fcckschein",
+      "name": "Einschreiben Rückschein",
       "label": "Registered mail with return receipt",
       "description": "Registered mail with signature and return receipt. Internetmarke API: domestic only.",
       "features": [
