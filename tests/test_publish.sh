@@ -32,8 +32,6 @@ const hasPy = files.some(f => f.endsWith('.py'));
 if (hasPy) { console.error('FAIL: .py file in npm package'); process.exit(1); }
 const mustHave = [
   'porto_data/schemas/porto_ids.schema.json',
-  'docs/porto_id.md',
-  'docs/resolution.md',
 ];
 for (const rel of mustHave) {
   if (!fs.existsSync(path.join(root, rel))) {
@@ -41,13 +39,17 @@ for (const rel of mustHave) {
     process.exit(1);
   }
 }
+if (fs.existsSync(path.join(root, 'docs'))) {
+  console.error('FAIL: docs/ must not be shipped in npm package');
+  process.exit(1);
+}
 if (!pkg.policy || !pkg.providers || pkg.global) {
   console.error('FAIL: metadata shape (expected policy/providers, not global)');
   process.exit(1);
 }
 console.log('✓ require() OK, project.version:', pkg.project?.version);
 console.log('✓ No Python files in porto_data/');
-console.log('✓ porto_ids.schema.json and contract docs present');
+console.log('✓ porto_ids.schema.json present; docs/ excluded');
 "
 cd "$ROOT"
 rm -f "$TARBALL"
