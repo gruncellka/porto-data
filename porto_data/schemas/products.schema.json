@@ -69,7 +69,7 @@
             "description": "Official product name (original language)"
           },
           "native_id": {
-            "description": "Carrier API product identifier for this row (contract catalog / ordering). Not the bundle `id` and not unified `porto_id`. Examples: DHL Internetmarke REST `productCode` (integer). Values must match the operator\u2019s live catalog (e.g. `/app/catalog` contract products).",
+            "description": "Carrier API product identifier for this row (contract catalog / ordering). Not the bundle `id` and not unified `porto_id`. Examples: DHL Internetmarke REST `productCode` (integer). Values must match the operator’s live catalog (e.g. `/app/catalog` contract products).",
             "oneOf": [
               {
                 "type": "integer",
@@ -159,6 +159,19 @@
             "items": {
               "$ref": "#/definitions/delivery_entry"
             }
+          },
+          "included_features": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z_]+$"
+            },
+            "description": "Provider feature ids bundled in base postage (see features.json). Optional add-ons remain in services.json."
+          },
+          "indemnity": {
+            "$ref": "#/definitions/indemnity",
+            "description": "Operator-stated loss/damage indemnity cap when the product tier defines one (e.g. La Poste recommandée R1–R3)."
           }
         },
         "additionalProperties": false,
@@ -190,6 +203,49 @@
     }
   },
   "definitions": {
+    "money_amount": {
+      "type": "object",
+      "required": [
+        "amount",
+        "currency"
+      ],
+      "properties": {
+        "amount": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Minor units (cents/rappen) per operator tariff."
+        },
+        "currency": {
+          "type": "string",
+          "enum": [
+            "EUR",
+            "CHF",
+            "UAH",
+            "USD"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "indemnity": {
+      "type": "object",
+      "required": [
+        "tier",
+        "max"
+      ],
+      "properties": {
+        "tier": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Operator-native indemnity tier code (e.g. R1, R2, R3)."
+        },
+        "max": {
+          "$ref": "#/definitions/money_amount",
+          "description": "Maximum indemnification in case of loss or damage per operator tariff."
+        }
+      },
+      "additionalProperties": false
+    },
     "delivery_entry": {
       "type": "object",
       "required": [

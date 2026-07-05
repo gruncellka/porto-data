@@ -15,7 +15,9 @@ All notable changes to this project will be documented in this file.
 - **Validation:** **`porto validate --type markets`** — registry ↔ markets coverage and fiscal shape checks.
 - **`markets.working_days`:** Per-country postal calendar (`weekdays`, `exclude_public_holidays`) on every market row.
 - **`products.delivery[]`:** Zone-grouped operator delivery SLA (`span`, `days_min`/`days_max`, optional `weekdays` override). Union of entry zones must equal `product.zones`.
-- **Validation:** **`porto validate --type products_delivery`** — zone coverage, span/days shape, Swiss Post A/B weekday rules.
+- **`products.included_features[]`:** Optional bundled capability ids (refs provider `features.json`; omit when not applicable).
+- **`products.indemnity`:** Optional operator tier + loss/damage cap (`tier`, `max.amount` in minor units, `max.currency`).
+- **Validation:** **`porto validate --type products_delivery`** — zone coverage, span/days shape, Swiss Post A/B weekday rules, feature refs, La Poste indemnity rules, twin resolution fingerprint guard.
 - **Docs:** [docs/providers/](docs/providers/) tariff notes per operator; [resolution.md](docs/resolution.md), [provider-template.md](docs/provider-template.md), [porto_id.md](docs/porto_id.md), [tariff-verification.md](docs/tariff-verification.md); [id.md](docs/id.md), [policy.md](docs/policy.md), [formats.md](docs/formats.md).
 - **Mappings:** Required provider template schemas enforced in mappings validation.
 
@@ -29,6 +31,7 @@ All notable changes to this project will be documented in this file.
 - **`porto_ids.schema.json`:** Validator rejects **product** enum overlap with **service** or **feature** tokens; products are size buckets only.
 - **`metadata.json`:** Generated with 2-space indent (matches data JSON).
 - **2026 tariff snapshot:** Catalog baseline **`effective_from`: `2026-01-01`** on products and price rows where applicable (see per-provider docs under **`docs/providers/`**).
+- **La Poste:** Removed **`lettre_recommandee_inter_r_deux`** (international R2 retired **2026-04-01**); populated **`indemnity`** and **`included_features`** on recommandée and tracked letter products.
 
 ### Breaking
 

@@ -39,7 +39,7 @@ Reference for **reconciling JSON with official letter tariffs** (not a legal tar
 
 - **Territories footnote:** métropole, Monaco, Andorre, secteurs militaires, OM — possible **complément aérien** OM above 100 g; encode per catalogue, don’t invent.
 - **International zones:** separate prices per weight; map destination → zone via **`zones.json`** + catalogue intégral if buckets are coarse.
-- **Recommandée as products:** R1–R3 / international R1–R2 are **products** with own price rows, not only services.
+- **Recommandée as products:** R1–R3 domestic and international R1 are **products** with own price rows and **`indemnity`** caps, not only services. International **R2 retired 2026-04-01** — removed from bundle (`lettre_recommandee_inter_r_deux`).
 - **MTEL discount:** online stamp **3 ct** below counter price — bundle uses **official table** (counter) amounts unless MTEL product is added.
 
 ---
@@ -64,7 +64,7 @@ Reference for **reconciling JSON with official letter tariffs** (not a legal tar
 | 2026-06-21 | [Tarif lettre verte 2026](https://www.laposte.fr/tarif-lettre-verte) | Lettre verte ladder |
 | 2026-06-21 | [Tarifs postaux 2026](https://www.laposte.fr/tarifs-postaux-courrier-lettres-timbres-2026) | All letter products |
 | 2026-06-21 | [Boutique MTEL tarifs](https://boutique.laposte.fr/mon-timbre-en-ligne/tarifs) | Online franking presentation |
-| — | [Catalogue intégral](https://www.laposte.fr/tarifs-postaux/catalogue-integral) | Destination groups, recommandée R1–R3 / R1–R2 |
+| 2026-06-21 | [Tarif lettre recommandée](https://www.laposte.fr/tarif-lettre-recommandee) | R1–R3 indemnity caps (domestic + international R1) |
 
 ---
 
@@ -91,7 +91,26 @@ Reference for **reconciling JSON with official letter tariffs** (not a legal tar
 
 **Lettre Services Plus — France:** 20 g **3,47** … 2 kg **12,01** (full ladder on site).
 
-**Lettre recommandée:** domestic **R1–R3** and international **R1–R2** — see live page / catalogue for full matrix.
+**Lettre recommandée:** domestic **R1–R3** and international **R1** — see live page / catalogue for full matrix. International **R2** discontinued from **2026-04-01** (not in bundle).
+
+### Indemnity caps (`products.indemnity`, amounts in **cents** EUR)
+
+| `product_id` | `tier` | `max.amount` | Notes |
+|--------------|--------|-------------:|-------|
+| `lettre_recommandee_r_un` | R1 | 1600 | domestic (16 €) |
+| `lettre_recommandee_r_deux` | R2 | 15300 | domestic (153 €) |
+| `lettre_recommandee_r_trois` | R3 | 45800 | domestic (458 €) |
+| `lettre_recommandee_inter_r_un` | R1 | 4500 | international (45 €) |
+
+Source: [laposte.fr tarif recommandée](https://www.laposte.fr/tarif-lettre-recommandee) (2026). **`avis_reception`** remains an optional **service** (+145/150 ct), not in `included_features`.
+
+### Bundled features (`products.included_features`)
+
+| Product family | `included_features` |
+|----------------|---------------------|
+| `lettre_verte` | omit |
+| `lettre_verte_suivie`, `lettre_services_plus` | `numero_suivi` |
+| `lettre_recommandee_*` | `preuve_depot`, `signature_destinataire`, `numero_suivi` |
 
 ---
 
@@ -103,7 +122,7 @@ Reference for **reconciling JSON with official letter tariffs** (not a legal tar
 | `lettre_verte_suivie` | **202, 360, 574, 791, 979, 1164** | **505, 765, …, 3450** on `zone_1_eu`, `zone_2_europe`, `world` |
 | `lettre_services_plus` | **347, 457, 578, 810, 1035, 1201** | — |
 | `lettre_recommandee_r_un` / `r_deux` / `r_trois` | R1–R3 table | — |
-| `lettre_recommandee_inter_r_un` / `inter_r_deux` | — | R1–R2 × zones |
+| `lettre_recommandee_inter_r_un` | — | R1 × zones |
 
 **Services (examples):** `suivi_option` 50 · `avis_de_reception_national` 145 · `avis_de_reception_international` 150.
 

@@ -1,4 +1,4 @@
-"""Validate zone-scoped delivery SLAs on providers/*/products.json."""
+"""Validate zone-scoped delivery SLAs and product resolution facts on providers/*/products.json."""
 
 from __future__ import annotations
 
@@ -8,12 +8,21 @@ from scripts.data_files import (
     get_data_file_path,
     get_project_root,
     list_provider_ids,
+    load_markets,
     load_providers_registry,
 )
 from scripts.utils import load_json
 
 _VALID_SPANS = frozenset({"next", "within", "between"})
 _VALID_WEEKDAYS = frozenset({"mon_fri", "mon_sat"})
+_VALID_CURRENCIES = frozenset({"EUR", "CHF", "UAH", "USD"})
+
+_LAPOSTE_INDEMNITY_TIER_BY_ID: dict[str, str] = {
+    "lettre_recommandee_r_un": "R1",
+    "lettre_recommandee_r_deux": "R2",
+    "lettre_recommandee_r_trois": "R3",
+    "lettre_recommandee_inter_r_un": "R1",
+}
 
 
 def _provider_countries() -> dict[str, str]:
@@ -26,6 +35,168 @@ def _provider_countries() -> dict[str, str]:
         if isinstance(row, dict) and isinstance(row.get("country"), str):
             out[str(pid)] = str(row["country"]).upper()
     return out
+
+
+def _market_currencies() -> dict[str, str]:
+    try:
+        doc = load_markets()
+    except (FileNotFoundError, ValueError):
+        return {}
+    markets = doc.get("markets")
+    if not isinstance(markets, dict):
+        return {}
+    out: dict[str, str] = {}
+    for cc, row in markets.items():
+        if isinstance(row, dict) and isinstance(row.get("currency"), str):
+            out[str(cc).upper()] = str(row["currency"])
+    return out
+
+
+def _load_feature_ids(provider: str, root: Any) -> set[str]:
+    try:
+        path = get_data_file_path("features", provider, project_root=root)
+        doc = load_json(path)
+    except (FileNotFoundError, OSError, ValueError):
+        return set()
+    features = doc.get("features")
+    if not isinstance(features, list):
+        return set()
+    return {str(f["id"]) for f in features if isinstance(f, dict) and isinstance(f.get("id"), str)}
+
+
+def _load_graph_product_edges(provider: str, root: Any) -> dict[str, dict[str, Any]]:
+    try:
+        path = get_data_file_path("graph", provider, project_root=root)
+        doc = load_json(path)
+    except (FileNotFoundError, OSError, ValueError):
+        return {}
+    edges = doc.get("edges")
+    if not isinstance(edges, dict):
+        return {}
+    products = edges.get("products")
+    if not isinstance(products, dict):
+        return {}
+    return {str(k): v for k, v in products.items() if isinstance(v, dict)}
+
+
+def _delivery_zone_signature(product: dict[str, Any], zone: str) -> tuple[Any, ...] | None:
+    delivery = product.get("delivery")
+    if not isinstance(delivery, list):
+        return None
+    for entry in delivery:
+        if not isinstance(entry, dict):
+            continue
+        zones_raw = entry.get("zones")
+        if isinstance(zones_raw, list) and zone in zones_raw:
+            return (
+                entry.get("span"),
+                entry.get("days_min"),
+                entry.get("days_max"),
+                entry.get("weekdays"),
+            )
+    return None
+
+
+def _resolution_fingerprint(product: dict[str, Any], zone: str) -> tuple[Any, ...]:
+    indemnity = product.get("indemnity")
+    tier: str | None = None
+    if isinstance(indemnity, dict) and isinstance(indemnity.get("tier"), str):
+        tier = indemnity["tier"]
+    included = product.get("included_features")
+    if isinstance(included, list):
+        features_key = frozenset(str(x) for x in included if isinstance(x, str))
+    else:
+        features_key = frozenset()
+    return (
+        _delivery_zone_signature(product, zone),
+        tier,
+        features_key,
+        product.get("tracking_mode"),
+    )
+
+
+def _validate_included_features(
+    *,
+    provider: str,
+    product_id: str,
+    product: dict[str, Any],
+    feature_ids: set[str],
+    errors: list[str],
+) -> None:
+    prefix = f"providers/{provider}/products.json product {product_id!r}"
+    included = product.get("included_features")
+    if included is None:
+        return
+    if not isinstance(included, list):
+        errors.append(f"{prefix}: included_features must be an array when set")
+        return
+    seen: set[str] = set()
+    for feat in included:
+        if not isinstance(feat, str):
+            errors.append(f"{prefix}: included_features entries must be strings")
+            continue
+        if feat in seen:
+            errors.append(f"{prefix}: duplicate included_features entry {feat!r}")
+        seen.add(feat)
+        if feature_ids and feat not in feature_ids:
+            errors.append(
+                f"{prefix}: included_features {feat!r} not found in providers/{provider}/features.json"
+            )
+
+
+def _validate_indemnity(
+    *,
+    provider: str,
+    product_id: str,
+    product: dict[str, Any],
+    market_currency: str | None,
+    errors: list[str],
+) -> None:
+    prefix = f"providers/{provider}/products.json product {product_id!r}"
+    indemnity = product.get("indemnity")
+    is_recommandee = product_id.startswith("lettre_recommandee_")
+
+    if provider == "laposte":
+        if is_recommandee:
+            if not isinstance(indemnity, dict):
+                errors.append(f"{prefix}: lettre_recommandee_* must include indemnity")
+                return
+        elif indemnity is not None:
+            errors.append(f"{prefix}: only lettre_recommandee_* products may set indemnity")
+            return
+
+    if indemnity is None:
+        return
+    if not isinstance(indemnity, dict):
+        errors.append(f"{prefix}: indemnity must be an object")
+        return
+
+    tier = indemnity.get("tier")
+    if not isinstance(tier, str) or not tier:
+        errors.append(f"{prefix}: indemnity.tier must be a non-empty string")
+    elif provider == "laposte":
+        expected = _LAPOSTE_INDEMNITY_TIER_BY_ID.get(product_id)
+        if expected is not None and tier != expected:
+            errors.append(
+                f"{prefix}: indemnity.tier must be {expected!r} for product id {product_id!r}"
+            )
+
+    max_raw = indemnity.get("max")
+    if not isinstance(max_raw, dict):
+        errors.append(f"{prefix}: indemnity.max must be an object")
+        return
+    amount = max_raw.get("amount")
+    if not isinstance(amount, int) or amount < 1:
+        errors.append(f"{prefix}: indemnity.max.amount must be an integer >= 1")
+    currency = max_raw.get("currency")
+    if currency not in _VALID_CURRENCIES:
+        errors.append(
+            f"{prefix}: indemnity.max.currency must be one of {sorted(_VALID_CURRENCIES)}"
+        )
+    elif market_currency is not None and currency != market_currency:
+        errors.append(
+            f"{prefix}: indemnity.max.currency must match markets currency ({market_currency!r})"
+        )
 
 
 def _validate_delivery_entry(
@@ -171,26 +342,78 @@ def _validate_swisspost_delivery_rules(
         if not isinstance(entry, dict):
             continue
         zones = entry.get("zones")
-        if zones == ["domestic"]:
-            if entry.get("weekdays") != "mon_fri":
-                errors.append(
-                    f"providers/swisspost/products.json product {product_id!r}: "
-                    "b_post_* domestic delivery must set weekdays mon_fri"
-                )
+        if zones == ["domestic"] and entry.get("weekdays") != "mon_fri":
+            errors.append(
+                f"providers/swisspost/products.json product {product_id!r}: "
+                "b_post_* domestic delivery must set weekdays mon_fri"
+            )
+
+
+def _validate_twin_disambiguation(
+    *,
+    provider: str,
+    products_by_id: dict[str, dict[str, Any]],
+    graph_edges: dict[str, dict[str, Any]],
+    errors: list[str],
+) -> None:
+    twin_groups: dict[tuple[str, str, str], list[str]] = {}
+    for product_id, edge in graph_edges.items():
+        product = products_by_id.get(product_id)
+        if product is None:
+            continue
+        porto_id = product.get("porto_id")
+        if not isinstance(porto_id, str):
+            continue
+        zones_raw = edge.get("zones")
+        tiers_raw = edge.get("weight_tiers")
+        if not isinstance(zones_raw, list) or not isinstance(tiers_raw, list):
+            continue
+        for zone in zones_raw:
+            if not isinstance(zone, str):
+                continue
+            for tier in tiers_raw:
+                if not isinstance(tier, str):
+                    continue
+                key = (porto_id, zone, tier)
+                twin_groups.setdefault(key, []).append(product_id)
+
+    for (porto_id, zone, tier), product_ids in twin_groups.items():
+        unique_ids = sorted(set(product_ids))
+        if len(unique_ids) < 2:
+            continue
+        fingerprints: dict[tuple[Any, ...], list[str]] = {}
+        for pid in unique_ids:
+            product = products_by_id[pid]
+            fp = _resolution_fingerprint(product, zone)
+            fingerprints.setdefault(fp, []).append(pid)
+        for fp, pids in fingerprints.items():
+            if len(pids) < 2:
+                continue
+            errors.append(
+                f"providers/{provider}: products {pids} share porto_id={porto_id!r}, "
+                f"zone={zone!r}, weight_tier={tier!r} and identical resolution fingerprint "
+                f"{fp!r}; distinguish via delivery[], indemnity.tier, included_features, or tracking_mode"
+            )
 
 
 def validate_products_delivery() -> int:
-    """Validate delivery[] on all provider products.json files. Returns 0 if ok, 1 if errors."""
+    """Validate delivery[], included_features, indemnity, and twin disambiguation on products.json."""
     print("Validating products delivery (zone SLAs)...\n")
 
     errors: list[str] = []
     root = get_project_root()
     countries = _provider_countries()
+    market_currencies = _market_currencies()
 
     for provider in list_provider_ids():
         if provider not in countries:
             errors.append(f"providers/{provider}: no country in providers.json")
             continue
+        country = countries[provider]
+        market_currency = market_currencies.get(country)
+        feature_ids = _load_feature_ids(provider, root)
+        graph_edges = _load_graph_product_edges(provider, root)
+
         try:
             path = get_data_file_path("products", provider, project_root=root)
             doc = load_json(path)
@@ -203,9 +426,34 @@ def validate_products_delivery() -> int:
             errors.append(f"providers/{provider}/products.json: missing products array")
             continue
 
+        products_by_id: dict[str, dict[str, Any]] = {}
         for product in products:
-            if isinstance(product, dict):
-                _validate_product_delivery(provider=provider, product=product, errors=errors)
+            if not isinstance(product, dict):
+                continue
+            product_id = str(product.get("id", "<unknown>"))
+            products_by_id[product_id] = product
+            _validate_product_delivery(provider=provider, product=product, errors=errors)
+            _validate_included_features(
+                provider=provider,
+                product_id=product_id,
+                product=product,
+                feature_ids=feature_ids,
+                errors=errors,
+            )
+            _validate_indemnity(
+                provider=provider,
+                product_id=product_id,
+                product=product,
+                market_currency=market_currency,
+                errors=errors,
+            )
+
+        _validate_twin_disambiguation(
+            provider=provider,
+            products_by_id=products_by_id,
+            graph_edges=graph_edges,
+            errors=errors,
+        )
 
     for err in errors:
         print(f"❌ ERROR: {err}")

@@ -45,6 +45,36 @@ Indicative only — not a guaranteed delivery date. No SDK speed-class enum (`la
 
 **Coverage:** each product’s `delivery[].zones` must partition `product.zones` exactly (validated in CI).
 
+## Candidate enrichment (resolution facts)
+
+After graph filtering, each remaining candidate carries optional facts for SDK/UI disambiguation (no French name parsing):
+
+| Field | Source | Role |
+|-------|--------|------|
+| **`delivery_hint`** | `products.delivery[]` + `markets[CC].working_days` | SLA span/days for the shipment zone |
+| **`included_features[]`** | `products.included_features` | Capabilities bundled in base postage (refs `features.json` ids) |
+| **`indemnity`** | `products.indemnity` | Operator tier code + loss/damage cap (`max.amount` in minor units) |
+| **`tracking_mode`** | `products.tracking_mode` | Whether tracking is none / optional / included |
+
+`included_features` lists provider feature **ids** (same namespace as `services[].features`), not priced add-ons from `services.json`. Omit the field when nothing is bundled (e.g. plain Lettre verte).
+
+`indemnity.tier` is operator-native (La Poste R1/R2/R3 today) — not a global Porto enum. `indemnity.max` uses the same minor-unit convention as `prices/*.json`.
+
+### Disambiguation matrix
+
+When multiple products share `(porto_id, zone, weight_tier)` after graph filtering:
+
+| Provider / family | Primary axis | Secondary |
+|-------------------|--------------|-----------|
+| **Swiss Post** A vs B | `delivery[]` fingerprint (span, days) | explicit `product.id` |
+| **La Poste** R1/R2/R3 | `indemnity.tier` | price row |
+| **La Poste** verte / suivie / Services Plus | `included_features[]`, `tracking_mode` | price row |
+| **Deutsche Post** extra_large twins | zone + weight_tier | — |
+| **Ukrposhta** small vs large | zone (large is domestic-only) | — |
+| **Else** | explicit native **`product.id`** or user preference | — |
+
+CI rejects twins that share the same resolution fingerprint (`delivery` sig per zone, `indemnity.tier`, `included_features`, `tracking_mode`) for the same graph edge key.
+
 ## Known ambiguous cases
 
 ### Deutsche Post — extra_large variants
@@ -66,7 +96,7 @@ If `porto_id: large` is requested for a non-domestic zone, resolution fails — 
 
 Several products share `porto_id: small` (`lettre_verte`, `lettre_recommandee_r_un`, `r_deux`, `r_trois`, international variants, …).
 
-Disambiguation: **native product id** and **registered tier** (R1/R2/R3), not `porto_id` alone. Recommandée is a distinct product SKU at the same letter size — not a `registered` service add-on like Deutsche Post Einschreiben.
+Disambiguation: **native product id** and **`indemnity.tier`** (R1/R2/R3), not `porto_id` alone. Recommandée is a distinct product SKU at the same letter size — not a `registered` service add-on like Deutsche Post Einschreiben. Compare **`included_features[]`** and price when choosing verte vs suivie vs Services Plus.
 
 ### Swiss Post — same `porto_id`, different speed class
 

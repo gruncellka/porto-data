@@ -50,9 +50,7 @@ def _validate_working_days(country: str, row: dict[str, Any], errors: list[str])
             f"markets.{country}: working_days.weekdays must be one of {sorted(_VALID_WEEKDAYS)}"
         )
     if not isinstance(wd.get("exclude_public_holidays"), bool):
-        errors.append(
-            f"markets.{country}: working_days.exclude_public_holidays must be a boolean"
-        )
+        errors.append(f"markets.{country}: working_days.exclude_public_holidays must be a boolean")
 
 
 def _validate_market_row(country: str, row: dict[str, Any], errors: list[str]) -> None:

@@ -199,7 +199,9 @@ class TestValidateMarketsBranches:
 
     def test_vat_exempt_with_domestic_lane(self, tmp_path, capsys):
         _write_registry(tmp_path, countries={"deutschepost": "DE"})
-        _write_markets(tmp_path, {"DE": _market_row(vat={"exempt": True, "domestic": {"inclusive": True}})})
+        _write_markets(
+            tmp_path, {"DE": _market_row(vat={"exempt": True, "domestic": {"inclusive": True}})}
+        )
         with patch.object(data_files, "_get_project_root", return_value=tmp_path):
             assert validate_markets() == 1
         assert "vat.domestic/international must be omitted" in capsys.readouterr().out

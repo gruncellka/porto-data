@@ -71,7 +71,7 @@ Merge order documented in provider `limits.json` `context`: restrictions → lim
 - `scripts.validators.schema` — JSON Schema validation (with `$ref` to sibling schemas).
 - `scripts.validators.mappings_layout` — `mappings.json`, registry, stray files, metadata presence, required provider template.
 - `scripts.validators.markets` — `policy/markets.json` vs **every** `providers.json` country, fiscal shape, and **`working_days`**.
-- `scripts.validators.products_delivery` — zone-scoped **`delivery[]`** on every `products.json` (partition `product.zones`, span/days rules).
+- `scripts.validators.products_delivery` — zone-scoped **`delivery[]`**, optional **`included_features[]`** / **`indemnity`**, twin fingerprint guard on every `products.json`.
 - `scripts.validators.limits_scope` — `providers/*/limits.json` letter-scope rules (empty `limits[]` is valid).
 - `scripts.validators.porto_ids` — canonical `porto_id` enums and native-id cross-file refs.
 - `scripts/validators/graph/` — package for `graph.json` (`validator`, `runner`, `edges`, `services`, `units`, `dependencies`, …). Import as `scripts.validators.graph`.

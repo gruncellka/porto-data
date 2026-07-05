@@ -294,7 +294,9 @@ def validate_porto_ids(*, write_mapping_doc: bool = True) -> int:
         if not mapping_path.exists() or mapping_path.read_text(encoding="utf-8") != content:
             mapping_path.write_text(content, encoding="utf-8")
             print(f"❌ ERROR: {rel} was out of date and has been regenerated.")
-            print("   Commit the updated file (or run 'porto validate --type porto_ids' and review).")
+            print(
+                "   Commit the updated file (or run 'porto validate --type porto_ids' and review)."
+            )
             print()
             print("❌ porto_id validation failed (mapping doc drift).")
             return 1

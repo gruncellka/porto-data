@@ -300,3 +300,15 @@ If a PR adds **`lane`**, **`priority`**, **`economy`**, or similar interpreter e
 - **Title:** `Speed class belongs in SDK, not catalog`
 - **Body:** `Catalog stores operator time facts (delivery span + days per zone) and markets.working_days calendar. Disambiguation (A-Post vs B-Post) uses native product id or delivery hints — not a normalized lane enum.`
 - **Labels:** `data`, `architecture`, `consistency`
+
+### 32) Product indemnity and twin disambiguation (blocking)
+
+If a PR adds or changes **`products.json`** and:
+
+- any La Poste **`lettre_recommandee_*`** row lacks **`indemnity`**, or a non-recommandée La Poste row sets **`indemnity`**, or **`indemnity.tier`** does not match the product id (R1/R2/R3), or
+- two products share the same **`(porto_id, zone, weight_tier)`** graph edge and identical resolution fingerprint (`delivery[]` sig, **`indemnity.tier`**, **`included_features`**, **`tracking_mode`**), or
+- **`included_features[]`** references an id missing from provider **`features.json`**:
+
+- **Title:** `Product resolution facts invalid or ambiguous twins`
+- **Body:** `Recommandée must carry indemnity; twins must differ on delivery, indemnity.tier, included_features, or tracking_mode. CI: porto validate --type products_delivery. See docs/resolution.md § Candidate enrichment.`
+- **Labels:** `data`, `consistency`, `resolution`

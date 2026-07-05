@@ -34,7 +34,15 @@ Examples:
     validate_parser = subparsers.add_parser("validate", help="Validate data files")
     validate_parser.add_argument(
         "--type",
-        choices=["schema", "mappings", "markets", "limits", "porto_ids", "products_delivery", "graph"],
+        choices=[
+            "schema",
+            "mappings",
+            "markets",
+            "limits",
+            "porto_ids",
+            "products_delivery",
+            "graph",
+        ],
         default=None,
         help="Type of validation to run (omit to run all)",
     )
