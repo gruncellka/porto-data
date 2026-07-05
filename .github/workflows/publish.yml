@@ -88,8 +88,9 @@ jobs:
             - name: Verify tarball contents
               run: |
                   tar -tzf gruncellka-porto-data-*.tgz | head -30
-                  test -n "$(tar -tzf gruncellka-porto-data-*.tgz | grep 'package/porto_data/data/')"
-                  test -n "$(tar -tzf gruncellka-porto-data-*.tgz | grep 'package/porto_data/schemas/')"
+                  test -n "$(tar -tzf gruncellka-porto-data-*.tgz | grep 'package/porto_data/providers/')"
+                  test -n "$(tar -tzf gruncellka-porto-data-*.tgz | grep 'package/porto_data/policy/')"
+                  test -n "$(tar -tzf gruncellka-porto-data-*.tgz | grep 'package/porto_data/schemas/porto_ids.schema.json')"
                   echo "Tarball structure OK"
 
             - name: Upload npm artifact

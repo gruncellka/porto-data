@@ -5,7 +5,7 @@
 
 **Porto Data** is **JSON + schemas** for national postal operators under one shared layout and vocabulary. Published on **npm** and **PyPI** with the **same** `porto_data/` tree on every platform.
 
-The bundle covers **Deutsche Post**, **Ukrposhta**, **La Poste**, and **Swiss Post** (Die Post) with shared policy/formats data at the bundle root and **per-operator** catalogs under **`providers/<id>/`** (products, services, prices, zones, weight tiers, features, limits, **`graph.json`**). Registry display names: **`providers.json`** → **`label`**; legal entities: **`name`**.
+The bundle covers **Deutsche Post**, **Ukrposhta**, **La Poste**, and **Swiss Post** with shared policy/formats data at the bundle root and **per-operator** catalogs under **`providers/<id>/`** (products, services, prices, zones, weight tiers, features, limits, **`graph.json`**). Registry display names: **`providers.json`** → **`label`**; legal entities: **`name`**.
 
 ---
 
