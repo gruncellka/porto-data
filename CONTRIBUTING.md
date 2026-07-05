@@ -23,9 +23,7 @@ Consumers (SDK, apps) read the JSON. Contributors edit data here and run validat
 make
 ```
 
-First run of **`make`** (or any target that needs the venv) creates `venv`, installs dev dependencies, and runs the full quality gate (validate → format → lint → type-check). Or run **`make venv`** explicitly. There is no separate **`make setup`** — use **`make`** or **`make help`**.
-
-Pre-commit hooks install automatically on first venv setup when run inside a git checkout.
+First run of **`make`** creates `venv`, installs dev dependencies, and installs pre-commit hooks. You stay in your shell — **`make validate`**, **`make quality`**, etc. run inside the venv automatically. Manual `source venv/bin/activate` is only if you run `python` / `pytest` / `porto` directly without `make`. For CI, use **`make venv`** (setup only, no hooks).
 
 ## Where files live
 
@@ -86,6 +84,8 @@ Disambiguation when multiple native rows share one `porto_id`: [docs/resolution.
 
 | Make                                            | Purpose                               |
 | ----------------------------------------------- | ------------------------------------- |
+| `make`                                          | venv + hooks                          |
+| `make venv`                                     | venv + dev deps only (CI)             |
 | `make validate`                                 | Same as full `porto validate`         |
 | `make validate-graph`                           | Graph only                            |
 | `make format` / `make lint` / `make type-check` | Quality                               |

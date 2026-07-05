@@ -1,9 +1,6 @@
-.PHONY: help venv install-hooks
+.PHONY: . help venv install-hooks
 .PHONY: validate-json validate-graph format-json lint-json format-code lint-code type-check
 .PHONY: validate format lint metadata test test-cov quality test-publish
-
-# Default: full quality gate (creates venv on first run)
-.DEFAULT_GOAL := quality
 
 # Prefer Python 3.13+ (project requires >=3.13). Override in CI: PYTHON3=python
 PYTHON3 ?= $(shell command -v python3.13 2>/dev/null || command -v python3 2>/dev/null || echo python3)
@@ -13,21 +10,25 @@ VENV := venv
 VENV_PYTHON := $(VENV)/bin/python
 VENV_MARKER := $(VENV)/.setup-complete
 
+# Plain `make`
+.DEFAULT_GOAL := .
+
+.: venv install-hooks
+	@echo "✓ Ready — make targets use venv automatically (no source needed)"
+
 help:
 	@echo "Porto Data - Schema Validation & Code Quality"
 	@echo "=============================================="
 	@echo ""
-	@echo "Default:"
-	@echo "  make               - validate + format + lint + type-check (creates venv if needed)"
+	@echo "  make               - venv + dev deps + pre-commit hooks (targets use venv automatically)"
 	@echo "  make help          - Show this help"
-	@echo "Setup:"
-	@echo "  make venv           - Create venv + install dev deps (also runs automatically)"
+	@echo "  make venv          - Create venv + install dev deps only (CI / scripts)"
 	@echo ""
 	@echo "Most Common Commands:"
+	@echo "  make quality       - validate + format + lint + type-check"
 	@echo "  make validate      - Validate all JSON (schema → mappings → markets → limits → porto_ids → delivery → graph)"
 	@echo "  make format        - Format JSON and Python"
 	@echo "  make lint          - Lint JSON and Python"
-	@echo "  make quality       - Same as default make"
 	@echo ""
 	@echo "JSON Commands:"
 	@echo "  make validate-json  - Full JSON validation chain"
@@ -51,19 +52,26 @@ help:
 	@echo "  make test-publish   - npm + PyPI install smoke test"
 	@echo ""
 
-# ==========================================
-# Virtualenv (internal — triggered by other targets)
-# ==========================================
+# CI / scripts: setup only — no hooks
 venv:
 	@if [ ! -x "$(VENV_PYTHON)" ] || [ ! -f "$(VENV_MARKER)" ]; then \
 		echo "Setting up porto-data (venv + dev deps)..."; \
 		$(PYTHON3) -m venv $(VENV) || (echo "Error: need Python >=3.13 ($(PYTHON3) failed)" && exit 1); \
 		. $(VENV)/bin/activate && pip install -q -U pip && pip install -q ".[dev]"; \
 		touch $(VENV_MARKER); \
-		if git rev-parse --is-inside-work-tree > /dev/null 2>&1; then \
-			$(MAKE) install-hooks || echo "Warning: pre-commit hooks not installed."; \
-		fi; \
 		echo "✓ Ready"; \
+	fi
+
+install-hooks: venv
+	@if git rev-parse --is-inside-work-tree > /dev/null 2>&1; then \
+		echo "Installing pre-commit hooks..."; \
+		if [ -f $(VENV)/bin/pre-commit ]; then \
+			$(VENV)/bin/pre-commit install; \
+		else \
+			echo "Error: pre-commit not found."; \
+			exit 1; \
+		fi; \
+		echo "✓ Pre-commit hooks installed"; \
 	fi
 
 # ==========================================
@@ -171,19 +179,6 @@ test-cov: venv
 # ==========================================
 metadata: venv
 	@. $(VENV)/bin/activate && PYTHONPATH=. python -m cli.main metadata
-
-# ==========================================
-# Hooks (internal — run from venv setup)
-# ==========================================
-install-hooks: venv
-	@echo "Installing pre-commit hooks..."
-	@if [ -f $(VENV)/bin/pre-commit ]; then \
-		$(VENV)/bin/pre-commit install; \
-	else \
-		echo "Error: pre-commit not found."; \
-		exit 1; \
-	fi
-	@echo "✓ Pre-commit hooks installed"
 
 # ==========================================
 # Quality
