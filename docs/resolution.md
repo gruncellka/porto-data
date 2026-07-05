@@ -20,10 +20,30 @@ SDK and app code should pass **`porto_id`** (canonical bucket). The bundle resol
 4. If exactly one product remains, use that `product.id`.
 5. If multiple products remain, apply provider-specific disambiguation below.
 6. Price lookup uses native `product_id` × `zone` × `weight_tier` in `prices/products.json`.
+7. **Delivery hint:** pick the `products.delivery[]` entry whose `zones` contains the shipment `zone`; join with `markets[CC].working_days` from `providers.json` → `country` (see below).
 
 When step 4 still leaves multiple products, the SDK or app must apply the provider-specific rules below (or an explicit user/operator hint). The bundle does not encode speed class or registered tier as separate `porto_id` values today.
 
 Cross-file refs (graph, prices, rules) always use **native `id`**, never `porto_id`. See [CONTRIBUTING.md](../CONTRIBUTING.md).
+
+## Delivery hints (operator SLA, zone-scoped)
+
+After native `product.id` is resolved, expose an indicative **`delivery_hint`** for the shipment zone:
+
+1. Find `products.delivery[]` entry where `zones` includes the target **zone**.
+2. Resolve market calendar: `providers.json` → `country` → `policy/markets.json` → `markets[CC].working_days`.
+3. Merge entry `span`, `days_min` / `days_max`, and weekdays: `entry.weekdays` when set, else `markets[CC].working_days.weekdays`.
+
+| Field | Source |
+|-------|--------|
+| `span`, `days_*` | `products.delivery[]` row for the zone |
+| `working_days.market` | Provider home country (`providers[provider].country`) |
+| `working_days.weekdays` | Entry override or `markets[CC].working_days.weekdays` |
+| `working_days.exclude_public_holidays` | `markets[CC].working_days.exclude_public_holidays` |
+
+Indicative only — not a guaranteed delivery date. No SDK speed-class enum (`lane`); disambiguation uses native `product.id`, delivery preference, or explicit user choice.
+
+**Coverage:** each product’s `delivery[].zones` must partition `product.zones` exactly (validated in CI).
 
 ## Known ambiguous cases
 
@@ -55,7 +75,7 @@ Multiple products share `porto_id: small` or `large`:
 - `a_post_standardbrief` vs `b_post_standardbrief` (domestic speed)
 - `international_standardbrief` vs domestic variants
 
-Disambiguation: prefer **zone** (domestic vs international) first, then **speed class** (A-Post vs B-Post) from app/SDK policy or explicit product hint when the user selects a tariff.
+Disambiguation: prefer **zone** (domestic vs international) first, then compare **delivery hints** (`span`, `days_max`) or explicit **native `product.id`** when the user selects a tariff (e.g. A-Post vs B-Post).
 
 ## Service variants
 

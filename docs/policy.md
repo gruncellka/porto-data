@@ -7,7 +7,7 @@ Shared **regulatory and geographic policy** data: legal/sanctions-style restrict
 | File                 | `file_type`     | Role                                                                                                                                                    |
 | -------------------- | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `jurisdictions.json` | `jurisdictions` | EU/UN membership sets, per-country rows, **IANA `timezone`** where used for policy interpretation.                                                      |
-| `markets.json`       | `markets`       | Per-country fiscal defaults (`currency`, `vat`, `international_currency`, `settlement`). Currency/VAT resolution: [resolution.md](resolution.md). |
+| `markets.json`       | `markets`       | Per-country fiscal defaults (`currency`, `vat`, `international_currency`, `settlement`) and **`working_days`** (postal calendar). Currency/VAT resolution: [resolution.md](resolution.md). |
 | `restrictions.json`  | `restrictions`  | Destination-oriented restrictions; row-level **`effective_from` / `effective_to`**; not carrier-specific execution rules. |
 
 ## Schemas & mappings

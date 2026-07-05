@@ -10,6 +10,14 @@ import pytest
 import scripts.data_files as data_files
 from scripts.validators.markets import validate_markets
 
+_WORKING_DAYS = {"weekdays": "mon_sat", "exclude_public_holidays": True}
+
+
+def _market_row(**extra: object) -> dict:
+    row = {"currency": "EUR", "working_days": dict(_WORKING_DAYS)}
+    row.update(extra)
+    return row
+
 
 def _write_registry(tmp_path, *, countries: dict[str, str]) -> None:
     providers = {
@@ -95,7 +103,7 @@ class TestLoadMarketsErrors:
 class TestValidateMarketsBranches:
     def test_missing_market_for_provider_country(self, tmp_path, capsys):
         _write_registry(tmp_path, countries={"deutschepost": "DE"})
-        _write_markets(tmp_path, {"FR": {"currency": "EUR"}})
+        _write_markets(tmp_path, {"FR": _market_row()})
         with patch.object(data_files, "_get_project_root", return_value=tmp_path):
             assert validate_markets() == 1
         out = capsys.readouterr().out
@@ -115,6 +123,7 @@ class TestValidateMarketsBranches:
             {
                 "DE": {
                     "currency": "BAD",
+                    "working_days": _WORKING_DAYS,
                     "international_currency": ["EUR"],
                     "vat": {"exempt": True, "rate": 0.2},
                     "settlement": "not-a-dict",
@@ -135,6 +144,7 @@ class TestValidateMarketsBranches:
             {
                 "DE": {
                     "currency": "EUR",
+                    "working_days": _WORKING_DAYS,
                     "international_currency": ["EUR"],
                 }
             },
@@ -174,6 +184,7 @@ class TestValidateMarketsBranches:
             {
                 "DE": {
                     "currency": "EUR",
+                    "working_days": _WORKING_DAYS,
                     "intl_ccy": ["USD"],
                     "vat": {"inclusive": True, "intl_excl": True},
                 }
@@ -188,36 +199,28 @@ class TestValidateMarketsBranches:
 
     def test_vat_exempt_with_domestic_lane(self, tmp_path, capsys):
         _write_registry(tmp_path, countries={"deutschepost": "DE"})
-        _write_markets(
-            tmp_path,
-            {
-                "DE": {
-                    "currency": "EUR",
-                    "vat": {"exempt": True, "domestic": {"inclusive": True}},
-                }
-            },
-        )
+        _write_markets(tmp_path, {"DE": _market_row(vat={"exempt": True, "domestic": {"inclusive": True}})})
         with patch.object(data_files, "_get_project_root", return_value=tmp_path):
             assert validate_markets() == 1
         assert "vat.domestic/international must be omitted" in capsys.readouterr().out
 
     def test_vat_not_dict(self, tmp_path, capsys):
         _write_registry(tmp_path, countries={"deutschepost": "DE"})
-        _write_markets(tmp_path, {"DE": {"currency": "EUR", "vat": "bad"}})
+        _write_markets(tmp_path, {"DE": _market_row(vat="bad")})
         with patch.object(data_files, "_get_project_root", return_value=tmp_path):
             assert validate_markets() == 1
         assert "vat must be an object" in capsys.readouterr().out
 
     def test_empty_international_currency_array(self, tmp_path, capsys):
         _write_registry(tmp_path, countries={"deutschepost": "DE"})
-        _write_markets(tmp_path, {"DE": {"currency": "EUR", "international_currency": []}})
+        _write_markets(tmp_path, {"DE": _market_row(international_currency=[])})
         with patch.object(data_files, "_get_project_root", return_value=tmp_path):
             assert validate_markets() == 1
         assert "international_currency must be a non-empty array" in capsys.readouterr().out
 
     def test_invalid_international_currency_entry(self, tmp_path, capsys):
         _write_registry(tmp_path, countries={"deutschepost": "DE"})
-        _write_markets(tmp_path, {"DE": {"currency": "EUR", "international_currency": ["BAD"]}})
+        _write_markets(tmp_path, {"DE": _market_row(international_currency=["BAD"])})
         with patch.object(data_files, "_get_project_root", return_value=tmp_path):
             assert validate_markets() == 1
         assert "international_currency entry" in capsys.readouterr().out
@@ -229,7 +232,7 @@ class TestValidateMarketsBranches:
         )
         monkeypatch.setattr(
             "scripts.validators.markets.load_markets",
-            lambda: {"markets": {"DE": {"currency": "EUR"}}},
+            lambda: {"markets": {"DE": _market_row()}},
         )
         assert validate_markets() == 0
 
@@ -241,11 +244,58 @@ class TestValidateMarketsBranches:
                 "newoperator": "PL",
             },
         )
-        _write_markets(tmp_path, {"DE": {"currency": "EUR"}})
+        _write_markets(tmp_path, {"DE": _market_row()})
         with patch.object(data_files, "_get_project_root", return_value=tmp_path):
             assert validate_markets() == 1
         out = capsys.readouterr().out
         assert "providers.newoperator.country 'PL'" in out
+
+    def test_missing_working_days(self, tmp_path, capsys) -> None:
+        _write_registry(tmp_path, countries={"deutschepost": "DE"})
+        _write_markets(tmp_path, {"DE": {"currency": "EUR"}})
+        with patch.object(data_files, "_get_project_root", return_value=tmp_path):
+            assert validate_markets() == 1
+        assert "working_days is required" in capsys.readouterr().out
+
+    def test_invalid_working_days_weekdays(self, tmp_path, capsys) -> None:
+        _write_registry(tmp_path, countries={"deutschepost": "DE"})
+        _write_markets(
+            tmp_path,
+            {
+                "DE": {
+                    "currency": "EUR",
+                    "working_days": {
+                        "weekdays": "sun_only",
+                        "exclude_public_holidays": True,
+                    },
+                }
+            },
+        )
+        with patch.object(data_files, "_get_project_root", return_value=tmp_path):
+            assert validate_markets() == 1
+        assert "working_days.weekdays must be one of" in capsys.readouterr().out
+
+    def test_working_days_not_object(self, tmp_path, capsys) -> None:
+        _write_registry(tmp_path, countries={"deutschepost": "DE"})
+        _write_markets(tmp_path, {"DE": {"currency": "EUR", "working_days": "bad"}})
+        with patch.object(data_files, "_get_project_root", return_value=tmp_path):
+            assert validate_markets() == 1
+        assert "working_days must be an object" in capsys.readouterr().out
+
+    def test_working_days_exclude_holidays_not_bool(self, tmp_path, capsys) -> None:
+        _write_registry(tmp_path, countries={"deutschepost": "DE"})
+        _write_markets(
+            tmp_path,
+            {
+                "DE": {
+                    "currency": "EUR",
+                    "working_days": {"weekdays": "mon_sat", "exclude_public_holidays": "yes"},
+                }
+            },
+        )
+        with patch.object(data_files, "_get_project_root", return_value=tmp_path):
+            assert validate_markets() == 1
+        assert "exclude_public_holidays must be a boolean" in capsys.readouterr().out
 
     def test_provider_row_skips_non_dict_country(self, tmp_path, capsys, monkeypatch):
         monkeypatch.setattr(
@@ -264,6 +314,6 @@ class TestValidateMarketsBranches:
         )
         monkeypatch.setattr(
             "scripts.validators.markets.load_markets",
-            lambda: {"markets": {"DE": {"currency": "EUR"}}},
+            lambda: {"markets": {"DE": _market_row()}},
         )
         assert validate_markets() == 0

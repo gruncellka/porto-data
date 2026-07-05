@@ -99,6 +99,11 @@ products.json
   weight_tier ────────────────────► weights.json
   envelope_ids[] ─────────────────► formats/envelopes.json
   mark_type ──────────────────────► marks.profiles[].mark_type (must match)
+  delivery[] (zones, span, days) ─► operator SLA per zone group
+  delivery[].weekdays? ───────────► override of markets[CC].working_days.weekdays
+
+policy/markets.json
+  markets[CC].working_days ───────► default postal calendar for delivery hints
 
 graph.json
   edges.products[product_id].zones[] ──► zones used for that product

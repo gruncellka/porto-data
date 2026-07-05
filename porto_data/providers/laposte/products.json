@@ -23,7 +23,16 @@
       "effective_from": "2026-01-01",
       "effective_to": null,
       "mark_type": "label",
-      "tracking_mode": "optional"
+      "tracking_mode": "optional",
+      "delivery": [
+        {
+          "zones": [
+            "domestic"
+          ],
+          "span": "within",
+          "days_max": 3
+        }
+      ]
     },
     {
       "id": "lettre_verte_suivie",
@@ -45,7 +54,25 @@
       "effective_from": "2026-01-01",
       "effective_to": null,
       "mark_type": "label",
-      "tracking_mode": "included"
+      "tracking_mode": "included",
+      "delivery": [
+        {
+          "zones": [
+            "domestic"
+          ],
+          "span": "within",
+          "days_max": 3
+        },
+        {
+          "zones": [
+            "zone_1_eu",
+            "zone_2_europe",
+            "world"
+          ],
+          "span": "within",
+          "days_max": 8
+        }
+      ]
     },
     {
       "id": "lettre_services_plus",
@@ -64,7 +91,17 @@
       "effective_from": "2026-01-01",
       "effective_to": null,
       "mark_type": "label",
-      "tracking_mode": "included"
+      "tracking_mode": "included",
+      "delivery": [
+        {
+          "zones": [
+            "domestic"
+          ],
+          "span": "between",
+          "days_min": 1,
+          "days_max": 2
+        }
+      ]
     },
     {
       "id": "lettre_recommandee_r_un",
@@ -83,7 +120,17 @@
       "effective_from": "2026-01-01",
       "effective_to": null,
       "mark_type": "label",
-      "tracking_mode": "included"
+      "tracking_mode": "included",
+      "delivery": [
+        {
+          "zones": [
+            "domestic"
+          ],
+          "span": "between",
+          "days_min": 1,
+          "days_max": 2
+        }
+      ]
     },
     {
       "id": "lettre_recommandee_r_deux",
@@ -102,7 +149,17 @@
       "effective_from": "2026-01-01",
       "effective_to": null,
       "mark_type": "label",
-      "tracking_mode": "included"
+      "tracking_mode": "included",
+      "delivery": [
+        {
+          "zones": [
+            "domestic"
+          ],
+          "span": "between",
+          "days_min": 1,
+          "days_max": 2
+        }
+      ]
     },
     {
       "id": "lettre_recommandee_r_trois",
@@ -121,7 +178,17 @@
       "effective_from": "2026-01-01",
       "effective_to": null,
       "mark_type": "label",
-      "tracking_mode": "included"
+      "tracking_mode": "included",
+      "delivery": [
+        {
+          "zones": [
+            "domestic"
+          ],
+          "span": "between",
+          "days_min": 1,
+          "days_max": 2
+        }
+      ]
     },
     {
       "id": "lettre_recommandee_inter_r_un",
@@ -142,7 +209,18 @@
       "effective_from": "2026-01-01",
       "effective_to": null,
       "mark_type": "label",
-      "tracking_mode": "included"
+      "tracking_mode": "included",
+      "delivery": [
+        {
+          "zones": [
+            "zone_1_eu",
+            "zone_2_europe",
+            "world"
+          ],
+          "span": "within",
+          "days_max": 8
+        }
+      ]
     },
     {
       "id": "lettre_recommandee_inter_r_deux",
@@ -163,7 +241,18 @@
       "effective_from": "2026-01-01",
       "effective_to": null,
       "mark_type": "label",
-      "tracking_mode": "included"
+      "tracking_mode": "included",
+      "delivery": [
+        {
+          "zones": [
+            "zone_1_eu",
+            "zone_2_europe",
+            "world"
+          ],
+          "span": "within",
+          "days_max": 8
+        }
+      ]
     }
   ]
 }

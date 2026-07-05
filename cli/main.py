@@ -21,6 +21,7 @@ Examples:
   porto validate --type markets      policy/markets.json vs provider countries
   porto validate --type limits       Validate providers/*/limits.json (letter scope)
   porto validate --type porto_ids   Validate porto_id enums and native-id refs
+  porto validate --type products_delivery  Zone delivery SLAs on products.json
   porto validate --type graph        Validate provider graph.json
   porto validate --type graph --analyze  Detailed graph analysis
   porto metadata                      Generate metadata.json
@@ -33,7 +34,7 @@ Examples:
     validate_parser = subparsers.add_parser("validate", help="Validate data files")
     validate_parser.add_argument(
         "--type",
-        choices=["schema", "mappings", "markets", "limits", "porto_ids", "graph"],
+        choices=["schema", "mappings", "markets", "limits", "porto_ids", "products_delivery", "graph"],
         default=None,
         help="Type of validation to run (omit to run all)",
     )
@@ -62,6 +63,7 @@ def main() -> int:
             validate_mappings,
             validate_markets_cmd,
             validate_porto_ids,
+            validate_products_delivery_cmd,
             validate_schema,
         )
 
@@ -71,6 +73,7 @@ def main() -> int:
             "markets",
             "limits",
             "porto_ids",
+            "products_delivery",
             "graph",
         ):
             parser.print_help()
@@ -85,6 +88,8 @@ def main() -> int:
             return validate_limits()
         if args.type == "porto_ids":
             return validate_porto_ids()
+        if args.type == "products_delivery":
+            return validate_products_delivery_cmd()
         if args.type == "graph":
             return validate_graph(analyze=args.analyze)
         else:

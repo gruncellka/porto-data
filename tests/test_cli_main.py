@@ -112,6 +112,15 @@ class TestMainFunction:
             assert result == 0
             mock_validate_porto_ids.assert_called_once()
 
+    @patch("cli.commands.validate.validate_products_delivery_cmd")
+    def test_main_validate_products_delivery(self, mock_validate_products_delivery):
+        """Test main with validate --type products_delivery."""
+        mock_validate_products_delivery.return_value = 0
+        with patch("sys.argv", ["porto", "validate", "--type", "products_delivery"]):
+            result = main()
+            assert result == 0
+            mock_validate_products_delivery.assert_called_once()
+
     @patch("cli.commands.validate.validate_all")
     def test_main_validate_all(self, mock_validate_all):
         """Test main with validate and no --type runs all."""

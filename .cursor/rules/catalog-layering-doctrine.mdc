@@ -23,7 +23,7 @@ Runtime / adapter   →  native_id, PortoMark, tracking numbers
 1. **One identifier, one job.** Same English word in two layers is a bug unless explicitly documented (e.g. `domestic` as zone vs mark_profile; `registered` as service porto_id vs mark_profile id — never as product porto_id).
 
 2. **Facts vs normalization vs workflow.**
-   - **Facts** in JSON: carrier SKUs (`products.id`), mm geometry (`layouts.window`), stamp sizes (`marks.profiles`), tariff rows.
+   - **Facts** in JSON: carrier SKUs (`products.id`), mm geometry (`layouts.window`), stamp sizes (`marks.profiles`), tariff rows, **zone-scoped delivery SLAs** (`products.delivery[]`), **market working-day calendar** (`markets.working_days`).
    - **Normalization** (`porto_id`): cross-operator SDK input with **narrow** enums per entity type.
    - **Workflow** (sender inside window, R1/R2 pick, speed class): **SDK / Licko compose** — not invented catalog fields.
 
@@ -45,6 +45,7 @@ Runtime / adapter   →  native_id, PortoMark, tracking numbers
 | `graph` or `prices` keyed by `porto_id` | Wrong identifier layer | Use native `id` |
 | New layout zone named like a product feature | Invented semantics | Only standard/provider geometry |
 | Docs say X but schema allows Y | Drift | Align schema, validator, `docs/id.md`, generated tables |
+| `lane` / speed class on product rows | SDK taxonomy in catalog | Use `delivery[]` + native `id`; interpret in SDK/app |
 
 ## Examples (canonical)
 
@@ -52,6 +53,7 @@ Runtime / adapter   →  native_id, PortoMark, tracking numbers
 - **DE Einschreiben:** service `porto_id: registered` on `einschreiben` — not on `standardbrief`.
 - **Layouts:** C5 window mm rect — not “address block” split for compose.
 - **Marks:** `mark_profile: registered` — stamp footprint; third namespace from `porto_id`.
+- **Delivery:** `markets.CH.working_days` + `products.delivery[]` per zone — not `lane: priority` on the product row.
 
 ## Before merge (any catalog/schema change)
 

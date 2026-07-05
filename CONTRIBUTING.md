@@ -69,7 +69,7 @@ Disambiguation when multiple native rows share one `porto_id`: [docs/resolution.
 
 ## Commands
 
-**Default validation order:** schema → mappings → markets → limits → porto_ids → graph (all providers).
+**Default validation order:** schema → mappings → markets → limits → porto_ids → products_delivery → graph (all providers).
 
 | CLI                                     | Purpose                                            |
 | --------------------------------------- | -------------------------------------------------- |
@@ -79,6 +79,7 @@ Disambiguation when multiple native rows share one `porto_id`: [docs/resolution.
 | `porto validate --type markets`         | `policy/markets.json` vs provider countries        |
 | `porto validate --type limits`          | `providers/*/limits.json`                          |
 | `porto validate --type porto_ids`       | `porto_id` enums, native-id cross-file refs; regenerates **`docs/porto_id.md`** (must be committed) |
+| `porto validate --type products_delivery` | Zone-scoped **`delivery[]`** on all `products.json` |
 | `porto validate --type graph`           | `graph.json` (incl. `edges.products`, `edges.marks`) |
 | `porto validate --type graph --analyze` | Verbose graph report                               |
 | `porto metadata`                        | Regenerate `metadata.json`                         |
