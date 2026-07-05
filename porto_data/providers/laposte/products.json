@@ -135,8 +135,7 @@
       "indemnity": {
         "tier": "R1",
         "max": {
-          "amount": 1600,
-          "currency": "EUR"
+          "amount": 1600
         }
       },
       "delivery": [
@@ -176,8 +175,7 @@
       "indemnity": {
         "tier": "R2",
         "max": {
-          "amount": 15300,
-          "currency": "EUR"
+          "amount": 15300
         }
       },
       "delivery": [
@@ -217,8 +215,7 @@
       "indemnity": {
         "tier": "R3",
         "max": {
-          "amount": 45800,
-          "currency": "EUR"
+          "amount": 45800
         }
       },
       "delivery": [
@@ -260,8 +257,7 @@
       "indemnity": {
         "tier": "R1",
         "max": {
-          "amount": 4500,
-          "currency": "EUR"
+          "amount": 4500
         }
       },
       "delivery": [

@@ -93,7 +93,9 @@ Reference for **reconciling JSON with official letter tariffs** (not a legal tar
 
 **Lettre recommandée:** domestic **R1–R3** and international **R1** — see live page / catalogue for full matrix. International **R2** discontinued from **2026-04-01** (not in bundle).
 
-### Indemnity caps (`products.indemnity`, amounts in **cents** EUR)
+### Indemnity caps (`products.indemnity`, amounts in provider market minor units — EUR cents for La Poste)
+
+Currency is **`markets.FR.currency`** (EUR), not stored on the product row.
 
 | `product_id` | `tier` | `max.amount` | Notes |
 |--------------|--------|-------------:|-------|

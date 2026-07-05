@@ -102,7 +102,7 @@ products.json
   delivery[] (zones, span, days) ─► operator SLA per zone group
   delivery[].weekdays? ───────────► override of markets[CC].working_days.weekdays
   included_features[] ────────────► features.json (bundled capabilities, not services)
-  indemnity { tier, max } ────────► operator tier cap (La Poste R* today)
+  indemnity { tier, max.amount } ─► operator tier cap; currency from markets[CC]
 
 policy/markets.json
   markets[CC].working_days ───────► default postal calendar for delivery hints

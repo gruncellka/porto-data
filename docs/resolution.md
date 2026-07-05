@@ -58,7 +58,7 @@ After graph filtering, each remaining candidate carries optional facts for SDK/U
 
 `included_features` lists provider feature **ids** (same namespace as `services[].features`), not priced add-ons from `services.json`. Omit the field when nothing is bundled (e.g. plain Lettre verte).
 
-`indemnity.tier` is operator-native (La Poste R1/R2/R3 today) — not a global Porto enum. `indemnity.max` uses the same minor-unit convention as `prices/*.json`.
+`indemnity.tier` is operator-native (La Poste R1/R2/R3 today) — not a global Porto enum. `indemnity.max.amount` is in the provider market’s minor units; resolve **currency** from `markets[providers.country].currency` (same as prices).
 
 ### Disambiguation matrix
 

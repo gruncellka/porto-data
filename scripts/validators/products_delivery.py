@@ -8,14 +8,12 @@ from scripts.data_files import (
     get_data_file_path,
     get_project_root,
     list_provider_ids,
-    load_markets,
     load_providers_registry,
 )
 from scripts.utils import load_json
 
 _VALID_SPANS = frozenset({"next", "within", "between"})
 _VALID_WEEKDAYS = frozenset({"mon_fri", "mon_sat"})
-_VALID_CURRENCIES = frozenset({"EUR", "CHF", "UAH", "USD"})
 
 _LAPOSTE_INDEMNITY_TIER_BY_ID: dict[str, str] = {
     "lettre_recommandee_r_un": "R1",
@@ -34,21 +32,6 @@ def _provider_countries() -> dict[str, str]:
     for pid, row in providers.items():
         if isinstance(row, dict) and isinstance(row.get("country"), str):
             out[str(pid)] = str(row["country"]).upper()
-    return out
-
-
-def _market_currencies() -> dict[str, str]:
-    try:
-        doc = load_markets()
-    except (FileNotFoundError, ValueError):
-        return {}
-    markets = doc.get("markets")
-    if not isinstance(markets, dict):
-        return {}
-    out: dict[str, str] = {}
-    for cc, row in markets.items():
-        if isinstance(row, dict) and isinstance(row.get("currency"), str):
-            out[str(cc).upper()] = str(row["currency"])
     return out
 
 
@@ -149,7 +132,6 @@ def _validate_indemnity(
     provider: str,
     product_id: str,
     product: dict[str, Any],
-    market_currency: str | None,
     errors: list[str],
 ) -> None:
     prefix = f"providers/{provider}/products.json product {product_id!r}"
@@ -188,15 +170,6 @@ def _validate_indemnity(
     amount = max_raw.get("amount")
     if not isinstance(amount, int) or amount < 1:
         errors.append(f"{prefix}: indemnity.max.amount must be an integer >= 1")
-    currency = max_raw.get("currency")
-    if currency not in _VALID_CURRENCIES:
-        errors.append(
-            f"{prefix}: indemnity.max.currency must be one of {sorted(_VALID_CURRENCIES)}"
-        )
-    elif market_currency is not None and currency != market_currency:
-        errors.append(
-            f"{prefix}: indemnity.max.currency must match markets currency ({market_currency!r})"
-        )
 
 
 def _validate_delivery_entry(
@@ -403,14 +376,11 @@ def validate_products_delivery() -> int:
     errors: list[str] = []
     root = get_project_root()
     countries = _provider_countries()
-    market_currencies = _market_currencies()
 
     for provider in list_provider_ids():
         if provider not in countries:
             errors.append(f"providers/{provider}: no country in providers.json")
             continue
-        country = countries[provider]
-        market_currency = market_currencies.get(country)
         feature_ids = _load_feature_ids(provider, root)
         graph_edges = _load_graph_product_edges(provider, root)
 
@@ -444,7 +414,6 @@ def validate_products_delivery() -> int:
                 provider=provider,
                 product_id=product_id,
                 product=product,
-                market_currency=market_currency,
                 errors=errors,
             )
 

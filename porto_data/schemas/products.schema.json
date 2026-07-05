@@ -203,26 +203,16 @@
     }
   },
   "definitions": {
-    "money_amount": {
+    "indemnity_max": {
       "type": "object",
       "required": [
-        "amount",
-        "currency"
+        "amount"
       ],
       "properties": {
         "amount": {
           "type": "integer",
           "minimum": 1,
-          "description": "Minor units (cents/rappen) per operator tariff."
-        },
-        "currency": {
-          "type": "string",
-          "enum": [
-            "EUR",
-            "CHF",
-            "UAH",
-            "USD"
-          ]
+          "description": "Indemnification cap in provider market minor units (markets[country].currency)."
         }
       },
       "additionalProperties": false
@@ -240,7 +230,7 @@
           "description": "Operator-native indemnity tier code (e.g. R1, R2, R3)."
         },
         "max": {
-          "$ref": "#/definitions/money_amount",
+          "$ref": "#/definitions/indemnity_max",
           "description": "Maximum indemnification in case of loss or damage per operator tariff."
         }
       },

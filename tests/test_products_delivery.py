@@ -594,7 +594,7 @@ class TestProductsIndemnityAndFeatures:
                     "zones": ["domestic"],
                     "indemnity": {
                         "tier": "R1",
-                        "max": {"amount": 1600, "currency": "EUR"},
+                        "max": {"amount": 1600},
                     },
                     "delivery": [{"zones": ["domestic"], "span": "within", "days_max": 3}],
                 }
@@ -614,7 +614,7 @@ class TestProductsIndemnityAndFeatures:
                     "zones": ["domestic"],
                     "indemnity": {
                         "tier": "R1",
-                        "max": {"amount": 15300, "currency": "EUR"},
+                        "max": {"amount": 15300},
                     },
                     "delivery": [
                         {"zones": ["domestic"], "span": "between", "days_min": 1, "days_max": 2}
@@ -625,28 +625,6 @@ class TestProductsIndemnityAndFeatures:
         with patch.object(data_files, "_get_project_root", return_value=tmp_path):
             assert validate_products_delivery() == 1
         assert "indemnity.tier must be 'R2'" in capsys.readouterr().out
-
-    def test_indemnity_wrong_currency(self, tmp_path, capsys) -> None:
-        _write_laposte_bundle(
-            tmp_path,
-            products=[
-                {
-                    "id": "lettre_recommandee_r_un",
-                    "porto_id": "small",
-                    "zones": ["domestic"],
-                    "indemnity": {
-                        "tier": "R1",
-                        "max": {"amount": 1600, "currency": "CHF"},
-                    },
-                    "delivery": [
-                        {"zones": ["domestic"], "span": "between", "days_min": 1, "days_max": 2}
-                    ],
-                }
-            ],
-        )
-        with patch.object(data_files, "_get_project_root", return_value=tmp_path):
-            assert validate_products_delivery() == 1
-        assert "indemnity.max.currency must match" in capsys.readouterr().out
 
     def test_twin_identical_fingerprint_fails(self, tmp_path, capsys) -> None:
         delivery = [{"zones": ["domestic"], "span": "within", "days_max": 3}]
@@ -702,7 +680,7 @@ class TestProductsIndemnityAndFeatures:
                     "id": "lettre_recommandee_r_un",
                     "porto_id": "small",
                     "zones": ["domestic"],
-                    "indemnity": {"tier": "R1", "max": {"amount": 0, "currency": "EUR"}},
+                    "indemnity": {"tier": "R1", "max": {"amount": 0}},
                     "delivery": [
                         {"zones": ["domestic"], "span": "between", "days_min": 1, "days_max": 2}
                     ],
@@ -712,15 +690,6 @@ class TestProductsIndemnityAndFeatures:
         with patch.object(data_files, "_get_project_root", return_value=tmp_path):
             assert validate_products_delivery() == 1
         assert "indemnity.max.amount must be an integer >= 1" in capsys.readouterr().out
-
-    def test_market_currencies_load_error(self, monkeypatch) -> None:
-        monkeypatch.setattr(
-            "scripts.validators.products_delivery.load_markets",
-            lambda: (_ for _ in ()).throw(FileNotFoundError("missing")),
-        )
-        from scripts.validators.products_delivery import _market_currencies
-
-        assert _market_currencies() == {}
 
     def test_delivery_zone_signature_none(self) -> None:
         from scripts.validators.products_delivery import _delivery_zone_signature
@@ -811,25 +780,6 @@ class TestProductsIndemnityAndFeatures:
             assert validate_products_delivery() == 1
         assert "indemnity.max must be an object" in capsys.readouterr().out
 
-    def test_indemnity_invalid_currency_code(self, tmp_path, capsys) -> None:
-        _write_laposte_bundle(
-            tmp_path,
-            products=[
-                {
-                    "id": "lettre_recommandee_r_un",
-                    "porto_id": "small",
-                    "zones": ["domestic"],
-                    "indemnity": {"tier": "R1", "max": {"amount": 1600, "currency": "GBP"}},
-                    "delivery": [
-                        {"zones": ["domestic"], "span": "between", "days_min": 1, "days_max": 2}
-                    ],
-                }
-            ],
-        )
-        with patch.object(data_files, "_get_project_root", return_value=tmp_path):
-            assert validate_products_delivery() == 1
-        assert "indemnity.max.currency must be one of" in capsys.readouterr().out
-
     def test_non_dict_product_skipped(self, tmp_path, capsys) -> None:
         _write_laposte_bundle(
             tmp_path,
@@ -915,15 +865,6 @@ class TestProductsIndemnityAndFeatures:
         products_path.write_text(json.dumps(doc), encoding="utf-8")
         with patch.object(data_files, "_get_project_root", return_value=tmp_path):
             assert validate_products_delivery() == 0
-
-    def test_market_currencies_not_dict(self, monkeypatch) -> None:
-        monkeypatch.setattr(
-            "scripts.validators.products_delivery.load_markets",
-            lambda: {"markets": "bad"},
-        )
-        from scripts.validators.products_delivery import _market_currencies
-
-        assert _market_currencies() == {}
 
     def test_load_feature_ids_not_list(self, tmp_path) -> None:
         from scripts.validators.products_delivery import _load_feature_ids
