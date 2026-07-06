@@ -11,6 +11,11 @@ All notable changes to this project will be documented in this file.
 - **`services.integrations`:** Removed — redundant with **`online_supported`** and **`graph.edges.wire`** integration keys.
 - **All four providers:** Migrated Internetmarke / MTEL / WebStamp / Ukrposhta eCom wire tables into graph; DE composite Einschreiben codes moved off `services.json`.
 - **La Poste / Swiss Post wire:** `base` populated with stable catalog keys (`product.id`) pending live API SKU harvest.
+- **`marks.schema.json`:** Removed `image/jpeg` from allowed profile MIME types (PNG/PDF only).
+
+### Fixed
+
+- **Deutsche Post `edges.wire.internetmarke` (domestic):** Restore full 5-digit `productCode` values (bases and Einschreiben composites); CSV import had truncated leading zeros.
 
 ### Added
 
