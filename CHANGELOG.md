@@ -8,7 +8,7 @@ All notable changes to this project will be documented in this file.
 
 - **`graph.json`:** Required **`strategy`** (`service` | `id` | `speed` | `min`); optional **`edges.wire`** for adapter catalog codes per integration.
 - **Entity schemas:** Removed **`products.native_id`**, **`products.zone_native_ids`**, **`services.native_id`**, and **`services.product_native_ids`**. Wire codes are owned by **`graph.edges.wire`** only.
-- **`services.integrations`:** Boolean map only; dropped unused **`address_policy`** object form.
+- **`services.integrations`:** Removed — redundant with **`online_supported`** and **`graph.edges.wire`** integration keys.
 - **All four providers:** Migrated Internetmarke / MTEL / WebStamp / Ukrposhta eCom wire tables into graph; DE composite Einschreiben codes moved off `services.json`.
 - **La Poste / Swiss Post wire:** `base` populated with stable catalog keys (`product.id`) pending live API SKU harvest.
 

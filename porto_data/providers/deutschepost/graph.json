@@ -203,11 +203,11 @@
       "internetmarke": {
         "standardbrief": {
           "domestic": {
-            "base": 1,
+            "base": 10001,
             "services": {
-              "einschreiben": 1007,
-              "einschreiben_einwurf": 1002,
-              "einschreiben_rueckschein": 1008
+              "einschreiben": 10007,
+              "einschreiben_einwurf": 10012,
+              "einschreiben_rueckschein": 10008
             }
           },
           "zone_1_eu": {
@@ -231,11 +231,11 @@
         },
         "kompaktbrief": {
           "domestic": {
-            "base": 11,
+            "base": 10002,
             "services": {
-              "einschreiben": 1017,
-              "einschreiben_einwurf": 1012,
-              "einschreiben_rueckschein": 1018
+              "einschreiben": 10017,
+              "einschreiben_einwurf": 10022,
+              "einschreiben_rueckschein": 10018
             }
           },
           "zone_1_eu": {
@@ -259,11 +259,11 @@
         },
         "grossbrief": {
           "domestic": {
-            "base": 21,
+            "base": 10003,
             "services": {
-              "einschreiben": 1027,
-              "einschreiben_einwurf": 1022,
-              "einschreiben_rueckschein": 1028
+              "einschreiben": 10027,
+              "einschreiben_einwurf": 10032,
+              "einschreiben_rueckschein": 10028
             }
           },
           "zone_1_eu": {
@@ -287,11 +287,11 @@
         },
         "maxibrief": {
           "domestic": {
-            "base": 31,
+            "base": 10004,
             "services": {
-              "einschreiben": 1037,
-              "einschreiben_einwurf": 1032,
-              "einschreiben_rueckschein": 1038
+              "einschreiben": 10037,
+              "einschreiben_einwurf": 10042,
+              "einschreiben_rueckschein": 10038
             }
           },
           "zone_1_eu": {

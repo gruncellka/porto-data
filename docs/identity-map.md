@@ -13,7 +13,7 @@ One-page map of **who names what** across **porto-data** (JSON + schemas), **Por
 ```text
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │  APPLICATION                                                                 │
-│  vars: provider, destination country, weight_g, letterType, service picks   │
+│  vars: provider, destination country, weight, letterType, service picks   │
 └───────────────────────────────────┬─────────────────────────────────────────┘
                                     │
 ┌───────────────────────────────────▼─────────────────────────────────────────┐
@@ -120,7 +120,7 @@ services.json
   id ─────────────────────────────► prices/services.json service_id
   id ─────────────────────────────► graph.services[]
   porto_id ◄────────────────────── cross-operator service input
-  integrations.* ─────────────────► online purchase supported (boolean; address rules live in SDK/Licko)
+  online_supported ───────────────► false = offline-only; online adapter from graph.edges.wire
   features[] ─────────────────────► features.json
 
 marks.json
@@ -141,7 +141,7 @@ INPUT                          RESOLVE TO NATIVE              OUTPUT FIELD
 ─────                          ─────────────────              ────────────
 provider: deutschepost    →    (loader scope)
 country_code: US          →    zone: world
-weight_g: 20              →    weight_tier: W0020
+weight: 20               →    weight_tier: W0020
 letterType: small         →    porto_id: small
                           →    product.id: standardbrief      ResolvedData.product
                           →    base_price from prices         ResolvedData.pricing

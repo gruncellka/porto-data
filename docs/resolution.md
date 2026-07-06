@@ -9,13 +9,13 @@ SDK and app code should pass **`porto_id`** (canonical bucket). The bundle resol
 | `provider` | Operator id (`deutschepost`, `ukrposhta`, `laposte`, `swisspost`, …) |
 | `porto_id` | Canonical product size bucket (`small`, `large`, …) |
 | `zone` | Resolved from destination country |
-| `weight_g` | Actual weight in grams → `weight_tier` via `weights.json` |
+| `weight` | Shipment weight (unit from `graph.unit.weight` / `weights.json`) → `weight_tier` |
 | `services[]` | Optional selected service native ids or porto_ids (SDK layer) |
 
 ## Resolution order
 
 1. Filter `products.json` rows where `porto_id` matches and `zones` contains the target zone.
-2. Resolve `weight_tier` from `weights.json` for the given `weight_g`.
+2. Resolve `weight_tier` from `weights.json` for the given `weight`.
 3. Intersect with `graph.json` → `edges.products[product_id].zones` and `edges.products[product_id].weight_tiers`.
 4. If exactly one product remains, use that `product.id`.
 5. If multiple products remain, apply provider-specific disambiguation below.

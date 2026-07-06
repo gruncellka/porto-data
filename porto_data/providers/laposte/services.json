@@ -14,9 +14,6 @@
       ],
       "enables_tracking": true,
       "online_supported": true,
-      "integrations": {
-        "mon_timbre_en_ligne": true
-      },
       "supported_zones": [
         "domestic"
       ]
@@ -32,9 +29,6 @@
       ],
       "enables_tracking": false,
       "online_supported": true,
-      "integrations": {
-        "mon_timbre_en_ligne": true
-      },
       "supported_zones": [
         "domestic"
       ]
@@ -50,9 +44,6 @@
       ],
       "enables_tracking": false,
       "online_supported": true,
-      "integrations": {
-        "mon_timbre_en_ligne": true
-      },
       "supported_zones": [
         "zone_1_eu",
         "zone_2_europe",

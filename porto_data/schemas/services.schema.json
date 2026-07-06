@@ -84,13 +84,6 @@
             "type": "boolean",
             "description": "Whether this service can be ordered via online provider flows (e.g. Internetmarke, WebStamp). Default: true if omitted. Set false for discontinued or offline-only services."
           },
-          "integrations": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "boolean"
-            },
-            "description": "Online purchase integration id (e.g. internetmarke, webstamp) → supported for this service."
-          },
           "supported_zones": {
             "type": "array",
             "items": {
