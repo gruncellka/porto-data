@@ -207,6 +207,55 @@
       "world": {
         "profile": "international"
       }
+    },
+    "wire": {
+      "webstamp": {
+        "a_post_standardbrief": {
+          "domestic": {
+            "base": "a_post_standardbrief"
+          }
+        },
+        "a_post_grossbrief": {
+          "domestic": {
+            "base": "a_post_grossbrief"
+          }
+        },
+        "b_post_standardbrief": {
+          "domestic": {
+            "base": "b_post_standardbrief"
+          }
+        },
+        "b_post_grossbrief": {
+          "domestic": {
+            "base": "b_post_grossbrief"
+          }
+        },
+        "international_standardbrief": {
+          "zone_1_eu": {
+            "base": "international_standardbrief"
+          },
+          "world": {
+            "base": "international_standardbrief"
+          }
+        },
+        "international_grossbrief": {
+          "zone_1_eu": {
+            "base": "international_grossbrief"
+          },
+          "world": {
+            "base": "international_grossbrief"
+          }
+        },
+        "international_maxibrief": {
+          "zone_1_eu": {
+            "base": "international_maxibrief"
+          },
+          "world": {
+            "base": "international_maxibrief"
+          }
+        }
+      }
     }
-  }
+  },
+  "strategy": "speed"
 }

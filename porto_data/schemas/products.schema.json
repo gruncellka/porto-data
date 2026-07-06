@@ -68,19 +68,6 @@
             "minLength": 1,
             "description": "Official product name (original language)"
           },
-          "native_id": {
-            "description": "Carrier API product identifier for this row (contract catalog / ordering). Not the bundle `id` and not unified `porto_id`. Examples: DHL Internetmarke REST `productCode` (integer). Values must match the operator’s live catalog (e.g. `/app/catalog` contract products).",
-            "oneOf": [
-              {
-                "type": "integer",
-                "minimum": 1
-              },
-              {
-                "type": "string",
-                "minLength": 1
-              }
-            ]
-          },
           "porto_id": {
             "$ref": "porto_ids.schema.json#/definitions/product_porto_id",
             "description": "Unified Porto letter size bucket (small … extra_large). Not service semantics — use services.json for registered/tracking add-ons. Graph and prices use native `id`, not `porto_id`."

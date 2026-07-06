@@ -78,7 +78,7 @@
               "string",
               "null"
             ],
-            "description": "Deutsche Post PPL service identifier (note: services in PPL are typically composite products, not standalone IDs)"
+            "description": "Legacy operator source key or catalog label. Adapter wire codes belong in graph.json edges.wire."
           },
           "online_supported": {
             "type": "boolean",
@@ -89,7 +89,7 @@
             "additionalProperties": {
               "type": "boolean"
             },
-            "description": "Per-integration support: { \"internetmarke\": true, \"webstamp\": false }. Only list integrations with explicit evidence of support."
+            "description": "Online purchase integration id (e.g. internetmarke, webstamp) → supported for this service."
           },
           "supported_zones": {
             "type": "array",

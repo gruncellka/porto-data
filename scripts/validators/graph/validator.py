@@ -47,6 +47,11 @@ from .mark_edges import run_validate_mark_edges
 from .marks_profiles import run_validate_marks_profiles
 from .provider_rules import run_validate_provider_rules
 from .services import run_validate_graph_services
+from .wire_edges import (
+    run_validate_no_entity_wire_codes,
+    run_validate_strategy,
+    run_validate_wire_edges,
+)
 from .units import run_validate_units
 
 
@@ -359,6 +364,34 @@ class GraphValidator:
             products=self.products,
         )
 
+    def validate_wire_edges(self) -> None:
+        """Validate graph.edges.wire adapter codes and forbid entity native_id fields."""
+        if self.graph is None:
+            return
+        run_validate_strategy(self.results, graph=self.graph)
+        products_list = (
+            self.products.get("products", [])
+            if isinstance(self.products, dict)
+            else []
+        )
+        services_list = (
+            self.services.get("services", [])
+            if isinstance(self.services, dict)
+            else []
+        )
+        run_validate_no_entity_wire_codes(
+            self.results,
+            products=products_list,
+            services=services_list,
+        )
+        run_validate_wire_edges(
+            self.results,
+            graph=self.graph,
+            product_dict=self.product_dict,
+            services_by_id=self.services_by_id,
+            graph_service_ids=set(self.graph.get("services") or []),
+        )
+
     def validate_circular_dependencies(self) -> None:
         """Check for circular dependencies."""
         if self.graph is None:
@@ -384,6 +417,7 @@ class GraphValidator:
         self.validate_execution_semantics()
         self.validate_marks_profiles()
         self.validate_mark_edges()
+        self.validate_wire_edges()
         self.validate_provider_rules()
         self.validate_dependencies()
         self.validate_units()

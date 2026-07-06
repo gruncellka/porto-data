@@ -111,7 +111,6 @@
               "type": "string",
               "enum": [
                 "image/png",
-                "image/jpeg",
                 "application/pdf",
                 "application/octet-stream"
               ]

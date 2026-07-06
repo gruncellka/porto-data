@@ -21,6 +21,7 @@ SDK and app code should pass **`porto_id`** (canonical bucket). The bundle resol
 5. If multiple products remain, apply provider-specific disambiguation below.
 6. Price lookup uses native `product_id` × `zone` × `weight_tier` in `prices/products.json`.
 7. **Delivery hint:** pick the `products.delivery[]` entry whose `zones` contains the shipment `zone`; join with `markets[CC].working_days` from `providers.json` → `country` (see below).
+8. **Wire code (online purchase only):** `graph.edges.wire[integration][product_id][zone_id]` — optional `services[service_id]` override when `strategy` is `service` (Deutsche Post Internetmarke). See [Wire resolution](#wire-resolution) below.
 
 When step 4 still leaves multiple products, the SDK or app must apply the provider-specific rules below (or an explicit user/operator hint). The bundle does not encode speed class or registered tier as separate `porto_id` values today.
 
@@ -114,6 +115,37 @@ Multiple `services[].id` rows may share one `porto_id` (e.g. two `registered` va
 ## Mark profile resolution
 
 Lane and service mark mapping: **`graph.edges.marks[zone]`**. Catalog sizes: **`marks.json`** → `profiles[]`. See [mark-profiles.md](mark-profiles.md).
+
+## Wire resolution
+
+Stage 2 of the SDK pipeline — after native `product.id`, `zone`, and optional `service_ids[]` are known:
+
+| Step | Graph field | SDK |
+|------|-------------|-----|
+| Load strategy | `graph.strategy` | resolution contract for stage 1 |
+| Base adapter code | `graph.edges.wire[integration][product_id][zone_id].base` | `resolve_wire_code(...)` |
+| Service override (DE only) | `...services[service_id]` | when `strategy: service` |
+
+### `graph.strategy` per provider
+
+| Provider | Strategy | Wire integration | Wire shape |
+|----------|----------|------------------|------------|
+| Deutsche Post | `service` | `internetmarke` | `base` + optional `services` map |
+| La Poste | `id` | `mon_timbre_en_ligne` | `base` = `products.id` (purchasable catalog key) |
+| Swiss Post | `speed` | `webstamp` | `base` = `products.id` until Options API harvest |
+| Ukrposhta | `min` | `ukrposhta_ecom` | `base` only (`letter` / `document`) |
+
+**La Poste `strategy: id`:** each `products.id` is a distinct purchasable product line (Lettre verte, R1–R3, …). `porto_id: small` is a coarse cross-provider size bucket only — resolution requires explicit `products.id` (or indemnity tier). Wire `base` must equal `products.id`.
+
+Adapter wire codes live in **`graph.edges.wire` only** — not on `products.json` or `services.json` rows. Validators reject `native_id`, `zone_native_ids`, and `product_native_ids` on entity files.
+
+Lookup rules (SDK):
+
+1. No selected services → use `.base`.
+2. `service` + one or more service ids → last matching entry in `services` map wins (mirrors `edges.marks` override order).
+3. Missing or `null` base → fail closed.
+
+**La Poste / Swiss Post wire keys:** until operator API SKUs are harvested, `base` is the stable **`product.id` string** (catalog key). Adapters resolve catalog keys to live MTEL / WebStamp `post_product_number` via Options harvest or runtime lookup — same pattern as Ukrposhta `"letter"` / `"document"` keys.
 
 ## Currency and VAT
 
