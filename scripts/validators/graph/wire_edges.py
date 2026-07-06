@@ -20,9 +20,7 @@ def run_validate_strategy(
     strategy = graph.get("strategy")
     allowed = {"service", "id", "speed", "min"}
     if strategy not in allowed:
-        results["errors"].append(
-            f"{GRAPH_FILE}: strategy must be one of {sorted(allowed)}"
-        )
+        results["errors"].append(f"{GRAPH_FILE}: strategy must be one of {sorted(allowed)}")
     else:
         results["correct"].append(f"strategy: {strategy}")
 
@@ -37,8 +35,7 @@ def run_validate_no_entity_wire_codes(
         pid = product.get("id", "?")
         if "native_id" in product:
             results["errors"].append(
-                f"{PRODUCTS_FILE}: product '{pid}' must not define native_id; "
-                "use graph.edges.wire"
+                f"{PRODUCTS_FILE}: product '{pid}' must not define native_id; use graph.edges.wire"
             )
         if "zone_native_ids" in product:
             results["errors"].append(
@@ -49,8 +46,7 @@ def run_validate_no_entity_wire_codes(
         sid = service.get("id", "?")
         if "native_id" in service:
             results["errors"].append(
-                f"{SERVICES_FILE}: service '{sid}' must not define native_id; "
-                "use graph.edges.wire"
+                f"{SERVICES_FILE}: service '{sid}' must not define native_id; use graph.edges.wire"
             )
         if "product_native_ids" in service:
             results["errors"].append(
@@ -82,9 +78,7 @@ def run_validate_wire_edges(
 
     for integration, products_wire in wire_root.items():
         if not isinstance(products_wire, dict):
-            results["errors"].append(
-                f"{GRAPH_FILE}: edges.wire.{integration} must be an object"
-            )
+            results["errors"].append(f"{GRAPH_FILE}: edges.wire.{integration} must be an object")
             continue
         for product_id, zones_wire in products_wire.items():
             if product_id not in product_dict:

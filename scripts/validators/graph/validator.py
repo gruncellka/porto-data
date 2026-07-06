@@ -47,12 +47,12 @@ from .mark_edges import run_validate_mark_edges
 from .marks_profiles import run_validate_marks_profiles
 from .provider_rules import run_validate_provider_rules
 from .services import run_validate_graph_services
+from .units import run_validate_units
 from .wire_edges import (
     run_validate_no_entity_wire_codes,
     run_validate_strategy,
     run_validate_wire_edges,
 )
-from .units import run_validate_units
 
 
 class GraphValidator:
@@ -369,16 +369,8 @@ class GraphValidator:
         if self.graph is None:
             return
         run_validate_strategy(self.results, graph=self.graph)
-        products_list = (
-            self.products.get("products", [])
-            if isinstance(self.products, dict)
-            else []
-        )
-        services_list = (
-            self.services.get("services", [])
-            if isinstance(self.services, dict)
-            else []
-        )
+        products_list = self.products.get("products", []) if isinstance(self.products, dict) else []
+        services_list = self.services.get("services", []) if isinstance(self.services, dict) else []
         run_validate_no_entity_wire_codes(
             self.results,
             products=products_list,
