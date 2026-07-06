@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-07-06
+
 ### Changed (breaking)
 
 - **`graph.json`:** Required **`strategy`** (`service` | `id` | `speed` | `min`); optional **`edges.wire`** for adapter catalog codes per integration.
