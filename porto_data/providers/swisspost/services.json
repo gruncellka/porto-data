@@ -14,9 +14,6 @@
       ],
       "enables_tracking": true,
       "online_supported": true,
-      "integrations": {
-        "webstamp": true
-      },
       "supported_zones": [
         "domestic"
       ]

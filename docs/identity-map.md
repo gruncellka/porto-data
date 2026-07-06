@@ -13,7 +13,7 @@ One-page map of **who names what** across **porto-data** (JSON + schemas), **Por
 ```text
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │  APPLICATION                                                                 │
-│  vars: provider, destination country, weight_g, letterType, service picks   │
+│  vars: provider, destination country, weight, letterType, service picks   │
 └───────────────────────────────────┬─────────────────────────────────────────┘
                                     │
 ┌───────────────────────────────────▼─────────────────────────────────────────┐
@@ -46,7 +46,7 @@ One-page map of **who names what** across **porto-data** (JSON + schemas), **Por
 | **`porto_id`** (service) | Porto enum | `registered`, `insurance` | **SDK input** | graph.services list |
 | **`porto_id`** (feature) | Porto enum | `tracking_number` | semantics | prices |
 | **`id`** (product/service) | Provider native | `standardbrief`, `einschreiben` | **graph, prices, rules** | SDK input |
-| **`native_id`** | Carrier catalog | `10001` (DE) | **adapter API only** | graph |
+| **`wire_code`** | Graph wire edge | `10001`, `"letter"` | **adapter API only** | products/services rows |
 | **`zone`** | Provider | `domestic`, `world`, `zone_1_eu` | prices, graph edges | porto_id |
 | **`weight_tier`** | Provider | `W0020`, `W1000` | prices, graph edges | porto_id |
 | **`mark_profile`** | Porto convention | `domestic`, `registered_international` | **layout output** | porto_id |
@@ -94,7 +94,6 @@ products.json
   id ─────────────────────────────► graph.edges.products[id]
   id ─────────────────────────────► prices/products.json product_id
   porto_id ◄────────────────────── SDK letterType / porto_id input
-  native_id ──────────────────────► adapter API (when present)
   zones[] ────────────────────────► zones.json (subset)
   weight_tier? (optional) ──────► hint only (Deutsche Post); resolve weight via weights.json + graph
   envelope_ids[] ─────────────────► formats/envelopes.json
@@ -108,16 +107,20 @@ policy/markets.json
   markets[CC].working_days ───────► default postal calendar for delivery hints
 
 graph.json
+  strategy ───────────────────────► resolution strategy (`service`, `id`, `speed`, `min`)
   edges.products[product_id].zones[] ──► zones used for that product
   edges.products[product_id].weight_tiers[] ► tiers allowed
   edges.marks[zone].profile ────────────► default mark profile id
   edges.marks[zone].services[id] ───────► profile override when service selected
+  edges.wire[integration][product][zone].base ► adapter catalog code (purchase)
+  edges.wire[integration][product][zone].services[id] ► service-composed code (DE Internetmarke)
   services[] (native service ids) ► services.json id list
 
 services.json
   id ─────────────────────────────► prices/services.json service_id
   id ─────────────────────────────► graph.services[]
   porto_id ◄────────────────────── cross-operator service input
+  online_supported ───────────────► false = offline-only; online adapter from graph.edges.wire
   features[] ─────────────────────► features.json
 
 marks.json
@@ -138,7 +141,7 @@ INPUT                          RESOLVE TO NATIVE              OUTPUT FIELD
 ─────                          ─────────────────              ────────────
 provider: deutschepost    →    (loader scope)
 country_code: US          →    zone: world
-weight_g: 20              →    weight_tier: W0020
+weight: 20               →    weight_tier: W0020
 letterType: small         →    porto_id: small
                           →    product.id: standardbrief      ResolvedData.product
                           →    base_price from prices         ResolvedData.pricing
@@ -150,7 +153,8 @@ zone + services           →    graph.edges.marks[zone] + services overrides
                           →    mark_profile: registered_international
                           →    size 57×30, mark_type stamp
 
-adapter purchase          →    native_id: 10001 + API payload
+adapter purchase          →    graph.edges.wire.internetmarke[product][zone][service?]
+                          →    wire_code (e.g. 10001) + API payload
                           →    PDF bytes                      PortoMark.content
                           →    tracking ref                   PortoMark.tracking_number
 ```

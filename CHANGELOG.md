@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Changed (breaking)
+
+- **`graph.json`:** Required **`strategy`** (`service` | `id` | `speed` | `min`); optional **`edges.wire`** for adapter catalog codes per integration.
+- **Entity schemas:** Removed **`products.native_id`**, **`products.zone_native_ids`**, **`services.native_id`**, and **`services.product_native_ids`**. Wire codes are owned by **`graph.edges.wire`** only.
+- **`services.integrations`:** Removed — redundant with **`online_supported`** and **`graph.edges.wire`** integration keys.
+- **All four providers:** Migrated Internetmarke / MTEL / WebStamp / Ukrposhta eCom wire tables into graph; DE composite Einschreiben codes moved off `services.json`.
+- **La Poste / Swiss Post wire:** `base` populated with stable catalog keys (`product.id`) pending live API SKU harvest.
+- **`marks.schema.json`:** Removed `image/jpeg` from allowed profile MIME types (PNG/PDF only).
+
+### Fixed
+
+- **Deutsche Post `edges.wire.internetmarke` (domestic):** Restore full 5-digit `productCode` values (bases and Einschreiben composites); CSV import had truncated leading zeros.
+
+### Added
+
+- Graph validator: **`strategy`**, **`edges.wire`** key coverage, entity wire-code guard; **`strategy: id`** requires `wire.base === products.id`.
+- Docs: wire resolution sequence in [resolution.md](docs/resolution.md); adapter ownership in [identity-map.md](docs/identity-map.md).
+
 ## [0.4.1] - 2026-07-05
 
 Release since **v0.3.1**: multi-provider bundle layout, **`policy/markets.json`**, delivery/indemnity resolution contract, and npm publish tarball checks for the new paths.

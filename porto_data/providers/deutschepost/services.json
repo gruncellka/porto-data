@@ -15,9 +15,6 @@
       ],
       "enables_tracking": true,
       "online_supported": true,
-      "integrations": {
-        "internetmarke": true
-      },
       "supported_zones": [
         "domestic",
         "zone_1_eu",
@@ -36,9 +33,6 @@
       ],
       "enables_tracking": true,
       "online_supported": true,
-      "integrations": {
-        "internetmarke": true
-      },
       "supported_zones": [
         "domestic"
       ]
@@ -57,9 +51,6 @@
       ],
       "enables_tracking": true,
       "online_supported": true,
-      "integrations": {
-        "internetmarke": true
-      },
       "supported_zones": [
         "domestic"
       ]
@@ -74,9 +65,6 @@
         "tracking_number"
       ],
       "online_supported": true,
-      "integrations": {
-        "internetmarke": true
-      },
       "supported_zones": [
         "domestic",
         "zone_1_eu",

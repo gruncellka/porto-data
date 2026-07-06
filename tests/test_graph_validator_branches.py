@@ -43,6 +43,7 @@ def _base_graph(**overrides):
         },
         "edges": {"products": {}, "marks": {}},
         "services": ["einschreiben"],
+        "strategy": "service",
     }
     graph.update(overrides)
     return graph

@@ -31,6 +31,14 @@ def mark_edges(graph: dict[str, Any] | None) -> dict[str, Any]:
     return marks if isinstance(marks, dict) else {}
 
 
+def wire_edges(graph: dict[str, Any] | None) -> dict[str, Any]:
+    root = _edges_root(graph)
+    if root is None:
+        return {}
+    wire = root.get("wire")
+    return wire if isinstance(wire, dict) else {}
+
+
 def validate_edges_container(results: ValidationResults, *, graph: dict[str, Any] | None) -> bool:
     """Ensure ``edges`` has ``products`` and ``marks`` objects. Returns False if invalid."""
     if graph is None or not isinstance(graph, dict):

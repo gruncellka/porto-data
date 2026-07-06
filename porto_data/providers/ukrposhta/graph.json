@@ -143,6 +143,24 @@
       "world": {
         "profile": "domestic"
       }
+    },
+    "wire": {
+      "ukrposhta_ecom": {
+        "lyst_standartnyi": {
+          "domestic": {
+            "base": "letter"
+          },
+          "world": {
+            "base": "letter"
+          }
+        },
+        "dokument": {
+          "domestic": {
+            "base": "document"
+          }
+        }
+      }
     }
-  }
+  },
+  "strategy": "min"
 }

@@ -8,7 +8,6 @@
   "products": [
     {
       "id": "standardbrief",
-      "native_id": 10001,
       "porto_id": "small",
       "name": "Standardbrief",
       "envelope_ids": [
@@ -48,7 +47,6 @@
     },
     {
       "id": "kompaktbrief",
-      "native_id": 10002,
       "porto_id": "medium",
       "name": "Kompaktbrief",
       "envelope_ids": [
@@ -87,7 +85,6 @@
     },
     {
       "id": "grossbrief",
-      "native_id": 10003,
       "porto_id": "large",
       "name": "Großbrief",
       "envelope_ids": [
@@ -126,7 +123,6 @@
     },
     {
       "id": "maxibrief",
-      "native_id": 10004,
       "porto_id": "extra_large",
       "name": "Maxibrief",
       "envelope_ids": [
@@ -165,7 +161,6 @@
     },
     {
       "id": "maxibrief_international_heavy",
-      "native_id": 10005,
       "porto_id": "extra_large",
       "name": "Maxibrief International (bis 2.000 g)",
       "envelope_ids": [

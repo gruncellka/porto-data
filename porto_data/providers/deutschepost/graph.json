@@ -198,6 +198,143 @@
           "einschreiben": "registered_international"
         }
       }
+    },
+    "wire": {
+      "internetmarke": {
+        "standardbrief": {
+          "domestic": {
+            "base": 10001,
+            "services": {
+              "einschreiben": 10007,
+              "einschreiben_einwurf": 10012,
+              "einschreiben_rueckschein": 10008
+            }
+          },
+          "zone_1_eu": {
+            "base": 10001,
+            "services": {
+              "einschreiben": 11006
+            }
+          },
+          "zone_2_europe": {
+            "base": 10001,
+            "services": {
+              "einschreiben": 11006
+            }
+          },
+          "world": {
+            "base": 10001,
+            "services": {
+              "einschreiben": 11006
+            }
+          }
+        },
+        "kompaktbrief": {
+          "domestic": {
+            "base": 10002,
+            "services": {
+              "einschreiben": 10017,
+              "einschreiben_einwurf": 10022,
+              "einschreiben_rueckschein": 10018
+            }
+          },
+          "zone_1_eu": {
+            "base": 10011,
+            "services": {
+              "einschreiben": 11016
+            }
+          },
+          "zone_2_europe": {
+            "base": 10011,
+            "services": {
+              "einschreiben": 11016
+            }
+          },
+          "world": {
+            "base": 10011,
+            "services": {
+              "einschreiben": 11016
+            }
+          }
+        },
+        "grossbrief": {
+          "domestic": {
+            "base": 10003,
+            "services": {
+              "einschreiben": 10027,
+              "einschreiben_einwurf": 10032,
+              "einschreiben_rueckschein": 10028
+            }
+          },
+          "zone_1_eu": {
+            "base": 10051,
+            "services": {
+              "einschreiben": 11056
+            }
+          },
+          "zone_2_europe": {
+            "base": 10051,
+            "services": {
+              "einschreiben": 11056
+            }
+          },
+          "world": {
+            "base": 10051,
+            "services": {
+              "einschreiben": 11056
+            }
+          }
+        },
+        "maxibrief": {
+          "domestic": {
+            "base": 10004,
+            "services": {
+              "einschreiben": 10037,
+              "einschreiben_einwurf": 10042,
+              "einschreiben_rueckschein": 10038
+            }
+          },
+          "zone_1_eu": {
+            "base": 10071,
+            "services": {
+              "einschreiben": 11076
+            }
+          },
+          "zone_2_europe": {
+            "base": 10071,
+            "services": {
+              "einschreiben": 11076
+            }
+          },
+          "world": {
+            "base": 10071,
+            "services": {
+              "einschreiben": 11076
+            }
+          }
+        },
+        "maxibrief_international_heavy": {
+          "zone_1_eu": {
+            "base": 10091,
+            "services": {
+              "einschreiben": 11096
+            }
+          },
+          "zone_2_europe": {
+            "base": 10091,
+            "services": {
+              "einschreiben": 11096
+            }
+          },
+          "world": {
+            "base": 10091,
+            "services": {
+              "einschreiben": 11096
+            }
+          }
+        }
+      }
     }
-  }
+  },
+  "strategy": "service"
 }

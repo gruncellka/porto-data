@@ -7,6 +7,7 @@
   "required": [
     "file_type",
     "provider",
+    "strategy",
     "unit",
     "dependencies",
     "edges",
@@ -27,6 +28,16 @@
       "type": "string",
       "pattern": "^[a-z_]+$",
       "description": "Provider identifier (e.g. deutschepost, ukrposhta, laposte, swisspost)"
+    },
+    "strategy": {
+      "type": "string",
+      "enum": [
+        "service",
+        "id",
+        "speed",
+        "min"
+      ],
+      "description": "Graph resolution strategy: service (DE wire+service), id (explicit products.id required), speed (Swiss A/B), min (Ukrposhta)"
     },
     "unit": {
       "type": "object",
@@ -171,6 +182,28 @@
             }
           },
           "additionalProperties": false
+        },
+        "wire": {
+          "type": "object",
+          "description": "Adapter catalog codes per integration × product × zone. Optional services map for service-composed SKUs (e.g. Deutsche Post Internetmarke).",
+          "patternProperties": {
+            "^[a-z_]+$": {
+              "type": "object",
+              "patternProperties": {
+                "^[a-z_]+$": {
+                  "type": "object",
+                  "patternProperties": {
+                    "^[a-z0-9_]+$": {
+                      "$ref": "#/definitions/wire_zone_entry"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
         }
       },
       "additionalProperties": false
@@ -183,6 +216,46 @@
         "pattern": "^[a-z_]+$"
       },
       "description": "Attachable services for this provider. Each entry must match **services.json `id`** (provider-native key)."
+    }
+  },
+  "definitions": {
+    "wire_code": {
+      "description": "Operator adapter wire identifier (integer productCode or string catalog key). null = TBD until catalog harvest.",
+      "oneOf": [
+        {
+          "type": "integer",
+          "minimum": 1
+        },
+        {
+          "type": "string",
+          "minLength": 1
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "wire_zone_entry": {
+      "type": "object",
+      "required": [
+        "base"
+      ],
+      "properties": {
+        "base": {
+          "$ref": "#/definitions/wire_code"
+        },
+        "services": {
+          "type": "object",
+          "description": "Composite adapter code when this service is selected with the base product in this zone.",
+          "patternProperties": {
+            "^[a-z_]+$": {
+              "$ref": "#/definitions/wire_code"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
     }
   },
   "additionalProperties": false

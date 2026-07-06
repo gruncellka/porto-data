@@ -229,6 +229,61 @@
       "world": {
         "profile": "international"
       }
+    },
+    "wire": {
+      "mon_timbre_en_ligne": {
+        "lettre_verte": {
+          "domestic": {
+            "base": "lettre_verte"
+          }
+        },
+        "lettre_verte_suivie": {
+          "domestic": {
+            "base": "lettre_verte_suivie"
+          },
+          "zone_1_eu": {
+            "base": "lettre_verte_suivie"
+          },
+          "zone_2_europe": {
+            "base": "lettre_verte_suivie"
+          },
+          "world": {
+            "base": "lettre_verte_suivie"
+          }
+        },
+        "lettre_services_plus": {
+          "domestic": {
+            "base": "lettre_services_plus"
+          }
+        },
+        "lettre_recommandee_r_un": {
+          "domestic": {
+            "base": "lettre_recommandee_r_un"
+          }
+        },
+        "lettre_recommandee_r_deux": {
+          "domestic": {
+            "base": "lettre_recommandee_r_deux"
+          }
+        },
+        "lettre_recommandee_r_trois": {
+          "domestic": {
+            "base": "lettre_recommandee_r_trois"
+          }
+        },
+        "lettre_recommandee_inter_r_un": {
+          "zone_1_eu": {
+            "base": "lettre_recommandee_inter_r_un"
+          },
+          "zone_2_europe": {
+            "base": "lettre_recommandee_inter_r_un"
+          },
+          "world": {
+            "base": "lettre_recommandee_inter_r_un"
+          }
+        }
+      }
     }
-  }
+  },
+  "strategy": "id"
 }

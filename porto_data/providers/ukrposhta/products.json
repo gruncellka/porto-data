@@ -9,7 +9,6 @@
     {
       "id": "lyst_standartnyi",
       "porto_id": "small",
-      "native_id": "letter",
       "name": "Лист стандартний",
       "envelope_ids": [
         "DL",
@@ -46,7 +45,6 @@
     {
       "id": "dokument",
       "porto_id": "large",
-      "native_id": "document",
       "name": "Укрпошта Документ",
       "envelope_ids": [
         "C4",
