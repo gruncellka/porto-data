@@ -5,7 +5,7 @@ alwaysApply: true
 
 # Catalog layering doctrine (porto-data)
 
-**Hub:** `docs/identity-map.md` · `docs/id.md` · `docs/mark-profiles.md` · `BUGBOT.md` (philosophy + rules 23–36)
+**Hub:** `docs/identity.md` · `docs/id.md` · `docs/marks.md` · `BUGBOT.md` (philosophy + rules 23–36)
 
 porto-data is a **factual bundle** + **schemas** + **validators**. It is not the product UI, compose engine, or SDK resolver. When in doubt: **put the fact in one layer only**; let SDK/app **resolve** across layers.
 
@@ -37,7 +37,7 @@ Runtime / adapter   →  PortoMark, tracking numbers (not in porto-data)
 
 6. **Geometry is factual, composition is not.** `formats/layouts.json`: `window`, `post_mark`, `standard` only — no `address_area`, `print_area`, sender/recipient zones, or printable-region workflow.
 
-7. **Mark calibrations are measured facts, not resolution.** Optional `marks.calibrations[]` stores checkout dpi + px/mm per `integration` × `voucher_layout`. Operator-specific tables belong in **`docs/providers/<id>.md`**, not generic `mark-profiles.md`.
+7. **Mark calibrations are measured facts, not resolution.** Optional `marks.calibrations[]` stores checkout dpi + px/mm per `integration` × `voucher_layout`. Operator-specific tables belong in **`docs/providers/<id>.md`**, not generic `marks.md`.
 
 8. **Validators encode philosophy.** If a rule matters for review, it should fail in `scripts/validators/` + `tests/` — not live only in prose.
 
@@ -51,7 +51,7 @@ Runtime / adapter   →  PortoMark, tracking numbers (not in porto-data)
 | `graph` or `prices` keyed by `porto_id` | Wrong identifier layer | Use native `id` |
 | `capabilities` or `adapter` only in `graph.json` body | SDK manifest in resolution graph | `integrations.json` + `dependencies.integrations` pointer |
 | `productCode` / wire codes in `integrations.json` | Wire table in wrong file | `graph.edges.wire` |
-| Operator mark calibration tables in `mark-profiles.md` | Provider-specific prose in generic doc | `docs/providers/<id>.md` |
+| Operator mark calibration tables in `marks.md` | Provider-specific prose in generic doc | `docs/providers/<id>.md` |
 | New layout zone named like a product feature | Invented semantics | Only standard/provider geometry |
 | Docs say X but schema allows Y | Drift | Align schema, validator, `docs/id.md`, generated tables |
 | `lane` / speed class on product rows | SDK taxonomy in catalog | Use `delivery[]` + native `id`; interpret in SDK/app |

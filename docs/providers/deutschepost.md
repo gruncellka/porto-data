@@ -96,7 +96,7 @@ Reference for **reconciling JSON with official letter/postcard tariffs** (not a 
 
 ## Mark profiles & Internetmarke calibrations
 
-Cross-provider resolution rules: [mark-profiles.md](../mark-profiles.md).
+Cross-provider resolution rules: [marks.md](../marks.md).
 
 ### Zone × service → profile
 

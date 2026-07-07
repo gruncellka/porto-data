@@ -5,7 +5,7 @@
     "version": "0.5.0",
     "description": "Multi-provider postal JSON: operator catalogs, pricing, shared policy (markets, restrictions), and schemas"
   },
-  "generated_at": "2026-07-07T13:44:48.687763Z",
+  "generated_at": "2026-07-07T14:17:48.134430Z",
   "policy": {
     "jurisdictions": {
       "data": {
@@ -100,8 +100,8 @@
         },
         "schema": {
           "path": "schemas/marks.schema.json",
-          "checksum": "986d89cbf1fc60e16eb11e1775e4ddccbbd4db6a905852762fd32402c0154357",
-          "size": 6756,
+          "checksum": "7c17886b7fc408095d2a67ae4d288027c1f56663dc57c044e1c6f8312a2d4b94",
+          "size": 6865,
           "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/marks.schema.json"
         }
       },
@@ -245,8 +245,8 @@
         },
         "schema": {
           "path": "schemas/marks.schema.json",
-          "checksum": "986d89cbf1fc60e16eb11e1775e4ddccbbd4db6a905852762fd32402c0154357",
-          "size": 6756,
+          "checksum": "7c17886b7fc408095d2a67ae4d288027c1f56663dc57c044e1c6f8312a2d4b94",
+          "size": 6865,
           "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/marks.schema.json"
         }
       },
@@ -377,8 +377,8 @@
         },
         "schema": {
           "path": "schemas/marks.schema.json",
-          "checksum": "986d89cbf1fc60e16eb11e1775e4ddccbbd4db6a905852762fd32402c0154357",
-          "size": 6756,
+          "checksum": "7c17886b7fc408095d2a67ae4d288027c1f56663dc57c044e1c6f8312a2d4b94",
+          "size": 6865,
           "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/marks.schema.json"
         }
       },
@@ -509,8 +509,8 @@
         },
         "schema": {
           "path": "schemas/marks.schema.json",
-          "checksum": "986d89cbf1fc60e16eb11e1775e4ddccbbd4db6a905852762fd32402c0154357",
-          "size": 6756,
+          "checksum": "7c17886b7fc408095d2a67ae4d288027c1f56663dc57c044e1c6f8312a2d4b94",
+          "size": 6865,
           "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/marks.schema.json"
         }
       },

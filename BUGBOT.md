@@ -17,7 +17,7 @@ porto-data ships **catalog facts** and **contracts** — not product workflow, c
 
 ### Principles (apply to any PR touching catalog JSON or schemas)
 
-1. **One identifier, one layer.** Native `id` wires graph/prices/rules. `porto_id` is SDK input only. `mark_profile` is layout output. `native_id` is adapter/API (runtime — not on catalog product/service rows). Wire checkout codes (`productCode`, etc.) live in **`graph.edges.wire`** only. Do not use the same token in two layers unless `docs/identity-map.md` documents the trap.
+1. **One identifier, one layer.** Native `id` wires graph/prices/rules. `porto_id` is SDK input only. `mark_profile` is layout output. `native_id` is adapter/API (runtime — not on catalog product/service rows). Wire checkout codes (`productCode`, etc.) live in **`graph.edges.wire`** only. Do not use the same token in two layers unless `docs/identity.md` documents the trap.
 
 2. **Facts vs normalization vs workflow.** Tariff rows, mm geometry, and operator SKUs are facts. `porto_id` enums normalize cross-operator input. User choices (R1/R2, A-Post vs B-Post, sender placement) are resolved in SDK/app — **do not** encode them as new catalog fields when an existing layer already owns the fact.
 
@@ -38,9 +38,9 @@ porto-data ships **catalog facts** and **contracts** — not product workflow, c
 | `productCode` / wire tables in `integrations.json` | Wire data in SDK manifest | `graph.edges.wire[integration]` |
 | `capabilities` / `adapter` only under `graph.services` | SDK gate in resolution graph | `integrations.json` + `dependencies.integrations` |
 | `native_id` on `products.json` / `services.json` rows | Adapter code in catalog facts | `edges.wire` per product × zone |
-| Operator mark calibration tables in `mark-profiles.md` | Provider-specific prose in generic doc | `docs/providers/<id>.md` + `marks.calibrations[]` |
+| Operator mark calibration tables in `marks.md` | Provider-specific prose in generic doc | `docs/providers/<id>.md` + `marks.calibrations[]` |
 
-See `docs/identity-map.md`, `docs/id.md`, `docs/formats.md`, `docs/mark-profiles.md`.
+See `docs/identity.md`, `docs/id.md`, `docs/formats.md`, `docs/marks.md`.
 
 ## Severity
 
@@ -267,10 +267,10 @@ If a PR adds or restores layout or format fields that describe **addressing work
 
 ### 27) Cross-layer identifier misuse (blocking)
 
-If a PR uses **`porto_id`** (or other SDK-normalization tokens) in **`graph.json`**, **`prices/*.json`**, or **`rules.json`** keys/refs where **native `id`** is required — or conflates **`mark_profile`** ids / **zone** ids with **`porto_id`** without updating `docs/identity-map.md`:
+If a PR uses **`porto_id`** (or other SDK-normalization tokens) in **`graph.json`**, **`prices/*.json`**, or **`rules.json`** keys/refs where **native `id`** is required — or conflates **`mark_profile`** ids / **zone** ids with **`porto_id`** without updating `docs/identity.md`:
 
 - **Title:** `Wrong identifier layer in catalog wiring`
-- **Body:** `graph, prices, rules: native product_id / service_id only. porto_id is SDK input. mark_profile and zone are separate namespaces. See docs/identity-map.md.`
+- **Body:** `graph, prices, rules: native product_id / service_id only. porto_id is SDK input. mark_profile and zone are separate namespaces. See docs/identity.md.`
 - **Labels:** `data`, `resolution`, `consistency`
 
 ### 28) New schema field without clear owning layer (non-blocking)
@@ -327,7 +327,7 @@ If a PR adds or changes **`integrations.json`** and:
 - reintroduces **`services.integrations`** on **`graph.json`**:
 
 - **Title:** `Integrations manifest conflated with wire tables`
-- **Body:** `integrations.json owns adapter + capabilities[] only. Wire productCode tables live in graph.edges.wire[integration]. dependencies.integrations is a bundle index pointer. CI: scripts/validators/graph/integrations_manifest.py. See docs/identity-map.md.`
+- **Body:** `integrations.json owns adapter + capabilities[] only. Wire productCode tables live in graph.edges.wire[integration]. dependencies.integrations is a bundle index pointer. CI: scripts/validators/graph/integrations_manifest.py. See docs/identity.md.`
 - **Labels:** `data`, `architecture`, `consistency`
 
 ### 34) Wire codes must not live on catalog entity rows (blocking)
@@ -344,7 +344,7 @@ If a PR adds or changes **`marks.json`** **`calibrations[]`** and:
 
 - **`integration`** does not match a key under **`graph.edges.wire`**, or
 - **`voucher_layout`** / profile keys are unknown to **`marks.profiles`**, or
-- measured checkout sizes are documented only in **`docs/mark-profiles.md`** instead of **`docs/providers/<id>.md`** for operator-specific tables:
+- measured checkout sizes are documented only in **`docs/marks.md`** instead of **`docs/providers/<id>.md`** for operator-specific tables:
 
 - **Title:** `Mark calibrations invalid or misplaced`
 - **Body:** `calibrations[].integration must match edges.wire. FRANKING_ZONE uses by_mark_profile; ADDRESS_ZONE uses shared label_canvas. Operator tables belong in docs/providers/<id>.md. CI: scripts/validators/graph/marks_profiles.py.`

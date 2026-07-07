@@ -4,7 +4,7 @@ One-page map of **who names what** across **porto-data** (JSON + schemas), **Por
 
 **porto-data** ships facts and validates them. **Porto SDK** loads the bundle and resolves. This repo has no resolver implementation.
 
-**See also:** [id.md](id.md) · [mark-profiles.md](mark-profiles.md) · [resolution.md](resolution.md) · [SDK_ARCHITECTURE.md](../../docs/sdks/SDK_ARCHITECTURE.md)
+**See also:** [id.md](id.md) · [marks.md](marks.md) · [resolution.md](resolution.md) · [SDK_ARCHITECTURE.md](../../docs/sdks/SDK_ARCHITECTURE.md)
 
 ---
 

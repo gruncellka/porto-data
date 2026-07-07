@@ -136,12 +136,12 @@
           "integration": {
             "type": "string",
             "minLength": 1,
-            "description": "graph.edges.wire integration key (e.g. internetmarke)"
+            "description": "graph.edges.wire integration key (same id namespace as integrations.json adapter when present)"
           },
           "voucher_layout": {
             "type": "string",
             "minLength": 1,
-            "description": "Provider integration checkout layout id (wire enum; e.g. Internetmarke ADDRESS_ZONE)"
+            "description": "Integration-specific checkout layout token at purchase time (opaque catalog string; allowed values belong in operator docs)"
           },
           "mime_type": {
             "type": "string",
@@ -153,7 +153,7 @@
           "dpi": {
             "type": "integer",
             "minimum": 1,
-            "description": "Checkout dpi request (e.g. 300 for DPI300)"
+            "description": "Checkout raster dpi used when measuring or requesting assets (e.g. 300)"
           },
           "by_mark_profile": {
             "type": "object",

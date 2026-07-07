@@ -35,7 +35,7 @@ There is **no** `porto_data/data/`, `data_links.json`, or `porto_data/global/` b
 | Bundle file index | `graph.json` → **`dependencies.integrations`** | Pointer to `integrations.json` only — not manifest data |
 | Measured checkout asset size (mm/px) | **`marks.json`** → **`calibrations[]`** | Integration × `voucher_layout` × dpi; `integration` must match a **`edges.wire`** key |
 
-See `docs/identity-map.md`, `docs/mark-profiles.md` (generic), `docs/providers/<id>.md` (operator tables).
+See `docs/identity.md`, `docs/marks.md` (generic), `docs/providers/<id>.md` (operator tables).
 
 ## Policy vs limits (restrictions model)
 
@@ -110,7 +110,7 @@ CI (`.github/workflows/validation.yml`) must run the same chain; include a **`va
 
 ## Catalog layering doctrine (strict)
 
-**Full rule:** `.cursor/rules/catalog-layering-doctrine.mdc` · **Review mirror:** `BUGBOT.md` § Catalog layering philosophy · **Diagram:** `docs/identity-map.md`
+**Full rule:** `.cursor/rules/catalog-layering-doctrine.mdc` · **Review mirror:** `BUGBOT.md` § Catalog layering philosophy · **Diagram:** `docs/identity.md`
 
 porto-data = **facts + contracts**. SDK/app = **resolution + workflow**. Do not collapse layers to “make validate pass” or “make the doc table pretty”.
 
