@@ -46,30 +46,26 @@ def _graph_doc(*, marks_map: dict | None = None, services: list[str] | None = No
 class TestMarksProfilesCoverage:
     def test_missing_marks_errors(self) -> None:
         r = _empty_results()
-        run_validate_marks_profiles(r, graph={}, products={"products": []}, marks=None)
+        run_validate_marks_profiles(r, graph={}, marks=None)
         assert r["errors"]
 
     def test_wrong_file_type(self) -> None:
         r = _empty_results()
         marks = {"file_type": "wrong", "profiles": [{"id": "a"}]}
-        run_validate_marks_profiles(
-            r, graph={"provider": "p"}, products={"products": []}, marks=marks
-        )
+        run_validate_marks_profiles(r, graph={"provider": "p"}, marks=marks)
         assert any("file_type" in e for e in r["errors"])
 
     def test_provider_mismatch(self) -> None:
         r = _empty_results()
         marks = _marks_doc(profiles=[{"id": "a", "mark_type": "stamp", "label": "A"}])
         marks["provider"] = "other"
-        run_validate_marks_profiles(
-            r, graph={"provider": "mine"}, products={"products": []}, marks=marks
-        )
+        run_validate_marks_profiles(r, graph={"provider": "mine"}, marks=marks)
         assert any("provider" in e for e in r["errors"])
 
     def test_profiles_not_nonempty_list(self) -> None:
         r = _empty_results()
         marks = {"file_type": "marks", "profiles": []}
-        run_validate_marks_profiles(r, graph={}, products={"products": []}, marks=marks)
+        run_validate_marks_profiles(r, graph={}, marks=marks)
         assert any("profiles" in e for e in r["errors"])
 
     def test_bad_profile_rows_and_duplicate_id(self) -> None:
@@ -83,7 +79,7 @@ class TestMarksProfilesCoverage:
             ],
             "default_profile": 123,
         }
-        run_validate_marks_profiles(r, graph={}, products={"products": []}, marks=marks)
+        run_validate_marks_profiles(r, graph={}, marks=marks)
         assert any("object with id" in e for e in r["errors"])
         assert any("duplicate" in e for e in r["errors"])
         assert any("default_profile" in e for e in r["errors"])
@@ -92,15 +88,136 @@ class TestMarksProfilesCoverage:
         r = _empty_results()
         marks = _marks_doc(profiles=[{"id": "a", "mark_type": "stamp", "label": "A"}])
         marks["default_profile"] = "missing"
-        run_validate_marks_profiles(r, graph={}, products={"products": []}, marks=marks)
+        run_validate_marks_profiles(r, graph={}, marks=marks)
         assert any("not found in profiles" in e for e in r["errors"])
 
     def test_legacy_marks_zones_rejected(self) -> None:
         r = _empty_results()
         marks = _marks_doc(profiles=[{"id": "a", "mark_type": "stamp", "label": "A"}])
         marks["zones"] = {"domestic": "a"}
-        run_validate_marks_profiles(r, graph={}, products={"products": []}, marks=marks)
+        run_validate_marks_profiles(r, graph={}, marks=marks)
         assert any("edges.marks" in e for e in r["errors"])
+
+    def test_calibration_integration_must_match_wire(self) -> None:
+        r = _empty_results()
+        marks = _marks_doc(profiles=[{"id": "domestic", "mark_type": "stamp", "label": "D"}])
+        marks["calibrations"] = [
+            {
+                "integration": "unknown_api",
+                "voucher_layout": "stamp_only",
+                "mime_type": "image/png",
+                "dpi": 300,
+                "label_canvas": {
+                    "width_px": 1,
+                    "height_px": 1,
+                    "width_mm": 1,
+                    "height_mm": 1,
+                },
+            }
+        ]
+        graph = {
+            "provider": "p",
+            "edges": {
+                "products": {},
+                "marks": {},
+                "wire": {"checkout_api": {"letter": {"domestic": {"base": 1}}}},
+            },
+        }
+        run_validate_marks_profiles(r, graph=graph, marks=marks)
+        assert any("integration 'unknown_api'" in e for e in r["errors"])
+
+    def test_calibration_by_mark_profile_requires_known_profiles(self) -> None:
+        r = _empty_results()
+        marks = _marks_doc(profiles=[{"id": "domestic", "mark_type": "stamp", "label": "D"}])
+        marks["calibrations"] = [
+            {
+                "integration": "webstamp",
+                "voucher_layout": "stamp_only",
+                "mime_type": "image/png",
+                "dpi": 300,
+                "by_mark_profile": {
+                    "unknown": {"width_px": 1, "height_px": 1, "width_mm": 1, "height_mm": 1}
+                },
+            }
+        ]
+        run_validate_marks_profiles(r, graph={}, marks=marks)
+        assert any("by_mark_profile key 'unknown'" in e for e in r["errors"])
+
+    def test_calibration_rejects_source_run(self) -> None:
+        r = _empty_results()
+        marks = _marks_doc(profiles=[{"id": "domestic", "mark_type": "stamp", "label": "D"}])
+        marks["calibrations"] = [
+            {
+                "integration": "mtel",
+                "voucher_layout": "full_label",
+                "mime_type": "image/png",
+                "dpi": 300,
+                "source_run": "lab-run",
+                "label_canvas": {
+                    "width_px": 1,
+                    "height_px": 1,
+                    "width_mm": 1,
+                    "height_mm": 1,
+                },
+            }
+        ]
+        run_validate_marks_profiles(r, graph={}, marks=marks)
+        assert any("source_run must not be set" in e for e in r["errors"])
+
+    def test_calibrations_must_be_array_when_present(self) -> None:
+        r = _empty_results()
+        marks = _marks_doc(profiles=[{"id": "a", "mark_type": "stamp", "label": "A"}])
+        marks["calibrations"] = "bad"
+        run_validate_marks_profiles(r, graph={}, marks=marks)
+        assert any("calibrations must be an array" in e for e in r["errors"])
+
+    def test_calibration_row_must_be_object(self) -> None:
+        r = _empty_results()
+        marks = _marks_doc(profiles=[{"id": "a", "mark_type": "stamp", "label": "A"}])
+        marks["calibrations"] = ["bad"]
+        run_validate_marks_profiles(r, graph={}, marks=marks)
+        assert any("calibrations[0] must be an object" in e for e in r["errors"])
+
+    def test_calibration_requires_integration_and_layout(self) -> None:
+        r = _empty_results()
+        marks = _marks_doc(profiles=[{"id": "a", "mark_type": "stamp", "label": "A"}])
+        marks["calibrations"] = [{"integration": "", "voucher_layout": ""}]
+        run_validate_marks_profiles(r, graph={}, marks=marks)
+        assert any("integration must be a non-empty string" in e for e in r["errors"])
+        assert any("voucher_layout must be a non-empty string" in e for e in r["errors"])
+
+    def test_calibration_requires_dimension_data(self) -> None:
+        r = _empty_results()
+        marks = _marks_doc(profiles=[{"id": "a", "mark_type": "stamp", "label": "A"}])
+        marks["calibrations"] = [
+            {"integration": "api", "voucher_layout": "stamp_only", "by_mark_profile": {}}
+        ]
+        run_validate_marks_profiles(r, graph={}, marks=marks)
+        assert any("requires by_mark_profile or label_canvas" in e for e in r["errors"])
+
+    def test_calibration_dimension_box_validation(self) -> None:
+        r = _empty_results()
+        marks = _marks_doc(profiles=[{"id": "a", "mark_type": "stamp", "label": "A"}])
+        marks["calibrations"] = [
+            {
+                "integration": "api",
+                "voucher_layout": "stamp_only",
+                "label_canvas": "bad",
+                "by_mark_profile": {"a": "bad"},
+            }
+        ]
+        run_validate_marks_profiles(r, graph={}, marks=marks)
+        assert any("label_canvas must be an object" in e for e in r["errors"])
+        assert any("by_mark_profile['a'] must be an object" in e for e in r["errors"])
+        marks["calibrations"] = [
+            {
+                "integration": "api",
+                "voucher_layout": "stamp_only",
+                "label_canvas": {"width_px": 1},
+            }
+        ]
+        run_validate_marks_profiles(r, graph={}, marks=marks)
+        assert any("label_canvas missing" in e for e in r["errors"])
 
 
 class TestEdgeAccessCoverage:
@@ -454,3 +571,11 @@ class TestGraphValidatorBuildLookupEarlyReturn:
         v.shared_bundle_subdir = tmp_path
         v._bundle_root = tmp_path
         v._build_lookup_structures()
+
+    def test_validate_integrations_manifest_graph_none_returns(self, tmp_path: Path) -> None:
+        (tmp_path / "graph.json").write_text("{}", encoding="utf-8")
+        v = GraphValidator(data_dir=tmp_path)
+        v.graph = None
+        v.integrations = {"file_type": "integrations", "provider": "p", "adapter": "x"}
+        v.validate_integrations_manifest()
+        assert v.results["errors"] == []

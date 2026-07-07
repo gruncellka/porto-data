@@ -508,6 +508,7 @@ ENVELOPES_FILE = _FILE_NAMES["envelopes"]
 LAYOUTS_FILE = _FILE_NAMES["layouts"]
 FEATURES_FILE = _FILE_NAMES["features"]
 MARKS_FILE = _FILE_NAMES["marks"]
+INTEGRATIONS_FILE = _FILE_NAMES.get("integrations", "integrations.json")
 RESTRICTIONS_FILE = _FILE_NAMES["restrictions"]
 MARKETS_FILE = _FILE_NAMES["markets"]
 LIMITS_FILE = _FILE_NAMES["limits"]

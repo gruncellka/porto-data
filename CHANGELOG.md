@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- **`integrations.schema.json`:** Per-operator execution adapter manifest (`adapter`, `capabilities[]`).
+- **Deutsche Post `integrations.json`:** Internetmarke adapter with `mark_purchase_sync` and `wallet_balance_read`.
+
+### Fixed
+
+- **Deutsche Post `edges.wire.internetmarke` (domestic):** Restore correct Internetmarke `productCode` values for base products and Einschreiben composites (e.g. `standardbrief` domestic `1` / `1007`, not `10001` / `10007`).
+- **`graph.dependencies.integrations`:** Clarified description — manifest holds adapter + capabilities; wire codes remain in `edges.wire`.
+- **Graph validator:** `integrations.adapter` must match an `edges.wire` key; `identity.md` documents the split.
+- **TypeScript SDK bundled manifest:** `_bundled/.../integrations.json` now matches the full porto-data schema shape.
+- **Docs:** Deutsche Post mark-profile tables and Internetmarke calibrations moved from `marks.md` to `providers/deutschepost.md`; generic mark contract stays in `marks.md`.
+
+### Changed
+
+- **Deutsche Post `marks.json`:** Added `calibrations[]` for Internetmarke `FRANKING_ZONE` (per `mark_profile`) and `ADDRESS_ZONE` full label canvas (85×43 mm at checkout DPI300).
+- **`marks.schema.json`:** Optional `calibrations[]` on marks files (integration × voucher layout × checkout dpi × px/mm).
+
 ## [0.5.0] - 2026-07-06
 
 ### Changed (breaking)
@@ -22,7 +40,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 
 - Graph validator: **`strategy`**, **`edges.wire`** key coverage, entity wire-code guard; **`strategy: id`** requires `wire.base === products.id`.
-- Docs: wire resolution sequence in [resolution.md](docs/resolution.md); adapter ownership in [identity-map.md](docs/identity-map.md).
+- Docs: wire resolution sequence in [resolution.md](docs/resolution.md); adapter ownership in [identity.md](docs/identity.md).
 
 ## [0.4.1] - 2026-07-05
 
@@ -39,7 +57,7 @@ Release since **v0.3.1**: multi-provider bundle layout, **`policy/markets.json`*
 **Multi-provider catalog**
 
 - **`graph.edges.marks`:** Zone → mark profile resolution under **`edges`** (`products` + `marks`). Catalog in `marks.json` → `profiles[]`.
-- **Mark profiles:** Measured sizes in `marks.json`; resolution via `graph.edges.marks`. See [mark-profiles.md](docs/mark-profiles.md).
+- **Mark profiles:** Measured sizes in `marks.json`; resolution via `graph.edges.marks`. See [marks.md](docs/marks.md).
 - **Operators:** Full letter catalogs for Deutsche Post, Ukrposhta, La Poste, and Swiss Post under **`providers/<id>/`**.
 - **Policy:** **`policy/jurisdictions.json`**, **`policy/restrictions.json`**, **`policy/markets.json`** (DE, FR, CH, UA fiscal defaults).
 - **Swiss Post:** Optional **`providers/swisspost/rules.json`** (e.g. thickness surcharge) where modeled.
@@ -66,7 +84,7 @@ Release since **v0.3.1**: multi-provider bundle layout, **`policy/markets.json`*
 - **Ukrposhta docs:** Letters-only bundle scope; verification **verified** for in-scope letter products; `porto_id` **`large`** = domestic `dokument` documented in [id.md](docs/id.md), [resolution.md](docs/resolution.md), [providers/ukrposhta.md](docs/providers/ukrposhta.md).
 - **Mark layout data model:** Removed `marks.zones` and top-level `mark_edges`. Resolution lives in **`graph.edges.marks`**; `marks.json` is catalog only.
 - **Marks `scope_notes`:** DE sizes flagged as sample-based; CH/FR registered documented as same footprint as lane until measured.
-- **Docs:** `mark-profiles.md`, `resolution.md`, `identity-map.md`, `provider-template.md` — data vs SDK split.
+- **Docs:** `marks.md`, `resolution.md`, `identity.md`, `provider-template.md` — data vs SDK split.
 - **Validation order:** schema → mappings → **markets** → limits → **porto_ids** → **delivery** → graph.
 - **`porto_ids.schema.json`:** Validator rejects **product** enum overlap with **service** or **feature** tokens; products are size buckets only.
 - **`metadata.json`:** Generated with 2-space indent (matches data JSON).
@@ -89,7 +107,7 @@ Release since **v0.3.1**: multi-provider bundle layout, **`policy/markets.json`*
 - **Features:** Operator-scoped **`providers/<id>/features.json`** only (no global features file).
 - **Registry:** Four operators — **`deutschepost`**, **`ukrposhta`**, **`laposte`**, **`swisspost`** — in **`providers.json`** and **`mappings.json`**; keys must match **`providers/<id>/`** folder names. Registry **`label`** = display name; **`name`** = legal entity (replaces former display **`name`** + **`legal_name`**).
 - **`graph.json`:** Removed **`lookup_rules`**, **`global_settings`**, and **`price_lookup`**. **`services`** is top-level. Price paths from **`dependencies`**; join keys from price schemas (`product_id`, `zone`, `weight_tier` / `service_id`).
-- **Mark profile ids:** Provider-specific stamp ids (`internetmarke_*`, `mtel_*`, `webstamp_*`, `label_default`) replaced by shared layout ids (`domestic`, `international`, `registered`, `registered_international`) — not the same namespace as `porto_id: registered`. See [mark-profiles.md](docs/mark-profiles.md).
+- **Mark profile ids:** Provider-specific stamp ids (`internetmarke_*`, `mtel_*`, `webstamp_*`, `label_default`) replaced by shared layout ids (`domestic`, `international`, `registered`, `registered_international`) — not the same namespace as `porto_id: registered`. See [marks.md](docs/marks.md).
 
 **Identity & fiscal**
 

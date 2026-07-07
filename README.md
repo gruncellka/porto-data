@@ -86,7 +86,7 @@ All JSON validates against **`schemas/`**; **`mappings.json`** maps entities to 
 
 ## Related resources
 
-- **Mark profiles:** [docs/mark-profiles.md](docs/mark-profiles.md) — sizes and `zones`.
+- **Mark profiles:** [docs/marks.md](docs/marks.md) — sizes and `zones`.
 - **Policy & fiscal defaults:** [docs/policy.md](docs/policy.md)
 - **Unified `porto_id`:** [docs/id.md](docs/id.md) · [docs/porto_id.md](docs/porto_id.md) · [docs/resolution.md](docs/resolution.md) · [docs/provider-template.md](docs/provider-template.md)
 - **Tariff reconciliation:** [docs/tariff-verification.md](docs/tariff-verification.md)

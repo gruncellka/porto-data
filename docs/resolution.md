@@ -114,7 +114,7 @@ Multiple `services[].id` rows may share one `porto_id` (e.g. two `registered` va
 
 ## Mark profile resolution
 
-Lane and service mark mapping: **`graph.edges.marks[zone]`**. Catalog sizes: **`marks.json`** → `profiles[]`. See [mark-profiles.md](mark-profiles.md).
+Lane and service mark mapping: **`graph.edges.marks[zone]`**. Catalog sizes: **`marks.json`** → `profiles[]`. See [marks.md](marks.md).
 
 ## Wire resolution
 

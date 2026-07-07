@@ -120,6 +120,109 @@
         },
         "additionalProperties": false
       }
+    },
+    "calibrations": {
+      "type": "array",
+      "description": "Optional checkout asset dimensions (integration × voucher layout × dpi)",
+      "items": {
+        "type": "object",
+        "required": [
+          "integration",
+          "voucher_layout",
+          "mime_type",
+          "dpi"
+        ],
+        "properties": {
+          "integration": {
+            "type": "string",
+            "minLength": 1,
+            "description": "graph.edges.wire integration key (same id namespace as integrations.json adapter when present)"
+          },
+          "voucher_layout": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Integration-specific checkout layout token at purchase time (opaque catalog string; allowed values belong in operator docs)"
+          },
+          "mime_type": {
+            "type": "string",
+            "enum": [
+              "image/png",
+              "application/pdf"
+            ]
+          },
+          "dpi": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Checkout raster dpi used when measuring or requesting assets (e.g. 300)"
+          },
+          "by_mark_profile": {
+            "type": "object",
+            "description": "Per mark_profile measured asset dimensions (when layout varies by profile)",
+            "additionalProperties": {
+              "type": "object",
+              "required": [
+                "width_px",
+                "height_px",
+                "width_mm",
+                "height_mm"
+              ],
+              "properties": {
+                "width_px": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "height_px": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "width_mm": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "height_mm": {
+                  "type": "number",
+                  "minimum": 0
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "label_canvas": {
+            "type": "object",
+            "description": "Single shared label canvas dimensions (when layout is uniform across profiles)",
+            "required": [
+              "width_px",
+              "height_px",
+              "width_mm",
+              "height_mm"
+            ],
+            "properties": {
+              "width_px": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "height_px": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "width_mm": {
+                "type": "number",
+                "minimum": 0
+              },
+              "height_mm": {
+                "type": "number",
+                "minimum": 0
+              }
+            },
+            "additionalProperties": false
+          },
+          "notes": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      }
     }
   },
   "additionalProperties": false

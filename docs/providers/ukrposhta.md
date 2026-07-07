@@ -2,8 +2,6 @@
 
 Reference for **reconciling JSON with official letter tariffs** (not a legal tariff publication). Verify on [ukrposhta.ua](https://www.ukrposhta.ua) and current PDF tariffs before production changes.
 
-**Related:** [deutschepost.md](deutschepost.md) · [laposte.md](laposte.md) · [swisspost.md](swisspost.md) · [tariff-verification.md](../tariff-verification.md) · [porto_id.md](../porto_id.md)
-
 ---
 
 ## Bundle scope (letters only)

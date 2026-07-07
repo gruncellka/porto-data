@@ -8,6 +8,7 @@ from scripts.data_files import (
     DEFAULT_PROVIDER,
     ENVELOPES_FILE,
     GRAPH_FILE,
+    INTEGRATIONS_FILE,
     LAYOUTS_FILE,
     MARKS_FILE,
     POLICY_MAPPINGS_KEY,
@@ -38,6 +39,7 @@ from .edges import (
     run_validate_products_in_edges,
 )
 from .execution_semantics import run_validate_execution_semantics
+from .integrations_manifest import run_validate_integrations_manifest
 from .layouts import (
     run_validate_envelope_address_window,
     run_validate_envelope_ids,
@@ -120,6 +122,7 @@ class GraphValidator:
         self.envelopes: dict[str, Any] | None = None
         self.envelope_layouts: dict[str, Any] | None = None
         self.marks: dict[str, Any] | None = None
+        self.integrations: dict[str, Any] | None = None
         self.market: dict[str, Any] | None = None
 
         self.product_dict: dict[str, dict[str, Any]] = {}
@@ -154,6 +157,10 @@ class GraphValidator:
             self.envelopes = load_json(fmt_path)
             self.envelope_layouts = load_json(lay_path)
             self.marks = load_json(self.provider_dir / MARKS_FILE)
+            integrations_path = self.provider_dir / INTEGRATIONS_FILE
+            self.integrations = (
+                load_json(integrations_path) if integrations_path.is_file() else None
+            )
             rules_path = self.provider_dir / "rules.json"
             if rules_path.is_file():
                 self.provider_rules_doc = load_json(rules_path)
@@ -291,10 +298,7 @@ class GraphValidator:
         run_validate_marks_profiles(
             self.results,
             graph=self.graph,
-            products=self.products,
             marks=self.marks,
-            zones=self.zones,
-            services=self.services,
         )
 
     def validate_mark_edges(self) -> None:
@@ -364,6 +368,18 @@ class GraphValidator:
             products=self.products,
         )
 
+    def validate_integrations_manifest(self) -> None:
+        """Validate integrations.json against graph.dependencies and edges.wire."""
+        if self.graph is None:
+            return
+        provider_id = str(self.graph.get("provider") or self.provider_dir.name)
+        run_validate_integrations_manifest(
+            self.results,
+            graph=self.graph,
+            integrations=self.integrations,
+            provider_id=provider_id,
+        )
+
     def validate_wire_edges(self) -> None:
         """Validate graph.edges.wire adapter codes and forbid entity native_id fields."""
         if self.graph is None:
@@ -410,6 +426,7 @@ class GraphValidator:
         self.validate_marks_profiles()
         self.validate_mark_edges()
         self.validate_wire_edges()
+        self.validate_integrations_manifest()
         self.validate_provider_rules()
         self.validate_dependencies()
         self.validate_units()

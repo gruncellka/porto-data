@@ -39,6 +39,11 @@ def wire_edges(graph: dict[str, Any] | None) -> dict[str, Any]:
     return wire if isinstance(wire, dict) else {}
 
 
+def wire_integration_ids(graph: dict[str, Any] | None) -> frozenset[str]:
+    """Integration keys under ``graph.edges.wire`` (provider-neutral)."""
+    return frozenset(wire_edges(graph).keys())
+
+
 def validate_edges_container(results: ValidationResults, *, graph: dict[str, Any] | None) -> bool:
     """Ensure ``edges`` has ``products`` and ``marks`` objects. Returns False if invalid."""
     if graph is None or not isinstance(graph, dict):

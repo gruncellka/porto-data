@@ -12,10 +12,9 @@
       "mark_type": "stamp",
       "label": "Internetmarke domestic",
       "description": "Standard domestic letter franking graphic",
-      "scope_notes": "Not from Deutsche Post official spec; measured from Internetmarke PDF samples (calibration samples/, not in git). Frankierzone placement max 74×40 mm",
       "size": {
-        "width": 36,
-        "height": 16
+        "width": 37,
+        "height": 20
       },
       "mime_type": [
         "image/png",
@@ -27,10 +26,10 @@
       "mark_type": "stamp",
       "label": "Internetmarke international",
       "description": "International letter franking graphic (wider footprint)",
-      "scope_notes": "Not from Deutsche Post official spec; measured from Internetmarke PDF samples. Includes Priority P.P. line when applicable",
+      "scope_notes": "Includes Priority P.P. line when applicable.",
       "size": {
-        "width": 60,
-        "height": 16
+        "width": 62,
+        "height": 20
       },
       "mime_type": [
         "image/png",
@@ -42,10 +41,10 @@
       "mark_type": "stamp",
       "label": "Internetmarke registered domestic",
       "description": "Domestic registered (Einschreiben) franking graphic",
-      "scope_notes": "Not from Deutsche Post official spec; measured from Internetmarke PDF samples. Einschreiben Einwurf / Rückschein and domestic Einschreiben",
+      "scope_notes": "Einschreiben, Einwurf, and Rückschein share this footprint.",
       "size": {
-        "width": 57,
-        "height": 21
+        "width": 62,
+        "height": 20
       },
       "mime_type": [
         "image/png",
@@ -57,15 +56,61 @@
       "mark_type": "stamp",
       "label": "Internetmarke registered international",
       "description": "International registered franking graphic",
-      "scope_notes": "Not from Deutsche Post official spec; measured from Internetmarke PDF samples. International Einschreiben; taller footprint with barcode and service lines",
+      "scope_notes": "Einschreiben service lines and barcode.",
       "size": {
-        "width": 57,
-        "height": 30
+        "width": 62,
+        "height": 33
       },
       "mime_type": [
         "image/png",
         "application/pdf"
       ]
+    }
+  ],
+  "calibrations": [
+    {
+      "integration": "internetmarke",
+      "voucher_layout": "FRANKING_ZONE",
+      "mime_type": "image/png",
+      "dpi": 300,
+      "by_mark_profile": {
+        "domestic": {
+          "width_px": 437,
+          "height_px": 236,
+          "width_mm": 37.0,
+          "height_mm": 20.0
+        },
+        "international": {
+          "width_px": 732,
+          "height_px": 236,
+          "width_mm": 62.0,
+          "height_mm": 20.0
+        },
+        "registered": {
+          "width_px": 732,
+          "height_px": 236,
+          "width_mm": 62.0,
+          "height_mm": 20.0
+        },
+        "registered_international": {
+          "width_px": 732,
+          "height_px": 384,
+          "width_mm": 62.0,
+          "height_mm": 32.5
+        }
+      }
+    },
+    {
+      "integration": "internetmarke",
+      "voucher_layout": "ADDRESS_ZONE",
+      "mime_type": "image/png",
+      "dpi": 300,
+      "label_canvas": {
+        "width_px": 1004,
+        "height_px": 508,
+        "width_mm": 85.0,
+        "height_mm": 43.0
+      }
     }
   ]
 }

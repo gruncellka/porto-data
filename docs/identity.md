@@ -4,7 +4,7 @@ One-page map of **who names what** across **porto-data** (JSON + schemas), **Por
 
 **porto-data** ships facts and validates them. **Porto SDK** loads the bundle and resolves. This repo has no resolver implementation.
 
-**See also:** [id.md](id.md) · [mark-profiles.md](mark-profiles.md) · [resolution.md](resolution.md) · [SDK_ARCHITECTURE.md](../../docs/sdks/SDK_ARCHITECTURE.md)
+**See also:** [id.md](id.md) · [marks.md](marks.md) · [resolution.md](resolution.md) · [SDK_ARCHITECTURE.md](../../docs/sdks/SDK_ARCHITECTURE.md)
 
 ---
 
@@ -128,6 +128,11 @@ marks.json
   profiles[].size ────────────────► layout width/height (mm)
   default_profile ────────────────► fallback when edges.marks omits a zone
 
+integrations.json
+  adapter ────────────────────────► must match graph.edges.wire key (e.g. internetmarke)
+  capabilities[] ─────────────────► SDK execution gates (mark_purchase_sync, wallet_balance_read)
+  graph.dependencies.integrations ► bundle index only — not integration data
+
 formats/layouts.json
   jurisdictions[DE].post_mark ────► envelope anchor (mm), not stamp size
 ```
@@ -155,7 +160,9 @@ zone + services           →    graph.edges.marks[zone] + services overrides
 
 adapter purchase          →    graph.edges.wire.internetmarke[product][zone][service?]
                           →    wire_code (e.g. 10001) + API payload
-                          →    PDF bytes                      PortoMark.content
+                          →    integrations.json.adapter selects wire table
+                          →    integrations.json.capabilities gate SDK billing/execution
+                          →    PDF/PNG bytes                      PortoMark.content
                           →    tracking ref                   PortoMark.tracking_number
 ```
 

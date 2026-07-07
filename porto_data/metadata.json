@@ -5,7 +5,7 @@
     "version": "0.5.0",
     "description": "Multi-provider postal JSON: operator catalogs, pricing, shared policy (markets, restrictions), and schemas"
   },
-  "generated_at": "2026-07-06T13:18:20.843035Z",
+  "generated_at": "2026-07-07T14:17:48.134430Z",
   "policy": {
     "jurisdictions": {
       "data": {
@@ -95,13 +95,13 @@
       "marks": {
         "data": {
           "path": "providers/deutschepost/marks.json",
-          "checksum": "0cd5cdece2b5017432a2cdd2c364a8c2f01713f2bb39a103c36c372f0098e3a8",
-          "size": 2278
+          "checksum": "554353674223e544d3367d800a2a2a2e91a957940692b424ae22fd114f60a04a",
+          "size": 2907
         },
         "schema": {
           "path": "schemas/marks.schema.json",
-          "checksum": "364c53a0bf6c38d62679d8c32585e7e64178366d3684ef2309be4c96f844fc9a",
-          "size": 3722,
+          "checksum": "7c17886b7fc408095d2a67ae4d288027c1f56663dc57c044e1c6f8312a2d4b94",
+          "size": 6865,
           "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/marks.schema.json"
         }
       },
@@ -212,14 +212,27 @@
       "graph": {
         "data": {
           "path": "providers/deutschepost/graph.json",
-          "checksum": "4172bdc4cbd91cf727e7296292d29c1cdd2718510c89a502c9530b9a78651db2",
-          "size": 8771
+          "checksum": "52a0bda872fd049029e274c3ff71bd67751b7609cf4b8f6fd9d2a7ab7257a83e",
+          "size": 8939
         },
         "schema": {
           "path": "schemas/graph.schema.json",
           "checksum": "c89a1002565390c637b0d13c20976e867fdf766c3f65eb83d372edff3c2dc8c6",
           "size": 7836,
           "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/graph.schema.json"
+        }
+      },
+      "integrations": {
+        "data": {
+          "path": "providers/deutschepost/integrations.json",
+          "checksum": "d4ea0326d8c088df5944fe4bea6181a6fe564ab2910cc3e89f0de395de1afd25",
+          "size": 303
+        },
+        "schema": {
+          "path": "schemas/integrations.schema.json",
+          "checksum": "272f5e9d759d0b9bbf18655449ae40fc89f7dac4796a0cccaf133cc9da1e9d3a",
+          "size": 1570,
+          "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/integrations.schema.json"
         }
       }
     },
@@ -232,8 +245,8 @@
         },
         "schema": {
           "path": "schemas/marks.schema.json",
-          "checksum": "364c53a0bf6c38d62679d8c32585e7e64178366d3684ef2309be4c96f844fc9a",
-          "size": 3722,
+          "checksum": "7c17886b7fc408095d2a67ae4d288027c1f56663dc57c044e1c6f8312a2d4b94",
+          "size": 6865,
           "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/marks.schema.json"
         }
       },
@@ -364,8 +377,8 @@
         },
         "schema": {
           "path": "schemas/marks.schema.json",
-          "checksum": "364c53a0bf6c38d62679d8c32585e7e64178366d3684ef2309be4c96f844fc9a",
-          "size": 3722,
+          "checksum": "7c17886b7fc408095d2a67ae4d288027c1f56663dc57c044e1c6f8312a2d4b94",
+          "size": 6865,
           "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/marks.schema.json"
         }
       },
@@ -496,8 +509,8 @@
         },
         "schema": {
           "path": "schemas/marks.schema.json",
-          "checksum": "364c53a0bf6c38d62679d8c32585e7e64178366d3684ef2309be4c96f844fc9a",
-          "size": 3722,
+          "checksum": "7c17886b7fc408095d2a67ae4d288027c1f56663dc57c044e1c6f8312a2d4b94",
+          "size": 6865,
           "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/marks.schema.json"
         }
       },
@@ -641,8 +654,8 @@
     "mappings": {
       "data": {
         "path": "mappings.json",
-        "checksum": "56b20983f12be2fa1d4cfc0ee779634000c78bc88a983507113eed3e684ad053",
-        "size": 3916
+        "checksum": "704aa0d65c58be9eb873a3ff985b3052c7e7591b078319769811c78ae482f1d4",
+        "size": 4004
       },
       "schema": {
         "path": "schemas/mappings.schema.json",
