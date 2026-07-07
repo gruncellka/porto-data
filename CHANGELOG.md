@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.5.1] - 2026-07-07
+
+Release since **v0.5.0**: SDK execution manifest (`integrations.json`), Internetmarke mark calibrations, domestic wire `productCode` fix, and governance/docs alignment.
+
 ### Added
 
 - **`integrations.schema.json`:** Per-operator execution adapter manifest (`adapter`, `capabilities[]`).
