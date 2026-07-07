@@ -1,6 +1,6 @@
 {
     "name": "@gruncellka/porto-data",
-    "version": "0.5.0",
+    "version": "0.5.1",
     "description": "Multi-provider postal JSON: operator catalogs, pricing, shared policy (markets, restrictions), and schemas",
     "author": "Oleksandr Tsyba",
     "license": "Apache-2.0",

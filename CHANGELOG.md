@@ -4,23 +4,26 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.5.1] - 2026-07-07
+
 ### Added
 
 - **`integrations.schema.json`:** Per-operator execution adapter manifest (`adapter`, `capabilities[]`).
 - **Deutsche Post `integrations.json`:** Internetmarke adapter with `mark_purchase_sync` and `wallet_balance_read`.
+- **Deutsche Post `marks.json`:** `calibrations[]` for Internetmarke `FRANKING_ZONE` (per `mark_profile`) and `ADDRESS_ZONE` full label canvas (85×43 mm at checkout dpi 300).
+- **`marks.schema.json`:** Optional `calibrations[]` (integration × voucher layout × checkout dpi × px/mm).
+- **Graph validators:** `integrations_manifest` (adapter vs `edges.wire`); `marks_profiles` calibration cross-checks.
 
 ### Fixed
 
 - **Deutsche Post `edges.wire.internetmarke` (domestic):** Restore correct Internetmarke `productCode` values for base products and Einschreiben composites (e.g. `standardbrief` domestic `1` / `1007`, not `10001` / `10007`).
 - **`graph.dependencies.integrations`:** Clarified description — manifest holds adapter + capabilities; wire codes remain in `edges.wire`.
-- **Graph validator:** `integrations.adapter` must match an `edges.wire` key; `identity.md` documents the split.
-- **TypeScript SDK bundled manifest:** `_bundled/.../integrations.json` now matches the full porto-data schema shape.
-- **Docs:** Deutsche Post mark-profile tables and Internetmarke calibrations moved from `marks.md` to `providers/deutschepost.md`; generic mark contract stays in `marks.md`.
 
 ### Changed
 
-- **Deutsche Post `marks.json`:** Added `calibrations[]` for Internetmarke `FRANKING_ZONE` (per `mark_profile`) and `ADDRESS_ZONE` full label canvas (85×43 mm at checkout DPI300).
-- **`marks.schema.json`:** Optional `calibrations[]` on marks files (integration × voucher layout × checkout dpi × px/mm).
+- **Docs:** Renamed `identity-map.md` → [identity.md](docs/identity.md) and `mark-profiles.md` → [marks.md](docs/marks.md); Deutsche Post mark tables and Internetmarke calibrations live in [providers/deutschepost.md](docs/providers/deutschepost.md).
+- **`marks.schema.json`:** Provider-neutral calibration field descriptions (no operator-specific examples in shared contract).
+- **Governance:** Cursor rules and `BUGBOT.md` rules 33–36 for integrations vs wire layering and mark calibrations.
 
 ## [0.5.0] - 2026-07-06
 
