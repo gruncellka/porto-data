@@ -8,17 +8,18 @@ How franking **graphic footprints** are named and stored in **porto-data**.
 
 | Layer | Where defined | Examples |
 |-------|---------------|----------|
-| **Carrier native** | `products.json`, adapters | `standardbrief`, `native_id: 10001` |
+| **Carrier native** | `products.json` (`id`), `graph.edges.wire` | `standardbrief`, wire `10001` (Deutsche Post Internetmarke) |
 | **Porto `porto_id`** | `schemas/porto_ids.schema.json` | `small` … `extra_large` (product); `registered` (service) |
 | **Porto `mark_profile`** | `marks.json` → `profiles[].id` | `domestic`, `registered_international` |
 
-Display-only: `marks.profiles[].label` — e.g. “Internetmarke domestic”.
+Display-only: `marks.profiles[].label` — operator-facing text in `marks.json`.
 
 ## What porto-data contains
 
 | File | Fields |
 |------|--------|
 | `marks.json` → `profiles[]` | `id`, `mark_type`, `size` (mm), `mime_type` |
+| `marks.json` → `calibrations[]` | Optional checkout output dimensions per integration layout variant |
 | `marks.json` → `default_profile` | Fallback when `graph.edges.marks` omits a zone |
 | `graph.json` → `edges.marks` | Per zone: `profile` + optional `services` overrides |
 | `graph.json` → `edges.products` | Product × zone × weight (unchanged) |
@@ -29,6 +30,8 @@ Display-only: `marks.profiles[].label` — e.g. “Internetmarke domestic”.
 Validators check profile ids, `edges.marks` keys vs `zones.json`, service ids vs `graph.services`, and schema shape.
 
 ## `graph.edges` shape
+
+Example (Deutsche Post native ids — other operators use their own `products.json` / `services.json` keys):
 
 ```json
 "edges": {
@@ -62,17 +65,20 @@ Validators check profile ids, `edges.marks` keys vs `zones.json`, service ids vs
 1. Read `graph.edges.marks[zone].profile` (else `marks.default_profile`).
 2. For each selected native service id, if `edges.marks[zone].services[service_id]` exists → use that profile.
 3. Look up `marks.profiles[id].size` and `formats/layouts.json` `post_mark`.
+4. When `marks.calibrations[]` is present, use it for integration-specific checkout output size (mm/px at a given dpi).
 
 Service keys are **native ids** from `graph.services` / `services.json`, not `porto_id`.
 
-## Deutsche Post examples
+## Per-provider mark tables
 
-| Zone | Selected services | Profile id |
-|------|-------------------|------------|
-| `domestic` | none | `domestic` |
-| `world` | none | `international` |
-| `domestic` | `einschreiben` | `registered` |
-| `world` | `einschreiben` | `registered_international` |
+Operator-specific profile matrices, measured sizes, and adapter calibrations live in **`docs/providers/<id>.md`** (not here).
+
+| Provider | Doc |
+|----------|-----|
+| Deutsche Post | [providers/deutschepost.md](providers/deutschepost.md#mark-profiles--internetmarke-calibrations) |
+| La Poste | [providers/laposte.md](providers/laposte.md) |
+| Swiss Post | [providers/swisspost.md](providers/swisspost.md) |
+| Ukrposhta | [providers/ukrposhta.md](providers/ukrposhta.md) |
 
 ## See also
 

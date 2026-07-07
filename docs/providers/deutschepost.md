@@ -2,7 +2,7 @@
 
 Reference for **reconciling JSON with official letter/postcard tariffs** (not a legal tariff publication). Verify on [deutschepost.de](https://www.deutschepost.de) and current **Preisblätter** before production changes.
 
-**Related:** [ukrposhta.md](ukrposhta.md) · [laposte.md](laposte.md) · [swisspost.md](swisspost.md) · [tariff-verification.md](../tariff-verification.md)
+**Related:** [mark-profiles.md](../mark-profiles.md) · [ukrposhta.md](ukrposhta.md) · [laposte.md](laposte.md) · [swisspost.md](swisspost.md) · [tariff-verification.md](../tariff-verification.md)
 
 ---
 
@@ -25,7 +25,8 @@ Reference for **reconciling JSON with official letter/postcard tariffs** (not a 
 | `prices/services.json` | `service_prices` | Surcharges (Einschreiben, etc.) |
 | `services.json` | `services` | Service definitions |
 | `features.json` | `features` | Feature ids used by services |
-| `marks.json` | `marks` | Mark/label profiles |
+| `marks.json` | `marks` | Mark/label profiles and optional checkout calibrations |
+| `integrations.json` | `integrations` | SDK execution manifest (`internetmarke`, capabilities) |
 | `weights.json` | `weights` | Weight tier ids (`W0020` …) |
 | `zones.json` | `zones` | Domestic / EU / Europe / world buckets |
 | `limits.json` | `limits` | Provider operational overlays on top of global policy (often empty) |
@@ -92,6 +93,34 @@ Reference for **reconciling JSON with official letter/postcard tariffs** (not a 
 **`service_prices` (cents):** `einschreiben` 265 · `einschreiben_einwurf` 235 · `einschreiben_rueckschein` 485 · `zusatzversicherung` 250.
 
 **Graph:** weight tiers in official ladder must appear in **`edges`**; prices via `dependencies` + `prices/products.json` / `prices/services.json`.
+
+---
+
+## Mark profiles & Internetmarke calibrations
+
+Cross-provider resolution rules: [mark-profiles.md](../mark-profiles.md).
+
+### Zone × service → profile
+
+| Zone | Selected services | Profile id |
+|------|-------------------|------------|
+| `domestic` | none | `domestic` |
+| `world` | none | `international` |
+| `domestic` | `einschreiben` | `registered` |
+| `world` | `einschreiben` | `registered_international` |
+
+Mapped in `graph.json` → `edges.marks`; catalog sizes in `marks.json` → `profiles[]`.
+
+### Internetmarke checkout calibrations
+
+`marks.json` → `calibrations[]` at checkout **DPI300** (measured from live Internetmarke output):
+
+| `voucher_layout` | Asset | Size (mm) | Size (px) |
+|------------------|-------|-----------|-----------|
+| `FRANKING_ZONE` | Marke only (per `mark_profile`) | 37×20 · 62×20 · 62×32.5 | 437×236 · 732×236 · 732×384 |
+| `ADDRESS_ZONE` | Full label (all profiles) | **85×43** | **1004×508** |
+
+`profiles[].size` is nominal marke footprint (mm). Per-layout px/mm at a given checkout dpi is in `calibrations[]` (`by_mark_profile` or `label_canvas`).
 
 ---
 

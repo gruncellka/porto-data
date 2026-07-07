@@ -1,0 +1,10 @@
+{
+  "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/integrations.schema.json",
+  "file_type": "integrations",
+  "provider": "deutschepost",
+  "adapter": "internetmarke",
+  "capabilities": [
+    "mark_purchase_sync",
+    "wallet_balance_read"
+  ]
+}
