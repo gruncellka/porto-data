@@ -164,6 +164,61 @@ class TestMarksProfilesCoverage:
         run_validate_marks_profiles(r, graph={}, marks=marks)
         assert any("source_run must not be set" in e for e in r["errors"])
 
+    def test_calibrations_must_be_array_when_present(self) -> None:
+        r = _empty_results()
+        marks = _marks_doc(profiles=[{"id": "a", "mark_type": "stamp", "label": "A"}])
+        marks["calibrations"] = "bad"
+        run_validate_marks_profiles(r, graph={}, marks=marks)
+        assert any("calibrations must be an array" in e for e in r["errors"])
+
+    def test_calibration_row_must_be_object(self) -> None:
+        r = _empty_results()
+        marks = _marks_doc(profiles=[{"id": "a", "mark_type": "stamp", "label": "A"}])
+        marks["calibrations"] = ["bad"]
+        run_validate_marks_profiles(r, graph={}, marks=marks)
+        assert any("calibrations[0] must be an object" in e for e in r["errors"])
+
+    def test_calibration_requires_integration_and_layout(self) -> None:
+        r = _empty_results()
+        marks = _marks_doc(profiles=[{"id": "a", "mark_type": "stamp", "label": "A"}])
+        marks["calibrations"] = [{"integration": "", "voucher_layout": ""}]
+        run_validate_marks_profiles(r, graph={}, marks=marks)
+        assert any("integration must be a non-empty string" in e for e in r["errors"])
+        assert any("voucher_layout must be a non-empty string" in e for e in r["errors"])
+
+    def test_calibration_requires_dimension_data(self) -> None:
+        r = _empty_results()
+        marks = _marks_doc(profiles=[{"id": "a", "mark_type": "stamp", "label": "A"}])
+        marks["calibrations"] = [
+            {"integration": "api", "voucher_layout": "stamp_only", "by_mark_profile": {}}
+        ]
+        run_validate_marks_profiles(r, graph={}, marks=marks)
+        assert any("requires by_mark_profile or label_canvas" in e for e in r["errors"])
+
+    def test_calibration_dimension_box_validation(self) -> None:
+        r = _empty_results()
+        marks = _marks_doc(profiles=[{"id": "a", "mark_type": "stamp", "label": "A"}])
+        marks["calibrations"] = [
+            {
+                "integration": "api",
+                "voucher_layout": "stamp_only",
+                "label_canvas": "bad",
+                "by_mark_profile": {"a": "bad"},
+            }
+        ]
+        run_validate_marks_profiles(r, graph={}, marks=marks)
+        assert any("label_canvas must be an object" in e for e in r["errors"])
+        assert any("by_mark_profile['a'] must be an object" in e for e in r["errors"])
+        marks["calibrations"] = [
+            {
+                "integration": "api",
+                "voucher_layout": "stamp_only",
+                "label_canvas": {"width_px": 1},
+            }
+        ]
+        run_validate_marks_profiles(r, graph={}, marks=marks)
+        assert any("label_canvas missing" in e for e in r["errors"])
+
 
 class TestEdgeAccessCoverage:
     def test_product_edges_empty_when_no_edges_root(self) -> None:
@@ -516,3 +571,11 @@ class TestGraphValidatorBuildLookupEarlyReturn:
         v.shared_bundle_subdir = tmp_path
         v._bundle_root = tmp_path
         v._build_lookup_structures()
+
+    def test_validate_integrations_manifest_graph_none_returns(self, tmp_path: Path) -> None:
+        (tmp_path / "graph.json").write_text("{}", encoding="utf-8")
+        v = GraphValidator(data_dir=tmp_path)
+        v.graph = None
+        v.integrations = {"file_type": "integrations", "provider": "p", "adapter": "x"}
+        v.validate_integrations_manifest()
+        assert v.results["errors"] == []

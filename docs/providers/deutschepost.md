@@ -2,8 +2,6 @@
 
 Reference for **reconciling JSON with official letter/postcard tariffs** (not a legal tariff publication). Verify on [deutschepost.de](https://www.deutschepost.de) and current **Preisblätter** before production changes.
 
-**Related:** [mark-profiles.md](../mark-profiles.md) · [ukrposhta.md](ukrposhta.md) · [laposte.md](laposte.md) · [swisspost.md](swisspost.md) · [tariff-verification.md](../tariff-verification.md)
-
 ---
 
 ## Verification status

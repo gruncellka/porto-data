@@ -2,8 +2,6 @@
 
 Reference for **reconciling JSON with official letter tariffs** (not a legal tariff publication). Verify on [post.ch](https://www.post.ch) and brochure PDFs before production changes.
 
-**Related:** [deutschepost.md](deutschepost.md) · [ukrposhta.md](ukrposhta.md) · [laposte.md](laposte.md) · [tariff-verification.md](../tariff-verification.md)
-
 ---
 
 ## Verification status

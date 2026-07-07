@@ -107,3 +107,62 @@ class TestIntegrationsManifest:
             provider_id="acmepost",
         )
         assert any("dependencies.integrations is missing" in w for w in r["warnings"])
+
+    def test_graph_none_or_invalid_returns_early(self) -> None:
+        r = _results()
+        run_validate_integrations_manifest(
+            r, graph=None, integrations=_manifest(), provider_id="acmepost"
+        )
+        assert r["errors"] == [] and r["warnings"] == []
+
+        r2 = _results()
+        run_validate_integrations_manifest(
+            r2, graph="not-a-graph", integrations=_manifest(), provider_id="acmepost"
+        )
+        assert r2["errors"] == [] and r2["warnings"] == []
+
+    def test_wrong_dependency_file_errors(self) -> None:
+        r = _results()
+        graph = _graph()
+        graph["dependencies"]["integrations"]["file"] = "wrong.json"
+        run_validate_integrations_manifest(
+            r, graph=graph, integrations=_manifest(), provider_id="acmepost"
+        )
+        assert any("dependencies.integrations.file must be" in e for e in r["errors"])
+
+    def test_integrations_not_dict_returns_without_side_effects(self) -> None:
+        r = _results()
+        run_validate_integrations_manifest(
+            r,
+            graph=_graph(),
+            integrations=[],  # type: ignore[arg-type]
+            provider_id="acmepost",
+        )
+        assert r["errors"] == [] and r["warnings"] == []
+
+    def test_provider_mismatch_errors(self) -> None:
+        r = _results()
+        run_validate_integrations_manifest(
+            r,
+            graph=_graph(),
+            integrations=_manifest(provider="other"),
+            provider_id="acmepost",
+        )
+        assert any("provider must be 'acmepost'" in e for e in r["errors"])
+
+    def test_empty_adapter_errors(self) -> None:
+        r = _results()
+        run_validate_integrations_manifest(
+            r,
+            graph=_graph(),
+            integrations=_manifest(adapter="   "),
+            provider_id="acmepost",
+        )
+        assert any("adapter must be a non-empty string" in e for e in r["errors"])
+
+    def test_dependency_file_pointer_correct(self) -> None:
+        r = _results()
+        run_validate_integrations_manifest(
+            r, graph=_graph(), integrations=_manifest(), provider_id="acmepost"
+        )
+        assert any("points at integrations.json" in c for c in r["correct"])
