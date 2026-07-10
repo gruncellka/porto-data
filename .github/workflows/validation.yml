@@ -1,6 +1,8 @@
 name: validation
 
-on: [push, pull_request]
+# Every push to any branch (with or without an open PR). PR checks use these runs.
+on:
+    push:
 
 concurrency:
     group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
