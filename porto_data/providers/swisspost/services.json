@@ -18,7 +18,7 @@
       ]
     },
     {
-      "id": "brief_dicke_zuschlag",
+      "id": "zuschlag_dicke",
       "porto_id": "thickness",
       "name": "Zuschlag Dicke",
       "label": "Letter thickness surcharge (>2 cm up to 5 cm)",

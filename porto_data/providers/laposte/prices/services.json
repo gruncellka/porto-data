@@ -7,7 +7,7 @@
   "file_type": "service_prices",
   "service_prices": [
     {
-      "service_id": "suivi_option",
+      "service_id": "option_suivi",
       "price": [
         {
           "amount": 50,

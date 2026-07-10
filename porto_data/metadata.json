@@ -5,7 +5,7 @@
     "version": "0.5.1",
     "description": "Multi-provider postal JSON: operator catalogs, pricing, shared policy (markets, restrictions), and schemas"
   },
-  "generated_at": "2026-07-10T11:51:13.798853Z",
+  "generated_at": "2026-07-10T13:03:25.544748Z",
   "policy": {
     "jurisdictions": {
       "data": {
@@ -108,8 +108,8 @@
       "products": {
         "data": {
           "path": "providers/deutschepost/products.json",
-          "checksum": "1732b66f0f67836870386fd731a6c3fbf0cbd590bc3388941458c070e3a7387a",
-          "size": 3978
+          "checksum": "d733c2809dee62e7d7b61a1a623f67908fd7c1a7a5b599926d5b572ff041ec2d",
+          "size": 3966
         },
         "schema": {
           "path": "schemas/products.schema.json",
@@ -147,8 +147,8 @@
       "product_prices": {
         "data": {
           "path": "providers/deutschepost/prices/products.json",
-          "checksum": "4ede282b264b9b2c13d28b23a80930ca6d32b3589efd89798cc7e5b3adfbb46e",
-          "size": 5021
+          "checksum": "73c4e67af14111dbf177f2f26e7b603bcb7f4be68f32b6c7724a5aa735f388b5",
+          "size": 4985
         },
         "schema": {
           "path": "schemas/product_prices.schema.json",
@@ -212,8 +212,8 @@
       "graph": {
         "data": {
           "path": "providers/deutschepost/graph.json",
-          "checksum": "5337304fd7dd64c477fad666782fa6312bceef8f06c21300c91f38224cb22073",
-          "size": 8917
+          "checksum": "683b5a5574d330631533e1d1245db62d1945ebd103e68f8f9236b2ddd5a7b3a1",
+          "size": 8893
         },
         "schema": {
           "path": "schemas/graph.schema.json",
@@ -266,8 +266,8 @@
       "features": {
         "data": {
           "path": "providers/ukrposhta/features.json",
-          "checksum": "5628ca0d7c501e1275d1ada290a26e95bd98c7a03ee744f77eccc65ef1a96cce",
-          "size": 1002
+          "checksum": "377abab5a37ced8ea90015d09ac95577ea9d50206014e4397efe4cc723c0b4e0",
+          "size": 1025
         },
         "schema": {
           "path": "schemas/features.schema.json",
@@ -279,8 +279,8 @@
       "services": {
         "data": {
           "path": "providers/ukrposhta/services.json",
-          "checksum": "7b23332c8d68991233e23340f5557257a15a5baa5c2f28f187f9995e078074d9",
-          "size": 1313
+          "checksum": "38bbfadd7ebaebe33e4a26c4bfbc427f0a6b430f5a2c5c51dd2170775fd2eb79",
+          "size": 1362
         },
         "schema": {
           "path": "schemas/services.schema.json",
@@ -305,8 +305,8 @@
       "service_prices": {
         "data": {
           "path": "providers/ukrposhta/prices/services.json",
-          "checksum": "ee60e7a2c36d9d9212fb1989636018b75d6c2ba141c4f2da5d71d56994663742",
-          "size": 894
+          "checksum": "4988ebb49b2a574cc3e3a1d47a06db0c8eaef91b460895e3af35d11a8da1f924",
+          "size": 918
         },
         "schema": {
           "path": "schemas/service_prices.schema.json",
@@ -357,8 +357,8 @@
       "graph": {
         "data": {
           "path": "providers/ukrposhta/graph.json",
-          "checksum": "8c8ba70e80c5087b5a95a54e9d4f9ffb60f5f89f44b88beecfb5c4cc089daac9",
-          "size": 4111
+          "checksum": "0879ecf73a23c7eae97ae770c528952018f792016f671b7fdeeaff858166371d",
+          "size": 4135
         },
         "schema": {
           "path": "schemas/graph.schema.json",
@@ -385,8 +385,8 @@
       "products": {
         "data": {
           "path": "providers/laposte/products.json",
-          "checksum": "f29d13118ae0b4c9e04ee870d4ce6edd3ed9e32d51df0025edb4695f7b0d5981",
-          "size": 5528
+          "checksum": "34c2316db2ba2b0a6896231d989201c149a658ab02f710385cea2785242a09c2",
+          "size": 5537
         },
         "schema": {
           "path": "schemas/products.schema.json",
@@ -411,7 +411,7 @@
       "services": {
         "data": {
           "path": "providers/laposte/services.json",
-          "checksum": "82fd6bd1e2e3a1c31c8ea92098c3f3033dfabac0b4c8e1a66d8cf72cb24c77b9",
+          "checksum": "ee28f6d9ce77eb853c2883052b5b6a9ced29c799e8012e6bdfc446ab210ffe1d",
           "size": 1811
         },
         "schema": {
@@ -424,8 +424,8 @@
       "product_prices": {
         "data": {
           "path": "providers/laposte/prices/products.json",
-          "checksum": "b3b18300a6947f54166e3e150f5079350e9d5ba4c9414d2edceb19b4aa7b88aa",
-          "size": 20519
+          "checksum": "f5f1d9fad12c92af351fea507a5e0ea942698025eeb756761af5e3ee8b5ec974",
+          "size": 20708
         },
         "schema": {
           "path": "schemas/product_prices.schema.json",
@@ -437,7 +437,7 @@
       "service_prices": {
         "data": {
           "path": "providers/laposte/prices/services.json",
-          "checksum": "90ac0d18c0d67f059eb84e1c41f36979b03b77885bfb38ad02a2639cb6d920f4",
+          "checksum": "3a7475e8b4ac4057b7612d15c39aa3c02360d200878d60c1c056c994e38a002a",
           "size": 865
         },
         "schema": {
@@ -489,8 +489,8 @@
       "graph": {
         "data": {
           "path": "providers/laposte/graph.json",
-          "checksum": "64715da78483a45f17527c42a05f72fc7e9058d64efc979dfd1d7fd94e6a15a5",
-          "size": 7146
+          "checksum": "9f700ecccede668ed81d1ad4d567e4d252c941c7c2d8160598d92e4249350f53",
+          "size": 7191
         },
         "schema": {
           "path": "schemas/graph.schema.json",
@@ -517,8 +517,8 @@
       "rules": {
         "data": {
           "path": "providers/swisspost/rules.json",
-          "checksum": "bb1785bf72c542873c92a80defbb779ce33f9da9e4378086cecac602c336ecdc",
-          "size": 815
+          "checksum": "ae265b66aa927edc23beda90e5a736e4da997a2608ba2b4a93259ba227e7cd28",
+          "size": 809
         },
         "schema": {
           "path": "schemas/rules.schema.json",
@@ -556,8 +556,8 @@
       "services": {
         "data": {
           "path": "providers/swisspost/services.json",
-          "checksum": "c2fa2bd1d14df5363fc439eef02f8d948e1245907824ce2b8527602f84a82e2e",
-          "size": 1285
+          "checksum": "d06301fcabe703183ced587bb20e635a064a23eb26e94076d3983bba1a6e85a8",
+          "size": 1279
         },
         "schema": {
           "path": "schemas/services.schema.json",
@@ -582,8 +582,8 @@
       "service_prices": {
         "data": {
           "path": "providers/swisspost/prices/services.json",
-          "checksum": "bcb16154457a83bdd6ec9ad8550a3274c19de744e811146a62d993ef830570d7",
-          "size": 648
+          "checksum": "e99690ef2213c83780aacb56eeea7afd3a065e564e67ff6935c4a28a1aef56d3",
+          "size": 642
         },
         "schema": {
           "path": "schemas/service_prices.schema.json",

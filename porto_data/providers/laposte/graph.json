@@ -108,7 +108,7 @@
     }
   },
   "services": [
-    "suivi_option",
+    "option_suivi",
     "avis_de_reception_national",
     "avis_de_reception_international"
   ],
@@ -198,7 +198,7 @@
           "W2000"
         ]
       },
-      "lettre_recommandee_inter_r_un": {
+      "lettre_recommandee_internationale_r_un": {
         "zones": [
           "zone_1_eu",
           "zone_2_europe",
@@ -270,15 +270,15 @@
             "base": "lettre_recommandee_r_trois"
           }
         },
-        "lettre_recommandee_inter_r_un": {
+        "lettre_recommandee_internationale_r_un": {
           "zone_1_eu": {
-            "base": "lettre_recommandee_inter_r_un"
+            "base": "lettre_recommandee_internationale_r_un"
           },
           "zone_2_europe": {
-            "base": "lettre_recommandee_inter_r_un"
+            "base": "lettre_recommandee_internationale_r_un"
           },
           "world": {
-            "base": "lettre_recommandee_inter_r_un"
+            "base": "lettre_recommandee_internationale_r_un"
           }
         }
       }

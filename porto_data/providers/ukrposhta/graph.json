@@ -108,9 +108,9 @@
     }
   },
   "services": [
-    "return_receipt_paper",
-    "return_receipt_electronic",
-    "recommended_international"
+    "paperove_povidomlennia_vruchennia",
+    "elektronne_povidomlennia_vruchennia",
+    "mizhnarodne_zareiestrovane"
   ],
   "edges": {
     "products": {

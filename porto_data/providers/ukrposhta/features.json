@@ -10,14 +10,14 @@
       "description": "Delivery with recipient signature required."
     },
     {
-      "id": "return_receipt_paper",
+      "id": "paperove_povidomlennia_vruchennia",
       "porto_id": "return_receipt",
       "name": "Повідомлення про вручення (паперове)",
       "label": "Return receipt (paper)",
       "description": "Paper delivery notice returned to the sender."
     },
     {
-      "id": "return_receipt_electronic",
+      "id": "elektronne_povidomlennia_vruchennia",
       "porto_id": "return_receipt",
       "name": "Повідомлення про вручення (електронне)",
       "label": "Return receipt (electronic)",

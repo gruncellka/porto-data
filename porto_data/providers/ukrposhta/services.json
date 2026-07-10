@@ -3,31 +3,31 @@
   "file_type": "services",
   "services": [
     {
-      "id": "return_receipt_paper",
+      "id": "paperove_povidomlennia_vruchennia",
       "porto_id": "return_receipt",
       "name": "Паперове повідомлення про вручення",
       "label": "Return receipt (paper)",
       "description": "Paper delivery notice returned to sender",
       "features": [
-        "return_receipt_paper"
+        "paperove_povidomlennia_vruchennia"
       ],
       "enables_tracking": true
     },
     {
-      "id": "return_receipt_electronic",
+      "id": "elektronne_povidomlennia_vruchennia",
       "porto_id": "return_receipt",
       "name": "Електронне повідомлення про вручення",
       "label": "Return receipt (electronic)",
       "description": "Electronic delivery notice returned to sender",
       "features": [
-        "return_receipt_electronic"
+        "elektronne_povidomlennia_vruchennia"
       ],
       "enables_tracking": true
     },
     {
-      "id": "recommended_international",
+      "id": "mizhnarodne_zareiestrovane",
       "porto_id": "registered",
-      "name": "Міжнародне реєстрування",
+      "name": "Міжнародне зареєстроване",
       "label": "International registered",
       "description": "Registered surcharge for international letters (LETTER; no declared value)",
       "features": [

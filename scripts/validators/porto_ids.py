@@ -168,7 +168,8 @@ def validate_porto_ids(*, write_mapping_doc: bool = True) -> int:
             if isinstance(native_id, str) and native_id.endswith("_intl"):
                 errors.append(
                     f"{pid}: product id '{native_id}' uses deprecated _intl suffix; "
-                    f"use international (carrier-mirrored ids like inter_r are OK)"
+                    f"use a local-language slug (e.g. mizhnarodne_zareiestrovane); "
+                    f"abbreviated locale tokens like inter_ are discouraged"
                 )
             if native_id and porto_id:
                 doc_data[pid]["products"].append((str(native_id), str(porto_id)))
@@ -186,7 +187,8 @@ def validate_porto_ids(*, write_mapping_doc: bool = True) -> int:
             if isinstance(native_id, str) and native_id.endswith("_intl"):
                 errors.append(
                     f"{pid}: service id '{native_id}' uses deprecated _intl suffix; "
-                    f"use international (carrier-mirrored ids like inter_r are OK)"
+                    f"use a local-language slug (e.g. mizhnarodne_zareiestrovane); "
+                    f"abbreviated locale tokens like inter_ are discouraged"
                 )
             if native_id and porto_id:
                 doc_data[pid]["services"].append((str(native_id), str(porto_id)))

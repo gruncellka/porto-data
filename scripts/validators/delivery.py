@@ -19,7 +19,7 @@ _LAPOSTE_INDEMNITY_TIER_BY_ID: dict[str, str] = {
     "lettre_recommandee_r_un": "R1",
     "lettre_recommandee_r_deux": "R2",
     "lettre_recommandee_r_trois": "R3",
-    "lettre_recommandee_inter_r_un": "R1",
+    "lettre_recommandee_internationale_r_un": "R1",
 }
 
 
