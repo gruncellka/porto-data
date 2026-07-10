@@ -1,0 +1,51 @@
+---
+description: Never commit or push without explicit user approval after they review the diff
+alwaysApply: true
+---
+
+# Git — no auto commit / push
+
+**Do not run `git commit`, `git push`, or `gh pr create` unless the user explicitly asks in that message.**
+
+## Required workflow
+
+1. **Finish code and doc changes** — leave them unstaged or staged only if the user asked to stage.
+2. **Show what will be committed** — summarize scope; offer `git status` / `git diff` output when the user is closing a branch or opening a PR.
+3. **Wait for explicit approval** — phrases like "open PR", "close this change", or "wrap up" are **not** permission to commit. The user must say something like **"commit"**, **"commit and push"**, or **"create the PR"** after reviewing.
+4. **Commit only when asked** — one commit (or as the user specifies); never amend unless their rules allow it.
+5. **Push / PR only when asked** — separate step after commit; confirm branch name and base branch if unclear.
+
+## Never without explicit request
+
+- `git commit` / `git commit --amend`
+- `git push` (including `-u origin HEAD`)
+- `gh pr create`
+
+## Commit message convention
+
+When creating a commit, use Conventional Commits:
+
+- Format: `type(scope): short summary`
+- Allowed common types: `feat`, `fix`, `refactor`, `chore`, `docs`, `test`, `ci`
+- Prefer imperative summaries and keep them concise
+
+Examples:
+
+- `fix(e2e): seed licko owner roles after migrations`
+- `refactor(porto): move organization schemas to user_customer`
+- `chore(ci): align e2e bootstrap with rollout seed`
+
+## OK without asking
+
+- `git status`, `git diff`, `git log` (read-only)
+- `git add` only when the user asked to stage or commit specific files
+
+## If the user wanted to verify first
+
+When they say they want to **review before commit**, stop after changes are done and report:
+
+- Branch name
+- Suggested commit message (draft only)
+- Commands to inspect: `git diff`, `git diff --staged`, `make check`, etc.
+
+Do not commit until they approve the message and scope.
