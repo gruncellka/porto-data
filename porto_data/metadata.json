@@ -5,7 +5,7 @@
     "version": "0.5.1",
     "description": "Multi-provider postal JSON: operator catalogs, pricing, shared policy (markets, restrictions), and schemas"
   },
-  "generated_at": "2026-07-10T12:40:42.057071Z",
+  "generated_at": "2026-07-10T13:03:25.544748Z",
   "policy": {
     "jurisdictions": {
       "data": {
@@ -279,8 +279,8 @@
       "services": {
         "data": {
           "path": "providers/ukrposhta/services.json",
-          "checksum": "b89f8aadc66057c6a247653c73e721dbd8804f660024601a08260f846c4d0248",
-          "size": 1360
+          "checksum": "38bbfadd7ebaebe33e4a26c4bfbc427f0a6b430f5a2c5c51dd2170775fd2eb79",
+          "size": 1362
         },
         "schema": {
           "path": "schemas/services.schema.json",
@@ -305,7 +305,7 @@
       "service_prices": {
         "data": {
           "path": "providers/ukrposhta/prices/services.json",
-          "checksum": "aeedae8ba43203bb4a0e55610ef04a3af6e8d5aaf88b3eb1655f66445e22d0bf",
+          "checksum": "4988ebb49b2a574cc3e3a1d47a06db0c8eaef91b460895e3af35d11a8da1f924",
           "size": 918
         },
         "schema": {
@@ -357,7 +357,7 @@
       "graph": {
         "data": {
           "path": "providers/ukrposhta/graph.json",
-          "checksum": "f532c50abc1735c91b2b23e2e722dd6b1ad8628c8c0ed92dfeb7f2d2c2902df0",
+          "checksum": "0879ecf73a23c7eae97ae770c528952018f792016f671b7fdeeaff858166371d",
           "size": 4135
         },
         "schema": {

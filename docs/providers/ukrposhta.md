@@ -130,7 +130,7 @@ This catalog models **letters only** — no parcels, postcards, personal-deliver
 |--------------|-------:|----------|
 | `paperove_povidomlennia_vruchennia` | 4800 | UAH |
 | `elektronne_povidomlennia_vruchennia` | 2400 | UAH |
-| `mizhnarodne_reiestruvannia` | 350 | USD |
+| `mizhnarodne_zareiestrovane` | 350 | USD |
 
 **Graph:** `graph.json` `unit.currency` = **UAH** (default); international price rows carry **`currency: "USD"`**.
 
@@ -152,5 +152,5 @@ This catalog models **letters only** — no parcels, postcards, personal-deliver
 
 1. Domestic: [taryfy-ukrposhta-dokumenty](https://www.ukrposhta.ua/uk/taryfy-ukrposhta-dokumenty) → `prices/products.json` + `prices/services.json` (UAH).
 2. Intl letters: [taryfy](https://www.ukrposhta.ua/ua/taryfy) letter table → `world` rows (USD).
-3. Registered international: PDF / taryfy footnotes → `mizhnarodne_reiestruvannia`.
+3. Registered international: PDF / taryfy footnotes → `mizhnarodne_zareiestrovane`.
 4. `make validate` → `make metadata`.

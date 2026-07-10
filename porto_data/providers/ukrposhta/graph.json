@@ -110,7 +110,7 @@
   "services": [
     "paperove_povidomlennia_vruchennia",
     "elektronne_povidomlennia_vruchennia",
-    "mizhnarodne_reiestruvannia"
+    "mizhnarodne_zareiestrovane"
   ],
   "edges": {
     "products": {

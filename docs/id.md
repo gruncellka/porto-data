@@ -34,7 +34,7 @@ Purpose: unify `porto_id` names across providers (letters-only scope) so that si
 | `small` | `lyst_standartnyi` | `domestic`, `world` | Standard letter; all international letter weight tiers |
 | `large` | `dokument` | `domestic` only | Ukrposhta “Документ” flat domestic document letter |
 
-No `medium` or `extra_large` **product** rows for Ukrposhta. International registered is a **service** (`mizhnarodne_reiestruvannia` → `porto_id: registered`).
+No `medium` or `extra_large` **product** rows for Ukrposhta. International registered is a **service** (`mizhnarodne_zareiestrovane` → `porto_id: registered`).
 
 ## General rules
 

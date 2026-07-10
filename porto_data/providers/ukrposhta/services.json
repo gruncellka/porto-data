@@ -25,9 +25,9 @@
       "enables_tracking": true
     },
     {
-      "id": "mizhnarodne_reiestruvannia",
+      "id": "mizhnarodne_zareiestrovane",
       "porto_id": "registered",
-      "name": "Міжнародне реєстрування",
+      "name": "Міжнародне зареєстроване",
       "label": "International registered",
       "description": "Registered surcharge for international letters (LETTER; no declared value)",
       "features": [
