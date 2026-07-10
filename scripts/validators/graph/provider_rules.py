@@ -29,10 +29,9 @@ def run_validate_provider_rules(
             f"rules.json: file_type must be 'provider_rules' (got {doc.get('file_type')!r})"
         )
         return
-    prov = doc.get("provider")
-    if graph and prov and str(prov) != str(graph.get("provider")):
+    if doc.get("provider") is not None:
         results["errors"].append(
-            f"rules.json provider {prov!r} does not match graph provider {graph.get('provider')!r}"
+            "rules.json: top-level 'provider' is path-implied — remove redundant field"
         )
     rules_raw = doc.get("rules")
     if not isinstance(rules_raw, list):

@@ -1,7 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/service_prices.schema.json",
   "file_type": "service_prices",
-  "provider": "ukrposhta",
   "unit": {
     "price": "cents",
     "currency": "UAH"

@@ -1,5 +1,4 @@
 {
-  "provider": "swisspost",
   "unit": {
     "price": "cents",
     "currency": "CHF"

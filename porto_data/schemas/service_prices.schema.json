@@ -6,7 +6,6 @@
   "type": "object",
   "required": [
     "file_type",
-    "provider",
     "unit",
     "service_prices"
   ],
@@ -18,11 +17,6 @@
     "file_type": {
       "type": "string",
       "const": "service_prices"
-    },
-    "provider": {
-      "type": "string",
-      "pattern": "^[a-z_]+$",
-      "description": "Provider identifier"
     },
     "unit": {
       "type": "object",

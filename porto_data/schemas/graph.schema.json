@@ -6,7 +6,6 @@
   "type": "object",
   "required": [
     "file_type",
-    "provider",
     "strategy",
     "unit",
     "dependencies",
@@ -23,11 +22,6 @@
       "type": "string",
       "const": "graph",
       "description": "File type identifier"
-    },
-    "provider": {
-      "type": "string",
-      "pattern": "^[a-z_]+$",
-      "description": "Provider identifier (e.g. deutschepost, ukrposhta, laposte, swisspost)"
     },
     "strategy": {
       "type": "string",

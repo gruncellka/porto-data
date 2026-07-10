@@ -48,7 +48,7 @@ def _write_stub_provider_files(root: Path, provider_id: str) -> None:
     for rel in rel_paths:
         path = prov / rel
         path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(json.dumps({"provider": provider_id}), encoding="utf-8")
+        path.write_text("{}", encoding="utf-8")
 
 
 def _patch_bundle_root(monkeypatch: pytest.MonkeyPatch, root: Path) -> None:
@@ -144,7 +144,7 @@ def test_validate_mappings_layout_errors_on_wrong_metadata_provider_key_order(
     assert "metadata.json providers" in capsys.readouterr().out
 
 
-def test_validate_mappings_layout_errors_on_provider_mismatch(
+def test_validate_mappings_layout_errors_on_redundant_provider_field(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     _patch_bundle_root(monkeypatch, tmp_path)
@@ -199,11 +199,11 @@ def test_validate_mappings_layout_errors_on_stray_json(
     (tmp_path / "mappings.json").write_text(json.dumps(mappings), encoding="utf-8")
     (tmp_path / "providers" / "acme").mkdir(parents=True)
     (tmp_path / "providers" / "acme" / "products.json").write_text(
-        json.dumps({"provider": "acme", "products": []}),
+        json.dumps({"products": []}),
         encoding="utf-8",
     )
     (tmp_path / "providers" / "acme" / "orphan.json").write_text(
-        json.dumps({"provider": "acme"}),
+        "{}",
         encoding="utf-8",
     )
 
@@ -466,7 +466,7 @@ def test_validate_mappings_layout_errors_when_mapped_root_not_object(
     assert validate_mappings_layout() == 1
 
 
-def test_validate_mappings_layout_errors_when_doc_missing_provider_field(
+def test_validate_mappings_layout_allows_doc_without_provider_field(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     _patch_bundle_root(monkeypatch, tmp_path)
@@ -483,21 +483,15 @@ def test_validate_mappings_layout_errors_when_doc_missing_provider_field(
                     "formats": {},
                     "registry": {},
                     "providers": {
-                        "acme": {
-                            "schemas/products.schema.json": "providers/acme/products.json",
-                        }
+                        "acme": _full_provider_schema_map("acme"),
                     },
                 }
             }
         ),
         encoding="utf-8",
     )
-    (tmp_path / "providers" / "acme").mkdir(parents=True)
-    (tmp_path / "providers" / "acme" / "products.json").write_text(
-        json.dumps({"products": []}),
-        encoding="utf-8",
-    )
-    assert validate_mappings_layout() == 1
+    _write_stub_provider_files(tmp_path, "acme")
+    assert validate_mappings_layout() == 0
 
 
 def test_validate_mappings_layout_errors_on_orphan_provider_folder(
@@ -528,7 +522,7 @@ def test_validate_mappings_layout_errors_on_orphan_provider_folder(
     )
     (tmp_path / "providers" / "acme").mkdir(parents=True)
     (tmp_path / "providers" / "acme" / "products.json").write_text(
-        json.dumps({"provider": "acme", "products": []}),
+        json.dumps({"products": []}),
         encoding="utf-8",
     )
     (tmp_path / "providers" / "stray").mkdir()
@@ -563,7 +557,7 @@ def test_validate_mappings_layout_errors_on_bad_metadata_json(
     )
     (tmp_path / "providers" / "acme").mkdir(parents=True)
     (tmp_path / "providers" / "acme" / "products.json").write_text(
-        json.dumps({"provider": "acme", "products": []}),
+        json.dumps({"products": []}),
         encoding="utf-8",
     )
     (tmp_path / "metadata.json").write_text("{", encoding="utf-8")
@@ -598,7 +592,7 @@ def test_validate_mappings_layout_errors_when_metadata_providers_not_object(
     )
     (tmp_path / "providers" / "acme").mkdir(parents=True)
     (tmp_path / "providers" / "acme" / "products.json").write_text(
-        json.dumps({"provider": "acme", "products": []}),
+        json.dumps({"products": []}),
         encoding="utf-8",
     )
     (tmp_path / "metadata.json").write_text(
@@ -636,7 +630,7 @@ def test_validate_mappings_layout_errors_on_metadata_provider_key_mismatch(
     )
     (tmp_path / "providers" / "acme").mkdir(parents=True)
     (tmp_path / "providers" / "acme" / "products.json").write_text(
-        json.dumps({"provider": "acme", "products": []}),
+        json.dumps({"products": []}),
         encoding="utf-8",
     )
     (tmp_path / "metadata.json").write_text(

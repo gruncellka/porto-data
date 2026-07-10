@@ -1,7 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/weights.schema.json",
   "file_type": "weights",
-  "provider": "laposte",
   "unit": {
     "weight": "g"
   },

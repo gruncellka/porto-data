@@ -1,7 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/services.schema.json",
   "file_type": "services",
-  "provider": "deutschepost",
   "services": [
     {
       "id": "einschreiben",

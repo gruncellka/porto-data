@@ -16,6 +16,27 @@ from typing import Any, Final, cast
 
 PROVIDERS_DIR = "providers"
 
+
+def provider_id_from_bundle_path(relative_path: str) -> str | None:
+    """Return provider id when ``relative_path`` lives under ``providers/<id>/``."""
+    parts = Path(relative_path).parts
+    if len(parts) >= 2 and parts[0] == PROVIDERS_DIR:
+        return parts[1]
+    return None
+
+
+def redundant_provider_field_error(relative_path: str, doc: Mapping[str, Any]) -> str | None:
+    """Error when a path-scoped provider file repeats ``provider`` in the body."""
+    if provider_id_from_bundle_path(relative_path) is None:
+        return None
+    if doc.get("provider") is not None:
+        return (
+            f"{relative_path}: top-level 'provider' is path-implied by "
+            f"providers/<id>/ layout — remove redundant field"
+        )
+    return None
+
+
 # Non-provider schema→data blocks in mappings.json / metadata.json (mirror bundle layout).
 POLICY_MAPPINGS_KEY = "policy"
 FORMATS_MAPPINGS_KEY = "formats"
@@ -508,7 +529,7 @@ ENVELOPES_FILE = _FILE_NAMES["envelopes"]
 LAYOUTS_FILE = _FILE_NAMES["layouts"]
 FEATURES_FILE = _FILE_NAMES["features"]
 MARKS_FILE = _FILE_NAMES["marks"]
-INTEGRATIONS_FILE = _FILE_NAMES.get("integrations", "integrations.json")
+INTEGRATION_FILE = _FILE_NAMES.get("integration", "integration.json")
 RESTRICTIONS_FILE = _FILE_NAMES["restrictions"]
 MARKETS_FILE = _FILE_NAMES["markets"]
 LIMITS_FILE = _FILE_NAMES["limits"]

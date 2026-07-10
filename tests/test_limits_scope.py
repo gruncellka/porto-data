@@ -80,7 +80,7 @@ def test_validate_limits_scope_passes_on_real_porto_data():
     assert validate_limits_scope(project_root=root) == 0
 
 
-def test_validate_limits_scope_errors_on_provider_mismatch(tmp_path: Path):
+def test_validate_limits_scope_errors_on_redundant_provider_field(tmp_path: Path):
     good = {
         "file_type": "limits",
         "provider": "wrong",
@@ -106,7 +106,6 @@ def test_validate_limits_scope_errors_when_limits_mapping_missing_for_second_pro
         },
         limits_body={
             "file_type": "limits",
-            "provider": "acme",
             "limits": [],
             "frameworks": {},
         },
@@ -141,7 +140,6 @@ def test_validate_limits_scope_errors_on_wrong_file_type(tmp_path: Path):
         mappings_providers={"acme": {"schemas/limits.schema.json": "providers/acme/limits.json"}},
         limits_body={
             "file_type": "other",
-            "provider": "acme",
             "limits": [],
             "frameworks": {},
         },
@@ -155,7 +153,6 @@ def test_validate_limits_scope_errors_when_limits_not_array(tmp_path: Path):
         mappings_providers={"acme": {"schemas/limits.schema.json": "providers/acme/limits.json"}},
         limits_body={
             "file_type": "limits",
-            "provider": "acme",
             "limits": {},
             "frameworks": {},
         },
@@ -169,7 +166,6 @@ def test_validate_limits_scope_errors_when_frameworks_null(tmp_path: Path):
         mappings_providers={"acme": {"schemas/limits.schema.json": "providers/acme/limits.json"}},
         limits_body={
             "file_type": "limits",
-            "provider": "acme",
             "limits": [],
             "frameworks": None,
         },
@@ -185,7 +181,6 @@ def test_validate_limits_scope_errors_when_frameworks_not_object(
         mappings_providers={"acme": {"schemas/limits.schema.json": "providers/acme/limits.json"}},
         limits_body={
             "file_type": "limits",
-            "provider": "acme",
             "limits": [],
             "frameworks": [],
         },
@@ -199,7 +194,6 @@ def test_validate_limits_scope_errors_on_non_object_limit_row(tmp_path: Path):
         mappings_providers={"acme": {"schemas/limits.schema.json": "providers/acme/limits.json"}},
         limits_body={
             "file_type": "limits",
-            "provider": "acme",
             "limits": ["bad"],
             "frameworks": {},
         },
@@ -213,7 +207,6 @@ def test_validate_limits_scope_errors_on_missing_row_id(tmp_path: Path):
         mappings_providers={"acme": {"schemas/limits.schema.json": "providers/acme/limits.json"}},
         limits_body={
             "file_type": "limits",
-            "provider": "acme",
             "limits": [{}],
             "frameworks": {},
         },
@@ -235,7 +228,6 @@ def test_validate_limits_scope_errors_on_duplicate_row_ids(tmp_path: Path):
         mappings_providers={"acme": {"schemas/limits.schema.json": "providers/acme/limits.json"}},
         limits_body={
             "file_type": "limits",
-            "provider": "acme",
             "limits": [row, dict(row)],
             "frameworks": {},
         },
@@ -249,7 +241,6 @@ def test_validate_limits_scope_errors_when_framework_entry_not_object(tmp_path: 
         mappings_providers={"acme": {"schemas/limits.schema.json": "providers/acme/limits.json"}},
         limits_body={
             "file_type": "limits",
-            "provider": "acme",
             "limits": [],
             "frameworks": {"fw1": "x"},
         },
@@ -263,7 +254,6 @@ def test_validate_limits_scope_errors_on_framework_timezone_mismatch(tmp_path: P
         mappings_providers={"acme": {"schemas/limits.schema.json": "providers/acme/limits.json"}},
         limits_body={
             "file_type": "limits",
-            "provider": "acme",
             "limits": [],
             "frameworks": {
                 "fw1": {"timezone": "Europe/Berlin"},
@@ -301,7 +291,6 @@ def test_validate_limits_scope_passes_when_registry_providers_not_dict(tmp_path:
         json.dumps(
             {
                 "file_type": "limits",
-                "provider": "acme",
                 "limits": [],
                 "frameworks": {},
             }

@@ -1,7 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/features.schema.json",
   "file_type": "features",
-  "provider": "swisspost",
   "features": [
     {
       "id": "sendungsnummer",

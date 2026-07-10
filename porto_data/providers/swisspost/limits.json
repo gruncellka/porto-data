@@ -1,7 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/limits.schema.json",
   "file_type": "limits",
-  "provider": "swisspost",
   "unit": {
     "country_code": "ISO 3166-1 alpha-2",
     "date": "ISO 8601"

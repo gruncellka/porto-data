@@ -1,7 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/marks.schema.json",
   "file_type": "marks",
-  "provider": "deutschepost",
   "unit": {
     "dimension": "mm"
   },

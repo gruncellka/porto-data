@@ -28,7 +28,6 @@ def minimal_graph():
     """Minimal valid graph.json structure."""
     return {
         "file_type": "graph",
-        "provider": "deutschepost",
         "unit": {"weight": "g", "dimension": "mm", "price": "cents", "currency": "EUR"},
         "dependencies": {},
         "edges": {"products": {}, "marks": {}},
@@ -50,7 +49,6 @@ def minimal_product_prices():
     """Minimal valid product_prices.json structure."""
     return {
         "file_type": "product_prices",
-        "provider": "deutschepost",
         "unit": {"price": "cents", "currency": "EUR"},
         "product_prices": [],
     }
@@ -61,7 +59,6 @@ def minimal_service_prices():
     """Minimal valid service_prices.json structure."""
     return {
         "file_type": "service_prices",
-        "provider": "deutschepost",
         "unit": {"price": "cents", "currency": "EUR"},
         "service_prices": [],
     }
@@ -128,7 +125,6 @@ def minimal_data_files(
         "layouts.json": minimal_envelope_layouts,
         "features.json": {
             "file_type": "features",
-            "provider": "deutschepost",
             "features": [
                 {
                     "id": "tracking_number",
@@ -141,7 +137,6 @@ def minimal_data_files(
         },
         "marks.json": {
             "file_type": "marks",
-            "provider": "deutschepost",
             "default_profile": "test_stamp",
             "profiles": [
                 {
@@ -219,7 +214,6 @@ def create_test_data_files(tmp_path, **file_data):
         },
         "features.json": {
             "file_type": "features",
-            "provider": "deutschepost",
             "features": [
                 {
                     "id": "tracking_number",
@@ -232,7 +226,6 @@ def create_test_data_files(tmp_path, **file_data):
         },
         "marks.json": {
             "file_type": "marks",
-            "provider": "deutschepost",
             "default_profile": "test_stamp",
             "profiles": [
                 {
@@ -251,14 +244,12 @@ def create_test_data_files(tmp_path, **file_data):
     if pp is None:
         pp = {
             "file_type": "product_prices",
-            "provider": "deutschepost",
             "unit": {"price": "cents", "currency": "EUR"},
             "product_prices": [],
         }
     if sp is None:
         sp = {
             "file_type": "service_prices",
-            "provider": "deutschepost",
             "unit": {"price": "cents", "currency": "EUR"},
             "service_prices": [],
         }

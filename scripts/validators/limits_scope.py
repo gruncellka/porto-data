@@ -22,6 +22,7 @@ from scripts.data_files import (
     PROVIDERS_REGISTRY_FILENAME,
     get_data_file_path,
     get_project_root,
+    redundant_provider_field_error,
 )
 from scripts.utils import load_json
 
@@ -113,11 +114,10 @@ def validate_limits_scope(project_root: Path | None = None) -> int:
 
         if data.get("file_type") != "limits":
             errors.append(f"{path}: file_type must be 'limits'")
-        if data.get("provider") != provider_id:
-            errors.append(
-                f"{path}: provider field is {data.get('provider')!r}, "
-                f"expected {provider_id!r} (must match folder name)"
-            )
+        rel = path.relative_to(root).as_posix()
+        redundant = redundant_provider_field_error(rel, data)
+        if redundant:
+            errors.append(redundant)
 
         limits = data.get("limits")
         if not isinstance(limits, list):

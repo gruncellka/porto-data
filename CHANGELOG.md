@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Changed (breaking)
+
+- **Provider-scoped JSON:** Drop redundant top-level `provider` on every file under `providers/<id>/` — folder path is SoT; keep `file_type` for schema routing.
+- **Singular integration manifest:** Rename `integrations.json` → `integration.json`, `integrations.schema.json` → `integration.schema.json`, `file_type` `integrations` → `integration`, and `graph.dependencies.integrations` → `graph.dependencies.integration`.
+- **`integration.schema.json`:** Drop flat `capabilities[]`; declare SDK subservices as `billing[]` and `execution[]` with public method ids (`get_wallet_balance`, `create_mark`).
+- **Deutsche Post `integration.json`:** Internetmarke manifest updated to structured billing/execution method lists.
+
+### Added
+
+- **Graph validator:** `integration_manifest` requires at least one billing or execution method when the manifest exists.
+
 ## [0.5.1] - 2026-07-07
 
 ### Added

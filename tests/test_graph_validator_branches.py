@@ -20,7 +20,6 @@ from tests.minimal_fixtures import minimal_restrictions_document
 def _base_graph(**overrides):
     graph = {
         "file_type": "graph",
-        "provider": "deutschepost",
         "unit": {"weight": "g", "dimension": "mm", "price": "cents", "currency": "EUR"},
         "dependencies": {
             "products": {"file": "products.json", "depends_on": []},
@@ -89,7 +88,6 @@ def _layouts_fixture():
 def _default_marks():
     return {
         "file_type": "marks",
-        "provider": "deutschepost",
         "default_profile": "p",
         "profiles": [{"id": "p", "mark_type": "stamp", "label": "P"}],
     }
@@ -98,7 +96,6 @@ def _default_marks():
 def _default_features():
     return {
         "file_type": "features",
-        "provider": "deutschepost",
         "features": [
             {
                 "id": "tracking_number",
@@ -128,13 +125,11 @@ def _minimal_extras(overrides: dict[str, dict] | None = None) -> dict[str, dict]
         "services.json": {"file_type": "services", "services": []},
         "prices/products.json": {
             "file_type": "product_prices",
-            "provider": "deutschepost",
             "unit": {"price": "cents", "currency": "EUR"},
             "product_prices": [],
         },
         "prices/services.json": {
             "file_type": "service_prices",
-            "provider": "deutschepost",
             "unit": {"price": "cents", "currency": "EUR"},
             "service_prices": [],
         },
@@ -228,7 +223,6 @@ class TestGraphExecutionSemantics:
                 },
                 "marks.json": {
                     "file_type": "marks",
-                    "provider": "deutschepost",
                     "default_profile": "p",
                     "profiles": [{"id": "p", "mark_type": "label", "label": "P"}],
                 },
@@ -300,7 +294,7 @@ class TestGraphMarksAndRules:
     def test_marks_wrong_file_type(self, tmp_path):
         data_dir = tmp_path / "d"
         docs = _minimal_extras(
-            {"marks.json": {"file_type": "wrong", "provider": "deutschepost", "profiles": []}},
+            {"marks.json": {"file_type": "wrong", "profiles": []}},
         )
         _write_bundle(data_dir, _base_graph(services=[]), docs)
         v = GraphValidator(data_dir)
@@ -313,7 +307,6 @@ class TestGraphMarksAndRules:
             {
                 "marks.json": {
                     "file_type": "marks",
-                    "provider": "deutschepost",
                     "default_profile": "a",
                     "profiles": [
                         {"id": "a", "mark_type": "stamp", "label": "A"},
@@ -331,7 +324,6 @@ class TestGraphMarksAndRules:
         data_dir = tmp_path / "d"
         rules = {
             "file_type": "provider_rules",
-            "provider": "deutschepost",
             "unit": {"thickness": "mm"},
             "rules": [{"id": "r1", "kind": "other", "metric": "thickness"}],
         }
@@ -359,7 +351,6 @@ class TestGraphMarksAndRules:
         }
         rules = {
             "file_type": "provider_rules",
-            "provider": "deutschepost",
             "unit": {"thickness": "mm"},
             "rules": [
                 {
@@ -378,7 +369,6 @@ class TestGraphMarksAndRules:
                 "services.json": services,
                 "prices/services.json": {
                     "file_type": "service_prices",
-                    "provider": "deutschepost",
                     "unit": {"price": "cents", "currency": "EUR"},
                     "service_prices": [
                         {"service_id": "svc_thick", "price": [{"amount": 1}]},
@@ -561,7 +551,6 @@ class TestGraphPriceDependenciesAndUnits:
             {
                 "prices/products.json": {
                     "file_type": "product_prices",
-                    "provider": "deutschepost",
                     "unit": {"price": "cents", "currency": "EUR"},
                     "product_prices": "not-a-list",
                 },
@@ -578,7 +567,6 @@ class TestGraphPriceDependenciesAndUnits:
             {
                 "prices/products.json": {
                     "file_type": "product_prices",
-                    "provider": "deutschepost",
                     "unit": {"price": "cents", "currency": "EUR"},
                     "product_prices": [
                         {
@@ -601,7 +589,6 @@ class TestGraphPriceDependenciesAndUnits:
             {
                 "prices/products.json": {
                     "file_type": "product_prices",
-                    "provider": "deutschepost",
                     "unit": {"price": "cents", "currency": "USD"},
                     "product_prices": [],
                 },

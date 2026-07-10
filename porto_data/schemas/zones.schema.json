@@ -6,7 +6,6 @@
   "type": "object",
   "required": [
     "file_type",
-    "provider",
     "unit",
     "zones"
   ],
@@ -20,11 +19,6 @@
       "type": "string",
       "const": "zones",
       "description": "File type identifier"
-    },
-    "provider": {
-      "type": "string",
-      "pattern": "^[a-z_]+$",
-      "description": "Provider identifier (e.g. deutschepost, ukrposhta, laposte, swisspost)"
     },
     "unit": {
       "type": "object",

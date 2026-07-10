@@ -6,7 +6,6 @@
   "type": "object",
   "required": [
     "file_type",
-    "provider",
     "services"
   ],
   "properties": {
@@ -19,11 +18,6 @@
       "type": "string",
       "const": "services",
       "description": "File type identifier"
-    },
-    "provider": {
-      "type": "string",
-      "pattern": "^[a-z_]+$",
-      "description": "Provider identifier (e.g. deutschepost, ukrposhta, laposte, swisspost)"
     },
     "services": {
       "type": "array",

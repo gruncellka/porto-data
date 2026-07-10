@@ -1,7 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/graph.schema.json",
   "file_type": "graph",
-  "provider": "deutschepost",
   "unit": {
     "weight": "g",
     "dimension": "mm",
@@ -107,10 +106,10 @@
       "depends_on": [],
       "description": "Franking profile catalog: profiles[] (sizes); resolution in graph.edges.marks"
     },
-    "integrations": {
-      "file": "integrations.json",
+    "integration": {
+      "file": "integration.json",
       "depends_on": [],
-      "description": "SDK execution manifest (adapter id + capabilities); wire codes stay in edges.wire"
+      "description": "SDK execution manifest (adapter + billing/execution methods); wire codes stay in edges.wire"
     }
   },
   "services": [

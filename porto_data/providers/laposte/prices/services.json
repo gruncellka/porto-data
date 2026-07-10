@@ -1,5 +1,4 @@
 {
-  "provider": "laposte",
   "unit": {
     "price": "cents",
     "currency": "EUR"

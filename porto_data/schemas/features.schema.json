@@ -6,7 +6,6 @@
   "type": "object",
   "required": [
     "file_type",
-    "provider",
     "features"
   ],
   "properties": {
@@ -19,11 +18,6 @@
       "type": "string",
       "const": "features",
       "description": "File type identifier"
-    },
-    "provider": {
-      "type": "string",
-      "pattern": "^[a-z_]+$",
-      "description": "Provider id (must match providers.json and this file path)"
     },
     "features": {
       "type": "array",
