@@ -3,7 +3,7 @@
   "file_type": "services",
   "services": [
     {
-      "id": "suivi_option",
+      "id": "option_suivi",
       "porto_id": "tracking",
       "name": "Option suivi (add-on)",
       "label": "Optional tracking add-on",

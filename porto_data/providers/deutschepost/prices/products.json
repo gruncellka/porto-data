@@ -199,7 +199,7 @@
       ]
     },
     {
-      "product_id": "maxibrief_international_heavy",
+      "product_id": "maxibrief_ausland",
       "zone": "zone_1_eu",
       "weight_tier": "W2000",
       "price": [
@@ -211,7 +211,7 @@
       ]
     },
     {
-      "product_id": "maxibrief_international_heavy",
+      "product_id": "maxibrief_ausland",
       "zone": "zone_2_europe",
       "weight_tier": "W2000",
       "price": [
@@ -223,7 +223,7 @@
       ]
     },
     {
-      "product_id": "maxibrief_international_heavy",
+      "product_id": "maxibrief_ausland",
       "zone": "world",
       "weight_tier": "W2000",
       "price": [

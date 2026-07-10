@@ -18,7 +18,7 @@
       ],
       "min_exclusive": 20,
       "max_inclusive": 50,
-      "service_id": "brief_dicke_zuschlag"
+      "service_id": "zuschlag_dicke"
     }
   ]
 }

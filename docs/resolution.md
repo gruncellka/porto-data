@@ -80,7 +80,7 @@ CI rejects twins that share the same resolution fingerprint (`delivery` sig per 
 
 ### Deutsche Post — extra_large variants
 
-`maxibrief` and `maxibrief_international_heavy` both map to `extra_large`.
+`maxibrief` and `maxibrief_ausland` both map to `extra_large`.
 
 Disambiguation: **zone** and **weight_tier** (e.g. W2000 only on international heavy).
 

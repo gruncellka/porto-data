@@ -86,7 +86,7 @@ Reference for **reconciling JSON with official letter/postcard tariffs** (not a 
 | `kompaktbrief` | 110 | 180 | W0050 |
 | `grossbrief` | 180 | 330 | W0500 |
 | `maxibrief` | 290 | 650 | W1000 |
-| `maxibrief_international_heavy` | — | 1700 | Abroad only, W2000 |
+| `maxibrief_ausland` | — | 1700 | Abroad only, W2000 |
 
 **`service_prices` (cents):** `einschreiben` 265 · `einschreiben_einwurf` 235 · `einschreiben_rueckschein` 485 · `zusatzversicherung` 250.
 

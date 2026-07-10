@@ -164,7 +164,7 @@
           "W1000"
         ]
       },
-      "maxibrief_international_heavy": {
+      "maxibrief_ausland": {
         "zones": [
           "zone_1_eu",
           "zone_2_europe",
@@ -317,7 +317,7 @@
             }
           }
         },
-        "maxibrief_international_heavy": {
+        "maxibrief_ausland": {
           "zone_1_eu": {
             "base": 10091,
             "services": {

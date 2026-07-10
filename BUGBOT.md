@@ -214,7 +214,7 @@ If a PR adds or keeps **`intl_ccy`**, **`intl_excl`**, top-level **`vat.inclusiv
 If a PR adds a **new** native product or service `id` ending in **`_intl`** (Porto-assigned naming; carrier tokens like `inter_r` are OK):
 
 - **Title:** `Native id uses deprecated _intl suffix`
-- **Body:** `Use international in ids we assign (e.g. recommended_international). Preserve carrier-mirrored ids (lettre_recommandee_inter_r_un, international_standardbrief). Enforced in scripts/validators/porto_ids.py.`
+- **Body:** `Native ids must be local-language slugs of the operator display name (see docs/provider-template.md). Avoid English semantic ids and abbreviated locale tokens. _intl suffix is deprecated for new ids. Enforced in scripts/validators/porto_ids.py.`
 - **Labels:** `data`, `consistency`
 
 ### 21) Market row key order (non-blocking)

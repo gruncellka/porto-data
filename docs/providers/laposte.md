@@ -100,7 +100,7 @@ Currency is **`markets.FR.currency`** (EUR), not stored on the product row.
 | `lettre_recommandee_r_un` | R1 | 1600 | domestic (16 €) |
 | `lettre_recommandee_r_deux` | R2 | 15300 | domestic (153 €) |
 | `lettre_recommandee_r_trois` | R3 | 45800 | domestic (458 €) |
-| `lettre_recommandee_inter_r_un` | R1 | 4500 | international (45 €) |
+| `lettre_recommandee_internationale_r_un` | R1 | 4500 | international (45 €) |
 
 Source: [laposte.fr tarif recommandée](https://www.laposte.fr/tarif-lettre-recommandee) (2026). **`avis_reception`** remains an optional **service** (+145/150 ct), not in `included_features`.
 
@@ -122,9 +122,9 @@ Source: [laposte.fr tarif recommandée](https://www.laposte.fr/tarif-lettre-reco
 | `lettre_verte_suivie` | **202, 360, 574, 791, 979, 1164** | **505, 765, …, 3450** on `zone_1_eu`, `zone_2_europe`, `world` |
 | `lettre_services_plus` | **347, 457, 578, 810, 1035, 1201** | — |
 | `lettre_recommandee_r_un` / `r_deux` / `r_trois` | R1–R3 table | — |
-| `lettre_recommandee_inter_r_un` | — | R1 × zones |
+| `lettre_recommandee_internationale_r_un` | — | R1 × zones |
 
-**Services (examples):** `suivi_option` 50 · `avis_de_reception_national` 145 · `avis_de_reception_international` 150.
+**Services (examples):** `option_suivi` 50 · `avis_de_reception_national` 145 · `avis_de_reception_international` 150.
 
 ---
 

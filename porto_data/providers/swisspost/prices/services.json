@@ -17,7 +17,7 @@
       ]
     },
     {
-      "service_id": "brief_dicke_zuschlag",
+      "service_id": "zuschlag_dicke",
       "price": [
         {
           "amount": 200,

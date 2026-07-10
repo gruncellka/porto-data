@@ -7,7 +7,7 @@
   },
   "service_prices": [
     {
-      "service_id": "return_receipt_paper",
+      "service_id": "paperove_povidomlennia_vruchennia",
       "price": [
         {
           "amount": 4800,
@@ -17,7 +17,7 @@
       ]
     },
     {
-      "service_id": "return_receipt_electronic",
+      "service_id": "elektronne_povidomlennia_vruchennia",
       "price": [
         {
           "amount": 2400,
@@ -27,7 +27,7 @@
       ]
     },
     {
-      "service_id": "recommended_international",
+      "service_id": "mizhnarodne_reiestruvannia",
       "currency": "USD",
       "price": [
         {

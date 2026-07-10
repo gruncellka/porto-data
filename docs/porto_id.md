@@ -13,7 +13,7 @@ Cross-file refs (graph, prices, rules) use **native `id`**. SDK input uses **`po
 | `grossbrief` | `large` |
 | `kompaktbrief` | `medium` |
 | `maxibrief` | `extra_large` |
-| `maxibrief_international_heavy` | `extra_large` |
+| `maxibrief_ausland` | `extra_large` |
 | `standardbrief` | `small` |
 
 ### services
@@ -48,17 +48,17 @@ Cross-file refs (graph, prices, rules) use **native `id`**. SDK input uses **`po
 
 | native `id` | services `porto_id` |
 |-------------|------------|
-| `recommended_international` | `registered` |
-| `return_receipt_electronic` | `return_receipt` |
-| `return_receipt_paper` | `return_receipt` |
+| `elektronne_povidomlennia_vruchennia` | `return_receipt` |
+| `mizhnarodne_reiestruvannia` | `registered` |
+| `paperove_povidomlennia_vruchennia` | `return_receipt` |
 
 ### features
 
 | native `id` | features `porto_id` |
 |-------------|------------|
+| `elektronne_povidomlennia_vruchennia` | `return_receipt` |
+| `paperove_povidomlennia_vruchennia` | `return_receipt` |
 | `recipient_signature` | `recipient_signature` |
-| `return_receipt_electronic` | `return_receipt` |
-| `return_receipt_paper` | `return_receipt` |
 
 ## laposte
 
@@ -66,7 +66,7 @@ Cross-file refs (graph, prices, rules) use **native `id`**. SDK input uses **`po
 
 | native `id` | products `porto_id` |
 |-------------|------------|
-| `lettre_recommandee_inter_r_un` | `small` |
+| `lettre_recommandee_internationale_r_un` | `small` |
 | `lettre_recommandee_r_deux` | `small` |
 | `lettre_recommandee_r_trois` | `small` |
 | `lettre_recommandee_r_un` | `small` |
@@ -80,7 +80,7 @@ Cross-file refs (graph, prices, rules) use **native `id`**. SDK input uses **`po
 |-------------|------------|
 | `avis_de_reception_international` | `return_receipt` |
 | `avis_de_reception_national` | `return_receipt` |
-| `suivi_option` | `tracking` |
+| `option_suivi` | `tracking` |
 
 ### features
 
@@ -111,7 +111,7 @@ Cross-file refs (graph, prices, rules) use **native `id`**. SDK input uses **`po
 | native `id` | services `porto_id` |
 |-------------|------------|
 | `a_mail_plus` | `tracking` |
-| `brief_dicke_zuschlag` | `thickness` |
+| `zuschlag_dicke` | `thickness` |
 
 ### features
 

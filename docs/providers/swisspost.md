@@ -27,7 +27,7 @@ Reference for **reconciling JSON with official letter tariffs** (not a legal tar
 | `weights.json` | `weights` | Tiers for standard / gross / maxi ladders |
 | `zones.json` | `zones` | `domestic`, `zone_1_eu`, `world` |
 | `limits.json` | `limits` | Provider overlays on global policy |
-| **`rules.json`** | **`provider_rules`** | Thickness band → `brief_dicke_zuschlag` |
+| **`rules.json`** | **`provider_rules`** | Thickness band → `zuschlag_dicke` |
 | `graph.json` | `graph` | Edges, units (CHF cents/rappen), `services` |
 
 **Loaded with the bundle:** `policy/jurisdictions.json`, `policy/markets.json`, `policy/restrictions.json`, `formats/envelopes.json`, `formats/layouts.json` — see `graph.json` `dependencies`.
@@ -39,7 +39,7 @@ Reference for **reconciling JSON with official letter tariffs** (not a legal tar
 ## Known pitfalls
 
 - **A Mail vs B Mail:** separate product ids (`a_post_*` vs `b_post_*`); resolver cannot infer from weight alone.
-- **Thickness surcharge:** domestic letters **>2 cm and ≤5 cm** → **+2,00 CHF** via `rules.json` + `brief_dicke_zuschlag` (200 rappen).
+- **Thickness surcharge:** domestic letters **>2 cm and ≤5 cm** → **+2,00 CHF** via `rules.json` + `zuschlag_dicke` (200 rappen).
 - **Midi letters (101–500 g):** separate prices on site (A 1,70 / B 1,40) — **not** split in minimal model (standard product covers 1–100 g flat rate per DigitalStamp table).
 - **International flat zones:** `zone_1_eu` and `world` share amounts where post.ch table is destination-independent.
 
@@ -49,7 +49,7 @@ Reference for **reconciling JSON with official letter tariffs** (not a legal tar
 
 - **Domestic:** A vs B × standard vs gross (large) format products.
 - **International documents:** standard / gross / maxi ladders from [international letters](https://www.post.ch/en/sending-letters/international-letters).
-- **`rules.json`:** thickness (20, 50] mm → attach **`brief_dicke_zuschlag`**.
+- **`rules.json`:** thickness (20, 50] mm → attach **`zuschlag_dicke`**.
 
 ## Service support (proof/signature/AR)
 
@@ -105,11 +105,11 @@ Reference for **reconciling JSON with official letter tariffs** (not a legal tar
 | `international_grossbrief` | — | W0250 **750**, W0500 **1200** | — |
 | `international_maxibrief` | — | — | W0500 **1300**, W1000 **1900**, W2000 **2600** |
 
-**`service_prices`:** `brief_dicke_zuschlag` **200** (CHF 2,00).
+**`service_prices`:** `zuschlag_dicke` **200** (CHF 2,00).
 
 **Zones:** `zone_1_eu` and `world` — same amounts per row where table is flat.
 
-**Rules:** `domestic_letter_thickness` → thickness (20, 50] mm → `brief_dicke_zuschlag`.
+**Rules:** `domestic_letter_thickness` → thickness (20, 50] mm → `zuschlag_dicke`.
 
 ---
 

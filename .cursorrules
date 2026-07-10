@@ -66,7 +66,7 @@ Merge order documented in provider `limits.json` `context`: restrictions → lim
 
 **Market row key order:** `currency` → `international_currency` → `vat` → `settlement`. Inside `vat`: `rate` → `exempt` → `domestic` → `international`.
 
-**Native ids we assign:** prefer `recommended_international`, not `*_intl`. **Carrier-mirrored ids** (e.g. `lettre_recommandee_inter_r_un`, `international_standardbrief`) — keep operator tokens; do not global-rename.
+**Native ids:** local-language slug of the operator `name` (ASCII snake_case). Disambiguate with operator tokens (`ausland`, `internationale`, `r_deux`) — not English semantic ids (`return_receipt_*`, `recommended_international`) or abbreviated locale fragments (`inter`, `heavy`). Swiss `international_*` prefix is operator-local and kept.
 
 **Allowed abbreviations:** `porto_id`, `fx`/`fx_date`, ISO country/currency codes, weight tier codes (`W0050`), `zone_1_eu`.
 
