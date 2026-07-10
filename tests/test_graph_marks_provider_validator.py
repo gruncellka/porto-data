@@ -59,8 +59,8 @@ class TestMarksProfilesCoverage:
         r = _empty_results()
         marks = _marks_doc(profiles=[{"id": "a", "mark_type": "stamp", "label": "A"}])
         marks["provider"] = "other"
-        run_validate_marks_profiles(r, graph={"provider": "mine"}, marks=marks)
-        assert any("provider" in e for e in r["errors"])
+        run_validate_marks_profiles(r, graph={}, marks=marks)
+        assert any("path-implied" in e for e in r["errors"])
 
     def test_profiles_not_nonempty_list(self) -> None:
         r = _empty_results()
@@ -409,13 +409,13 @@ class TestProviderRulesCoverage:
         doc = {"file_type": "provider_rules", "provider": "x", "rules": []}
         run_validate_provider_rules(
             r,
-            graph={"provider": "y"},
+            graph={},
             doc=doc,
             product_dict={},
             service_prices=[],
             services={"services": []},
         )
-        assert any("provider" in e.lower() for e in r["errors"])
+        assert any("path-implied" in e for e in r["errors"])
 
     def test_rules_not_list(self) -> None:
         r = _empty_results()
@@ -529,7 +529,6 @@ class TestProviderRulesCoverage:
         r = _empty_results()
         doc = {
             "file_type": "provider_rules",
-            "provider": "p",
             "unit": {"thickness": "mm"},
             "rules": [
                 {
@@ -572,10 +571,10 @@ class TestGraphValidatorBuildLookupEarlyReturn:
         v._bundle_root = tmp_path
         v._build_lookup_structures()
 
-    def test_validate_integrations_manifest_graph_none_returns(self, tmp_path: Path) -> None:
+    def test_validate_integration_manifest_graph_none_returns(self, tmp_path: Path) -> None:
         (tmp_path / "graph.json").write_text("{}", encoding="utf-8")
         v = GraphValidator(data_dir=tmp_path)
         v.graph = None
-        v.integrations = {"file_type": "integrations", "provider": "p", "adapter": "x"}
-        v.validate_integrations_manifest()
+        v.integration = {"file_type": "integration", "adapter": "x", "execution": ["create_mark"]}
+        v.validate_integration_manifest()
         assert v.results["errors"] == []

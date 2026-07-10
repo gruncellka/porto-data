@@ -1,7 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/rules.schema.json",
   "file_type": "provider_rules",
-  "provider": "swisspost",
   "unit": {
     "thickness": "mm"
   },

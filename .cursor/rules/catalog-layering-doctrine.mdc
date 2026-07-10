@@ -16,7 +16,7 @@ SDK / app input     →  porto_id, country, weight, service picks
 Catalog facts       →  native id, zones, weights, prices, geometry (this repo)
 Layout output       →  mark_profile, window rect, post_mark anchor
 Adapter wiring      →  edges.wire productCode / catalog keys (per integration)
-SDK execution gate  →  integrations.json adapter + capabilities (optional)
+SDK execution gate  →  integration.json adapter + capabilities (optional)
 Runtime / adapter   →  PortoMark, tracking numbers (not in porto-data)
 ```
 
@@ -33,7 +33,7 @@ Runtime / adapter   →  PortoMark, tracking numbers (not in porto-data)
 
 4. **Native `id` in wires; `porto_id` at the edge.** `graph.json`, `prices/*`, `rules.json` reference **native** `product_id` / `service_id`. Wire checkout codes live in **`graph.edges.wire`** only — never `products.native_id`, `services.native_id`, or `porto_id` in graph/prices.
 
-5. **Integrations manifest ≠ wire tables.** `integrations.json` declares **which adapter** + **SDK capabilities**. `graph.edges.wire[integration]` declares **productCode** rows. `graph.dependencies.integrations` is a **file pointer** only.
+5. **Integrations manifest ≠ wire tables.** `integration.json` declares **which adapter** + **SDK capabilities**. `graph.edges.wire[integration]` declares **productCode** rows. `graph.dependencies.integration` is a **file pointer** only.
 
 6. **Geometry is factual, composition is not.** `formats/layouts.json`: `window`, `post_mark`, `standard` only — no `address_area`, `print_area`, sender/recipient zones, or printable-region workflow.
 
@@ -49,8 +49,8 @@ Runtime / adapter   →  PortoMark, tracking numbers (not in porto-data)
 | `porto_id` on a product that means a **service** (registered, tracking, …) | Layer collapse | Size on product; service on `services.json` |
 | Same enum value in product + service schemas | Token smuggling | Disjoint enums; disambiguate with native `id` |
 | `graph` or `prices` keyed by `porto_id` | Wrong identifier layer | Use native `id` |
-| `capabilities` or `adapter` only in `graph.json` body | SDK manifest in resolution graph | `integrations.json` + `dependencies.integrations` pointer |
-| `productCode` / wire codes in `integrations.json` | Wire table in wrong file | `graph.edges.wire` |
+| `capabilities` or `adapter` only in `graph.json` body | SDK manifest in resolution graph | `integration.json` + `dependencies.integration` pointer |
+| `productCode` / wire codes in `integration.json` | Wire table in wrong file | `graph.edges.wire` |
 | Operator mark calibration tables in `marks.md` | Provider-specific prose in generic doc | `docs/providers/<id>.md` |
 | New layout zone named like a product feature | Invented semantics | Only standard/provider geometry |
 | Docs say X but schema allows Y | Drift | Align schema, validator, `docs/id.md`, generated tables |
@@ -63,7 +63,7 @@ Runtime / adapter   →  PortoMark, tracking numbers (not in porto-data)
 - **Layouts:** C5 window mm rect — not “address block” split for compose.
 - **Marks:** `mark_profile: registered` — stamp footprint; third namespace from `porto_id`. Checkout sizes in `calibrations[]` when measured.
 - **Wire:** Internetmarke `productCode` in `edges.wire.internetmarke` — not on product rows.
-- **Integrations:** `integrations.json` adapter `internetmarke` must match an `edges.wire` key.
+- **Integrations:** `integration.json` adapter `internetmarke` must match an `edges.wire` key.
 - **Delivery:** `markets.CH.working_days` + `products.delivery[]` per zone — not `lane: priority` on the product row.
 
 ## Before merge (any catalog/schema change)

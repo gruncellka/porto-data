@@ -6,7 +6,6 @@
   "type": "object",
   "required": [
     "file_type",
-    "provider",
     "rules"
   ],
   "additionalProperties": false,
@@ -18,10 +17,6 @@
     "file_type": {
       "type": "string",
       "const": "provider_rules"
-    },
-    "provider": {
-      "type": "string",
-      "pattern": "^[a-z_]+$"
     },
     "unit": {
       "type": "object",

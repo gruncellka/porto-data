@@ -6,7 +6,6 @@
   "type": "object",
   "required": [
     "file_type",
-    "provider",
     "unit",
     "limits",
     "frameworks"
@@ -21,11 +20,6 @@
       "type": "string",
       "const": "limits",
       "description": "File type identifier"
-    },
-    "provider": {
-      "type": "string",
-      "pattern": "^[a-z_]+$",
-      "description": "Provider id (must match path providers/<id>/)"
     },
     "unit": {
       "type": "object",

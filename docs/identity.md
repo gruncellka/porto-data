@@ -39,7 +39,7 @@ One-page map of **who names what** across **porto-data** (JSON + schemas), **Por
 
 | Name | Owner | Example | Used in | Never used in |
 |------|-------|---------|---------|---------------|
-| **`provider`** | Porto registry | `deutschepost` | SDK context, folder path | graph price keys |
+| **`provider`** | Porto registry + **`providers/<id>/` path** | `deutschepost` | SDK context, bundle layout | in-file repeat on path-scoped JSON |
 | **`label` / `name`** | Display / legal | `"Deutsche Post"`, `"Deutsche Post AG"` | UI, docs | resolution |
 | **`country`** | Registry → markets | `DE`, `FR`, `UA`, `CH` | VAT, currency, layouts | product id |
 | **`porto_id`** (product) | Porto enum | `small`, `medium`, `large`, `extra_large`, `postcard` | **SDK input** | graph, prices |
@@ -128,10 +128,10 @@ marks.json
   profiles[].size ────────────────► layout width/height (mm)
   default_profile ────────────────► fallback when edges.marks omits a zone
 
-integrations.json
+integration.json
   adapter ────────────────────────► must match graph.edges.wire key (e.g. internetmarke)
-  capabilities[] ─────────────────► SDK execution gates (mark_purchase_sync, wallet_balance_read)
-  graph.dependencies.integrations ► bundle index only — not integration data
+  billing[] / execution[] ─────────► SDK method gates (get_wallet_balance, create_mark)
+  graph.dependencies.integration ► bundle index only — not integration data
 
 formats/layouts.json
   jurisdictions[DE].post_mark ────► envelope anchor (mm), not stamp size
@@ -160,8 +160,8 @@ zone + services           →    graph.edges.marks[zone] + services overrides
 
 adapter purchase          →    graph.edges.wire.internetmarke[product][zone][service?]
                           →    wire_code (e.g. 10001) + API payload
-                          →    integrations.json.adapter selects wire table
-                          →    integrations.json.capabilities gate SDK billing/execution
+                          →    integration.json.adapter selects wire table
+                          →    integration.json billing/execution gate SDK subservices
                           →    PDF/PNG bytes                      PortoMark.content
                           →    tracking ref                   PortoMark.tracking_number
 ```

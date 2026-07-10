@@ -1,7 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/zones.schema.json",
   "file_type": "zones",
-  "provider": "laposte",
   "unit": {
     "country_code": "ISO 3166-1 alpha-2"
   },

@@ -3,7 +3,7 @@
 Checks:
   - ``mappings.providers`` keys match ``providers.json`` (bundle root) keys.
   - Each mapped data file under ``providers/<id>/`` exists.
-  - Each mapped provider JSON has top-level ``provider`` equal to ``<id>`` (folder name).
+  - Path-scoped provider JSON must not repeat top-level ``provider`` (folder is SoT).
   - No extra ``*.json`` files under ``providers/<id>/`` beyond what mappings list (letter bundle).
   - ``providers/<id>/`` exists for each registry id; no orphan provider folders.
   - If ``metadata.json`` exists: its ``providers`` keys match the registry.
@@ -21,6 +21,7 @@ from scripts.data_files import (
     get_project_root,
     load_providers_registry,
     provider_key_order_error,
+    redundant_provider_field_error,
 )
 from scripts.validators.porto_ids import REQUIRED_PROVIDER_SCHEMAS
 
@@ -114,16 +115,9 @@ def validate_mappings_layout() -> int:
             if not isinstance(doc, dict):
                 errors.append(f"{data_rel}: root must be a JSON object")
                 continue
-            doc_provider = doc.get("provider")
-            if doc_provider is None:
-                errors.append(
-                    f"{data_rel}: missing top-level 'provider' field (must be '{pid}' per folder)"
-                )
-            elif doc_provider != pid:
-                errors.append(
-                    f"{data_rel}: top-level 'provider' is {doc_provider!r}, expected {pid!r} "
-                    f"(must match providers/<id>/ folder)"
-                )
+            redundant = redundant_provider_field_error(data_rel, doc)
+            if redundant:
+                errors.append(redundant)
 
         if folder.is_dir():
             json_on_disk = {p.name for p in folder.glob("*.json")}

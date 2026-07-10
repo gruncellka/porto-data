@@ -27,11 +27,9 @@ def run_validate_marks_profiles(
         )
         return
 
-    provider_id = graph.get("provider") if isinstance(graph, dict) else None
-    if provider_id and marks.get("provider") and str(provider_id) != str(marks.get("provider")):
+    if marks.get("provider") is not None:
         results["errors"].append(
-            f"{MARKS_FILE} provider {marks.get('provider')!r} does not match "
-            f"{GRAPH_FILE} provider {provider_id!r}"
+            f"{MARKS_FILE}: top-level 'provider' is path-implied — remove redundant field"
         )
 
     profiles_raw = marks.get("profiles")

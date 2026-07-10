@@ -26,7 +26,6 @@ class TestProductsSchemaExecutionSemantics:
         data_path = tmp_path / "products.json"
         data = {
             "file_type": "products",
-            "provider": "testprov",
             "unit": {"weight": "g"},
             "products": [
                 {
@@ -49,7 +48,6 @@ class TestProductsSchemaExecutionSemantics:
         data_path = tmp_path / "products.json"
         data = {
             "file_type": "products",
-            "provider": "testprov",
             "unit": {"weight": "g"},
             "products": [
                 {
@@ -73,7 +71,6 @@ class TestProductsSchemaExecutionSemantics:
         data_path = tmp_path / "products.json"
         data = {
             "file_type": "products",
-            "provider": "testprov",
             "unit": {"weight": "g"},
             "products": [
                 {

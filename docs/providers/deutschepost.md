@@ -24,7 +24,7 @@ Reference for **reconciling JSON with official letter/postcard tariffs** (not a 
 | `services.json` | `services` | Service definitions |
 | `features.json` | `features` | Feature ids used by services |
 | `marks.json` | `marks` | Mark/label profiles and optional checkout calibrations |
-| `integrations.json` | `integrations` | SDK execution manifest (`internetmarke`, capabilities) |
+| `integration.json` | `integration` | SDK execution manifest (`internetmarke`, capabilities) |
 | `weights.json` | `weights` | Weight tier ids (`W0020` …) |
 | `zones.json` | `zones` | Domestic / EU / Europe / world buckets |
 | `limits.json` | `limits` | Provider operational overlays on top of global policy (often empty) |

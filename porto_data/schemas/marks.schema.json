@@ -6,7 +6,6 @@
   "type": "object",
   "required": [
     "file_type",
-    "provider",
     "default_profile",
     "profiles"
   ],
@@ -20,11 +19,6 @@
       "type": "string",
       "const": "marks",
       "description": "File type identifier"
-    },
-    "provider": {
-      "type": "string",
-      "pattern": "^[a-z_]+$",
-      "description": "Provider id (must match path providers/<id>/)"
     },
     "unit": {
       "type": "object",
@@ -136,7 +130,7 @@
           "integration": {
             "type": "string",
             "minLength": 1,
-            "description": "graph.edges.wire integration key (same id namespace as integrations.json adapter when present)"
+            "description": "graph.edges.wire integration key (same id namespace as integration.json adapter when present)"
           },
           "voucher_layout": {
             "type": "string",

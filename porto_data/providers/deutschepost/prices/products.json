@@ -1,5 +1,4 @@
 {
-  "provider": "deutschepost",
   "unit": {
     "price": "cents",
     "currency": "EUR"

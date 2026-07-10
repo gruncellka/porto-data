@@ -25,7 +25,7 @@
         "schemas/weights.schema.json": "providers/deutschepost/weights.json",
         "schemas/limits.schema.json": "providers/deutschepost/limits.json",
         "schemas/graph.schema.json": "providers/deutschepost/graph.json",
-        "schemas/integrations.schema.json": "providers/deutschepost/integrations.json"
+        "schemas/integration.schema.json": "providers/deutschepost/integration.json"
       },
       "ukrposhta": {
         "schemas/marks.schema.json": "providers/ukrposhta/marks.json",
