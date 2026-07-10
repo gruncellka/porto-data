@@ -1,6 +1,5 @@
 name: validation
 
-# Every push to any branch (with or without an open PR). PR checks use these runs.
 on:
     push:
 
