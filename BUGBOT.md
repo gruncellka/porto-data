@@ -139,10 +139,10 @@ If a PR changes the set of provider ids in **`porto_data/providers.json`** (`pro
 
 ### 11) New provider JSON must declare `provider` (blocking)
 
-If a PR adds a new `*.json` under `porto_data/providers/<id>/` and the file is a mapped data document (not a stray file), and top-level **`provider`** is missing or not equal to **`<id>`**:
+If a PR adds a new `*.json` under `porto_data/providers/<id>/` and the file is a mapped data document (not a stray file), and top-level **`provider`** is present on a path-scoped file:
 
-- **Title:** `Provider field must match folder id`
-- **Body:** `Mapped provider JSON must include "provider": "<id>" matching the directory name (mappings validation).`
+- **Title:** `Do not repeat provider on path-scoped JSON`
+- **Body:** `Provider id is implied by directory path providers/<id>/ — mapped files must not include a redundant top-level "provider" field (mappings_layout validation errors if present).`
 - **Labels:** `data`, `consistency`
 
 ### 12) Resolution graph edits need full validation (non-blocking)

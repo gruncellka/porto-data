@@ -31,7 +31,7 @@
         "speed",
         "min"
       ],
-      "description": "Graph resolution strategy: service (DE wire+service), id (explicit products.id required), speed (Swiss A/B), min (Ukrposhta)"
+      "description": "Product disambiguation policy when multiple native products share a porto_id (catalog fact — SDK reads, does not hardcode per provider)"
     },
     "unit": {
       "type": "object",

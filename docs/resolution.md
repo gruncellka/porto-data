@@ -82,7 +82,15 @@ CI rejects twins that share the same resolution fingerprint (`delivery` sig per 
 
 `maxibrief` and `maxibrief_ausland` both map to `extra_large`.
 
-Disambiguation: **zone** and **weight_tier** (e.g. W2000 only on international heavy).
+Disambiguation is **deterministic** from **zone + weight_tier** (not user choice):
+
+| Weight (g) | Tier | Zone | Resolves to |
+|------------|------|------|-------------|
+| 501–1000 | W1000 | `domestic`, `zone_1_eu`, `zone_2_europe`, `world` | `maxibrief` |
+| 1001–2000 | W2000 | `zone_1_eu`, `zone_2_europe`, `world` | `maxibrief_ausland` |
+| 1001–2000 | W2000 | `domestic` | *(no product — `maxibrief_ausland` is abroad-only)* |
+
+`maxibrief_ausland` never appears in `domestic` zone, so `extra_large` + DE is never ambiguous. BDD and adapter matrices should use **501 g** for `maxibrief` (W1000) and **1001 g** (or higher in W2000) for `maxibrief_ausland` — not 500 g (W0500, `grossbrief` tier).
 
 ### Ukrposhta — `small` vs `large` (letters only)
 

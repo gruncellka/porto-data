@@ -55,7 +55,7 @@
           "id": {
             "type": "string",
             "pattern": "^[a-z_]+$",
-            "description": "Semantic English product ID"
+            "description": "Native operator product id (local-language slug, ASCII snake_case). Used in graph, prices, and rules — not porto_id."
           },
           "name": {
             "type": "string",

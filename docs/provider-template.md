@@ -45,7 +45,7 @@ Provider `graph.json` → `dependencies` may reference:
 - **`name`** — registered legal entity in `providers.json`.
 - **`id`** — native catalog key: **local display name → ASCII snake_case** (operator language; disambiguation suffixes in that language). Used in graph, prices, rules. Not English semantic names (`return_receipt_*`) or mixed-locale abbreviations (`inter`).
 - **`porto_id`** — canonical SDK bucket; enum in `schemas/porto_ids.schema.json`.
-- **`native_id`** — carrier API code when known.
+- **Wire checkout codes** — adapter payload values in `graph.edges.wire[integration]` only (not on product/service rows).
 
 See [CONTRIBUTING.md](../CONTRIBUTING.md) and [id.md](id.md).
 

@@ -319,6 +319,38 @@ class TestRunValidateWireEdges:
         )
         assert r["errors"] == []
 
+    def test_same_base_across_zones_for_one_product_is_allowed(self) -> None:
+        r = _results()
+        graph = _wire_graph()
+        graph["edges"]["products"]["p1"]["zones"] = ["domestic", "zone_1_eu", "world"]
+        graph["edges"]["wire"]["internetmarke"]["p1"] = {
+            "domestic": {"base": 10001},
+            "zone_1_eu": {"base": 10001},
+            "world": {"base": 10001},
+        }
+        run_validate_wire_edges(
+            r,
+            graph=graph,
+            product_dict={"p1": {"id": "p1"}},
+            services_by_id={},
+            graph_service_ids=set(),
+        )
+        assert r["errors"] == []
+
+    def test_same_base_on_different_products_errors(self) -> None:
+        r = _results()
+        graph = _wire_graph()
+        graph["edges"]["products"]["p2"] = {"zones": ["domestic"], "weight_tiers": ["W1"]}
+        graph["edges"]["wire"]["internetmarke"]["p2"] = {"domestic": {"base": 10001}}
+        run_validate_wire_edges(
+            r,
+            graph=graph,
+            product_dict={"p1": {"id": "p1"}, "p2": {"id": "p2"}},
+            services_by_id={},
+            graph_service_ids=set(),
+        )
+        assert any("duplicate wire base" in e and "p1 vs p2" in e for e in r["errors"])
+
 
 class TestGraphValidatorValidateWireEdges:
     def test_validate_wire_edges_noop_when_graph_unloaded(self) -> None:

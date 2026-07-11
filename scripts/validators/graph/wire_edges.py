@@ -75,6 +75,7 @@ def run_validate_wire_edges(
 
     strategy = graph.get("strategy")
     product_links = product_edges(graph)
+    seen_wire_codes: dict[str, str] = {}
 
     for integration, products_wire in wire_root.items():
         if not isinstance(products_wire, dict):
@@ -103,6 +104,16 @@ def run_validate_wire_edges(
                 if not isinstance(zone_entry, dict):
                     continue
                 base = zone_entry.get("base")
+                if base is not None:
+                    code_key = f"{integration}:{base}"
+                    prior_product = seen_wire_codes.get(code_key)
+                    if prior_product and prior_product != product_id:
+                        results["errors"].append(
+                            f"{GRAPH_FILE}: duplicate wire base {base!r} on {integration} "
+                            f"({prior_product} vs {product_id})"
+                        )
+                    else:
+                        seen_wire_codes[code_key] = product_id
                 if base is None:
                     if strategy == "service" and integration == "internetmarke":
                         results["errors"].append(

@@ -54,6 +54,9 @@ One-page map of **who names what** across **porto-data** (JSON + schemas), **Por
 | **`tracking_mode`** | Porto enum | `none`, `optional`, `included` | product row | — |
 | **`envelope_id`** | Shared formats | `DL`, `C6`, `C4` | products, layouts | — |
 | **`PortoMark.id`** | SDK runtime | `deutschepost:abc-123` | execution result | porto-data |
+| **`integration` / `adapter`** | `integration.json` | `internetmarke` | SDK capability manifest | graph body |
+| **`capability`** | `integration.json` | `create_mark`, `get_wallet_balance` | SDK execution gates | generic SDK if-chains |
+| **`graph.strategy`** | Provider graph | `service`, `id`, `speed`, `min` | **Disambiguation policy** when multiple products share a `porto_id` | SDK hardcoded provider rules |
 | **`features[].id`** | Provider | `tracking_number` row | services link | cross-provider |
 
 Product and service `porto_id` enums are **disjoint** — products are size buckets only; `registered` is a **service** add-on (e.g. DE Einschreiben, UA intl registered surcharge).
