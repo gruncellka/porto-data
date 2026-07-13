@@ -571,10 +571,10 @@ class TestGraphValidatorBuildLookupEarlyReturn:
         v._bundle_root = tmp_path
         v._build_lookup_structures()
 
-    def test_validate_integration_manifest_graph_none_returns(self, tmp_path: Path) -> None:
+    def test_validate_execution_manifest_graph_none_returns(self, tmp_path: Path) -> None:
         (tmp_path / "graph.json").write_text("{}", encoding="utf-8")
         v = GraphValidator(data_dir=tmp_path)
         v.graph = None
-        v.integration = {"file_type": "integration", "adapter": "x", "execution": ["create_mark"]}
-        v.validate_integration_manifest()
+        v.execution = {"file_type": "execution", "wire": "x", "execution": ["create_mark"]}
+        v.validate_execution_manifest()
         assert v.results["errors"] == []

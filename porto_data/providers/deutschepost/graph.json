@@ -106,10 +106,10 @@
       "depends_on": [],
       "description": "Franking profile catalog: profiles[] (sizes); resolution in graph.edges.marks"
     },
-    "integration": {
-      "file": "integration.json",
+    "execution": {
+      "file": "execution.json",
       "depends_on": [],
-      "description": "SDK execution manifest (adapter + billing/execution methods); wire codes stay in edges.wire"
+      "description": "SDK execution manifest (wire + billing/execution methods); wire codes stay in edges.wire"
     }
   },
   "services": [

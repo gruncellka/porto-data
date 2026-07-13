@@ -1,0 +1,11 @@
+{
+  "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/execution.schema.json",
+  "file_type": "execution",
+  "wire": "internetmarke",
+  "billing": [
+    "get_wallet_balance"
+  ],
+  "execution": [
+    "create_mark"
+  ]
+}

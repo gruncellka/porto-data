@@ -22,8 +22,6 @@ def test_redundant_provider_field_error() -> None:
     )
     assert redundant_provider_field_error("policy/markets.json", {"provider": "de"}) is None
     assert (
-        redundant_provider_field_error(
-            "providers/acme/integration.json", {"file_type": "integration"}
-        )
+        redundant_provider_field_error("providers/acme/execution.json", {"file_type": "execution"})
         is None
     )

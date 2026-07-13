@@ -54,8 +54,8 @@ One-page map of **who names what** across **porto-data** (JSON + schemas), **Por
 | **`tracking_mode`** | Porto enum | `none`, `optional`, `included` | product row | — |
 | **`envelope_id`** | Shared formats | `DL`, `C6`, `C4` | products, layouts | — |
 | **`PortoMark.id`** | SDK runtime | `deutschepost:abc-123` | execution result | porto-data |
-| **`integration` / `adapter`** | `integration.json` | `internetmarke` | SDK capability manifest | graph body |
-| **`capability`** | `integration.json` | `create_mark`, `get_wallet_balance` | SDK execution gates | generic SDK if-chains |
+| **`wire`** | `execution.json` | `internetmarke` | SDK execution manifest | graph body |
+| **`capability`** | `execution.json` | `create_mark`, `get_wallet_balance` | SDK execution gates | generic SDK if-chains |
 | **`graph.strategy`** | Provider graph | `service`, `id`, `speed`, `min` | **Disambiguation policy** when multiple products share a `porto_id` | SDK hardcoded provider rules |
 | **`features[].id`** | Provider | `tracking_number` row | services link | cross-provider |
 
@@ -115,8 +115,8 @@ graph.json
   edges.products[product_id].weight_tiers[] ► tiers allowed
   edges.marks[zone].profile ────────────► default mark profile id
   edges.marks[zone].services[id] ───────► profile override when service selected
-  edges.wire[integration][product][zone].base ► adapter catalog code (purchase)
-  edges.wire[integration][product][zone].services[id] ► service-composed code (DE Internetmarke)
+  edges.wire[wire][product][zone].base ► adapter catalog code (purchase)
+  edges.wire[wire][product][zone].services[id] ► service-composed code (DE Internetmarke)
   services[] (native service ids) ► services.json id list
 
 services.json
@@ -131,10 +131,10 @@ marks.json
   profiles[].size ────────────────► layout width/height (mm)
   default_profile ────────────────► fallback when edges.marks omits a zone
 
-integration.json
-  adapter ────────────────────────► must match graph.edges.wire key (e.g. internetmarke)
+execution.json
+  wire ───────────────────────────► must match graph.edges.wire key (e.g. internetmarke)
   billing[] / execution[] ─────────► SDK method gates (get_wallet_balance, create_mark)
-  graph.dependencies.integration ► bundle index only — not integration data
+  graph.dependencies.execution ► bundle index only — not execution data
 
 formats/layouts.json
   jurisdictions[DE].post_mark ────► envelope anchor (mm), not stamp size
@@ -163,8 +163,8 @@ zone + services           →    graph.edges.marks[zone] + services overrides
 
 adapter purchase          →    graph.edges.wire.internetmarke[product][zone][service?]
                           →    wire_code (e.g. 10001) + API payload
-                          →    integration.json.adapter selects wire table
-                          →    integration.json billing/execution gate SDK subservices
+                          →    execution.json.wire selects wire table
+                          →    execution.json billing/execution gate SDK subservices
                           →    PDF/PNG bytes                      PortoMark.content
                           →    tracking ref                   PortoMark.tracking_number
 ```

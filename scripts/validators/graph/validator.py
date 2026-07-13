@@ -7,8 +7,8 @@ from typing import Any
 from scripts.data_files import (
     DEFAULT_PROVIDER,
     ENVELOPES_FILE,
+    EXECUTION_FILE,
     GRAPH_FILE,
-    INTEGRATION_FILE,
     LAYOUTS_FILE,
     MARKS_FILE,
     POLICY_MAPPINGS_KEY,
@@ -38,8 +38,8 @@ from .edges import (
     run_validate_edges,
     run_validate_products_in_edges,
 )
+from .execution_manifest import run_validate_execution_manifest
 from .execution_semantics import run_validate_execution_semantics
-from .integration_manifest import run_validate_integration_manifest
 from .layouts import (
     run_validate_envelope_address_window,
     run_validate_envelope_ids,
@@ -122,7 +122,7 @@ class GraphValidator:
         self.envelopes: dict[str, Any] | None = None
         self.envelope_layouts: dict[str, Any] | None = None
         self.marks: dict[str, Any] | None = None
-        self.integration: dict[str, Any] | None = None
+        self.execution: dict[str, Any] | None = None
         self.market: dict[str, Any] | None = None
 
         self.product_dict: dict[str, dict[str, Any]] = {}
@@ -157,8 +157,8 @@ class GraphValidator:
             self.envelopes = load_json(fmt_path)
             self.envelope_layouts = load_json(lay_path)
             self.marks = load_json(self.provider_dir / MARKS_FILE)
-            integration_path = self.provider_dir / INTEGRATION_FILE
-            self.integration = load_json(integration_path) if integration_path.is_file() else None
+            execution_path = self.provider_dir / EXECUTION_FILE
+            self.execution = load_json(execution_path) if execution_path.is_file() else None
             rules_path = self.provider_dir / "rules.json"
             if rules_path.is_file():
                 self.provider_rules_doc = load_json(rules_path)
@@ -366,15 +366,15 @@ class GraphValidator:
             products=self.products,
         )
 
-    def validate_integration_manifest(self) -> None:
-        """Validate integration.json against graph.dependencies and edges.wire."""
+    def validate_execution_manifest(self) -> None:
+        """Validate execution.json against graph.dependencies and edges.wire."""
         if self.graph is None:
             return
         provider_id = str(self.provider_dir.name)
-        run_validate_integration_manifest(
+        run_validate_execution_manifest(
             self.results,
             graph=self.graph,
-            integration=self.integration,
+            execution=self.execution,
             provider_id=provider_id,
         )
 
@@ -424,7 +424,7 @@ class GraphValidator:
         self.validate_marks_profiles()
         self.validate_mark_edges()
         self.validate_wire_edges()
-        self.validate_integration_manifest()
+        self.validate_execution_manifest()
         self.validate_provider_rules()
         self.validate_dependencies()
         self.validate_units()
