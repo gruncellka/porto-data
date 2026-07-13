@@ -103,9 +103,54 @@ Use a branch; ensure pre-commit passes. CI runs validation, format checks, metad
 
 ## Releases
 
-1. Update `CHANGELOG.md`.
-2. Bump version in `package.json` and `pyproject.toml` (e.g. `bump2version`).
-3. `metadata.json` committed and current.
-4. Tag `vX.Y.Z` on `main` (or your release process) to trigger publish; see `.github/workflows/publish.yml`.
+`main` is the integration branch. Feature and refactor PRs merge here first.
+
+When `main` is stable (CI green, no known release blockers), cut a **release branch** and publish from that branch. Do not bump the published version or tag while feature work is still landing on `main`.
 
 Packages: npm `@gruncellka/porto-data`, PyPI `gruncellka-porto-data`.
+
+### Flow
+
+1. **Integrate on `main`** — merge PRs; accumulate changes under `CHANGELOG.md` → `[Unreleased]`; do not tag.
+2. **Stabilize** — confirm CI on `main` (`make quality` locally if needed). For breaking catalog changes, smoke downstream consumers (Porto SDK Lab / SDK repos) before cutting a release.
+3. **Cut a release branch** from the stable commit:
+
+   ```bash
+   git checkout main && git pull
+   git checkout -b release/x.x.x
+   ```
+
+4. **On the release branch only:**
+   - Move `CHANGELOG.md` `[Unreleased]` → `[X.Y.Z] - YYYY-MM-DD`
+   - `bump2version minor` (or `patch` / `major`) — updates `package.json` and `pyproject.toml`
+   - `make metadata` — commit regenerated `porto_data/metadata.json` (pre-commit also runs this on version bumps)
+   - `make quality` and `make test-cov`
+5. **Tag and publish** from the release branch:
+
+   ```bash
+   git tag vX.Y.Z
+   git push origin release/x.x.x
+   git push origin vX.Y.Z
+   ```
+
+   Tag push triggers `.github/workflows/publish.yml` (npm + PyPI).
+
+6. **Merge the release branch back to `main`** so version files and the finalized changelog live on `main`:
+
+   ```bash
+   git checkout main && git merge release/x.x.x
+   git push origin main
+   ```
+
+`bump2version` has `tag = False` in `.bumpversion.cfg` — tags are always created manually in step 5, never by `bump2version`.
+
+### Naming
+
+| Artifact | Pattern | Example |
+| -------- | ------- | ------- |
+| Release branch | `release/X.Y.Z` | `release/1.1.1` |
+| Git tag | `vX.Y.Z` | `v1.1.1` (must match bumped version) |
+
+### When a release branch is optional
+
+A direct bump + tag on `main` is acceptable only for small, isolated fixes when no other PRs are in flight. Default for breaking or multi-PR releases: use a release branch.
