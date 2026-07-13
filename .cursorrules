@@ -19,21 +19,21 @@ Registry keys, `PROVIDER_IDS_ORDER`, and `mappings.json` follow this order. Extr
 - `porto_data/policy/` — shared policy JSON (`jurisdictions.json`, `restrictions.json`, **`markets.json`**).
 - `porto_data/formats/` — shared envelope catalog and print layouts (`envelopes.json`, `layouts.json`).
 - `porto_data/providers.json` — provider id registry (**no `vat`** — fiscal defaults live in **`markets.json`**).
-- `porto_data/providers/<provider_id>/` — per-operator JSON (`products`, `services`, `prices`, `zones`, `weights.json`, **`graph.json`**, **`limits.json`**, `features.json`, optional **`integration.json`** (SDK execution manifest when an adapter ships), optional `rules.json`, …).
+- `porto_data/providers/<provider_id>/` — per-operator JSON (`products`, `services`, `prices`, `zones`, `weights.json`, **`graph.json`**, **`limits.json`**, `features.json`, optional **`execution.json`** (SDK execution manifest when an adapter ships), optional `rules.json`, …).
 - `porto_data/schemas/` — JSON Schema (including `porto_ids.schema.json`, `markets.schema.json`).
 - `porto_data/mappings.json` — which logical entities exist for each provider (paths are authoritative for tooling).
 - `porto_data/metadata.json` — **generated** (checksums, manifest). Regenerate with `make metadata` / `porto metadata`; do not edit by hand.
 
-There is **no** `porto_data/data/`, `data_links.json`, or `porto_data/global/` bundle. Cross-file wiring lives in each provider’s **`graph.json`** (`file_type`: `graph`): **`dependencies`**, **`edges`**, top-level **`services`**. Price paths come from **`dependencies`**; join keys from price schemas. Do not use removed names: top-level **`links`**, **`lookup_rules`**, **`global_settings`**, **`price_lookup`**, **`available_services`** (use **`services`** on graph), **`services.integrations`** (use **`integration.json`** + **`edges.wire`**).
+There is **no** `porto_data/data/`, `data_links.json`, or `porto_data/global/` bundle. Cross-file wiring lives in each provider’s **`graph.json`** (`file_type`: `graph`): **`dependencies`**, **`edges`**, top-level **`services`**. Price paths come from **`dependencies`**; join keys from price schemas. Do not use removed names: top-level **`links`**, **`lookup_rules`**, **`global_settings`**, **`price_lookup`**, **`available_services`** (use **`services`** on graph), **`services.integrations`** (use **`execution.json`** + **`edges.wire`**).
 
 ### Execution wiring (do not collapse)
 
 | Concern | File / location | Owns |
 | ------- | ---------------- | ---- |
-| Adapter checkout **productCode** / catalog keys | `graph.json` → **`edges.wire[integration]`** | Wire tables per product × zone (+ service composites) |
-| SDK **billing/execution methods** | **`integration.json`** (optional per provider) | Which adapter is active + what the SDK may call |
-| Bundle file index | `graph.json` → **`dependencies.integration`** | Pointer to `integration.json` only — not manifest data |
-| Measured checkout asset size (mm/px) | **`marks.json`** → **`calibrations[]`** | Integration × `voucher_layout` × dpi; `integration` must match a **`edges.wire`** key |
+| Adapter checkout **productCode** / catalog keys | `graph.json` → **`edges.wire[wire]`** | Wire tables per product × zone (+ service composites) |
+| SDK **billing/execution methods** | **`execution.json`** (optional per provider) | Active wire channel + what the SDK may call |
+| Bundle file index | `graph.json` → **`dependencies.execution`** | Pointer to `execution.json` only — not manifest data |
+| Measured checkout asset size (mm/px) | **`marks.json`** → **`calibrations[]`** | Wire channel × `voucher_layout` × dpi; `integration` must match an **`edges.wire`** key |
 
 See `docs/identity.md`, `docs/marks.md` (generic), `docs/providers/<id>.md` (operator tables).
 
@@ -85,7 +85,7 @@ Merge order documented in provider `limits.json` `context`: restrictions → lim
 - `scripts.validators.delivery` — zone-scoped **`delivery[]`**, optional **`included_features[]`** / **`indemnity`**, twin fingerprint guard on every `products.json`.
 - `scripts.validators.limits_scope` — `providers/*/limits.json` letter-scope rules (empty `limits[]` is valid).
 - `scripts.validators.porto_ids` — canonical `porto_id` enums and native-id cross-file refs.
-- `scripts/validators/graph/` — package for `graph.json` (`validator`, `runner`, `edges`, `services`, `units`, `dependencies`, **`integration_manifest`**, **`marks_profiles`**, …). Import as `scripts.validators.graph`.
+- `scripts/validators/graph/` — package for `graph.json` (`validator`, `runner`, `edges`, `services`, `units`, `dependencies`, **`execution_manifest`**, **`marks_profiles`**, …). Import as `scripts.validators.graph`.
 - Results shape: `ValidationResults` in `scripts.validators.base`.
 
 CLI / default order: **schema → mappings → markets → limits → porto_ids → delivery → graph** (`porto validate` / `make validate`).
@@ -121,7 +121,7 @@ porto-data = **facts + contracts**. SDK/app = **resolution + workflow**. Do not 
 | **`formats/layouts`** | `window`, `post_mark`, `standard` | `address_area`, `print_area`, printable workflow |
 | **`marks` / `mark_profile`** | Stamp/label footprint; optional **`calibrations[]`** (checkout px/mm) | Product size or service semantics |
 | **`providers/<id>/*.json`** | `file_type` + entity payload | Repeat `provider` (path is SoT) |
-| **`edges.wire`** | Adapter catalog codes per integration | SDK capabilities or credentials |
+| **`edges.wire`** | Adapter catalog codes per wire channel | SDK billing/execution gates or credentials |
 | **Generated docs** | Drift detection (`porto_id.md`, `metadata.json`) | Hand-edited checksums |
 
 **`porto_id` (instance of the doctrine):**

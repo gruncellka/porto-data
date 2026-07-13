@@ -1,12 +1,12 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/integration.schema.json",
-  "title": "Provider execution integration",
-  "description": "Per-operator execution adapter manifest. Declares the active wire integration id and SDK billing/execution methods the adapter implements. Wire product codes remain in graph.json edges.wire; credentials are runtime config only.",
+  "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/execution.schema.json",
+  "title": "Provider execution manifest",
+  "description": "Per-operator execution manifest. Declares the active wire channel id and SDK billing/execution methods the adapter implements. Wire product codes remain in graph.json edges.wire; credentials are runtime config only.",
   "type": "object",
   "required": [
     "file_type",
-    "adapter"
+    "wire"
   ],
   "properties": {
     "$schema": {
@@ -16,13 +16,13 @@
     },
     "file_type": {
       "type": "string",
-      "const": "integration",
+      "const": "execution",
       "description": "File type identifier"
     },
-    "adapter": {
+    "wire": {
       "type": "string",
       "pattern": "^[a-z][a-z0-9_]*$",
-      "description": "Wire integration id; must match a key under graph.json edges.wire for this operator"
+      "description": "Wire channel id; must match a key under graph.json edges.wire for this operator"
     },
     "billing": {
       "type": "array",
@@ -32,7 +32,7 @@
         "enum": [
           "get_wallet_balance"
         ],
-        "description": "Billing subservice method exposed when this integration is active"
+        "description": "Billing subservice method exposed when this wire is active"
       }
     },
     "execution": {
@@ -43,7 +43,7 @@
         "enum": [
           "create_mark"
         ],
-        "description": "Postage execution subservice method exposed when this integration is active"
+        "description": "Postage execution subservice method exposed when this wire is active"
       }
     }
   },

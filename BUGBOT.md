@@ -4,7 +4,7 @@
 
 - Review rules for Bugbot in this `porto-data` tree only: data integrity, validation correctness, release safety.
 - **Consistency** means cross-file agreement: registry ↔ mappings ↔ disk, **`policy/markets.json`** ↔ provider countries, catalog JSON ↔ **`graph.json`**, units, services ↔ prices ↔ graph, **`porto_id`** ↔ native ids.
-- **Resolution** (for SDKs/loaders) is anchored in each provider’s **`graph.json`**: **`dependencies`**, **`edges`** (product × zones × weight tiers; **`edges.wire`** for adapter catalog codes), top-level **`services`**, plus **`porto_data/schemas/graph.schema.json`**. Optional **`integration.json`** (indexed via **`dependencies.integration`**) declares adapter + SDK **capabilities** only — not wire tables. Price lookup uses **`dependencies`** paths and price schemas join keys (`product_id`, `zone`, `weight_tier` / `service_id`). Loaders must not assume removed layouts (`porto_data/data/`, `data_links.json`, top-level **`links`**, **`lookup_rules`**, **`global_settings`**, **`price_lookup`**, graph key **`available_services`** — use **`services`**; **`services.integrations`** — use **`integration.json`** + **`edges.wire`**).
+- **Resolution** (for SDKs/loaders) is anchored in each provider’s **`graph.json`**: **`dependencies`**, **`edges`** (product × zones × weight tiers; **`edges.wire`** for adapter catalog codes), top-level **`services`**, plus **`porto_data/schemas/graph.schema.json`**. Optional **`execution.json`** (indexed via **`dependencies.execution`**) declares wire channel + SDK **billing/execution methods** only — not wire tables. Price lookup uses **`dependencies`** paths and price schemas join keys (`product_id`, `zone`, `weight_tier` / `service_id`). Loaders must not assume removed layouts (`porto_data/data/`, `data_links.json`, top-level **`links`**, **`lookup_rules`**, **`global_settings`**, **`price_lookup`**, graph key **`available_services`** — use **`services`**; **`services.integrations`** — use **`execution.json`** + **`edges.wire`**).
 - **Provider order** in docs and prose: **`deutschepost` → `ukrposhta` → `laposte` → `swisspost`**.
 - **`limits.json`** with empty **`limits[]`** is **valid** — global restrictions live in **`policy/restrictions.json`**; overlays are optional.
 - **JSON naming:** Porto-owned schema keys use full words (`international_currency`, `vat.domestic` / `vat.international`); see `.cursorrules` § JSON naming doctrine.
@@ -35,8 +35,8 @@ porto-data ships **catalog facts** and **contracts** — not product workflow, c
 | `address_area` / `print_area` in layouts | Compose/workflow in catalog | `window` + `post_mark` only; compose in app |
 | `porto_id` in `graph.json` / `prices/*` keys | SDK token in wiring | Native `product_id` / `service_id` |
 | `mark_profile` id treated as `porto_id` | Layout vs input collapse | Resolve via `graph.edges.marks` |
-| `productCode` / wire tables in `integration.json` | Wire data in SDK manifest | `graph.edges.wire[integration]` |
-| `capabilities` / `adapter` only under `graph.services` | SDK gate in resolution graph | `integration.json` + `dependencies.integration` |
+| `productCode` / wire tables in `execution.json` | Wire data in SDK manifest | `graph.edges.wire[integration]` |
+| `capabilities` / `wire` only under `graph.services` | SDK gate in resolution graph | `execution.json` + `dependencies.execution` |
 | `native_id` on `products.json` / `services.json` rows | Adapter code in catalog facts | `edges.wire` per product × zone |
 | Operator mark calibration tables in `marks.md` | Provider-specific prose in generic doc | `docs/providers/<id>.md` + `marks.calibrations[]` |
 
@@ -126,7 +126,7 @@ These rules align reviews with validators under `scripts/validators/` and **`mak
 If a PR adds or keeps a **top-level** `"links"` or `"available_services"` key in any `porto_data/providers/**/graph.json`, or reintroduces **`services.integrations`**:
 
 - **Title:** `graph.json uses removed top-level keys`
-- **Body:** `Use edges (product → zones + weight_tiers; wire under edges.wire) and top-level services (native service ids). Remove links, available_services, services.integrations, lookup_rules, global_settings, price_lookup per graph.schema.json. SDK adapter manifest: integration.json.`
+- **Body:** `Use edges (product → zones + weight_tiers; wire under edges.wire) and top-level services (native service ids). Remove links, available_services, services.integrations, lookup_rules, global_settings, price_lookup per graph.schema.json. SDK adapter manifest: execution.json.`
 - **Labels:** `data`, `resolution`
 
 ### 10) Provider registry and mappings stay in lockstep (blocking)
@@ -317,17 +317,17 @@ If a PR adds or changes **`products.json`** and:
 - **Body:** `Recommandée must carry indemnity; twins must differ on delivery, indemnity.tier, included_features, or tracking_mode. CI: porto validate --type delivery. See docs/resolution.md § Candidate enrichment.`
 - **Labels:** `data`, `consistency`, `resolution`
 
-### 33) Integrations manifest vs wire tables (blocking)
+### 33) Execution manifest vs wire tables (blocking)
 
-If a PR adds or changes **`integration.json`** and:
+If a PR adds or changes **`execution.json`** and:
 
 - puts **`productCode`**, zone wire rows, or other checkout catalog keys in the manifest instead of **`graph.edges.wire`**, or
-- sets **`adapter`** to a value that does not match an **`edges.wire`** integration key, or
-- duplicates manifest data under **`graph.dependencies.integration`** (beyond the file pointer), or
+- sets **`wire`** to a value that does not match an **`edges.wire`** key, or
+- duplicates manifest data under **`graph.dependencies.execution`** (beyond the file pointer), or
 - reintroduces **`services.integrations`** on **`graph.json`**:
 
-- **Title:** `Integrations manifest conflated with wire tables`
-- **Body:** `integration.json owns adapter + capabilities[] only. Wire productCode tables live in graph.edges.wire[integration]. dependencies.integration is a bundle index pointer. CI: scripts/validators/graph/integration_manifest.py. See docs/identity.md.`
+- **Title:** `Execution manifest conflated with wire tables`
+- **Body:** `execution.json owns wire + billing[]/execution[] only. Wire productCode tables live in graph.edges.wire[wire]. dependencies.execution is a bundle index pointer. CI: scripts/validators/graph/execution_manifest.py. See docs/identity.md.`
 - **Labels:** `data`, `architecture`, `consistency`
 
 ### 34) Wire codes must not live on catalog entity rows (blocking)
@@ -350,10 +350,10 @@ If a PR adds or changes **`marks.json`** **`calibrations[]`** and:
 - **Body:** `calibrations[].integration must match edges.wire. FRANKING_ZONE uses by_mark_profile; ADDRESS_ZONE uses shared label_canvas. Operator tables belong in docs/providers/<id>.md. CI: scripts/validators/graph/marks_profiles.py.`
 - **Labels:** `data`, `consistency`
 
-### 36) Integrations schema / mappings must stay in lockstep (blocking)
+### 36) Execution schema / mappings must stay in lockstep (blocking)
 
-If a PR adds **`integration.json`** for a provider but omits **`integration.schema.json`**, **`mappings.json`** entry, **`graph.dependencies.integration`**, or **`make validate`** / tests for **`integration_manifest`**:
+If a PR adds **`execution.json`** for a provider but omits **`execution.schema.json`**, **`mappings.json`** entry, **`graph.dependencies.execution`**, or **`make validate`** / tests for **`execution_manifest`**:
 
-- **Title:** `integration.json added without schema, index, or validator`
-- **Body:** `Register integrations in mappings; point from graph.dependencies.integration; validate adapter vs wire keys. Add tests in tests/test_graph_integration_manifest.py. Run make validate and commit metadata.json when data changes.`
+- **Title:** `execution.json added without schema, index, or validator`
+- **Body:** `Register execution manifest in mappings; point from graph.dependencies.execution; validate wire vs edges.wire keys. Add tests in tests/test_graph_execution_manifest.py. Run make validate and commit metadata.json when data changes.`
 - **Labels:** `quality`, `data`, `consistency`

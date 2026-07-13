@@ -130,7 +130,7 @@
           "integration": {
             "type": "string",
             "minLength": 1,
-            "description": "graph.edges.wire integration key (same id namespace as integration.json adapter when present)"
+            "description": "graph.edges.wire integration key (same id namespace as execution.json wire when present)"
           },
           "voucher_layout": {
             "type": "string",
