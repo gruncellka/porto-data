@@ -65,7 +65,7 @@ Product and service `porto_id` enums are **disjoint** — products are size buck
 
 ## SDK vocabulary (consumer, not catalog keys)
 
-porto-data does not implement the SDK. When docs name SDK types, use this spine:
+porto-data does not implement the SDK. When docs name SDK types, use this spine — not SDK method names:
 
 ```text
 Porto
@@ -80,14 +80,6 @@ pricing
 product
 wire
 execution
-```
-
-Flattened provider surface:
-
-```text
-ProviderClient.resolve             → PortoResolution (decision)
-ProviderClient.price               → Pricing
-ProviderClient.createMark          → PortoMark (execution)
 ```
 
 Catalog `prices` / `product_prices` feed **`Porto.pricing`**. `execution.json` `billing[]` / `execution[]` gate SDK methods.
