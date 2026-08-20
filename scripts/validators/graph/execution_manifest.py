@@ -7,7 +7,7 @@ from typing import Any
 from scripts.data_files import EXECUTION_FILE, GRAPH_FILE
 from scripts.validators.base import ValidationResults
 
-from .edge_access import wire_integration_ids
+from .edge_access import wire_ids
 
 
 def _execution_dependency(graph: dict[str, Any]) -> dict[str, Any] | None:
@@ -29,7 +29,7 @@ def run_validate_execution_manifest(
     if graph is None or not isinstance(graph, dict):
         return
 
-    wire_ids = wire_integration_ids(graph)
+    graph_wire_ids = wire_ids(graph)
     dependency = _execution_dependency(graph)
     has_manifest = execution is not None
 
@@ -51,9 +51,9 @@ def run_validate_execution_manifest(
     if not has_manifest:
         if dependency is not None:
             return
-        if wire_ids:
+        if graph_wire_ids:
             results["warnings"].append(
-                f"{GRAPH_FILE}: edges.wire defines {sorted(wire_ids)} but "
+                f"{GRAPH_FILE}: edges.wire defines {sorted(graph_wire_ids)} but "
                 f"{EXECUTION_FILE} is absent (optional until an SDK adapter ships)"
             )
         return
@@ -73,10 +73,10 @@ def run_validate_execution_manifest(
         return
 
     wire_id = wire.strip().lower()
-    if wire_id not in wire_ids:
+    if wire_id not in graph_wire_ids:
         results["errors"].append(
             f"{EXECUTION_FILE}: wire {wire_id!r} must match a key in "
-            f"{GRAPH_FILE} edges.wire (have {sorted(wire_ids) or 'none'})"
+            f"{GRAPH_FILE} edges.wire (have {sorted(graph_wire_ids) or 'none'})"
         )
     else:
         results["correct"].append(f"execution.wire {wire_id!r} matches edges.wire")

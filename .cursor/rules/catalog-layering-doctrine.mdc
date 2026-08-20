@@ -37,7 +37,7 @@ Runtime / adapter   →  PortoMark, tracking numbers (not in porto-data)
 
 6. **Geometry is factual, composition is not.** `formats/layouts.json`: `window`, `post_mark`, `standard` only — no `address_area`, `print_area`, sender/recipient zones, or printable-region workflow.
 
-7. **Mark calibrations are measured facts, not resolution.** Optional `marks.calibrations[]` stores checkout dpi + px/mm per wire channel (`integration` field) × `voucher_layout`. Operator-specific tables belong in **`docs/providers/<id>.md`**, not generic `marks.md`.
+7. **Mark calibrations are measured facts, not resolution.** Optional `marks.calibrations[]` stores checkout dpi + px/mm per wire channel (`wire` field) × `mark_profile`. Operator-specific tables belong in **`docs/providers/<id>.md`**, not generic `marks.md`.
 
 8. **Validators encode philosophy.** If a rule matters for review, it should fail in `scripts/validators/` + `tests/` — not live only in prose.
 

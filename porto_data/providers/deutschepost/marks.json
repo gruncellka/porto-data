@@ -68,8 +68,8 @@
   ],
   "calibrations": [
     {
-      "integration": "internetmarke",
-      "voucher_layout": "FRANKING_ZONE",
+      "wire": "internetmarke",
+      "mark_profile": "FRANKING_ZONE",
       "mime_type": "image/png",
       "dpi": 300,
       "by_mark_profile": {
@@ -100,8 +100,8 @@
       }
     },
     {
-      "integration": "internetmarke",
-      "voucher_layout": "ADDRESS_ZONE",
+      "wire": "internetmarke",
+      "mark_profile": "ADDRESS_ZONE",
       "mime_type": "image/png",
       "dpi": 300,
       "label_canvas": {

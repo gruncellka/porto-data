@@ -19,6 +19,7 @@ Examples:
   porto validate --type schema        Validate JSON schemas
   porto validate --type mappings     mappings.json vs disk, providers.json registry, metadata alignment
   porto validate --type markets      policy/markets.json vs provider countries
+  porto validate --type addresses    formats/addresses.json vs layouts/jurisdictions
   porto validate --type limits       Validate providers/*/limits.json (letter scope)
   porto validate --type porto_ids   Validate porto_id enums and native-id refs
   porto validate --type delivery         Zone delivery SLAs on products.json
@@ -38,6 +39,7 @@ Examples:
             "schema",
             "mappings",
             "markets",
+            "addresses",
             "limits",
             "porto_ids",
             "delivery",
@@ -65,6 +67,7 @@ def main() -> int:
 
     if args.command == "validate":
         from cli.commands.validate import (
+            validate_addresses_cmd,
             validate_all,
             validate_delivery_cmd,
             validate_graph,
@@ -79,6 +82,7 @@ def main() -> int:
             "schema",
             "mappings",
             "markets",
+            "addresses",
             "limits",
             "porto_ids",
             "delivery",
@@ -92,6 +96,8 @@ def main() -> int:
             return validate_mappings()
         if args.type == "markets":
             return validate_markets_cmd()
+        if args.type == "addresses":
+            return validate_addresses_cmd()
         if args.type == "limits":
             return validate_limits()
         if args.type == "porto_ids":

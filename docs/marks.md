@@ -19,7 +19,7 @@ Display-only: `marks.profiles[].label` — operator-facing text in `marks.json`.
 | File | Fields |
 |------|--------|
 | `marks.json` → `profiles[]` | `id`, `mark_type`, `size` (mm), `mime_type` |
-| `marks.json` → `calibrations[]` | Optional checkout output dimensions per integration layout variant |
+| `marks.json` → `calibrations[]` | Optional checkout output dimensions: `wire` × `mark_profile` (wire layout token) × dpi; franking sizes keyed by Porto profile id in `by_mark_profile` |
 | `marks.json` → `default_profile` | Fallback when `graph.edges.marks` omits a zone |
 | `graph.json` → `edges.marks` | Per zone: `profile` + optional `services` overrides |
 | `graph.json` → `edges.products` | Product × zone × weight (unchanged) |
@@ -65,7 +65,7 @@ Example (Deutsche Post native ids — other operators use their own `products.js
 1. Read `graph.edges.marks[zone].profile` (else `marks.default_profile`).
 2. For each selected native service id, if `edges.marks[zone].services[service_id]` exists → use that profile.
 3. Look up `marks.profiles[id].size` and `formats/layouts.json` `post_mark`.
-4. When `marks.calibrations[]` is present, use it for integration-specific checkout output size (mm/px at a given dpi).
+4. When `marks.calibrations[]` is present, use it for wire-specific checkout output size (mm/px at a given dpi).
 
 Service keys are **native ids** from `graph.services` / `services.json`, not `porto_id`.
 

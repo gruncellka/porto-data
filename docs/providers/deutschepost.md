@@ -113,12 +113,12 @@ Mapped in `graph.json` → `edges.marks`; catalog sizes in `marks.json` → `pro
 
 `marks.json` → `calibrations[]` at checkout **DPI300** (measured from live Internetmarke output):
 
-| `voucher_layout` | Asset | Size (mm) | Size (px) |
-|------------------|-------|-----------|-----------|
-| `FRANKING_ZONE` | Marke only (per `mark_profile`) | 37×20 · 62×20 · 62×32.5 | 437×236 · 732×236 · 732×384 |
-| `ADDRESS_ZONE` | Full label (all profiles) | **85×43** | **1004×508** |
+| `calibrations[].mark_profile` (wire layout token) | Asset | Size (mm) | Size (px) |
+|---------------------------------------------------|-------|-----------|-----------|
+| `FRANKING_ZONE` | Marke only (per Porto `profiles[].id` in `by_mark_profile`) | 37×20 · 62×20 · 62×32.5 | 437×236 · 732×236 · 732×384 |
+| `ADDRESS_ZONE` | Full label (all Porto profiles) | **85×43** | **1004×508** |
 
-`profiles[].size` is nominal marke footprint (mm). Per-layout px/mm at a given checkout dpi is in `calibrations[]` (`by_mark_profile` or `label_canvas`).
+`profiles[].id` / `by_mark_profile` keys are Porto **mark profiles** (`domestic`, …) — SDK `resolve_mark_profile_id`. `calibrations[].mark_profile` is the wire checkout layout token (SDK `MarkLayout` → adapter maps to Internetmarke `voucherLayout`). `profiles[].size` is nominal marke footprint (mm).
 
 ---
 

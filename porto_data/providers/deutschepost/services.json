@@ -19,6 +19,9 @@
         "zone_1_eu",
         "zone_2_europe",
         "world"
+      ],
+      "combinable_with": [
+        "zusatzversicherung"
       ]
     },
     {
@@ -34,6 +37,9 @@
       "online_supported": true,
       "supported_zones": [
         "domestic"
+      ],
+      "combinable_with": [
+        "zusatzversicherung"
       ]
     },
     {
@@ -52,6 +58,9 @@
       "online_supported": true,
       "supported_zones": [
         "domestic"
+      ],
+      "combinable_with": [
+        "zusatzversicherung"
       ]
     },
     {
@@ -69,6 +78,11 @@
         "zone_1_eu",
         "zone_2_europe",
         "world"
+      ],
+      "combinable_with": [
+        "einschreiben",
+        "einschreiben_einwurf",
+        "einschreiben_rueckschein"
       ]
     }
   ]

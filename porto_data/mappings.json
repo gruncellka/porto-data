@@ -8,7 +8,8 @@
     },
     "formats": {
       "schemas/envelopes.schema.json": "formats/envelopes.json",
-      "schemas/layouts.schema.json": "formats/layouts.json"
+      "schemas/layouts.schema.json": "formats/layouts.json",
+      "schemas/addresses.schema.json": "formats/addresses.json"
     },
     "registry": {
       "schemas/providers.schema.json": "providers.json"

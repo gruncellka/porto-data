@@ -35,7 +35,7 @@ porto-data ships **catalog facts** and **contracts** — not product workflow, c
 | `address_area` / `print_area` in layouts | Compose/workflow in catalog | `window` + `post_mark` only; compose in app |
 | `porto_id` in `graph.json` / `prices/*` keys | SDK token in wiring | Native `product_id` / `service_id` |
 | `mark_profile` id treated as `porto_id` | Layout vs input collapse | Resolve via `graph.edges.marks` |
-| `productCode` / wire tables in `execution.json` | Wire data in SDK manifest | `graph.edges.wire[integration]` |
+| `productCode` / wire tables in `execution.json` | Wire data in SDK manifest | `graph.edges.wire[wire]` |
 | `capabilities` / `wire` only under `graph.services` | SDK gate in resolution graph | `execution.json` + `dependencies.execution` |
 | `native_id` on `products.json` / `services.json` rows | Adapter code in catalog facts | `edges.wire` per product × zone |
 | Operator mark calibration tables in `marks.md` | Provider-specific prose in generic doc | `docs/providers/<id>.md` + `marks.calibrations[]` |
@@ -335,19 +335,19 @@ If a PR adds or changes **`execution.json`** and:
 If a PR adds **`native_id`**, **`productCode`**, or adapter checkout keys on **`products.json`** / **`services.json`** rows (or in schemas as required catalog fields) instead of **`graph.edges.wire`**:
 
 - **Title:** `Adapter wire code on catalog entity row`
-- **Body:** `Checkout catalog keys are per integration in graph.edges.wire (product × zone [× service composite]). products/services keep operator native id + porto_id only. CI: wire_edges entity guard.`
+- **Body:** `Checkout catalog keys are per wire in graph.edges.wire (product × zone [× service composite]). products/services keep operator native id + porto_id only. CI: wire_edges entity guard.`
 - **Labels:** `data`, `resolution`, `consistency`
 
-### 35) Mark calibrations must align with wire integrations (blocking)
+### 35) Mark calibrations must align with wire ids (blocking)
 
 If a PR adds or changes **`marks.json`** **`calibrations[]`** and:
 
-- **`integration`** does not match a key under **`graph.edges.wire`**, or
-- **`voucher_layout`** / profile keys are unknown to **`marks.profiles`**, or
+- **`wire`** does not match a key under **`graph.edges.wire`**, or
+- **`calibrations[].mark_profile`** is missing, or **`by_mark_profile`** keys are unknown to **`marks.profiles`**, or
 - measured checkout sizes are documented only in **`docs/marks.md`** instead of **`docs/providers/<id>.md`** for operator-specific tables:
 
 - **Title:** `Mark calibrations invalid or misplaced`
-- **Body:** `calibrations[].integration must match edges.wire. FRANKING_ZONE uses by_mark_profile; ADDRESS_ZONE uses shared label_canvas. Operator tables belong in docs/providers/<id>.md. CI: scripts/validators/graph/marks_profiles.py.`
+- **Body:** `calibrations[].wire must match edges.wire. calibrations[].mark_profile is the wire checkout layout token (not voucher_layout). FRANKING_ZONE uses by_mark_profile keyed by Porto profile id; ADDRESS_ZONE uses shared label_canvas. Operator tables belong in docs/providers/<id>.md. CI: scripts/validators/graph/marks_profiles.py.`
 - **Labels:** `data`, `consistency`
 
 ### 36) Execution schema / mappings must stay in lockstep (blocking)

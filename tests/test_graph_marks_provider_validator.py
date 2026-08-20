@@ -98,13 +98,13 @@ class TestMarksProfilesCoverage:
         run_validate_marks_profiles(r, graph={}, marks=marks)
         assert any("edges.marks" in e for e in r["errors"])
 
-    def test_calibration_integration_must_match_wire(self) -> None:
+    def test_calibration_wire_must_match_graph(self) -> None:
         r = _empty_results()
         marks = _marks_doc(profiles=[{"id": "domestic", "mark_type": "stamp", "label": "D"}])
         marks["calibrations"] = [
             {
-                "integration": "unknown_api",
-                "voucher_layout": "stamp_only",
+                "wire": "unknown_api",
+                "mark_profile": "stamp_only",
                 "mime_type": "image/png",
                 "dpi": 300,
                 "label_canvas": {
@@ -124,15 +124,15 @@ class TestMarksProfilesCoverage:
             },
         }
         run_validate_marks_profiles(r, graph=graph, marks=marks)
-        assert any("integration 'unknown_api'" in e for e in r["errors"])
+        assert any("wire 'unknown_api'" in e for e in r["errors"])
 
     def test_calibration_by_mark_profile_requires_known_profiles(self) -> None:
         r = _empty_results()
         marks = _marks_doc(profiles=[{"id": "domestic", "mark_type": "stamp", "label": "D"}])
         marks["calibrations"] = [
             {
-                "integration": "webstamp",
-                "voucher_layout": "stamp_only",
+                "wire": "webstamp",
+                "mark_profile": "stamp_only",
                 "mime_type": "image/png",
                 "dpi": 300,
                 "by_mark_profile": {
@@ -148,8 +148,8 @@ class TestMarksProfilesCoverage:
         marks = _marks_doc(profiles=[{"id": "domestic", "mark_type": "stamp", "label": "D"}])
         marks["calibrations"] = [
             {
-                "integration": "mtel",
-                "voucher_layout": "full_label",
+                "wire": "mtel",
+                "mark_profile": "full_label",
                 "mime_type": "image/png",
                 "dpi": 300,
                 "source_run": "lab-run",
@@ -178,19 +178,19 @@ class TestMarksProfilesCoverage:
         run_validate_marks_profiles(r, graph={}, marks=marks)
         assert any("calibrations[0] must be an object" in e for e in r["errors"])
 
-    def test_calibration_requires_integration_and_layout(self) -> None:
+    def test_calibration_requires_wire_and_layout(self) -> None:
         r = _empty_results()
         marks = _marks_doc(profiles=[{"id": "a", "mark_type": "stamp", "label": "A"}])
-        marks["calibrations"] = [{"integration": "", "voucher_layout": ""}]
+        marks["calibrations"] = [{"wire": "", "mark_profile": ""}]
         run_validate_marks_profiles(r, graph={}, marks=marks)
-        assert any("integration must be a non-empty string" in e for e in r["errors"])
-        assert any("voucher_layout must be a non-empty string" in e for e in r["errors"])
+        assert any("wire must be a non-empty string" in e for e in r["errors"])
+        assert any("mark_profile must be a non-empty string" in e for e in r["errors"])
 
     def test_calibration_requires_dimension_data(self) -> None:
         r = _empty_results()
         marks = _marks_doc(profiles=[{"id": "a", "mark_type": "stamp", "label": "A"}])
         marks["calibrations"] = [
-            {"integration": "api", "voucher_layout": "stamp_only", "by_mark_profile": {}}
+            {"wire": "api", "mark_profile": "stamp_only", "by_mark_profile": {}}
         ]
         run_validate_marks_profiles(r, graph={}, marks=marks)
         assert any("requires by_mark_profile or label_canvas" in e for e in r["errors"])
@@ -200,8 +200,8 @@ class TestMarksProfilesCoverage:
         marks = _marks_doc(profiles=[{"id": "a", "mark_type": "stamp", "label": "A"}])
         marks["calibrations"] = [
             {
-                "integration": "api",
-                "voucher_layout": "stamp_only",
+                "wire": "api",
+                "mark_profile": "stamp_only",
                 "label_canvas": "bad",
                 "by_mark_profile": {"a": "bad"},
             }
@@ -211,8 +211,8 @@ class TestMarksProfilesCoverage:
         assert any("by_mark_profile['a'] must be an object" in e for e in r["errors"])
         marks["calibrations"] = [
             {
-                "integration": "api",
-                "voucher_layout": "stamp_only",
+                "wire": "api",
+                "mark_profile": "stamp_only",
                 "label_canvas": {"width_px": 1},
             }
         ]

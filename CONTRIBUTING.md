@@ -105,6 +105,8 @@ Use a branch; ensure pre-commit passes. CI runs validation, format checks, metad
 
 `main` is the integration branch. Feature and refactor PRs merge here first.
 
+**1.0.0 gate:** `calibrations[]` use **`mark_profile`** (wire checkout layout token, e.g. `FRANKING_ZONE` / `ADDRESS_ZONE`), not `voucher_layout`. Porto profile ids (`domestic`, …) live in `profiles[]` and `by_mark_profile` keys. Re-run `make validate` before cutting `1.0.0`; stay on **0.5.1** until the full Unreleased contract is intentional and green.
+
 When `main` is stable (CI green, no known release blockers), cut a **release branch** and publish from that branch. Do not bump the published version or tag while feature work is still landing on `main`.
 
 Packages: npm `@gruncellka/porto-data`, PyPI `gruncellka-porto-data`.

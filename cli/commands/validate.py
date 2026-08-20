@@ -1,6 +1,7 @@
 """Validate command for porto CLI - thin wrapper around validators."""
 
 from scripts.data_files import list_provider_ids
+from scripts.validators.addresses import validate_addresses
 from scripts.validators.delivery import validate_delivery
 from scripts.validators.graph import validate_graph as _validate_provider_graph
 from scripts.validators.limits_scope import validate_limits_scope
@@ -36,6 +37,11 @@ def validate_markets_cmd() -> int:
     return validate_markets()
 
 
+def validate_addresses_cmd() -> int:
+    """Validate formats/addresses.json vs jurisdictions and layout standards."""
+    return validate_addresses()
+
+
 def validate_delivery_cmd() -> int:
     """Validate zone-scoped delivery SLAs on providers/*/products.json."""
     return validate_delivery()
@@ -54,7 +60,7 @@ def validate_graph(analyze: bool = False, provider: str | None = None) -> int:
 
 
 def validate_all() -> int:
-    """Validate data bundle: schema → mappings → markets → limits → porto_ids → delivery → graph."""
+    """Validate data bundle: schema → mappings → markets → addresses → limits → porto_ids → delivery → graph."""
     schema_result = validate_schema()
     if schema_result != 0:
         return schema_result
@@ -64,6 +70,9 @@ def validate_all() -> int:
     markets_result = validate_markets_cmd()
     if markets_result != 0:
         return markets_result
+    addresses_result = validate_addresses_cmd()
+    if addresses_result != 0:
+        return addresses_result
     limits_result = validate_limits()
     if limits_result != 0:
         return limits_result

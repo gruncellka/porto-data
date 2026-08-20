@@ -19,7 +19,7 @@ One-page map of **who names what** across **porto-data** (JSON + schemas), **Por
 ┌───────────────────────────────────▼─────────────────────────────────────────┐
 │  PORTO SDK (Python / TypeScript)                                             │
 │  input:  porto_id, country_code, weight, service porto_ids                  │
-│  output: ResolvedData (+ PortoMark after adapter call)                       │
+│  output: Porto (+ PortoMark after adapter call)                       │
 └───────────────────────────────────┬─────────────────────────────────────────┘
                                     │ reads bundle only via loader/resolvers
 ┌───────────────────────────────────▼─────────────────────────────────────────┐
@@ -53,13 +53,43 @@ One-page map of **who names what** across **porto-data** (JSON + schemas), **Por
 | **`mark_type`** | Porto enum | `stamp`, `label` | product + marks profile | — |
 | **`tracking_mode`** | Porto enum | `none`, `optional`, `included` | product row | — |
 | **`envelope_id`** | Shared formats | `DL`, `C6`, `C4` | products, layouts | — |
-| **`PortoMark.id`** | SDK runtime | `deutschepost:abc-123` | execution result | porto-data |
+| **`PortoMark.id`** | Porto SDK | UUID (factory-minted) | execution result identity | porto-data / provider wire ids |
 | **`wire`** | `execution.json` | `internetmarke` | SDK execution manifest | graph body |
-| **`capability`** | `execution.json` | `create_mark`, `get_wallet_balance` | SDK execution gates | generic SDK if-chains |
+| **`billing[]` / `execution[]`** | `execution.json` | `get_wallet_balance`, `create_mark` | SDK method gates | generic SDK if-chains |
 | **`graph.strategy`** | Provider graph | `service`, `id`, `speed`, `min` | **Disambiguation policy** when multiple products share a `porto_id` | SDK hardcoded provider rules |
 | **`features[].id`** | Provider | `tracking_number` row | services link | cross-provider |
 
 Product and service `porto_id` enums are **disjoint** — products are size buckets only; `registered` is a **service** add-on (e.g. DE Einschreiben, UA intl registered surcharge).
+
+---
+
+## SDK vocabulary (consumer, not catalog keys)
+
+porto-data does not implement the SDK. When docs name SDK types, use this spine:
+
+```text
+Porto
+PortoResolver
+PortoResolution
+PortoExecution
+PortoMark
+PortoError
+PortoErrorCode
+ProviderClient
+pricing
+product
+wire
+execution
+```
+
+Flattened provider surface:
+
+```text
+ProviderClient.resolve      → PortoResolution (decision)
+ProviderClient.createMark   → PortoMark (execution)
+```
+
+Catalog `prices` / `product_prices` feed **`Porto.pricing`**. `execution.json` `billing[]` / `execution[]` gate SDK methods.
 
 ---
 
@@ -82,7 +112,7 @@ La Poste recommandée
 "id"
   ├─ products.id / services.id   → provider-native (standardbrief)
   ├─ marks.profiles[].id         → mark_profile (domestic)
-  └─ PortoMark.id                → runtime execution handle
+  └─ PortoMark.id                → Porto UUID (not a provider handle)
 ```
 
 ---
@@ -151,8 +181,8 @@ provider: deutschepost    →    (loader scope)
 country_code: US          →    zone: world
 weight: 20               →    weight_tier: W0020
 letterType: small         →    porto_id: small
-                          →    product.id: standardbrief      ResolvedData.product
-                          →    base_price from prices         ResolvedData.pricing
+                          →    product.id: standardbrief      Porto.product
+                          →    base_price from prices         Porto.pricing
 
 services: [registered]    →    porto_id: registered
                           →    service.id: einschreiben

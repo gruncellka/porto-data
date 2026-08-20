@@ -92,7 +92,7 @@
               "type": "string",
               "pattern": "^[a-z_]+$"
             },
-            "description": "Service IDs this service can be combined with in a single order."
+            "description": "Service IDs this service can be combined with in a single order. Source of truth for multi-select; SDK validateServiceSelection / prepareMarkOrder enforce it. Apps must not invent exclusivity heuristics — declare edges here when variants are mutually exclusive."
           },
           "enables_tracking": {
             "type": "boolean",

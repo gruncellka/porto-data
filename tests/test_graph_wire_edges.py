@@ -127,7 +127,7 @@ class TestRunValidateWireEdges:
         )
         assert any("edges.wire is empty" in w for w in r["warnings"])
 
-    def test_integration_must_be_object(self) -> None:
+    def test_wire_must_be_object(self) -> None:
         r = _results()
         graph = _wire_graph()
         graph["edges"]["wire"] = {"internetmarke": "not-a-dict"}

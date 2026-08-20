@@ -93,6 +93,8 @@ validate-json: venv
 	@. $(VENV)/bin/activate && PYTHONPATH=. python -m cli.main validate --type mappings
 	@echo "Validating policy/markets.json..."
 	@. $(VENV)/bin/activate && PYTHONPATH=. python -m cli.main validate --type markets
+	@echo "Validating formats/addresses.json..."
+	@. $(VENV)/bin/activate && PYTHONPATH=. python -c "from scripts.validators.addresses import validate_addresses; raise SystemExit(validate_addresses())"
 	@echo "Validating providers/*/limits.json..."
 	@. $(VENV)/bin/activate && PYTHONPATH=. python -m cli.main validate --type limits
 	@echo "Validating porto_id vocabulary and native-id refs..."

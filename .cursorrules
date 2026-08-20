@@ -33,7 +33,7 @@ There is **no** `porto_data/data/`, `data_links.json`, or `porto_data/global/` b
 | Adapter checkout **productCode** / catalog keys | `graph.json` → **`edges.wire[wire]`** | Wire tables per product × zone (+ service composites) |
 | SDK **billing/execution methods** | **`execution.json`** (optional per provider) | Active wire channel + what the SDK may call |
 | Bundle file index | `graph.json` → **`dependencies.execution`** | Pointer to `execution.json` only — not manifest data |
-| Measured checkout asset size (mm/px) | **`marks.json`** → **`calibrations[]`** | Wire channel × `voucher_layout` × dpi; `integration` must match an **`edges.wire`** key |
+| Measured checkout asset size (mm/px) | **`marks.json`** → **`calibrations[]`** | Wire channel × `mark_profile` (layout token) × dpi; `wire` must match an **`edges.wire`** key |
 
 See `docs/identity.md`, `docs/marks.md` (generic), `docs/providers/<id>.md` (operator tables).
 

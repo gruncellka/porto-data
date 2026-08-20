@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+
+- **Layout window geometry (DIN 680 Form B):** C5/C4 `window.area.y` for DE/CH/FR was incorrectly using the DL/C6 15 mm-from-bottom rule (`y` 102 / 159). Corrected to Form B: C5 `y: 57` (60 mm from bottom), C4 `y: 57` (57 mm from top).
+- **`marks_profiles` calibrations:** Require ``calibrations[].mark_profile`` (wire checkout layout token), matching schema + Deutsche Post data — not legacy ``voucher_layout``.
+
+### Changed
+
+- **Vocabulary:** Graph validator helper `wire_integration_ids` → `wire_ids`. Identity cheat sheet `capability` → `billing[]` / `execution[]`; SDK spine map (`Porto*`, `ProviderClient.resolve` / `createMark`). BUGBOT `edges.wire[wire]`.
+
 ### Changed (breaking)
 
 - **Execution manifest:** Rename `integration.json` → `execution.json`, `integration.schema.json` → `execution.schema.json`, `file_type` `integration` → `execution`, manifest field `adapter` → `wire`, and `graph.dependencies.integration` → `graph.dependencies.execution`.
@@ -13,6 +22,8 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- **SDK catalog compat:** porto-data **package version is the schema version** (`metadata.project.version`). SDKs gate load on that semver (`PORTO_DATA_SCHEMA_UNSUPPORTED` / `PORTO_DATA_SCHEMA_TOO_NEW`). See Lab [versioning-architecture-review.md](../../docs/sdks/versioning-architecture-review.md).
+- **Address forms (`formats/addresses.json`):** Sparse jurisdiction postal validity (DE/CH/FR/UA) with `forms[]` kinds `street` | `post_box`, `postal_code.pattern`, and FR `max_line_length` 38. Layout-aligned standards for DE/CH/FR; UA address-only `UKRPOSHTA` until `layouts.UA` exists. Schema + validator (layout match only when layout jurisdiction present).
 - **Graph validator:** `execution_manifest` requires at least one billing or execution method when the manifest exists.
 
 ## [0.5.1] - 2026-07-07
@@ -22,7 +33,7 @@ All notable changes to this project will be documented in this file.
 - **`integrations.schema.json`:** Per-operator execution adapter manifest (`adapter`, `capabilities[]`).
 - **Deutsche Post `integrations.json`:** Internetmarke adapter with `mark_purchase_sync` and `wallet_balance_read`.
 - **Deutsche Post `marks.json`:** `calibrations[]` for Internetmarke `FRANKING_ZONE` (per `mark_profile`) and `ADDRESS_ZONE` full label canvas (85×43 mm at checkout dpi 300).
-- **`marks.schema.json`:** Optional `calibrations[]` (integration × voucher layout × checkout dpi × px/mm).
+- **`marks.schema.json`:** Optional `calibrations[]` (wire × mark_profile × checkout dpi × px/mm).
 - **Graph validators:** `integrations_manifest` (adapter vs `edges.wire`); `marks_profiles` calibration cross-checks.
 
 ### Fixed

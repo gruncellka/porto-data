@@ -49,7 +49,8 @@
       "porto_id": "medium",
       "name": "Kompaktbrief",
       "envelope_ids": [
-        "C5"
+        "DL",
+        "C6"
       ],
       "zones": [
         "domestic",
@@ -87,6 +88,7 @@
       "porto_id": "large",
       "name": "Großbrief",
       "envelope_ids": [
+        "C5",
         "C4"
       ],
       "zones": [
@@ -125,6 +127,8 @@
       "porto_id": "extra_large",
       "name": "Maxibrief",
       "envelope_ids": [
+        "C5",
+        "C4",
         "B4"
       ],
       "zones": [
@@ -163,6 +167,8 @@
       "porto_id": "extra_large",
       "name": "Maxibrief International (bis 2.000 g)",
       "envelope_ids": [
+        "C5",
+        "C4",
         "B4"
       ],
       "zones": [

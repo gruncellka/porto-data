@@ -6,7 +6,8 @@
       "name": "Deutsche Post AG",
       "country": "DE",
       "mark_types": [
-        "stamp"
+        "stamp",
+        "label"
       ]
     },
     "ukrposhta": {
