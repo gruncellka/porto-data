@@ -11,7 +11,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
-- **Vocabulary:** Graph validator helper `wire_integration_ids` → `wire_ids`. Identity cheat sheet `capability` → `billing[]` / `execution[]`; SDK spine map (`Porto*`, `ProviderClient.resolve` / `createMark`). BUGBOT `edges.wire[wire]`.
+- **Vocabulary:** Graph validator helper `wire_integration_ids` → `wire_ids`. Identity cheat sheet `capability` → `billing[]` / `execution[]`; SDK spine map (`Porto*`, `ProviderClient` — no Postage façade). BUGBOT `edges.wire[wire]`.
 
 ### Changed (breaking)
 

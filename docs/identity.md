@@ -85,8 +85,9 @@ execution
 Flattened provider surface:
 
 ```text
-ProviderClient.resolve      → PortoResolution (decision)
-ProviderClient.createMark   → PortoMark (execution)
+ProviderClient.resolve             → PortoResolution (decision)
+ProviderClient.price               → Pricing
+ProviderClient.createMark          → PortoMark (execution)
 ```
 
 Catalog `prices` / `product_prices` feed **`Porto.pricing`**. `execution.json` `billing[]` / `execution[]` gate SDK methods.
