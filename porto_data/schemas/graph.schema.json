@@ -179,7 +179,7 @@
         },
         "wire": {
           "type": "object",
-          "description": "Adapter catalog codes per integration × product × zone. Optional services map for service-composed SKUs (e.g. Deutsche Post Internetmarke).",
+          "description": "Adapter catalog codes per wire × product × zone. Optional services map for service-composed SKUs (e.g. Deutsche Post Internetmarke).",
           "patternProperties": {
             "^[a-z_]+$": {
               "type": "object",

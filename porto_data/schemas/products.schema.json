@@ -131,7 +131,7 @@
               "optional",
               "included"
             ],
-            "description": "Whether tracking is expected on the execution result; actual tracking numbers are runtime-only (PortoMark), never stored in porto-data."
+            "description": "Whether tracking is expected on the execution result; actual tracking numbers are runtime-only, never stored in porto-data."
           },
           "delivery": {
             "type": "array",

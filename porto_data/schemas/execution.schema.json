@@ -43,7 +43,7 @@
         "enum": [
           "create_mark"
         ],
-        "description": "Postage execution subservice method exposed when this wire is active"
+        "description": "Execution capability method exposed when this wire is active"
       }
     }
   },

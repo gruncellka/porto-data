@@ -26,7 +26,7 @@ help:
 	@echo ""
 	@echo "Most Common Commands:"
 	@echo "  make quality       - validate + format + lint + type-check"
-	@echo "  make validate      - Validate all JSON (schema → mappings → markets → limits → porto_ids → delivery → graph)"
+	@echo "  make validate      - Validate all JSON (schema → mappings → markets → addresses → limits → porto_ids → delivery → graph)"
 	@echo "  make format        - Format JSON and Python"
 	@echo "  make lint          - Lint JSON and Python"
 	@echo ""
@@ -94,7 +94,7 @@ validate-json: venv
 	@echo "Validating policy/markets.json..."
 	@. $(VENV)/bin/activate && PYTHONPATH=. python -m cli.main validate --type markets
 	@echo "Validating formats/addresses.json..."
-	@. $(VENV)/bin/activate && PYTHONPATH=. python -c "from scripts.validators.addresses import validate_addresses; raise SystemExit(validate_addresses())"
+	@. $(VENV)/bin/activate && PYTHONPATH=. python -m cli.main validate --type addresses
 	@echo "Validating providers/*/limits.json..."
 	@. $(VENV)/bin/activate && PYTHONPATH=. python -m cli.main validate --type limits
 	@echo "Validating porto_id vocabulary and native-id refs..."

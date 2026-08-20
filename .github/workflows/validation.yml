@@ -87,6 +87,21 @@ jobs:
                   make venv
                   . venv/bin/activate && PYTHONPATH=. python -m cli.main validate --type markets
 
+    validate-addresses:
+        name: Validate formats/addresses.json
+        runs-on: ubuntu-22.04
+        needs: [validate-schemas]
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-python@v5
+              with:
+                  python-version: ${{ env.PYTHON_VERSION }}
+                  cache: 'pip'
+            - name: Validate address forms vs layouts/jurisdictions
+              run: |
+                  make venv
+                  . venv/bin/activate && PYTHONPATH=. python -m cli.main validate --type addresses
+
     validate-porto-ids:
         name: Validate porto_id vocabulary
         runs-on: ubuntu-22.04
@@ -140,7 +155,7 @@ jobs:
     verify-metadata:
         name: Verify Metadata
         runs-on: ubuntu-22.04
-        needs: [validate-schemas, validate-mappings, validate-markets, validate-limits, validate-porto-ids, validate-delivery, validate-graph]
+        needs: [validate-schemas, validate-mappings, validate-markets, validate-addresses, validate-limits, validate-porto-ids, validate-delivery, validate-graph]
         steps:
             - uses: actions/checkout@v4
             - uses: actions/setup-python@v5
@@ -219,6 +234,7 @@ jobs:
             - format-json
             - validate-mappings
             - validate-markets
+            - validate-addresses
             - validate-limits
             - validate-porto-ids
             - validate-delivery

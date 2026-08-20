@@ -5,7 +5,7 @@ alwaysApply: true
 
 # Catalog layering doctrine (porto-data)
 
-**Hub:** `docs/identity.md` · `docs/id.md` · `docs/marks.md` · `BUGBOT.md` (philosophy + rules 23–36)
+**Hub:** `docs/identity.md` · `docs/id.md` · `docs/marks.md` · `BUGBOT.md` (philosophy + rules 23–37)
 
 porto-data is a **factual bundle** + **schemas** + **validators**. It is not the product UI, compose engine, or SDK resolver. When in doubt: **put the fact in one layer only**; let SDK/app **resolve** across layers.
 
@@ -17,7 +17,7 @@ Catalog facts       →  native id, zones, weights, prices, geometry (this repo)
 Layout output       →  mark_profile, window rect, post_mark anchor
 Adapter wiring      →  edges.wire productCode / catalog keys (per wire channel)
 SDK execution gate  →  execution.json wire + billing/execution methods (optional)
-Runtime / adapter   →  PortoMark, tracking numbers (not in porto-data)
+Runtime / adapter   →  purchased mark bytes, tracking numbers (not in porto-data)
 ```
 
 ## Core principles
@@ -25,7 +25,7 @@ Runtime / adapter   →  PortoMark, tracking numbers (not in porto-data)
 1. **One identifier, one job.** Same English word in two layers is a bug unless explicitly documented (e.g. `domestic` as zone vs mark_profile; `registered` as service porto_id vs mark_profile id — never as product porto_id).
 
 2. **Facts vs normalization vs workflow.**
-   - **Facts** in JSON: carrier SKUs (`products.id`), mm geometry (`layouts.window`), stamp sizes (`marks.profiles`), tariff rows, **zone-scoped delivery SLAs** (`products.delivery[]`), **market working-day calendar** (`markets.working_days`).
+   - **Facts** in JSON: carrier SKUs (`products.id`), mm geometry (`layouts.window`), stamp sizes (`marks.profiles`), tariff rows, **zone-scoped delivery SLAs** (`products.delivery[]`), **market working-day calendar** (`markets.working_days`), **sparse address forms** (`formats/addresses.json`).
    - **Normalization** (`porto_id`): cross-operator SDK input with **narrow** enums per entity type.
    - **Workflow** (sender inside window, R1/R2 pick, speed class): **SDK / Licko compose** — not invented catalog fields.
 
@@ -35,7 +35,7 @@ Runtime / adapter   →  PortoMark, tracking numbers (not in porto-data)
 
 5. **Execution manifest ≠ wire tables.** `execution.json` declares **active wire channel** + **SDK billing/execution methods**. `graph.edges.wire[wire]` declares **productCode** rows. `graph.dependencies.execution` is a **file pointer** only.
 
-6. **Geometry is factual, composition is not.** `formats/layouts.json`: `window`, `post_mark`, `standard` only — no `address_area`, `print_area`, sender/recipient zones, or printable-region workflow.
+6. **Geometry is factual, composition is not.** `formats/layouts.json`: `window`, `post_mark`, `standard` only — no `address_area`, `print_area`, sender/recipient zones, or printable-region workflow. Postal **forms** (required fields, postcode pattern) live in **`formats/addresses.json`**.
 
 7. **Mark calibrations are measured facts, not resolution.** Optional `marks.calibrations[]` stores checkout dpi + px/mm per wire channel (`wire` field) × `mark_profile`. Operator-specific tables belong in **`docs/providers/<id>.md`**, not generic `marks.md`.
 
@@ -53,6 +53,8 @@ Runtime / adapter   →  PortoMark, tracking numbers (not in porto-data)
 | `productCode` / wire codes in `execution.json` | Wire table in wrong file | `graph.edges.wire` |
 | Operator mark calibration tables in `marks.md` | Provider-specific prose in generic doc | `docs/providers/<id>.md` |
 | New layout zone named like a product feature | Invented semantics | Only standard/provider geometry |
+| Address compose blocks in `layouts.json` | Workflow in geometry | Forms in `addresses.json`; mm in `layouts` |
+| Docs name consumer SDK methods or class façades | Consumer API in catalog docs | Catalog keys/layers only; Lab owns SDK API docs |
 | Docs say X but schema allows Y | Drift | Align schema, validator, `docs/id.md`, generated tables |
 | `lane` / speed class on product rows | SDK taxonomy in catalog | Use `delivery[]` + native `id`; interpret in SDK/app |
 
@@ -65,6 +67,7 @@ Runtime / adapter   →  PortoMark, tracking numbers (not in porto-data)
 - **Wire:** Internetmarke `productCode` in `edges.wire.internetmarke` — not on product rows.
 - **Execution:** `execution.json` `wire: internetmarke` must match an `edges.wire` key.
 - **Delivery:** `markets.CH.working_days` + `products.delivery[]` per zone — not `lane: priority` on the product row.
+- **Addresses:** DE `DIN678` forms in `addresses.json` — not sender/recipient rectangles on the layout.
 
 ## Before merge (any catalog/schema change)
 

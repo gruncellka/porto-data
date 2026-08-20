@@ -44,6 +44,9 @@ Cross-file structure lives in each provider’s **`graph.json`** (`edges.product
 | Weight bracket file | `weights.json` (`file_type`: `weights`) |
 | Single tier field | `weight_tier` |
 | Conditional rules file | `rules.json` (`file_type`: `provider_rules`) |
+| Address forms | `formats/addresses.json` (`file_type`: `addresses`) |
+| Wire channel | `graph.edges.wire` / `execution.json` `wire` |
+| Identifier layers | `docs/identity.md` — catalog keys only (no SDK API surface) |
 
 **Provider order:** `deutschepost` → `ukrposhta` → `laposte` → `swisspost` in prose, tables, and JSON keys — see `.cursorrules`.
 
@@ -67,7 +70,7 @@ Disambiguation when multiple native rows share one `porto_id`: [docs/resolution.
 
 ## Commands
 
-**Default validation order:** schema → mappings → markets → limits → porto_ids → delivery → graph (all providers).
+**Default validation order:** schema → mappings → markets → addresses → limits → porto_ids → delivery → graph (all providers).
 
 | CLI                                     | Purpose                                            |
 | --------------------------------------- | -------------------------------------------------- |
@@ -75,6 +78,7 @@ Disambiguation when multiple native rows share one `porto_id`: [docs/resolution.
 | `porto validate --type schema`          | Schema vs JSON                                     |
 | `porto validate --type mappings`        | `mappings.json`, provider dirs, registry, metadata |
 | `porto validate --type markets`         | `policy/markets.json` vs provider countries        |
+| `porto validate --type addresses`       | `formats/addresses.json` vs layouts/jurisdictions  |
 | `porto validate --type limits`          | `providers/*/limits.json`                          |
 | `porto validate --type porto_ids`       | `porto_id` enums, native-id cross-file refs; regenerates **`docs/porto_id.md`** (must be committed) |
 | `porto validate --type delivery` | Zone-scoped **`delivery[]`**, optional **`included_features[]`** / **`indemnity`**, twin resolution fingerprint |

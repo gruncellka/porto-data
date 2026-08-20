@@ -11,7 +11,8 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
-- **Vocabulary:** Graph validator helper `wire_integration_ids` → `wire_ids`. Identity cheat sheet `capability` → `billing[]` / `execution[]`; SDK type spine (`Porto*`, `ProviderClient`, `pricing`) without SDK method names. BUGBOT `edges.wire[wire]`.
+- **Vocabulary:** Drop SDK type/method spine from porto-data docs (`identity.md`, BUGBOT, `.cursorrules`); keep catalog layer boundaries only. Graph validator helper `wire_integration_ids` → `wire_ids`. Identity cheat sheet `capability` → `billing[]` / `execution[]`. BUGBOT `edges.wire[wire]`. Validation chain includes **`addresses`** (Cursor rules, CONTRIBUTING, BUGBOT rule 37, pre-commit + CI job).
+- **`execution.schema.json`:** Capability description no longer says “Postage execution…”.
 
 ### Changed (breaking)
 

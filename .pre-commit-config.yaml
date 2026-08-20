@@ -55,6 +55,14 @@ repos:
             pass_filenames: false
             always_run: false
 
+          - id: validate-addresses
+            name: Validate formats/addresses.json
+            entry: bash -c 'if [ -f venv/bin/activate ]; then . venv/bin/activate; fi && PYTHONPATH=. python -m cli.main validate --type addresses'
+            language: system
+            files: ^porto_data/formats/(addresses|layouts)\.json$|^porto_data/policy/jurisdictions\.json$|^porto_data/schemas/addresses\.schema\.json$
+            pass_filenames: false
+            always_run: false
+
           - id: validate-limits
             name: Validate limits.json (letter scope)
             entry: bash -c 'if [ -f venv/bin/activate ]; then . venv/bin/activate; fi && PYTHONPATH=. python -m cli.main validate --type limits'

@@ -19,7 +19,7 @@ porto-data ships **catalog facts** and **contracts** — not product workflow, c
 
 1. **One identifier, one layer.** Native `id` wires graph/prices/rules. `porto_id` is SDK input only. `mark_profile` is layout output. `native_id` is adapter/API (runtime — not on catalog product/service rows). Wire checkout codes (`productCode`, etc.) live in **`graph.edges.wire`** only. Do not use the same token in two layers unless `docs/identity.md` documents the trap.
 
-2. **Facts vs normalization vs workflow.** Tariff rows, mm geometry, and operator SKUs are facts. `porto_id` enums normalize cross-operator input. User choices (R1/R2, A-Post vs B-Post, sender placement) are resolved in SDK/app — **do not** encode them as new catalog fields when an existing layer already owns the fact.
+2. **Facts vs normalization vs workflow.** Tariff rows, mm geometry, sparse address forms, and operator SKUs are facts. `porto_id` enums normalize cross-operator input. User choices (R1/R2, A-Post vs B-Post, sender placement) are resolved in SDK/app — **do not** encode them as new catalog fields when an existing layer already owns the fact.
 
 3. **Disjoint vocabularies beat clever reuse.** If an enum value could mean two entity types (product size vs registered add-on), **split layers** — do not share the token. Product/service/feature `porto_id` disjointness is the reference pattern; apply the same instinct to geometry and marks.
 
@@ -39,6 +39,8 @@ porto-data ships **catalog facts** and **contracts** — not product workflow, c
 | `capabilities` / `wire` only under `graph.services` | SDK gate in resolution graph | `execution.json` + `dependencies.execution` |
 | `native_id` on `products.json` / `services.json` rows | Adapter code in catalog facts | `edges.wire` per product × zone |
 | Operator mark calibration tables in `marks.md` | Provider-specific prose in generic doc | `docs/providers/<id>.md` + `marks.calibrations[]` |
+| Consumer SDK method/API names in porto-data docs | Consumer API in the catalog repo | Catalog keys/layers only; link Lab SDK docs if needed |
+| Compose address blocks in `layouts.json` | Workflow in geometry | Forms in `formats/addresses.json` |
 
 See `docs/identity.md`, `docs/id.md`, `docs/formats.md`, `docs/marks.md`.
 
@@ -119,7 +121,7 @@ If new/changed code adds `TODO` or `FIXME` without an issue reference (`#123`, `
 
 ## Data consistency and resolution
 
-These rules align reviews with validators under `scripts/validators/` and **`make validate`** (same order as **`porto validate`**: schema → mappings → markets → limits → porto_ids → delivery → graph). Graph logic lives in package **`scripts/validators/graph/`** (not a single `graph.py` file).
+These rules align reviews with validators under `scripts/validators/` and **`make validate`** (same order as **`porto validate`**: schema → mappings → markets → addresses → limits → porto_ids → delivery → graph). Graph logic lives in package **`scripts/validators/graph/`** (not a single `graph.py` file).
 
 ### 9) Graph uses `edges` and `services`, not legacy keys (blocking)
 
@@ -163,7 +165,7 @@ If a PR edits **`scripts/validators/**`** or **`cli/**`** without updates to **`
 
 ### 14) Schema changes for graph or catalogs need data alignment (non-blocking)
 
-If a PR changes **`porto_data/schemas/graph.schema.json`**, **`markets.schema.json`**, **`porto_ids.schema.json`**, or schemas for **`products`**, **`prices`**, **`services`**, **`zones`**, or **`weights`**:
+If a PR changes **`porto_data/schemas/graph.schema.json`**, **`markets.schema.json`**, **`porto_ids.schema.json`**, **`addresses.schema.json`**, or schemas for **`products`**, **`prices`**, **`services`**, **`zones`**, or **`weights`**:
 
 - **Title:** `Schema change — confirm all providers still validate`
 - **Body:** `Run porto validate (or make validate) for all providers; update every JSON file that must satisfy the new contract.`
@@ -171,10 +173,10 @@ If a PR changes **`porto_data/schemas/graph.schema.json`**, **`markets.schema.js
 
 ### 15) Markets must be validated in CI (blocking)
 
-If a PR changes validation tooling or **`.github/workflows/validation.yml`** and the workflow runs mappings / limits / porto_ids / graph but **not** `porto validate --type markets` (or equivalent **`validate-markets`** job):
+If a PR changes validation tooling or **`.github/workflows/validation.yml`** and the workflow runs mappings / limits / porto_ids / graph but **not** `porto validate --type markets` (or equivalent **`validate-markets`** job) or **not** `porto validate --type addresses` (or equivalent **`validate-addresses`** job):
 
-- **Title:** `CI skips markets validation`
-- **Body:** `make validate and pre-commit include markets between mappings and limits. Add a validate-markets job so policy/markets.json and provider country coverage cannot drift silently.`
+- **Title:** `CI skips markets or addresses validation`
+- **Body:** `make validate and pre-commit include markets then addresses between mappings and limits. Add validate-markets and validate-addresses jobs so policy/markets.json and formats/addresses.json cannot drift silently.`
 - **Labels:** `ci`, `consistency`
 
 ### 16) Markets validator must cover all registry providers (blocking)
@@ -357,3 +359,16 @@ If a PR adds **`execution.json`** for a provider but omits **`execution.schema.j
 - **Title:** `execution.json added without schema, index, or validator`
 - **Body:** `Register execution manifest in mappings; point from graph.dependencies.execution; validate wire vs edges.wire keys. Add tests in tests/test_graph_execution_manifest.py. Run make validate and commit metadata.json when data changes.`
 - **Labels:** `quality`, `data`, `consistency`
+
+### 37) Address forms stay in addresses.json (blocking)
+
+If a PR adds or changes **`formats/addresses.json`** / **`formats/layouts.json`** and:
+
+- puts sender/recipient or compose zones on **`layouts.json`**, or
+- treats **`addresses.json`** as a world directory (rows without cited postal facts), or
+- adds **`addresses.json`** without **`addresses.schema.json`**, mappings/formats index, **`scripts/validators/addresses.py`**, or tests, or
+- lets **`standard`** disagree with **`layouts.json`** for a jurisdiction that has layouts:
+
+- **Title:** `Address forms misplaced or unvalidated`
+- **Body:** `Forms (street/post_box, postcode pattern) live in formats/addresses.json. Layouts keep window/post_mark/standard only. Sparse jurisdictions; layout standard match when layouts[CC] exists. CI: porto validate --type addresses. See docs/formats.md and docs/identity.md.`
+- **Labels:** `data`, `architecture`, `consistency`
