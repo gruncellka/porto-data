@@ -92,7 +92,7 @@ def _write_provider_files(
                     "effective_from": "2026-01-01",
                     "effective_to": None,
                     "mark_type": "stamp",
-                    "tracking_mode": "optional",
+                    "tracking": "optional",
                 }
             ],
         },
@@ -116,7 +116,7 @@ def _write_provider_files(
             "features": [
                 {
                     "id": "f1",
-                    "porto_id": "tracking_number",
+                    "porto_id": "tracking",
                     "name": "F",
                     "label": "F",
                     "description": "d",
@@ -226,7 +226,7 @@ class TestPortoIdsValidator:
             {
                 "product_porto_id": {"small", "registered"},
                 "service_porto_id": {"registered", "tracking"},
-                "feature_porto_id": {"tracking_number"},
+                "feature_porto_id": {"tracking"},
             }
         )
         assert len(overlap) == 1
@@ -237,7 +237,7 @@ class TestPortoIdsValidator:
             {
                 "product_porto_id": {"small", "return_receipt"},
                 "service_porto_id": {"registered"},
-                "feature_porto_id": {"return_receipt", "tracking_number"},
+                "feature_porto_id": {"return_receipt", "tracking"},
             }
         )
         assert len(overlap) == 1
@@ -451,6 +451,14 @@ class TestPortoIdsValidator:
         (prov / "services.json").write_text(json.dumps(services), encoding="utf-8")
         (prov / "features.json").write_text(json.dumps(features), encoding="utf-8")
         assert validate_porto_ids(write_mapping_doc=False) == 1
+
+    def test_rejects_unknown_service_feature_ref(self, porto_ids_sandbox, capsys) -> None:
+        _tmp, _root, prov = porto_ids_sandbox
+        services = json.loads((prov / "services.json").read_text(encoding="utf-8"))
+        services["services"][0]["features"] = ["ghost_feat", 1]
+        (prov / "services.json").write_text(json.dumps(services), encoding="utf-8")
+        assert validate_porto_ids(write_mapping_doc=False) == 1
+        assert "ghost_feat" in capsys.readouterr().out
 
     def test_warns_on_duplicate_product_and_service_porto_ids(
         self, porto_ids_sandbox, capsys

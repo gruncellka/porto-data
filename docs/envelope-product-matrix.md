@@ -38,7 +38,7 @@ providers/<id>/prices/…         price: product_id × zone × weight_tier
 | Allowed envelopes | `products[].envelope_ids` | Membership SoT for envelope fit |
 | Allowed weight tiers | `graph.edges.products[].weight_tiers` | Which tiers the product may use |
 | Weight bound | `weights.json` | Tier → max grams |
-| Product + price | SDK resolver | Not Compose desk check |
+| Product + price | Consumer resolver | Not desk check |
 | Sanctions / overlays | `policy/restrictions.json`, `limits.json` | Not packaging |
 
 **Invariant:** every id in `envelope_ids` must exist in `formats/envelopes.json`. Empty `envelope_ids` = no format filter (rare).
@@ -51,14 +51,14 @@ providers/<id>/prices/…         price: product_id × zone × weight_tier
 2. Disambiguate twins (see [resolution.md](resolution.md))
 3. Price = `product_id × zone × weight_tier`
 
-### Compose (desk only)
+### Desk (already selected product)
 
 Against the **already selected** product:
 
-- Envelope: `format_id ∈ product.envelope_ids` → else soft `envelope_mismatch` (never auto-change envelope)
-- Weight: vs max from weights via graph tiers → hard `AUTO_UPGRADE` or soft `larger_than_needed`
+- Envelope: `format_id ∈ product.envelope_ids` — else mismatch (never auto-change envelope)
+- Weight: vs max from weights via graph tiers — upgrade or oversized as the consumer defines
 
-SDK contract: [docs/sdks/envelope.md](../../../docs/sdks/envelope.md) — strict fit is membership only.
+Strict envelope fit is membership only.
 
 ## Product → envelope_ids matrix (catalog)
 

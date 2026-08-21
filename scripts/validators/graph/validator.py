@@ -8,6 +8,7 @@ from scripts.data_files import (
     DEFAULT_PROVIDER,
     ENVELOPES_FILE,
     EXECUTION_FILE,
+    FEATURES_FILE,
     GRAPH_FILE,
     LAYOUTS_FILE,
     MARKS_FILE,
@@ -123,6 +124,7 @@ class GraphValidator:
         self.envelope_layouts: dict[str, Any] | None = None
         self.marks: dict[str, Any] | None = None
         self.execution: dict[str, Any] | None = None
+        self.features: dict[str, Any] | None = None
         self.market: dict[str, Any] | None = None
 
         self.product_dict: dict[str, dict[str, Any]] = {}
@@ -157,6 +159,8 @@ class GraphValidator:
             self.envelopes = load_json(fmt_path)
             self.envelope_layouts = load_json(lay_path)
             self.marks = load_json(self.provider_dir / MARKS_FILE)
+            features_path = self.provider_dir / FEATURES_FILE
+            self.features = load_json(features_path) if features_path.is_file() else None
             execution_path = self.provider_dir / EXECUTION_FILE
             self.execution = load_json(execution_path) if execution_path.is_file() else None
             rules_path = self.provider_dir / "rules.json"
@@ -281,7 +285,7 @@ class GraphValidator:
         )
 
     def validate_execution_semantics(self) -> None:
-        """Validate mark_type / tracking_mode and optional tracking service linkage."""
+        """Validate mark_type / tracking and optional tracking service linkage."""
         run_validate_execution_semantics(
             self.results,
             graph=self.graph,
@@ -289,6 +293,7 @@ class GraphValidator:
             services=self.services,
             services_by_id=self.services_by_id,
             product_dict=self.product_dict,
+            features=self.features,
         )
 
     def validate_marks_profiles(self) -> None:

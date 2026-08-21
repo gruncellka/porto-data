@@ -94,7 +94,7 @@ class TestExecutionSemanticsCoverage:
     def test_services_not_list_resets(self) -> None:
         r = _empty_results()
         graph = {"services": (1,)}
-        products = {"products": [{"id": "p1", "mark_type": "stamp", "tracking_mode": "none"}]}
+        products = {"products": [{"id": "p1", "mark_type": "stamp", "tracking": "none"}]}
         services = {"services": []}
         run_validate_execution_semantics(
             r,
@@ -109,7 +109,7 @@ class TestExecutionSemanticsCoverage:
     def test_missing_mark_type_errors(self) -> None:
         r = _empty_results()
         graph = {"services": []}
-        products = {"products": [{"id": "p1", "tracking_mode": "none"}]}
+        products = {"products": [{"id": "p1", "tracking": "none"}]}
         services = {"services": []}
         run_validate_execution_semantics(
             r,
@@ -125,9 +125,7 @@ class TestExecutionSemanticsCoverage:
         r = _empty_results()
         graph = {"services": []}
         products = {
-            "products": [
-                {"id": "p1", "mark_type": "label", "tracking_mode": "none", "zones": ["z"]}
-            ]
+            "products": [{"id": "p1", "mark_type": "label", "tracking": "none", "zones": ["z"]}]
         }
         services = {"services": []}
         run_validate_execution_semantics(
@@ -148,7 +146,7 @@ class TestExecutionSemanticsCoverage:
                 {
                     "id": "p1",
                     "mark_type": "label",
-                    "tracking_mode": "optional",
+                    "tracking": "optional",
                     "zones": ["domestic"],
                 }
             ]
@@ -159,7 +157,7 @@ class TestExecutionSemanticsCoverage:
                 {
                     "id": "trk",
                     "porto_id": "t1",
-                    "enables_tracking": True,
+                    "features": ["tracking"],
                     "supported_zones": ["domestic"],
                 },
             ]
@@ -175,6 +173,70 @@ class TestExecutionSemanticsCoverage:
         )
         assert not r["errors"]
 
+    def test_optional_tracking_via_native_feature_id(self) -> None:
+        r = _empty_results()
+        graph = {"services": ["trk"]}
+        products = {
+            "products": [
+                {
+                    "id": "p1",
+                    "mark_type": "label",
+                    "tracking": "optional",
+                    "zones": ["domestic"],
+                }
+            ]
+        }
+        services = {
+            "services": [
+                {"id": "trk", "features": ["sendungsnummer"], "supported_zones": ["domestic"]},
+            ]
+        }
+        features = {
+            "features": [{"id": "sendungsnummer", "porto_id": "tracking"}],
+        }
+        by_id = {s["id"]: s for s in services["services"]}
+        run_validate_execution_semantics(
+            r,
+            graph=graph,
+            products=products,
+            services=services,
+            services_by_id=by_id,
+            product_dict={p["id"]: p for p in products["products"]},
+            features=features,
+        )
+        assert not r["errors"]
+
+    def test_service_enables_tracking_skips_non_string_and_empty_features(self) -> None:
+        r = _empty_results()
+        graph = {"services": ["trk"]}
+        products = {
+            "products": [
+                {
+                    "id": "p1",
+                    "mark_type": "label",
+                    "tracking": "optional",
+                    "zones": ["domestic"],
+                }
+            ]
+        }
+        services = {
+            "services": [
+                {"id": "trk", "features": [1, None, "tracking"]},
+            ]
+        }
+        features = {"features": [{"porto_id": "tracking"}, "skip"]}
+        by_id = {s["id"]: s for s in services["services"]}
+        run_validate_execution_semantics(
+            r,
+            graph=graph,
+            products=products,
+            services=services,
+            services_by_id=by_id,
+            product_dict={p["id"]: p for p in products["products"]},
+            features=features,
+        )
+        assert not r["errors"]
+
     def test_optional_tracking_service_without_zones_covers(self) -> None:
         r = _empty_results()
         graph = {"services": ["trk"]}
@@ -183,14 +245,14 @@ class TestExecutionSemanticsCoverage:
                 {
                     "id": "p1",
                     "mark_type": "label",
-                    "tracking_mode": "optional",
+                    "tracking": "optional",
                     "zones": ["domestic"],
                 }
             ]
         }
         services = {
             "services": [
-                {"id": "trk", "enables_tracking": True},
+                {"id": "trk", "features": ["tracking"]},
             ]
         }
         by_id = {s["id"]: s for s in services["services"]}
@@ -212,12 +274,12 @@ class TestExecutionSemanticsCoverage:
                 {
                     "id": "p1",
                     "mark_type": "label",
-                    "tracking_mode": "optional",
+                    "tracking": "optional",
                     "zones": ["domestic"],
                 }
             ]
         }
-        services = {"services": [{"id": "x", "enables_tracking": False}]}
+        services = {"services": [{"id": "x", "features": ["other"]}]}
         by_id = {s["id"]: s for s in services["services"]}
         run_validate_execution_semantics(
             r,
@@ -237,17 +299,17 @@ class TestExecutionSemanticsCoverage:
                 {
                     "id": "p1",
                     "mark_type": "label",
-                    "tracking_mode": "optional",
+                    "tracking": "optional",
                     "zones": ["domestic"],
                 }
             ]
         }
         services = {
             "services": [
-                {"id": "only_plain", "enables_tracking": False},
+                {"id": "only_plain", "features": ["other"]},
                 {
                     "id": "hidden_trk",
-                    "enables_tracking": True,
+                    "features": ["tracking"],
                     "supported_zones": ["domestic"],
                 },
             ]

@@ -94,7 +94,7 @@ def _resolution_fingerprint(product: dict[str, Any], zone: str) -> tuple[Any, ..
         _delivery_zone_signature(product, zone),
         tier,
         features_key,
-        product.get("tracking_mode"),
+        product.get("tracking"),
     )
 
 
@@ -365,7 +365,7 @@ def _validate_twin_disambiguation(
             errors.append(
                 f"providers/{provider}: products {pids} share porto_id={porto_id!r}, "
                 f"zone={zone!r}, weight_tier={tier!r} and identical resolution fingerprint "
-                f"{fp!r}; distinguish via delivery[], indemnity.tier, included_features, or tracking_mode"
+                f"{fp!r}; distinguish via delivery[], indemnity.tier, included_features, or tracking"
             )
 
 

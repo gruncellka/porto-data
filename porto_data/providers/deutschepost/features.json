@@ -4,7 +4,7 @@
   "features": [
     {
       "id": "sendungsnummer",
-      "porto_id": "tracking_number",
+      "porto_id": "tracking",
       "name": "Sendungsnummer",
       "label": "Tracking number",
       "description": "Unique tracking number (registered mail only)"

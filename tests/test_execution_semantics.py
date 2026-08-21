@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Tests for execution semantics (mark_type, tracking_mode, enables_tracking)."""
+"""Tests for execution semantics (mark_type, tracking)."""
 
 import json
 from pathlib import Path
@@ -35,7 +35,7 @@ class TestProductsSchemaExecutionSemantics:
                     "zones": ["domestic"],
                     "effective_from": None,
                     "effective_to": None,
-                    "tracking_mode": "none",
+                    "tracking": "none",
                     "delivery": _minimal_delivery(),
                 }
             ],
@@ -58,7 +58,7 @@ class TestProductsSchemaExecutionSemantics:
                     "effective_from": None,
                     "effective_to": None,
                     "mark_type": "label",
-                    "tracking_mode": "none",
+                    "tracking": "none",
                     "delivery": _minimal_delivery(),
                 }
             ],
@@ -82,7 +82,7 @@ class TestProductsSchemaExecutionSemantics:
                     "effective_from": None,
                     "effective_to": None,
                     "mark_type": "stamp",
-                    "tracking_mode": "none",
+                    "tracking": "none",
                     "delivery": _minimal_delivery(),
                 }
             ],
@@ -100,7 +100,7 @@ class TestLaposteProviderData:
         data = json.loads(path.read_text(encoding="utf-8"))
         for p in data["products"]:
             assert p["mark_type"] == "label"
-            assert p["tracking_mode"] in ("optional", "included")
+            assert p["tracking"] in ("optional", "included")
 
     def test_laposte_graph_validation_exits_zero(self):
         assert validate_graph(provider="laposte") == 0

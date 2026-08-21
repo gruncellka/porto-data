@@ -230,7 +230,7 @@ class TestServicePriceConsistency:
                 "features": [
                     {
                         "id": "tracking_number",
-                        "porto_id": "tracking_number",
+                        "porto_id": "tracking",
                         "name": "Sendungsnummer",
                         "label": "Tracking number",
                         "description": "Test",
@@ -379,7 +379,7 @@ class TestServicePriceConsistency:
                 "features": [
                     {
                         "id": "tracking_number",
-                        "porto_id": "tracking_number",
+                        "porto_id": "tracking",
                         "name": "Sendungsnummer",
                         "label": "Tracking number",
                         "description": "Test",

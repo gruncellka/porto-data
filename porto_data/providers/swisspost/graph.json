@@ -123,7 +123,7 @@
         "zones.json",
         "prices/services.json"
       ],
-      "description": "Conditional letter policies (e.g. thickness surcharge); SDK evaluates after base resolution"
+      "description": "Conditional letter policies (e.g. thickness surcharge); consumers evaluate after base resolution"
     }
   },
   "services": [

@@ -48,7 +48,7 @@
           "effective_from",
           "effective_to",
           "mark_type",
-          "tracking_mode",
+          "tracking",
           "delivery"
         ],
         "properties": {
@@ -124,14 +124,14 @@
             ],
             "description": "What kind of provider mark this product produces when executed (data-driven; not inferred in adapters)."
           },
-          "tracking_mode": {
+          "tracking": {
             "type": "string",
             "enum": [
               "none",
               "optional",
               "included"
             ],
-            "description": "Whether tracking is expected on the execution result; actual tracking numbers are runtime-only, never stored in porto-data."
+            "description": "Product tracking posture (none | optional | included). Not the service/feature porto_id tracking. Actual tracking numbers are runtime-only, never stored in porto-data."
           },
           "delivery": {
             "type": "array",
@@ -170,7 +170,7 @@
             },
             "then": {
               "properties": {
-                "tracking_mode": {
+                "tracking": {
                   "enum": [
                     "optional",
                     "included"

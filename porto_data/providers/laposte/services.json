@@ -11,8 +11,6 @@
       "features": [
         "numero_suivi"
       ],
-      "enables_tracking": true,
-      "online_supported": true,
       "supported_zones": [
         "domestic"
       ]
@@ -26,8 +24,6 @@
       "features": [
         "avis_reception"
       ],
-      "enables_tracking": false,
-      "online_supported": true,
       "supported_zones": [
         "domestic"
       ]
@@ -41,8 +37,6 @@
       "features": [
         "avis_reception"
       ],
-      "enables_tracking": false,
-      "online_supported": true,
       "supported_zones": [
         "zone_1_eu",
         "zone_2_europe",

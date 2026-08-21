@@ -16,7 +16,7 @@ SDK / app input     →  porto_id, country, weight, service picks
 Catalog facts       →  native id, zones, weights, prices, geometry (this repo)
 Layout output       →  mark_profile, window rect, post_mark anchor
 Adapter wiring      →  edges.wire productCode / catalog keys (per wire channel)
-SDK execution gate  →  execution.json wire + billing/execution methods (optional)
+Execution capability gate  →  execution.json wire + billing/execution tokens (optional)
 Runtime / adapter   →  purchased mark bytes, tracking numbers (not in porto-data)
 ```
 
@@ -26,14 +26,14 @@ Runtime / adapter   →  purchased mark bytes, tracking numbers (not in porto-da
 
 2. **Facts vs normalization vs workflow.**
    - **Facts** in JSON: carrier SKUs (`products.id`), mm geometry (`layouts.window`), stamp sizes (`marks.profiles`), tariff rows, **zone-scoped delivery SLAs** (`products.delivery[]`), **market working-day calendar** (`markets.working_days`), **sparse address forms** (`formats/addresses.json`).
-   - **Normalization** (`porto_id`): cross-operator SDK input with **narrow** enums per entity type.
+   - **Normalization** (`porto_id`): cross-operator consumer input with **narrow** enums per entity type.
    - **Workflow** (sender inside window, R1/R2 pick, speed class): **SDK / Licko compose** — not invented catalog fields.
 
 3. **Disjoint vocabularies where ambiguity hurts.** Product `porto_id` must not overlap service/feature enums. Do not “fix” ambiguity by reusing a service token on a product row.
 
 4. **Native `id` in wires; `porto_id` at the edge.** `graph.json`, `prices/*`, `rules.json` reference **native** `product_id` / `service_id`. Wire checkout codes live in **`graph.edges.wire`** only — never `products.native_id`, `services.native_id`, or `porto_id` in graph/prices.
 
-5. **Execution manifest ≠ wire tables.** `execution.json` declares **active wire channel** + **SDK billing/execution methods**. `graph.edges.wire[wire]` declares **productCode** rows. `graph.dependencies.execution` is a **file pointer** only.
+5. **Execution manifest ≠ wire tables.** `execution.json` declares **active wire channel** + **billing/execution capability tokens**. `graph.edges.wire[wire]` declares **productCode** rows. `graph.dependencies.execution` is a **file pointer** only.
 
 6. **Geometry is factual, composition is not.** `formats/layouts.json`: `window`, `post_mark`, `standard` only — no `address_area`, `print_area`, sender/recipient zones, or printable-region workflow. Postal **forms** (required fields, postcode pattern) live in **`formats/addresses.json`**.
 

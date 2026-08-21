@@ -10,6 +10,13 @@
       "description": "Delivery with recipient signature required."
     },
     {
+      "id": "nomer_vidstezhennia",
+      "porto_id": "tracking",
+      "name": "Номер відстеження",
+      "label": "Tracking number",
+      "description": "Shipment tracking identifier for registered international letters."
+    },
+    {
       "id": "paperove_povidomlennia_vruchennia",
       "porto_id": "return_receipt",
       "name": "Повідомлення про вручення (паперове)",

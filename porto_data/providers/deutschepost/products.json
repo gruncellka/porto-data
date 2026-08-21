@@ -23,7 +23,7 @@
       "effective_from": "2026-01-01",
       "effective_to": null,
       "mark_type": "stamp",
-      "tracking_mode": "optional",
+      "tracking": "optional",
       "delivery": [
         {
           "zones": [
@@ -62,7 +62,7 @@
       "effective_from": "2026-01-01",
       "effective_to": null,
       "mark_type": "stamp",
-      "tracking_mode": "optional",
+      "tracking": "optional",
       "delivery": [
         {
           "zones": [
@@ -101,7 +101,7 @@
       "effective_from": "2026-01-01",
       "effective_to": null,
       "mark_type": "stamp",
-      "tracking_mode": "optional",
+      "tracking": "optional",
       "delivery": [
         {
           "zones": [
@@ -141,7 +141,7 @@
       "effective_from": "2026-01-01",
       "effective_to": null,
       "mark_type": "stamp",
-      "tracking_mode": "optional",
+      "tracking": "optional",
       "delivery": [
         {
           "zones": [
@@ -180,7 +180,7 @@
       "effective_from": "2026-01-01",
       "effective_to": null,
       "mark_type": "stamp",
-      "tracking_mode": "optional",
+      "tracking": "optional",
       "delivery": [
         {
           "zones": [

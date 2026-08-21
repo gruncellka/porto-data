@@ -9,11 +9,9 @@
       "label": "Registered mail",
       "description": "Tracking with proof of mailing",
       "features": [
-        "tracking_number",
+        "tracking",
         "proof_of_mailing"
       ],
-      "enables_tracking": true,
-      "online_supported": true,
       "supported_zones": [
         "domestic",
         "zone_1_eu",
@@ -31,10 +29,8 @@
       "label": "Registered mail (mailbox delivery)",
       "description": "Registered delivery into mailbox (service variant, not a feature). Internetmarke API: domestic only.",
       "features": [
-        "tracking_number"
+        "tracking"
       ],
-      "enables_tracking": true,
-      "online_supported": true,
       "supported_zones": [
         "domestic"
       ],
@@ -49,13 +45,11 @@
       "label": "Registered mail with return receipt",
       "description": "Registered mail with signature and return receipt. Internetmarke API: domestic only.",
       "features": [
-        "tracking_number",
+        "tracking",
         "recipient_signature",
         "return_receipt",
         "proof_of_delivery"
       ],
-      "enables_tracking": true,
-      "online_supported": true,
       "supported_zones": [
         "domestic"
       ],
@@ -70,9 +64,8 @@
       "label": "Additional insurance (500 EUR)",
       "description": "Additional insurance up to 500 EUR",
       "features": [
-        "tracking_number"
+        "tracking"
       ],
-      "online_supported": true,
       "supported_zones": [
         "domestic",
         "zone_1_eu",

@@ -11,8 +11,6 @@
       "features": [
         "sendungsnummer"
       ],
-      "enables_tracking": true,
-      "online_supported": true,
       "supported_zones": [
         "domestic"
       ]
@@ -26,8 +24,6 @@
       "features": [
         "brief_dicke_band"
       ],
-      "enables_tracking": false,
-      "online_supported": false,
       "supported_zones": [
         "domestic"
       ]

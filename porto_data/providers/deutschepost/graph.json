@@ -117,7 +117,7 @@
     "execution": {
       "file": "execution.json",
       "depends_on": [],
-      "description": "SDK execution manifest (wire + billing/execution methods); wire codes stay in edges.wire"
+      "description": "Execution manifest (wire + billing/execution capability tokens); wire codes stay in edges.wire"
     }
   },
   "services": [

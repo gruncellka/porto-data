@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Changed (breaking)
+
+- **Execution capability tokens:** `create_mark` → `mark`, `get_wallet_balance` → `wallet` in `execution.json` / `execution.schema.json`.
+- **Feature `porto_id`:** `tracking_number` → `tracking`, `thickness_surcharge` → `thickness` (share the matching service tokens).
+- **`products.tracking_mode` → `tracking`** (`none` \| `optional` \| `included`). Same English word as service/feature `porto_id` `tracking` — see `docs/identity.md`.
+- **Dropped service fields:** `enables_tracking`, `online_supported`, `source_id`. Tracking on a service is derived: `features[]` resolves (native id or `porto_id`) to a feature whose `porto_id` is `tracking`. Online orderability is a wire fact.
+
 ### Fixed
 
 - **Layout window geometry (DIN 680 Form B):** C5/C4 `window.area.y` for DE/CH/FR was incorrectly using the DL/C6 15 mm-from-bottom rule (`y` 102 / 159). Corrected to Form B: C5 `y: 57` (60 mm from bottom), C4 `y: 57` (57 mm from top).
@@ -25,7 +32,7 @@ All notable changes to this project will be documented in this file.
 
 - **SDK catalog compat:** porto-data **package version is the schema version** (`metadata.project.version`). SDKs gate load on that semver (`PORTO_DATA_SCHEMA_UNSUPPORTED` / `PORTO_DATA_SCHEMA_TOO_NEW`). See Lab [versioning-architecture-review.md](../../docs/sdks/versioning-architecture-review.md).
 - **Address forms (`formats/addresses.json`):** Sparse jurisdiction postal validity (DE/CH/FR/UA) with `forms[]` kinds `street` | `post_box`, `postal_code.pattern`, and FR `max_line_length` 38. Layout-aligned standards for DE/CH/FR; UA address-only `UKRPOSHTA` until `layouts.UA` exists. Schema + validator (layout match only when layout jurisdiction present).
-- **Graph validator:** `execution_manifest` requires at least one billing or execution method when the manifest exists.
+- **Graph validator:** `execution_manifest` requires at least one billing or execution capability token when the manifest exists.
 
 ## [0.5.1] - 2026-07-07
 

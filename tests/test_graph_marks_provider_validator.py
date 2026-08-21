@@ -575,6 +575,6 @@ class TestGraphValidatorBuildLookupEarlyReturn:
         (tmp_path / "graph.json").write_text("{}", encoding="utf-8")
         v = GraphValidator(data_dir=tmp_path)
         v.graph = None
-        v.execution = {"file_type": "execution", "wire": "x", "execution": ["create_mark"]}
+        v.execution = {"file_type": "execution", "wire": "x", "execution": ["mark"]}
         v.validate_execution_manifest()
         assert v.results["errors"] == []

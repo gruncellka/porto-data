@@ -104,7 +104,7 @@ def _render_mapping_doc(providers_data: dict[str, dict[str, list[tuple[str, str]
         "`porto_data/schemas/porto_ids.schema.json`. Policy: [id.md](id.md).",
         "",
         "Cross-file refs (graph, prices, rules) use **native `id`**. "
-        "SDK input uses **`porto_id`** — see [resolution.md](resolution.md) when "
+        "Consumer input uses **`porto_id`** — see [resolution.md](resolution.md) when "
         "multiple native rows share one `porto_id`.",
         "",
     ]
@@ -198,6 +198,8 @@ def validate_porto_ids(*, write_mapping_doc: bool = True) -> int:
                     f"not in canonical service enum"
                 )
 
+        feature_ids: set[str] = set()
+        feature_porto_ids: set[str] = set()
         for f in features.get("features", []):
             if not isinstance(f, dict):
                 continue
@@ -205,10 +207,27 @@ def validate_porto_ids(*, write_mapping_doc: bool = True) -> int:
             porto_id = f.get("porto_id")
             if native_id and porto_id:
                 doc_data[pid]["features"].append((str(native_id), str(porto_id)))
+            if isinstance(native_id, str):
+                feature_ids.add(native_id)
             if porto_id and porto_id not in enums["feature_porto_id"]:
                 errors.append(
                     f"{pid}: feature '{native_id}' porto_id '{porto_id}' "
                     f"not in canonical feature enum"
+                )
+            elif isinstance(porto_id, str):
+                feature_porto_ids.add(porto_id)
+
+        for s in services.get("services", []):
+            if not isinstance(s, dict):
+                continue
+            for ref in s.get("features") or []:
+                if not isinstance(ref, str):
+                    continue
+                if ref in feature_ids or ref in feature_porto_ids:
+                    continue
+                errors.append(
+                    f"{pid}: service '{s.get('id')}' features[] {ref!r} "
+                    f"must match a features.json id or porto_id"
                 )
 
         prod_dupes = _porto_ids_by_entity(products.get("products", []))

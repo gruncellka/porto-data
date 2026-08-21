@@ -31,7 +31,7 @@
         "speed",
         "min"
       ],
-      "description": "Product disambiguation policy when multiple native products share a porto_id (catalog fact — SDK reads, does not hardcode per provider)"
+      "description": "Product disambiguation policy when multiple native products share a porto_id (catalog fact — consumers read, do not hardcode per provider)"
     },
     "unit": {
       "type": "object",

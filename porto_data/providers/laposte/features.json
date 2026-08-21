@@ -4,7 +4,7 @@
   "features": [
     {
       "id": "numero_suivi",
-      "porto_id": "tracking_number",
+      "porto_id": "tracking",
       "name": "Numéro de suivi",
       "label": "Tracking number",
       "description": "Suivi / Lettre suivie style tracking when the ordered service provides it"

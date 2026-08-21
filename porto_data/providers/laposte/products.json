@@ -22,7 +22,7 @@
       "effective_from": "2026-01-01",
       "effective_to": null,
       "mark_type": "label",
-      "tracking_mode": "optional",
+      "tracking": "optional",
       "delivery": [
         {
           "zones": [
@@ -53,7 +53,7 @@
       "effective_from": "2026-01-01",
       "effective_to": null,
       "mark_type": "label",
-      "tracking_mode": "included",
+      "tracking": "included",
       "included_features": [
         "numero_suivi"
       ],
@@ -93,7 +93,7 @@
       "effective_from": "2026-01-01",
       "effective_to": null,
       "mark_type": "label",
-      "tracking_mode": "included",
+      "tracking": "included",
       "included_features": [
         "numero_suivi"
       ],
@@ -125,7 +125,7 @@
       "effective_from": "2026-01-01",
       "effective_to": null,
       "mark_type": "label",
-      "tracking_mode": "included",
+      "tracking": "included",
       "included_features": [
         "preuve_depot",
         "signature_destinataire",
@@ -165,7 +165,7 @@
       "effective_from": "2026-01-01",
       "effective_to": null,
       "mark_type": "label",
-      "tracking_mode": "included",
+      "tracking": "included",
       "included_features": [
         "preuve_depot",
         "signature_destinataire",
@@ -205,7 +205,7 @@
       "effective_from": "2026-01-01",
       "effective_to": null,
       "mark_type": "label",
-      "tracking_mode": "included",
+      "tracking": "included",
       "included_features": [
         "preuve_depot",
         "signature_destinataire",
@@ -247,7 +247,7 @@
       "effective_from": "2026-01-01",
       "effective_to": null,
       "mark_type": "label",
-      "tracking_mode": "included",
+      "tracking": "included",
       "included_features": [
         "preuve_depot",
         "signature_destinataire",

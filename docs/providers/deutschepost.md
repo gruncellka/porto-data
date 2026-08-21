@@ -24,7 +24,7 @@ Reference for **reconciling JSON with official letter/postcard tariffs** (not a 
 | `services.json` | `services` | Service definitions |
 | `features.json` | `features` | Feature ids used by services |
 | `marks.json` | `marks` | Mark/label profiles and optional checkout calibrations |
-| `execution.json` | `execution` | SDK execution manifest (`internetmarke`, billing/execution methods) |
+| `execution.json` | `execution` | Execution manifest (`internetmarke`, billing/execution capability tokens) |
 | `weights.json` | `weights` | Weight tier ids (`W0020` …) |
 | `zones.json` | `zones` | Domestic / EU / Europe / world buckets |
 | `limits.json` | `limits` | Provider operational overlays on top of global policy (often empty) |
@@ -118,7 +118,7 @@ Mapped in `graph.json` → `edges.marks`; catalog sizes in `marks.json` → `pro
 | `FRANKING_ZONE` | Marke only (per Porto `profiles[].id` in `by_mark_profile`) | 37×20 · 62×20 · 62×32.5 | 437×236 · 732×236 · 732×384 |
 | `ADDRESS_ZONE` | Full label (all Porto profiles) | **85×43** | **1004×508** |
 
-`profiles[].id` / `by_mark_profile` keys are Porto **mark profiles** (`domestic`, …) — SDK `resolve_mark_profile_id`. `calibrations[].mark_profile` is the wire checkout layout token (SDK `MarkLayout` → adapter maps to Internetmarke `voucherLayout`). `profiles[].size` is nominal marke footprint (mm).
+`profiles[].id` / `by_mark_profile` keys are Porto **mark profiles** (`domestic`, …). `calibrations[].mark_profile` is the wire checkout layout token (Internetmarke `voucherLayout`: `FRANKING_ZONE` / `ADDRESS_ZONE`). `profiles[].size` is nominal marke footprint (mm).
 
 ---
 

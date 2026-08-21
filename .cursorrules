@@ -19,7 +19,7 @@ Registry keys, `PROVIDER_IDS_ORDER`, and `mappings.json` follow this order. Extr
 - `porto_data/policy/` — shared policy JSON (`jurisdictions.json`, `restrictions.json`, **`markets.json`**).
 - `porto_data/formats/` — shared envelope catalog, print layouts, and address forms (`envelopes.json`, `layouts.json`, **`addresses.json`**).
 - `porto_data/providers.json` — provider id registry (**no `vat`** — fiscal defaults live in **`markets.json`**).
-- `porto_data/providers/<provider_id>/` — per-operator JSON (`products`, `services`, `prices`, `zones`, `weights.json`, **`graph.json`**, **`limits.json`**, `features.json`, optional **`execution.json`** (SDK execution manifest when an adapter ships), optional `rules.json`, …).
+- `porto_data/providers/<provider_id>/` — per-operator JSON (`products`, `services`, `prices`, `zones`, `weights.json`, **`graph.json`**, **`limits.json`**, `features.json`, optional **`execution.json`** (execution manifest when an adapter ships), optional `rules.json`, …).
 - `porto_data/schemas/` — JSON Schema (including `porto_ids.schema.json`, `markets.schema.json`).
 - `porto_data/mappings.json` — which logical entities exist for each provider (paths are authoritative for tooling).
 - `porto_data/metadata.json` — **generated** (checksums, manifest). Regenerate with `make metadata` / `porto metadata`; do not edit by hand.
@@ -31,7 +31,7 @@ There is **no** `porto_data/data/`, `data_links.json`, or `porto_data/global/` b
 | Concern | File / location | Owns |
 | ------- | ---------------- | ---- |
 | Adapter checkout **productCode** / catalog keys | `graph.json` → **`edges.wire[wire]`** | Wire tables per product × zone (+ service composites) |
-| SDK **billing/execution methods** | **`execution.json`** (optional per provider) | Active wire channel + what the SDK may call |
+| Billing / execution **capability tokens** | **`execution.json`** (optional per provider) | Active wire channel + what the adapter implements |
 | Bundle file index | `graph.json` → **`dependencies.execution`** | Pointer to `execution.json` only — not manifest data |
 | Measured checkout asset size (mm/px) | **`marks.json`** → **`calibrations[]`** | Wire channel × `mark_profile` (layout token) × dpi; `wire` must match an **`edges.wire`** key |
 
@@ -103,7 +103,7 @@ CI (`.github/workflows/validation.yml`) must run the same chain; include **`vali
 
 ## Domain tokens (high level)
 
-- **`porto_id`** — SDK normalization identifier; enum in `porto_ids.schema.json`.
+- **`porto_id`** — consumer normalization identifier; enum in `porto_ids.schema.json`.
 - **Native `id`** — operator catalog key; used in graph, prices, rules (not `porto_id`).
 - **Currency:** `row.currency` → file `unit.currency` → `markets[country].currency`; intl overrides → `markets[country].international_currency`.
 - Country codes: **ISO 3166-1 alpha-2** where used.
@@ -123,7 +123,7 @@ porto-data = **facts + contracts**. SDK/app = **resolution + workflow**. Do not 
 | **`formats/addresses`** | Sparse jurisdiction forms (`street` / `post_box`) | Compose zones, world directory, provider wire |
 | **`marks` / `mark_profile`** | Stamp/label footprint; optional **`calibrations[]`** (checkout px/mm) | Product size or service semantics |
 | **`providers/<id>/*.json`** | `file_type` + entity payload | Repeat `provider` (path is SoT) |
-| **`edges.wire`** | Adapter catalog codes per wire channel | SDK billing/execution gates or credentials |
+| **`edges.wire`** | Adapter catalog codes per wire channel | billing/execution capability tokens or credentials |
 | **Generated docs** | Drift detection (`porto_id.md`, `metadata.json`) | Hand-edited checksums |
 
 **`porto_id` (instance of the doctrine):**

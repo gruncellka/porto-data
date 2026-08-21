@@ -14,7 +14,7 @@ This catalog models **letters only** — no parcels, postcards, personal-deliver
 | Services | Return receipt (paper/electronic); international registered surcharge |
 | Zones | `domestic`, flat `world` (international letters) |
 
-**`porto_id`:** SDK input uses `small` or `large` only for Ukrposhta products. `large` is **only** `dokument` (domestic); international letter postage is always `small` on `lyst_standartnyi`. See [resolution.md](../resolution.md) § Ukrposhta.
+**`porto_id`:** consumer input uses `small` or `large` only for Ukrposhta products. `large` is **only** `dokument` (domestic); international letter postage is always `small` on `lyst_standartnyi`. See [resolution.md](../resolution.md) § Ukrposhta.
 
 ---
 

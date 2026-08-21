@@ -1,6 +1,6 @@
 # Product resolution when `porto_id` is ambiguous
 
-SDK and app code should pass **`porto_id`** (canonical bucket). The bundle resolves to a native **`product.id`** using provider context plus shipment facts.
+Consumers should pass **`porto_id`** (canonical bucket). The bundle resolves to a native **`product.id`** using provider context plus shipment facts.
 
 ## Inputs
 
@@ -10,7 +10,7 @@ SDK and app code should pass **`porto_id`** (canonical bucket). The bundle resol
 | `porto_id` | Canonical product size bucket (`small`, `large`, …) |
 | `zone` | Resolved from destination country |
 | `weight` | Shipment weight (unit from `graph.unit.weight` / `weights.json`) → `weight_tier` |
-| `services[]` | Optional selected service native ids or porto_ids (SDK layer) |
+| `services[]` | Optional selected service native ids or porto_ids (consumer) |
 
 ## Resolution order
 
@@ -23,7 +23,7 @@ SDK and app code should pass **`porto_id`** (canonical bucket). The bundle resol
 7. **Delivery hint:** pick the `products.delivery[]` entry whose `zones` contains the shipment `zone`; join with `markets[CC].working_days` from `providers.json` → `country` (see below).
 8. **Wire code (online purchase only):** when `execution.json` exists, `execution.wire` selects the active **`edges.wire`** channel; then `graph.edges.wire[wire][product_id][zone_id]` — optional `services[service_id]` override when `strategy` is `service` (Deutsche Post Internetmarke). See [Wire resolution](#wire-resolution) below.
 
-When step 4 still leaves multiple products, the SDK or app must apply the provider-specific rules below (or an explicit user/operator hint). The bundle does not encode speed class or registered tier as separate `porto_id` values today.
+When step 4 still leaves multiple products, the consumer must apply the provider-specific rules below (or an explicit user/operator hint). The bundle does not encode speed class or registered tier as separate `porto_id` values today.
 
 Cross-file refs (graph, prices, rules) always use **native `id`**, never `porto_id`. See [CONTRIBUTING.md](../CONTRIBUTING.md).
 
@@ -42,7 +42,7 @@ After native `product.id` is resolved, expose an indicative **`delivery_hint`** 
 | `working_days.weekdays` | Entry override or `markets[CC].working_days.weekdays` |
 | `working_days.exclude_public_holidays` | `markets[CC].working_days.exclude_public_holidays` |
 
-Indicative only — not a guaranteed delivery date. No SDK speed-class enum (`lane`); disambiguation uses native `product.id`, delivery preference, or explicit user choice.
+Indicative only — not a guaranteed delivery date. No consumer speed-class enum (`lane`); disambiguation uses native `product.id`, delivery preference, or explicit user choice.
 
 **Coverage:** each product’s `delivery[].zones` must partition `product.zones` exactly (validated in CI).
 
@@ -55,7 +55,7 @@ After graph filtering, each remaining candidate carries optional facts for SDK/U
 | **`delivery_hint`** | `products.delivery[]` + `markets[CC].working_days` | SLA span/days for the shipment zone |
 | **`included_features[]`** | `products.included_features` | Capabilities bundled in base postage (refs `features.json` ids) |
 | **`indemnity`** | `products.indemnity` | Operator tier code + loss/damage cap (`max.amount` in minor units) |
-| **`tracking_mode`** | `products.tracking_mode` | Whether tracking is none / optional / included |
+| **`tracking`** | `products.tracking` | Whether tracking is none / optional / included |
 
 `included_features` lists provider feature **ids** (same namespace as `services[].features`), not priced add-ons from `services.json`. Omit the field when nothing is bundled (e.g. plain Lettre verte).
 
@@ -69,12 +69,12 @@ When multiple products share `(porto_id, zone, weight_tier)` after graph filteri
 |-------------------|--------------|-----------|
 | **Swiss Post** A vs B | `delivery[]` fingerprint (span, days) | explicit `product.id` |
 | **La Poste** R1/R2/R3 | `indemnity.tier` | price row |
-| **La Poste** verte / suivie / Services Plus | `included_features[]`, `tracking_mode` | price row |
+| **La Poste** verte / suivie / Services Plus | `included_features[]`, `tracking` | price row |
 | **Deutsche Post** extra_large twins | zone + weight_tier | — |
 | **Ukrposhta** small vs large | zone (large is domestic-only) | — |
 | **Else** | explicit native **`product.id`** or user preference | — |
 
-CI rejects twins that share the same resolution fingerprint (`delivery` sig per zone, `indemnity.tier`, `included_features`, `tracking_mode`) for the same graph edge key.
+CI rejects twins that share the same resolution fingerprint (`delivery` sig per zone, `indemnity.tier`, `included_features`, `tracking`) for the same graph edge key.
 
 ## Known ambiguous cases
 
@@ -118,7 +118,7 @@ Disambiguation: prefer **zone** (domestic vs international) first, then compare 
 
 ## Service variants
 
-Multiple `services[].id` rows may share one `porto_id` (e.g. two `registered` variants on Deutsche Post). SDK should select by native service id or operator-specific option once the user picks a variant.
+Multiple `services[].id` rows may share one `porto_id` (e.g. two `registered` variants on Deutsche Post). Select by native service id or operator-specific option once the user picks a variant.
 
 ## Mark profile resolution
 
@@ -126,13 +126,13 @@ Lane and service mark mapping: **`graph.edges.marks[zone]`**. Catalog sizes: **`
 
 ## Wire resolution
 
-Stage 2 of the SDK pipeline — after native `product.id`, `zone`, and optional `service_ids[]` are known:
+After native `product.id`, `zone`, and optional `service_ids[]` are known:
 
-| Step | Graph field | SDK |
+| Step | Graph field | Role |
 |------|-------------|-----|
 | Load strategy | `graph.strategy` | resolution contract for stage 1 |
 | Active wire channel | `execution.json` → `wire` (when present) | must match an `edges.wire` key |
-| Base adapter code | `graph.edges.wire[wire][product_id][zone_id].base` | `resolve_wire_code(...)` |
+| Base adapter code | `graph.edges.wire[wire][product_id][zone_id].base` | checkout catalog key |
 | Service override (DE only) | `...services[service_id]` | when `strategy: service` |
 
 ### `graph.strategy` per provider
@@ -144,13 +144,13 @@ Stage 2 of the SDK pipeline — after native `product.id`, `zone`, and optional 
 | Swiss Post | `speed` | `webstamp` | `base` = `products.id` until Options API harvest |
 | Ukrposhta | `min` | `ukrposhta_ecom` | `base` only (`letter` / `document`) |
 
-**`execution.json`:** optional until an SDK adapter ships. When present, `wire` must equal one key under `graph.edges.wire`; `billing[]` / `execution[]` gate SDK subservices only — wire product codes stay in `edges.wire`.
+**`execution.json`:** optional until an execution adapter ships. When present, `wire` must equal one key under `graph.edges.wire`; `billing[]` / `execution[]` gate **capability tokens** only — wire product codes stay in `edges.wire`.
 
 **La Poste `strategy: id`:** each `products.id` is a distinct purchasable product line (Lettre verte, R1–R3, …). `porto_id: small` is a coarse cross-provider size bucket only — resolution requires explicit `products.id` (or indemnity tier). Wire `base` must equal `products.id`.
 
 Adapter wire codes live in **`graph.edges.wire` only** — not on `products.json` or `services.json` rows. Validators reject `native_id`, `zone_native_ids`, and `product_native_ids` on entity files.
 
-Lookup rules (SDK):
+Lookup rules (consumer):
 
 1. No selected services → use `.base`.
 2. `service` + one or more service ids → last matching entry in `services` map wins (mirrors `edges.marks` override order).

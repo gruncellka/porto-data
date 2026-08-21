@@ -4,7 +4,7 @@
 
 - Review rules for Bugbot in this `porto-data` tree only: data integrity, validation correctness, release safety.
 - **Consistency** means cross-file agreement: registry ↔ mappings ↔ disk, **`policy/markets.json`** ↔ provider countries, catalog JSON ↔ **`graph.json`**, units, services ↔ prices ↔ graph, **`porto_id`** ↔ native ids.
-- **Resolution** (for SDKs/loaders) is anchored in each provider’s **`graph.json`**: **`dependencies`**, **`edges`** (product × zones × weight tiers; **`edges.wire`** for adapter catalog codes), top-level **`services`**, plus **`porto_data/schemas/graph.schema.json`**. Optional **`execution.json`** (indexed via **`dependencies.execution`**) declares wire channel + SDK **billing/execution methods** only — not wire tables. Price lookup uses **`dependencies`** paths and price schemas join keys (`product_id`, `zone`, `weight_tier` / `service_id`). Loaders must not assume removed layouts (`porto_data/data/`, `data_links.json`, top-level **`links`**, **`lookup_rules`**, **`global_settings`**, **`price_lookup`**, graph key **`available_services`** — use **`services`**; **`services.integrations`** — use **`execution.json`** + **`edges.wire`**).
+- **Resolution** (for consumers/loaders) is anchored in each provider’s **`graph.json`**: **`dependencies`**, **`edges`** (product × zones × weight tiers; **`edges.wire`** for adapter catalog codes), top-level **`services`**, plus **`porto_data/schemas/graph.schema.json`**. Optional **`execution.json`** (indexed via **`dependencies.execution`**) declares wire channel + **billing/execution capability tokens** only — not wire tables. Price lookup uses **`dependencies`** paths and price schemas join keys (`product_id`, `zone`, `weight_tier` / `service_id`). Loaders must not assume removed layouts (`porto_data/data/`, `data_links.json`, top-level **`links`**, **`lookup_rules`**, **`global_settings`**, **`price_lookup`**, graph key **`available_services`** — use **`services`**; **`services.integrations`** — use **`execution.json`** + **`edges.wire`**).
 - **Provider order** in docs and prose: **`deutschepost` → `ukrposhta` → `laposte` → `swisspost`**.
 - **`limits.json`** with empty **`limits[]`** is **valid** — global restrictions live in **`policy/restrictions.json`**; overlays are optional.
 - **JSON naming:** Porto-owned schema keys use full words (`international_currency`, `vat.domestic` / `vat.international`); see `.cursorrules` § JSON naming doctrine.
@@ -17,7 +17,7 @@ porto-data ships **catalog facts** and **contracts** — not product workflow, c
 
 ### Principles (apply to any PR touching catalog JSON or schemas)
 
-1. **One identifier, one layer.** Native `id` wires graph/prices/rules. `porto_id` is SDK input only. `mark_profile` is layout output. `native_id` is adapter/API (runtime — not on catalog product/service rows). Wire checkout codes (`productCode`, etc.) live in **`graph.edges.wire`** only. Do not use the same token in two layers unless `docs/identity.md` documents the trap.
+1. **One identifier, one layer.** Native `id` wires graph/prices/rules. `porto_id` is consumer input only. `mark_profile` is layout output. `native_id` is adapter/API (runtime — not on catalog product/service rows). Wire checkout codes (`productCode`, etc.) live in **`graph.edges.wire`** only. Do not use the same token in two layers unless `docs/identity.md` documents the trap.
 
 2. **Facts vs normalization vs workflow.** Tariff rows, mm geometry, sparse address forms, and operator SKUs are facts. `porto_id` enums normalize cross-operator input. User choices (R1/R2, A-Post vs B-Post, sender placement) are resolved in SDK/app — **do not** encode them as new catalog fields when an existing layer already owns the fact.
 
@@ -33,9 +33,9 @@ porto-data ships **catalog facts** and **contracts** — not product workflow, c
 |--------------|-----------|---------------|
 | `registered` on `products.porto_id` | Service semantics on size bucket | `small` + native id, or `services.porto_id` |
 | `address_area` / `print_area` in layouts | Compose/workflow in catalog | `window` + `post_mark` only; compose in app |
-| `porto_id` in `graph.json` / `prices/*` keys | SDK token in wiring | Native `product_id` / `service_id` |
+| `porto_id` in `graph.json` / `prices/*` keys | Consumer token in wiring | Native `product_id` / `service_id` |
 | `mark_profile` id treated as `porto_id` | Layout vs input collapse | Resolve via `graph.edges.marks` |
-| `productCode` / wire tables in `execution.json` | Wire data in SDK manifest | `graph.edges.wire[wire]` |
+| `productCode` / wire tables in `execution.json` | Wire data in execution manifest | `graph.edges.wire[wire]` |
 | `capabilities` / `wire` only under `graph.services` | SDK gate in resolution graph | `execution.json` + `dependencies.execution` |
 | `native_id` on `products.json` / `services.json` rows | Adapter code in catalog facts | `edges.wire` per product × zone |
 | Operator mark calibration tables in `marks.md` | Provider-specific prose in generic doc | `docs/providers/<id>.md` + `marks.calibrations[]` |
@@ -128,7 +128,7 @@ These rules align reviews with validators under `scripts/validators/` and **`mak
 If a PR adds or keeps a **top-level** `"links"` or `"available_services"` key in any `porto_data/providers/**/graph.json`, or reintroduces **`services.integrations`**:
 
 - **Title:** `graph.json uses removed top-level keys`
-- **Body:** `Use edges (product → zones + weight_tiers; wire under edges.wire) and top-level services (native service ids). Remove links, available_services, services.integrations, lookup_rules, global_settings, price_lookup per graph.schema.json. SDK adapter manifest: execution.json.`
+- **Body:** `Use edges (product → zones + weight_tiers; wire under edges.wire) and top-level services (native service ids). Remove links, available_services, services.integrations, lookup_rules, global_settings, price_lookup per graph.schema.json. Execution manifest: execution.json.`
 - **Labels:** `data`, `resolution`
 
 ### 10) Provider registry and mappings stay in lockstep (blocking)
@@ -237,7 +237,7 @@ If a PR lists operators out of bundle order **`deutschepost` → `ukrposhta` →
 
 ### 23) Product `porto_id` is size-only — never service semantics (blocking)
 
-If a PR adds or changes **`products.json`** so any product row’s **`porto_id`** is **not** one of the current **`product_porto_id`** enum values in **`porto_ids.schema.json`**, or uses tokens that belong on services/features — including but not limited to **`registered`**, **`registered_letter`**, **`registered_return_receipt`**, **`tracking`**, **`insurance`**, **`return_receipt`**, **`proof_of_mailing`**, **`proof_of_delivery`**, **`thickness`**, **`tracking_number`**, **`thickness_surcharge`**:
+If a PR adds or changes **`products.json`** so any product row’s **`porto_id`** is **not** one of the current **`product_porto_id`** enum values in **`porto_ids.schema.json`**, or uses tokens that belong on services/features — including but not limited to **`registered`**, **`registered_letter`**, **`registered_return_receipt`**, **`tracking`**, **`insurance`**, **`return_receipt`**, **`proof_of_mailing`**, **`proof_of_delivery`**, **`thickness`**:
 
 - **Title:** `Product row uses service/feature porto_id (or invented product token)`
 - **Body:** `products.porto_id is a letter SIZE bucket only (small, medium, large, extra_large, postcard). Registered / recommandée / Einschreiben / tracking semantics belong on services.json or features.json, or are implied by native product id (e.g. La Poste lettre_recommandee_* → porto_id: small). Never put registered on a product row to mean “registered mail”. See docs/id.md and docs/resolution.md.`
@@ -272,7 +272,7 @@ If a PR adds or restores layout or format fields that describe **addressing work
 If a PR uses **`porto_id`** (or other SDK-normalization tokens) in **`graph.json`**, **`prices/*.json`**, or **`rules.json`** keys/refs where **native `id`** is required — or conflates **`mark_profile`** ids / **zone** ids with **`porto_id`** without updating `docs/identity.md`:
 
 - **Title:** `Wrong identifier layer in catalog wiring`
-- **Body:** `graph, prices, rules: native product_id / service_id only. porto_id is SDK input. mark_profile and zone are separate namespaces. See docs/identity.md.`
+- **Body:** `graph, prices, rules: native product_id / service_id only. porto_id is consumer input. mark_profile and zone are separate namespaces. See docs/identity.md.`
 - **Labels:** `data`, `resolution`, `consistency`
 
 ### 28) New schema field without clear owning layer (non-blocking)
@@ -312,11 +312,11 @@ If a PR adds **`lane`**, **`priority`**, **`economy`**, or similar interpreter e
 If a PR adds or changes **`products.json`** and:
 
 - any La Poste **`lettre_recommandee_*`** row lacks **`indemnity`**, or a non-recommandée La Poste row sets **`indemnity`**, or **`indemnity.tier`** does not match the product id (R1/R2/R3), or
-- two products share the same **`(porto_id, zone, weight_tier)`** graph edge and identical resolution fingerprint (`delivery[]` sig, **`indemnity.tier`**, **`included_features`**, **`tracking_mode`**), or
+- two products share the same **`(porto_id, zone, weight_tier)`** graph edge and identical resolution fingerprint (`delivery[]` sig, **`indemnity.tier`**, **`included_features`**, **`tracking`**), or
 - **`included_features[]`** references an id missing from provider **`features.json`**:
 
 - **Title:** `Product resolution facts invalid or ambiguous twins`
-- **Body:** `Recommandée must carry indemnity; twins must differ on delivery, indemnity.tier, included_features, or tracking_mode. CI: porto validate --type delivery. See docs/resolution.md § Candidate enrichment.`
+- **Body:** `Recommandée must carry indemnity; twins must differ on delivery, indemnity.tier, included_features, or tracking. CI: porto validate --type delivery. See docs/resolution.md § Candidate enrichment.`
 - **Labels:** `data`, `consistency`, `resolution`
 
 ### 33) Execution manifest vs wire tables (blocking)
