@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
+- **Deutsche Post `zusatzversicherung`:** do not list feature `tracking` — Zusatzversicherung is priced insurance, not Sendungsnummer. `services[].features` may be empty.
 - **Layout window geometry (DIN 680 Form B):** C5/C4 `window.area.y` for DE/CH/FR was incorrectly using the DL/C6 15 mm-from-bottom rule (`y` 102 / 159). Corrected to Form B: C5 `y: 57` (60 mm from bottom), C4 `y: 57` (57 mm from top).
 - **`marks_profiles` calibrations:** Require ``calibrations[].mark_profile`` (wire checkout layout token), matching schema + Deutsche Post data — not legacy ``voucher_layout``.
 

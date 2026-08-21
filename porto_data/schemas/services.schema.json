@@ -59,13 +59,13 @@
           },
           "features": {
             "type": "array",
-            "minItems": 1,
+            "minItems": 0,
             "items": {
               "type": "string",
               "pattern": "^[a-z_]+$",
               "description": "Feature ID reference"
             },
-            "description": "Feature references: each entry may be provider feature `id` or unified `porto_id` (see features.json). A service enables tracking iff any entry resolves to a feature whose porto_id is tracking."
+            "description": "Feature references: each entry may be provider feature `id` or unified `porto_id` (see features.json). Empty when the service is only a priced add-on (e.g. DE Zusatzversicherung is not Sendungsnummer). A service enables tracking iff any entry resolves to a feature whose porto_id is tracking."
           },
           "supported_zones": {
             "type": "array",

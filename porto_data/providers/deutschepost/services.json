@@ -63,9 +63,7 @@
       "name": "Zusatzversicherung 500",
       "label": "Additional insurance (500 EUR)",
       "description": "Additional insurance up to 500 EUR",
-      "features": [
-        "tracking"
-      ],
+      "features": [],
       "supported_zones": [
         "domestic",
         "zone_1_eu",
