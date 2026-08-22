@@ -48,7 +48,7 @@
           "id": {
             "type": "string",
             "minLength": 1,
-            "description": "Stable rule id for logs and SDK line items"
+            "description": "Stable rule id for logs and consumer line items"
           },
           "kind": {
             "type": "string",
@@ -62,7 +62,7 @@
             "enum": [
               "thickness"
             ],
-            "description": "Logical metric name; physical unit comes from document `unit` (e.g. unit.thickness mm). Add enum values only with SDK support."
+            "description": "Logical metric name; physical unit comes from document `unit` (e.g. unit.thickness mm). Add enum values only with consumer support."
           },
           "description": {
             "type": "string",

@@ -117,25 +117,25 @@
     },
     "calibrations": {
       "type": "array",
-      "description": "Optional checkout asset dimensions (integration × voucher layout × dpi)",
+      "description": "Optional checkout asset dimensions (wire × mark_profile layout token × dpi). Distinct from profiles[].id (Porto mark profile).",
       "items": {
         "type": "object",
         "required": [
-          "integration",
-          "voucher_layout",
+          "wire",
+          "mark_profile",
           "mime_type",
           "dpi"
         ],
         "properties": {
-          "integration": {
+          "wire": {
             "type": "string",
             "minLength": 1,
-            "description": "graph.edges.wire integration key (same id namespace as execution.json wire when present)"
+            "description": "graph.edges.wire key (same id namespace as execution.json wire when present)"
           },
-          "voucher_layout": {
+          "mark_profile": {
             "type": "string",
             "minLength": 1,
-            "description": "Integration-specific checkout layout token at purchase time (opaque catalog string; allowed values belong in operator docs)"
+            "description": "Wire checkout layout token at purchase time (e.g. Internetmarke FRANKING_ZONE / ADDRESS_ZONE). Not the same as profiles[].id. Do not use voucher_layout."
           },
           "mime_type": {
             "type": "string",

@@ -14,7 +14,7 @@ This catalog models **letters only** — no parcels, postcards, personal-deliver
 | Services | Return receipt (paper/electronic); international registered surcharge |
 | Zones | `domestic`, flat `world` (international letters) |
 
-**`porto_id`:** SDK input uses `small` or `large` only for Ukrposhta products. `large` is **only** `dokument` (domestic); international letter postage is always `small` on `lyst_standartnyi`. See [resolution.md](../resolution.md) § Ukrposhta.
+**`porto_id`:** consumer input uses `small` or `large` only for Ukrposhta products. `large` is **only** `dokument` (domestic); international letter postage is always `small` on `lyst_standartnyi`. See [resolution.md](../resolution.md) § Ukrposhta.
 
 ---
 
@@ -118,7 +118,7 @@ This catalog models **letters only** — no parcels, postcards, personal-deliver
 |--------------|------|------|-------:|----------|-------|
 | `lyst_standartnyi` | `domestic` | W0050 | 2400 | UAH | ≤50 g |
 | `lyst_standartnyi` | `domestic` | W0250, W1000, W2000 | 7200 | UAH | 50 g–2 kg |
-| `dokument` | `domestic` | W1000 | 5500 | UAH | Dokument flat |
+| `dokument` | `domestic` | W0050 / W0250 / W1000 | 5500 | UAH | Dokument flat ≤1 kg (same amount on each tier) |
 | `lyst_standartnyi` | `world` | W0050 | 250 | USD | ≤50 g |
 | `lyst_standartnyi` | `world` | W0250 | 400 | USD | ≤250 g |
 | `lyst_standartnyi` | `world` | W1000 | 1450 | USD | ≤1000 g |

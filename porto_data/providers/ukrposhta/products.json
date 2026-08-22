@@ -9,6 +9,7 @@
       "id": "lyst_standartnyi",
       "porto_id": "small",
       "name": "Лист стандартний",
+      "label": "Standard Letter",
       "envelope_ids": [
         "DL",
         "C6",
@@ -22,7 +23,7 @@
       "effective_from": "2026-01-01",
       "effective_to": null,
       "mark_type": "label",
-      "tracking_mode": "optional",
+      "tracking": "optional",
       "delivery": [
         {
           "zones": [
@@ -45,6 +46,7 @@
       "id": "dokument",
       "porto_id": "large",
       "name": "Укрпошта Документ",
+      "label": "Document Letter",
       "envelope_ids": [
         "C4",
         "B4"
@@ -55,7 +57,7 @@
       "effective_from": "2026-01-01",
       "effective_to": null,
       "mark_type": "label",
-      "tracking_mode": "included",
+      "tracking": "included",
       "delivery": [
         {
           "zones": [

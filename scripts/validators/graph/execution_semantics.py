@@ -1,4 +1,4 @@
-"""Product ``mark_type`` / ``tracking_mode`` and optional tracking service linkage."""
+"""Product ``mark_type`` / ``tracking`` and optional tracking service linkage."""
 
 from __future__ import annotations
 
@@ -9,6 +9,34 @@ from scripts.validators.base import ValidationResults
 
 from .services import get_service_by_ref
 
+TRACKING_PORTO_ID = "tracking"
+
+
+def _features_by_id(features: dict[str, Any] | None) -> dict[str, dict[str, Any]]:
+    if not features:
+        return {}
+    out: dict[str, dict[str, Any]] = {}
+    for row in features.get("features") or []:
+        if isinstance(row, dict) and row.get("id"):
+            out[str(row["id"])] = row
+    return out
+
+
+def service_enables_tracking(
+    svc: dict[str, Any],
+    features_by_id: dict[str, dict[str, Any]],
+) -> bool:
+    """True iff ``features[]`` resolves to a feature whose ``porto_id`` is tracking."""
+    for ref in svc.get("features") or []:
+        if not isinstance(ref, str):
+            continue
+        if ref == TRACKING_PORTO_ID:
+            return True
+        feat = features_by_id.get(ref)
+        if isinstance(feat, dict) and feat.get("porto_id") == TRACKING_PORTO_ID:
+            return True
+    return False
+
 
 def run_validate_execution_semantics(
     results: ValidationResults,
@@ -18,6 +46,7 @@ def run_validate_execution_semantics(
     services: dict[str, Any] | None,
     services_by_id: dict[str, dict[str, Any]],
     product_dict: dict[str, dict[str, Any]],
+    features: dict[str, Any] | None = None,
 ) -> None:
     if products is None or services is None:
         return
@@ -26,22 +55,24 @@ def run_validate_execution_semantics(
     if not isinstance(attached, list):
         attached = []
 
+    features_by_id = _features_by_id(features)
+
     for product_id, product in product_dict.items():
         mark_type = product.get("mark_type")
-        tracking_mode = product.get("tracking_mode")
-        if mark_type is None or tracking_mode is None:
+        tracking = product.get("tracking")
+        if mark_type is None or tracking is None:
             results["errors"].append(
-                f"Product '{product_id}' must define mark_type and tracking_mode ({PRODUCTS_FILE})"
+                f"Product '{product_id}' must define mark_type and tracking ({PRODUCTS_FILE})"
             )
             continue
 
-        if mark_type == "label" and tracking_mode == "none":
+        if mark_type == "label" and tracking == "none":
             results["errors"].append(
-                f"Product '{product_id}': invalid combination label + tracking_mode none "
+                f"Product '{product_id}': invalid combination label + tracking none "
                 f"(use optional or included)"
             )
 
-        if tracking_mode != "optional":
+        if tracking != "optional":
             continue
 
         p_zones = frozenset(product.get("zones") or [])
@@ -59,7 +90,7 @@ def run_validate_execution_semantics(
         ok = False
         for sid in attached:
             svc = get_service_by_ref(services, str(sid))
-            if not svc or not svc.get("enables_tracking"):
+            if not svc or not service_enables_tracking(svc, features_by_id):
                 continue
             if _service_covers_product(svc):
                 ok = True
@@ -67,7 +98,7 @@ def run_validate_execution_semantics(
 
         if not ok:
             for svc in services_by_id.values():
-                if not svc.get("enables_tracking"):
+                if not service_enables_tracking(svc, features_by_id):
                     continue
                 if _service_covers_product(svc):
                     ok = True
@@ -75,7 +106,7 @@ def run_validate_execution_semantics(
 
         if not ok:
             results["errors"].append(
-                f"Product '{product_id}' has tracking_mode optional but no service with "
-                f"enables_tracking covers its zones in {SERVICES_FILE} / graph.services "
-                f"({GRAPH_FILE})"
+                f"Product '{product_id}' has tracking optional but no service with "
+                f"feature porto_id {TRACKING_PORTO_ID} covers its zones in "
+                f"{SERVICES_FILE} / graph.services ({GRAPH_FILE})"
             )

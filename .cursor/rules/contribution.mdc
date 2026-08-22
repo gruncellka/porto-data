@@ -1,0 +1,14 @@
+---
+description: Never commit or push without explicit user approval
+alwaysApply: true
+---
+
+# Contribution
+
+Mistake without this: agent runs `git commit` / `git push` / `gh pr create` without an explicit user ask.
+
+1. Finish code/docs; leave unstaged unless asked to stage.
+2. Summarize scope; show `git status` / `git diff` when closing work.
+3. Wait for explicit **"commit"**, **"commit and push"**, or **"create the PR"** after review.
+4. Conventional Commits: `type(scope): summary` — e.g. `feat(catalog): add product labels`, `docs(identity): clarify wire vs execution`.
+5. OK without asking: `git status`, `git diff`, `git log`.

@@ -77,9 +77,9 @@ def run_validate_wire_edges(
     product_links = product_edges(graph)
     seen_wire_codes: dict[str, str] = {}
 
-    for integration, products_wire in wire_root.items():
+    for wire_id, products_wire in wire_root.items():
         if not isinstance(products_wire, dict):
-            results["errors"].append(f"{GRAPH_FILE}: edges.wire.{integration} must be an object")
+            results["errors"].append(f"{GRAPH_FILE}: edges.wire.{wire_id} must be an object")
             continue
         for product_id, zones_wire in products_wire.items():
             if product_id not in product_dict:
@@ -98,36 +98,36 @@ def run_validate_wire_edges(
             for zone_id, zone_entry in zones_wire.items():
                 if zone_id not in allowed_zones:
                     results["errors"].append(
-                        f"{GRAPH_FILE}: wire.{integration}.{product_id}.{zone_id} "
+                        f"{GRAPH_FILE}: wire.{wire_id}.{product_id}.{zone_id} "
                         f"not in edges.products zones {sorted(allowed_zones)}"
                     )
                 if not isinstance(zone_entry, dict):
                     continue
                 base = zone_entry.get("base")
                 if base is not None:
-                    code_key = f"{integration}:{base}"
+                    code_key = f"{wire_id}:{base}"
                     prior_product = seen_wire_codes.get(code_key)
                     if prior_product and prior_product != product_id:
                         results["errors"].append(
-                            f"{GRAPH_FILE}: duplicate wire base {base!r} on {integration} "
+                            f"{GRAPH_FILE}: duplicate wire base {base!r} on {wire_id} "
                             f"({prior_product} vs {product_id})"
                         )
                     else:
                         seen_wire_codes[code_key] = product_id
                 if base is None:
-                    if strategy == "service" and integration == "internetmarke":
+                    if strategy == "service" and wire_id == "internetmarke":
                         results["errors"].append(
-                            f"{GRAPH_FILE}: wire.{integration}.{product_id}.{zone_id}.base "
+                            f"{GRAPH_FILE}: wire.{wire_id}.{product_id}.{zone_id}.base "
                             "must not be null for service strategy"
                         )
                     else:
                         results["warnings"].append(
-                            f"{GRAPH_FILE}: wire.{integration}.{product_id}.{zone_id}.base "
+                            f"{GRAPH_FILE}: wire.{wire_id}.{product_id}.{zone_id}.base "
                             "is null (TBD catalog code)"
                         )
                 elif strategy == "id" and base != product_id:
                     results["errors"].append(
-                        f"{GRAPH_FILE}: wire.{integration}.{product_id}.{zone_id}.base "
+                        f"{GRAPH_FILE}: wire.{wire_id}.{product_id}.{zone_id}.base "
                         f"must equal products.id {product_id!r} when strategy is id"
                     )
                 svc_map = zone_entry.get("services") or {}
@@ -147,6 +147,6 @@ def run_validate_wire_edges(
                     supported = svc_row.get("supported_zones")
                     if supported and zone_id not in supported:
                         results["errors"].append(
-                            f"{GRAPH_FILE}: wire.{integration}.{product_id}.{zone_id} "
+                            f"{GRAPH_FILE}: wire.{wire_id}.{product_id}.{zone_id} "
                             f"service '{service_id}' not in supported_zones {supported}"
                         )

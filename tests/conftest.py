@@ -128,7 +128,7 @@ def minimal_data_files(
             "features": [
                 {
                     "id": "tracking_number",
-                    "porto_id": "tracking_number",
+                    "porto_id": "tracking",
                     "name": "Sendungsnummer",
                     "label": "Tracking number",
                     "description": "Test",
@@ -217,7 +217,7 @@ def create_test_data_files(tmp_path, **file_data):
             "features": [
                 {
                     "id": "tracking_number",
-                    "porto_id": "tracking_number",
+                    "porto_id": "tracking",
                     "name": "Sendungsnummer",
                     "label": "Tracking number",
                     "description": "Test",

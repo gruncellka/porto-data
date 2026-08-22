@@ -288,6 +288,7 @@ def get_data_file_path(
     global_entities = {
         "envelopes",
         "layouts",
+        "addresses",
         "markets",
         "restrictions",
         "features",
@@ -492,6 +493,7 @@ _FILE_NAMES = get_all_data_file_names()
 _REQUIRED_ENTITIES = [
     "envelopes",
     "layouts",
+    "addresses",
     "jurisdictions",
     "markets",
     "providers",
@@ -527,6 +529,7 @@ PRODUCT_PRICES_FILE = _FILE_NAMES["product_prices"]
 SERVICE_PRICES_FILE = _FILE_NAMES["service_prices"]
 ENVELOPES_FILE = _FILE_NAMES["envelopes"]
 LAYOUTS_FILE = _FILE_NAMES["layouts"]
+ADDRESSES_FILE = _FILE_NAMES["addresses"]
 FEATURES_FILE = _FILE_NAMES["features"]
 MARKS_FILE = _FILE_NAMES["marks"]
 EXECUTION_FILE = _FILE_NAMES.get("execution", "execution.json")

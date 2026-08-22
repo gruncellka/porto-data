@@ -7,7 +7,7 @@ from typing import Any
 from scripts.data_files import GRAPH_FILE, MARKS_FILE
 from scripts.validators.base import ValidationResults
 
-from .edge_access import wire_integration_ids
+from .edge_access import wire_ids
 
 _DIM_KEYS = ("width_px", "height_px", "width_mm", "height_mm")
 
@@ -64,7 +64,7 @@ def run_validate_marks_profiles(
         results,
         marks=marks,
         profile_ids=set(by_id.keys()),
-        wire_ids=wire_integration_ids(graph),
+        wire_ids=wire_ids(graph),
     )
 
 
@@ -106,18 +106,18 @@ def _validate_calibrations(
             continue
         prefix = f"{MARKS_FILE}: calibrations[{index}]"
 
-        integration = row.get("integration")
-        if not isinstance(integration, str) or not integration.strip():
-            results["errors"].append(f"{prefix}: integration must be a non-empty string")
-        elif wire_ids and integration.strip().lower() not in wire_ids:
+        wire = row.get("wire")
+        if not isinstance(wire, str) or not wire.strip():
+            results["errors"].append(f"{prefix}: wire must be a non-empty string")
+        elif wire_ids and wire.strip().lower() not in wire_ids:
             results["errors"].append(
-                f"{prefix}: integration {integration.strip().lower()!r} must match a key in "
+                f"{prefix}: wire {wire.strip().lower()!r} must match a key in "
                 f"{GRAPH_FILE} edges.wire (have {sorted(wire_ids)})"
             )
 
-        layout = row.get("voucher_layout")
+        layout = row.get("mark_profile")
         if not isinstance(layout, str) or not layout.strip():
-            results["errors"].append(f"{prefix}: voucher_layout must be a non-empty string")
+            results["errors"].append(f"{prefix}: mark_profile must be a non-empty string")
 
         by_profile = row.get("by_mark_profile")
         canvas = row.get("label_canvas")

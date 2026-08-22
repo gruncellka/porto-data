@@ -94,6 +94,15 @@ class TestMainFunction:
             assert result == 0
             mock_validate_markets.assert_called_once()
 
+    @patch("cli.commands.validate.validate_addresses_cmd")
+    def test_main_validate_addresses(self, mock_validate_addresses):
+        """Test main with validate --type addresses."""
+        mock_validate_addresses.return_value = 0
+        with patch("sys.argv", ["porto", "validate", "--type", "addresses"]):
+            result = main()
+            assert result == 0
+            mock_validate_addresses.assert_called_once()
+
     @patch("cli.commands.validate.validate_limits")
     def test_main_validate_limits(self, mock_validate_limits):
         """Test main with validate --type limits."""

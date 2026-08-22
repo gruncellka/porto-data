@@ -70,6 +70,14 @@
       ],
       "description": "Jurisdiction-keyed print/window layout (DE/CH/FR); file formats/layouts.json"
     },
+    "address_forms": {
+      "file": "formats/addresses.json",
+      "depends_on": [
+        "policy/jurisdictions.json",
+        "formats/layouts.json"
+      ],
+      "description": "Jurisdiction-keyed address forms (DE/CH/FR/UA); layout-aligned standards where layouts exist; file formats/addresses.json"
+    },
     "jurisdictions": {
       "file": "policy/jurisdictions.json",
       "depends_on": [],
@@ -131,6 +139,8 @@
           "domestic"
         ],
         "weight_tiers": [
+          "W0050",
+          "W0250",
           "W1000"
         ]
       }

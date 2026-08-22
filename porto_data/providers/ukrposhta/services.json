@@ -10,8 +10,7 @@
       "description": "Paper delivery notice returned to sender",
       "features": [
         "paperove_povidomlennia_vruchennia"
-      ],
-      "enables_tracking": true
+      ]
     },
     {
       "id": "elektronne_povidomlennia_vruchennia",
@@ -21,8 +20,7 @@
       "description": "Electronic delivery notice returned to sender",
       "features": [
         "elektronne_povidomlennia_vruchennia"
-      ],
-      "enables_tracking": true
+      ]
     },
     {
       "id": "mizhnarodne_zareiestrovane",
@@ -31,9 +29,9 @@
       "label": "International registered",
       "description": "Registered surcharge for international letters (LETTER; no declared value)",
       "features": [
-        "recipient_signature"
-      ],
-      "enables_tracking": true
+        "nomer_vidstezhennia",
+        "osobyste_vruchennia"
+      ]
     }
   ]
 }

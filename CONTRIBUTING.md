@@ -11,7 +11,7 @@
 | JSON data + schemas | Yes |
 | `scripts/` validators | No (CI + `make validate` only) |
 | `cli/` (`porto validate`, …) | No |
-| Resolution / `markLayout` code | No — **Porto SDK** repos |
+| Resolution / layout mapping | No — **Porto SDK** repos |
 
 Consumers (SDK, apps) read the JSON. Contributors edit data here and run validators before release.
 
@@ -44,6 +44,10 @@ Cross-file structure lives in each provider’s **`graph.json`** (`edges.product
 | Weight bracket file | `weights.json` (`file_type`: `weights`) |
 | Single tier field | `weight_tier` |
 | Conditional rules file | `rules.json` (`file_type`: `provider_rules`) |
+| Address forms | `formats/addresses.json` (`file_type`: `addresses`) |
+| Wire channel | `graph.edges.wire` / `execution.json` `wire` |
+| Billing / execution tokens | `execution.json` `billing[]` / `execution[]` (`wallet`, `mark`) |
+| Product tracking posture | `products.tracking` (`none` \| `optional` \| `included`) |
 
 **Provider order:** `deutschepost` → `ukrposhta` → `laposte` → `swisspost` in prose, tables, and JSON keys — see `.cursorrules`.
 
@@ -51,11 +55,11 @@ Cross-file structure lives in each provider’s **`graph.json`** (`edges.product
 
 ## Reference direction (frozen)
 
-1. **SDK / app input** → `porto_id` (canonical enum in `schemas/porto_ids.schema.json`).
+1. **Consumer input** → `porto_id` (canonical enum in `schemas/porto_ids.schema.json`).
 2. **graph.json, prices, rules** → native **`id`** only (never `porto_id`).
-3. **`native_id`** → carrier API catalog code only.
+3. **Carrier API codes** → runtime / `graph.edges.wire` only (not a `native_id` field on product or service rows).
 4. **`porto_id` on catalog rows** → cross-operator normalization on products, services, features.
-5. **`services[].features`** → convention under review; do not enforce until provider audit completes.
+5. **`services[].features`** → each entry is a `features.json` `id` or `porto_id`.
 
 Disambiguation when multiple native rows share one `porto_id`: [docs/resolution.md](docs/resolution.md). Provider file checklist: [docs/provider-template.md](docs/provider-template.md). **Tariff amounts:** [docs/tariff-verification.md](docs/tariff-verification.md) and [docs/providers/](docs/providers/) — reconcile against official sources; `make validate` does not check cent amounts.
 
@@ -67,7 +71,7 @@ Disambiguation when multiple native rows share one `porto_id`: [docs/resolution.
 
 ## Commands
 
-**Default validation order:** schema → mappings → markets → limits → porto_ids → delivery → graph (all providers).
+**Default validation order:** schema → mappings → markets → addresses → limits → porto_ids → delivery → graph (all providers).
 
 | CLI                                     | Purpose                                            |
 | --------------------------------------- | -------------------------------------------------- |
@@ -75,6 +79,7 @@ Disambiguation when multiple native rows share one `porto_id`: [docs/resolution.
 | `porto validate --type schema`          | Schema vs JSON                                     |
 | `porto validate --type mappings`        | `mappings.json`, provider dirs, registry, metadata |
 | `porto validate --type markets`         | `policy/markets.json` vs provider countries        |
+| `porto validate --type addresses`       | `formats/addresses.json` vs layouts/jurisdictions  |
 | `porto validate --type limits`          | `providers/*/limits.json`                          |
 | `porto validate --type porto_ids`       | `porto_id` enums, native-id cross-file refs; regenerates **`docs/porto_id.md`** (must be committed) |
 | `porto validate --type delivery` | Zone-scoped **`delivery[]`**, optional **`included_features[]`** / **`indemnity`**, twin resolution fingerprint |
@@ -104,6 +109,8 @@ Use a branch; ensure pre-commit passes. CI runs validation, format checks, metad
 ## Releases
 
 `main` is the integration branch. Feature and refactor PRs merge here first.
+
+**1.0.0 gate:** `calibrations[]` use **`mark_profile`** (wire checkout layout token, e.g. `FRANKING_ZONE` / `ADDRESS_ZONE`), not `voucher_layout`. Porto profile ids (`domestic`, …) live in `profiles[]` and `by_mark_profile` keys. Re-run `make validate` before cutting `1.0.0`.
 
 When `main` is stable (CI green, no known release blockers), cut a **release branch** and publish from that branch. Do not bump the published version or tag while feature work is still landing on `main`.
 

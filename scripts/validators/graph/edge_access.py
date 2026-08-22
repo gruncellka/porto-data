@@ -39,8 +39,8 @@ def wire_edges(graph: dict[str, Any] | None) -> dict[str, Any]:
     return wire if isinstance(wire, dict) else {}
 
 
-def wire_integration_ids(graph: dict[str, Any] | None) -> frozenset[str]:
-    """Integration keys under ``graph.edges.wire`` (provider-neutral)."""
+def wire_ids(graph: dict[str, Any] | None) -> frozenset[str]:
+    """Wire channel ids under ``graph.edges.wire`` (provider-neutral)."""
     return frozenset(wire_edges(graph).keys())
 
 

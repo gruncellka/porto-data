@@ -8,6 +8,7 @@
     {
       "id": "domestic",
       "name": "France",
+      "label": "France",
       "description": "France (domestic)",
       "country_codes": [
         "FR"
@@ -16,6 +17,7 @@
     {
       "id": "zone_1_eu",
       "name": "Zone 1 - EU",
+      "label": "Zone 1 - EU",
       "description": "European Union member countries (for France-origin international letters). Switzerland and other non-EU European states are in zone_2_europe.",
       "country_codes": [
         "AT",
@@ -48,6 +50,7 @@
     {
       "id": "zone_2_europe",
       "name": "Zone 2 - Europa",
+      "label": "Zone 2 - Europe",
       "description": "European countries outside the EU (e.g. CH, NO, GB). Switzerland is not an EU member and is priced here when posting from France.",
       "country_codes": [
         "AL",
@@ -78,6 +81,7 @@
     {
       "id": "world",
       "name": "Welt",
+      "label": "World",
       "description": "All countries outside Europe (international mail)",
       "country_codes": [
         "AF",

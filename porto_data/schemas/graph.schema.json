@@ -31,7 +31,7 @@
         "speed",
         "min"
       ],
-      "description": "Product disambiguation policy when multiple native products share a porto_id (catalog fact — SDK reads, does not hardcode per provider)"
+      "description": "Product disambiguation policy when multiple native products share a porto_id (catalog fact — consumers read, do not hardcode per provider)"
     },
     "unit": {
       "type": "object",
@@ -179,7 +179,7 @@
         },
         "wire": {
           "type": "object",
-          "description": "Adapter catalog codes per integration × product × zone. Optional services map for service-composed SKUs (e.g. Deutsche Post Internetmarke).",
+          "description": "Adapter catalog codes per wire × product × zone. Optional services map for service-composed SKUs (e.g. Deutsche Post Internetmarke).",
           "patternProperties": {
             "^[a-z_]+$": {
               "type": "object",

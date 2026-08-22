@@ -2,7 +2,7 @@
 
 Generated from live bundle data. Normative enum: `porto_data/schemas/porto_ids.schema.json`. Policy: [id.md](id.md).
 
-Cross-file refs (graph, prices, rules) use **native `id`**. SDK input uses **`porto_id`** — see [resolution.md](resolution.md) when multiple native rows share one `porto_id`.
+Cross-file refs (graph, prices, rules) use **native `id`**. Consumer input uses **`porto_id`** — see [resolution.md](resolution.md) when multiple native rows share one `porto_id`.
 
 ## deutschepost
 
@@ -31,7 +31,7 @@ Cross-file refs (graph, prices, rules) use **native `id`**. SDK input uses **`po
 |-------------|------------|
 | `einliefernachweis` | `proof_of_mailing` |
 | `rueckschein` | `return_receipt` |
-| `sendungsnummer` | `tracking_number` |
+| `sendungsnummer` | `tracking` |
 | `unterschrift_empfanger` | `recipient_signature` |
 | `zustellnachweis` | `proof_of_delivery` |
 
@@ -57,8 +57,9 @@ Cross-file refs (graph, prices, rules) use **native `id`**. SDK input uses **`po
 | native `id` | features `porto_id` |
 |-------------|------------|
 | `elektronne_povidomlennia_vruchennia` | `return_receipt` |
+| `nomer_vidstezhennia` | `tracking` |
+| `osobyste_vruchennia` | `recipient_signature` |
 | `paperove_povidomlennia_vruchennia` | `return_receipt` |
-| `recipient_signature` | `recipient_signature` |
 
 ## laposte
 
@@ -87,7 +88,7 @@ Cross-file refs (graph, prices, rules) use **native `id`**. SDK input uses **`po
 | native `id` | features `porto_id` |
 |-------------|------------|
 | `avis_reception` | `return_receipt` |
-| `numero_suivi` | `tracking_number` |
+| `numero_suivi` | `tracking` |
 | `preuve_depot` | `proof_of_mailing` |
 | `preuve_livraison` | `proof_of_delivery` |
 | `signature_destinataire` | `recipient_signature` |
@@ -117,5 +118,5 @@ Cross-file refs (graph, prices, rules) use **native `id`**. SDK input uses **`po
 
 | native `id` | features `porto_id` |
 |-------------|------------|
-| `brief_dicke_band` | `thickness_surcharge` |
-| `sendungsnummer` | `tracking_number` |
+| `brief_dicke_band` | `thickness` |
+| `sendungsnummer` | `tracking` |

@@ -99,7 +99,7 @@ def _default_features():
         "features": [
             {
                 "id": "tracking_number",
-                "porto_id": "tracking_number",
+                "porto_id": "tracking",
                 "name": "T",
                 "label": "T",
                 "description": "D",
@@ -208,7 +208,7 @@ class TestGraphExecutionSemantics:
                     "effective_from": None,
                     "effective_to": None,
                     "mark_type": "label",
-                    "tracking_mode": "none",
+                    "tracking": "none",
                 }
             ],
         }
@@ -254,7 +254,7 @@ class TestGraphExecutionSemantics:
                     "effective_from": None,
                     "effective_to": None,
                     "mark_type": "stamp",
-                    "tracking_mode": "optional",
+                    "tracking": "optional",
                 }
             ],
         }
@@ -267,8 +267,7 @@ class TestGraphExecutionSemantics:
                     "name": "N",
                     "label": "L",
                     "description": "D",
-                    "features": ["tracking_number"],
-                    "enables_tracking": False,
+                    "features": ["proof_of_mailing"],
                 }
             ],
         }
@@ -287,7 +286,7 @@ class TestGraphExecutionSemantics:
         _write_bundle(data_dir, _base_graph(services=[]), docs)
         v = GraphValidator(data_dir)
         v.validate_all()
-        assert any("tracking_mode optional" in e for e in v.results["errors"])
+        assert any("tracking optional" in e for e in v.results["errors"])
 
 
 class TestGraphMarksAndRules:
@@ -344,8 +343,7 @@ class TestGraphMarksAndRules:
                     "name": "T",
                     "label": "T",
                     "description": "D",
-                    "features": ["tracking_number"],
-                    "enables_tracking": False,
+                    "features": ["brief_dicke_band"],
                 }
             ],
         }
@@ -429,7 +427,7 @@ def _product_letter_fixture(**overrides):
         "effective_from": None,
         "effective_to": None,
         "mark_type": "stamp",
-        "tracking_mode": "none",
+        "tracking": "none",
     }
     row.update(overrides)
     return {"file_type": "products", "unit": {"weight": "g"}, "products": [row]}

@@ -1,4 +1,4 @@
-"""Cross-file checks for ``providers/<id>/execution.json`` (SDK execution manifest)."""
+"""Cross-file checks for ``providers/<id>/execution.json`` (execution manifest)."""
 
 from __future__ import annotations
 
@@ -7,7 +7,7 @@ from typing import Any
 from scripts.data_files import EXECUTION_FILE, GRAPH_FILE
 from scripts.validators.base import ValidationResults
 
-from .edge_access import wire_integration_ids
+from .edge_access import wire_ids
 
 
 def _execution_dependency(graph: dict[str, Any]) -> dict[str, Any] | None:
@@ -29,7 +29,7 @@ def run_validate_execution_manifest(
     if graph is None or not isinstance(graph, dict):
         return
 
-    wire_ids = wire_integration_ids(graph)
+    graph_wire_ids = wire_ids(graph)
     dependency = _execution_dependency(graph)
     has_manifest = execution is not None
 
@@ -51,10 +51,10 @@ def run_validate_execution_manifest(
     if not has_manifest:
         if dependency is not None:
             return
-        if wire_ids:
+        if graph_wire_ids:
             results["warnings"].append(
-                f"{GRAPH_FILE}: edges.wire defines {sorted(wire_ids)} but "
-                f"{EXECUTION_FILE} is absent (optional until an SDK adapter ships)"
+                f"{GRAPH_FILE}: edges.wire defines {sorted(graph_wire_ids)} but "
+                f"{EXECUTION_FILE} is absent (optional until an execution adapter ships)"
             )
         return
 
@@ -73,22 +73,22 @@ def run_validate_execution_manifest(
         return
 
     wire_id = wire.strip().lower()
-    if wire_id not in wire_ids:
+    if wire_id not in graph_wire_ids:
         results["errors"].append(
             f"{EXECUTION_FILE}: wire {wire_id!r} must match a key in "
-            f"{GRAPH_FILE} edges.wire (have {sorted(wire_ids) or 'none'})"
+            f"{GRAPH_FILE} edges.wire (have {sorted(graph_wire_ids) or 'none'})"
         )
     else:
         results["correct"].append(f"execution.wire {wire_id!r} matches edges.wire")
 
     billing = manifest.get("billing") or []
-    execution_methods = manifest.get("execution") or []
-    if not isinstance(billing, list) or not isinstance(execution_methods, list):
+    execution_tokens = manifest.get("execution") or []
+    if not isinstance(billing, list) or not isinstance(execution_tokens, list):
         results["errors"].append(
             f"{EXECUTION_FILE}: billing and execution must be arrays when present"
         )
         return
-    if not billing and not execution_methods:
+    if not billing and not execution_tokens:
         results["errors"].append(
-            f"{EXECUTION_FILE}: at least one billing or execution method must be declared"
+            f"{EXECUTION_FILE}: at least one billing or execution capability token must be declared"
         )

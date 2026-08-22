@@ -23,7 +23,7 @@ Every operator in `porto_data/providers/<id>/` follows this layout. Registry id 
 
 | Schema | Data path | When |
 |--------|-----------|------|
-| `execution.schema.json` | `execution.json` | SDK execution manifest (`wire`, `billing[]`, `execution[]`). `file_type`: `execution`. Indexed via `graph.dependencies.execution`. |
+| `execution.schema.json` | `execution.json` | Execution manifest (`wire`, `billing[]`, `execution[]`). `file_type`: `execution`. Indexed via `graph.dependencies.execution`. |
 | `rules.schema.json` | `rules.json` | Metric-band conditional surcharges (e.g. Swiss Post thickness). `file_type`: `provider_rules`. |
 
 ## Shared bundle dependencies
@@ -45,9 +45,9 @@ Provider `graph.json` → `dependencies` may reference:
 - **`label`** — short display name in `providers.json` (UI / prose).
 - **`name`** — registered legal entity in `providers.json`.
 - **`id`** — native catalog key: **local display name → ASCII snake_case** (operator language; disambiguation suffixes in that language). Used in graph, prices, rules. Not English semantic names (`return_receipt_*`) or mixed-locale abbreviations (`inter`).
-- **`porto_id`** — canonical SDK bucket; enum in `schemas/porto_ids.schema.json`.
+- **`porto_id`** — canonical consumer bucket; enum in `schemas/porto_ids.schema.json`.
 - **Wire checkout codes** — adapter payload values in `graph.edges.wire[wire]` only (not on product/service rows).
-- **Execution manifest** — `execution.json` declares active wire channel + SDK billing/execution methods; not checkout product codes.
+- **Execution manifest** — `execution.json` declares active wire channel + billing/execution capability tokens; not checkout product codes.
 
 See [CONTRIBUTING.md](../CONTRIBUTING.md) and [id.md](id.md).
 

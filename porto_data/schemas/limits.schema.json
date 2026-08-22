@@ -148,7 +148,7 @@
     },
     "frameworks": {
       "type": "object",
-      "description": "Operational regime metadata for this provider. Each framework documents the regime time window (effective_from / effective_to, nullable) interpreted in timezone (provider operational calendar—must match providers.<id>.timezone). limits[] row effective_from/effective_to remain authoritative for SDK activation; framework dates are the documented span, usually aligned with the primary limit row.",
+      "description": "Operational regime metadata for this provider. Each framework documents the regime time window (effective_from / effective_to, nullable) interpreted in timezone (provider operational calendar—must match providers.<id>.timezone). limits[] row effective_from/effective_to remain authoritative for consumer activation; framework dates are the documented span, usually aligned with the primary limit row.",
       "patternProperties": {
         "^[A-Z0-9_]+$": {
           "type": "object",

@@ -3,9 +3,9 @@
   "file_type": "execution",
   "wire": "internetmarke",
   "billing": [
-    "get_wallet_balance"
+    "wallet"
   ],
   "execution": [
-    "create_mark"
+    "mark"
   ]
 }

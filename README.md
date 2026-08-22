@@ -54,7 +54,8 @@ E-commerce and logistics (multi-carrier quotes, letters), compliance (sanctions,
 | `limits.json`               | Provider operational overlay on global policy (**`limits[]` often empty**; see [docs/policy.md](docs/policy.md)) |
 | `graph.json`                | **`dependencies`**, **`edges.products`**, **`edges.marks`**, **`services`**, **`unit`** |
 | `marks.json`                | Franking footprint **catalog**: **`profiles[]`** only; resolution in **`graph.edges.marks`** |
-| `formats/layouts.json`        | Jurisdiction-keyed print/window geometry (**DE / CH / FR**) per envelope **`id`** (`file_type` **`layouts`**); optional **`standard`** (norm token, e.g. **DIN678**, **SN010130**, **NFEN13850**); physical sizes remain in **`formats/envelopes.json`** |
+| `formats/layouts.json`        | Jurisdiction-keyed print/window geometry (**DE / CH / FR**) per envelope **`id`** (`file_type` **`layouts`**); optional **`standard`** (norm token, e.g. **DIN678**, **SN010130**, **NFZ10011**); physical sizes remain in **`formats/envelopes.json`** |
+| `formats/addresses.json`      | Sparse jurisdiction address forms (**DE / CH / FR / UA**): **`forms[]`** (`street` / `post_box`), **`postal_code.pattern`**; FR **`max_line_length`** 38; UA **`UKRPOSHTA`** (`file_type` **`addresses`**) |
 | `formats/envelopes.json`      | Physical envelope catalog: **`envelopes[]`** with **`id`**, **`width`/`height`**, **`standard`** `ISO269`, **`sheets[]`** (ISO 216 **`sheet`** + **`fold`**)                                                                                           |
 | `policy/restrictions.json`  | Sanctions-style restrictions and compliance frameworks                                                                                                                                                                                                 |
 | `policy/jurisdictions.json` | `jurisdictions.eu` / `jurisdictions.un` (ISO alpha-2; align with symbolic `EU` / `UN`)                                                                                                                                                                 |
@@ -62,7 +63,7 @@ E-commerce and logistics (multi-carrier quotes, letters), compliance (sanctions,
 
 All JSON validates against **`schemas/`**; **`mappings.json`** maps entities to paths; **`metadata.json`** has checksums and schema URLs.
 
-**Cross-file rules:** native **`id`** in graph/prices; **`porto_id`** for cross-operator input — see [docs/resolution.md](docs/resolution.md).
+**Cross-file rules:** native **`id`** in graph/prices; **`porto_id`** for cross-operator input — see [docs/resolution.md](docs/resolution.md). Envelope membership + weight (not mm handbook): [docs/envelope-product-matrix.md](docs/envelope-product-matrix.md).
 
 **Tariff verification:** CI validates structure only — not that amounts match live carrier tables. See [docs/tariff-verification.md](docs/tariff-verification.md) and per-provider notes under [docs/providers/](docs/providers/).
 

@@ -17,7 +17,7 @@ def _graph(*, provider: str = "acmepost", wire: dict | None = None, **overrides:
             "execution": {
                 "file": "execution.json",
                 "depends_on": [],
-                "description": "SDK execution manifest",
+                "description": "Execution manifest",
             }
         },
         "edges": {
@@ -36,7 +36,7 @@ def _manifest(*, wire: str = "checkout_api") -> dict:
     return {
         "file_type": "execution",
         "wire": wire,
-        "execution": ["create_mark"],
+        "execution": ["mark"],
     }
 
 
@@ -88,7 +88,7 @@ class TestExecutionManifest:
             provider_id="acmepost",
         )
         assert r["errors"] == []
-        assert any("optional until an SDK adapter ships" in w for w in r["warnings"])
+        assert any("optional until an execution adapter ships" in w for w in r["warnings"])
 
     def test_manifest_without_dependency_warns(self) -> None:
         r = _results()
@@ -162,7 +162,7 @@ class TestExecutionManifest:
             },
             provider_id="acmepost",
         )
-        assert any("at least one billing or execution method" in e for e in r["errors"])
+        assert any("at least one billing or execution capability token" in e for e in r["errors"])
 
     def test_non_array_billing_or_execution_errors(self) -> None:
         r = _results()
@@ -172,8 +172,8 @@ class TestExecutionManifest:
             execution={
                 "file_type": "execution",
                 "wire": "checkout_api",
-                "billing": "get_wallet_balance",
-                "execution": ["create_mark"],
+                "billing": "wallet",
+                "execution": ["mark"],
             },
             provider_id="acmepost",
         )

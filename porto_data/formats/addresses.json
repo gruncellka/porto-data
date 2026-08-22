@@ -1,0 +1,123 @@
+{
+  "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/addresses.schema.json",
+  "file_type": "addresses",
+  "jurisdictions": {
+    "DE": {
+      "standard": "DIN678",
+      "postal_code": {
+        "pattern": "^\\d{5}$"
+      },
+      "forms": [
+        {
+          "kind": "street",
+          "required": [
+            "name",
+            "street",
+            "house_number",
+            "postal_code",
+            "city",
+            "country_code"
+          ]
+        },
+        {
+          "kind": "post_box",
+          "required": [
+            "name",
+            "post_box",
+            "postal_code",
+            "city",
+            "country_code"
+          ]
+        }
+      ]
+    },
+    "CH": {
+      "standard": "SN010130",
+      "postal_code": {
+        "pattern": "^\\d{4}$"
+      },
+      "forms": [
+        {
+          "kind": "street",
+          "required": [
+            "name",
+            "street",
+            "house_number",
+            "postal_code",
+            "city",
+            "country_code"
+          ]
+        },
+        {
+          "kind": "post_box",
+          "required": [
+            "name",
+            "post_box",
+            "postal_code",
+            "city",
+            "country_code"
+          ]
+        }
+      ]
+    },
+    "FR": {
+      "standard": "NFZ10011",
+      "postal_code": {
+        "pattern": "^\\d{5}$"
+      },
+      "forms": [
+        {
+          "kind": "street",
+          "required": [
+            "name",
+            "street",
+            "house_number",
+            "postal_code",
+            "city",
+            "country_code"
+          ]
+        },
+        {
+          "kind": "post_box",
+          "required": [
+            "name",
+            "post_box",
+            "postal_code",
+            "city",
+            "country_code"
+          ]
+        }
+      ],
+      "max_line_length": 38
+    },
+    "UA": {
+      "standard": "UKRPOSHTA",
+      "postal_code": {
+        "pattern": "^\\d{5}$"
+      },
+      "forms": [
+        {
+          "kind": "street",
+          "required": [
+            "name",
+            "street",
+            "house_number",
+            "postal_code",
+            "city",
+            "country_code"
+          ]
+        },
+        {
+          "kind": "post_box",
+          "required": [
+            "name",
+            "post_box",
+            "postal_code",
+            "city",
+            "country_code"
+          ]
+        }
+      ]
+    }
+  }
+}

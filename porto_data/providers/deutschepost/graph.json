@@ -70,6 +70,14 @@
       ],
       "description": "Jurisdiction-keyed print/window layout (DE/CH/FR); file formats/layouts.json"
     },
+    "address_forms": {
+      "file": "formats/addresses.json",
+      "depends_on": [
+        "policy/jurisdictions.json",
+        "formats/layouts.json"
+      ],
+      "description": "Jurisdiction-keyed address forms (DE/CH/FR/UA); layout-aligned standards where layouts exist; file formats/addresses.json"
+    },
     "jurisdictions": {
       "file": "policy/jurisdictions.json",
       "depends_on": [],
@@ -109,7 +117,7 @@
     "execution": {
       "file": "execution.json",
       "depends_on": [],
-      "description": "SDK execution manifest (wire + billing/execution methods); wire codes stay in edges.wire"
+      "description": "Execution manifest (wire + billing/execution capability tokens); wire codes stay in edges.wire"
     }
   },
   "services": [

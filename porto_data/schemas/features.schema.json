@@ -39,7 +39,7 @@
           },
           "porto_id": {
             "$ref": "porto_ids.schema.json#/definitions/feature_porto_id",
-            "description": "Unified Porto feature id for cross-provider resolution and SDK semantics"
+            "description": "Unified Porto feature id for cross-provider resolution and consumer semantics"
           },
           "name": {
             "type": "string",

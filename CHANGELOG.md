@@ -4,16 +4,36 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- **English `label` on products and zones:** Required `label` (English UI/tooling) alongside native `name` on all provider `products.json` and `zones.json` rows; schemas updated.
+- **SDK catalog compat:** porto-data **package version is the schema version** (`metadata.project.version`). SDKs gate load on that semver (`PORTO_DATA_SCHEMA_UNSUPPORTED` / `PORTO_DATA_SCHEMA_TOO_NEW`). See Lab [versioning-architecture-review.md](../../docs/sdks/versioning-architecture-review.md).
+- **Address forms (`formats/addresses.json`):** Sparse jurisdiction postal validity (DE/CH/FR/UA) with `forms[]` kinds `street` | `post_box`, `postal_code.pattern`, and FR `max_line_length` 38. Layout-aligned standards for DE/CH/FR; UA address-only `UKRPOSHTA` until `layouts.UA` exists. Schema + validator (layout match only when layout jurisdiction present).
+- **Graph validator:** `execution_manifest` requires at least one billing or execution capability token when the manifest exists.
+
+### Changed
+
+- **Ukrposhta feature native id:** Rename `recipient_signature` → `osobyste_vruchennia` (keep `porto_id: recipient_signature`); service feature refs updated.
+- **Vocabulary:** Drop SDK type/method spine from porto-data docs (`identity.md`, BUGBOT, `.cursorrules`); keep catalog layer boundaries only. Graph validator helper `wire_integration_ids` → `wire_ids`. Identity cheat sheet `capability` → `billing[]` / `execution[]`. BUGBOT `edges.wire[wire]`. Validation chain includes **`addresses`** (Cursor rules, CONTRIBUTING, BUGBOT rule 37, pre-commit + CI job).
+- **`execution.schema.json`:** Capability description no longer says “Postage execution…”.
+
 ### Changed (breaking)
 
+- **Product `porto_id`:** Drop unused `postcard` from `porto_ids.schema.json` and docs (`id.md`, `identity.md`, BUGBOT, `.cursorrules`). Size buckets are `small` … `extra_large` only.
+- **Execution capability tokens:** `create_mark` → `mark`, `get_wallet_balance` → `wallet` in `execution.json` / `execution.schema.json`.
+- **Feature `porto_id`:** `tracking_number` → `tracking`, `thickness_surcharge` → `thickness` (share the matching service tokens).
+- **`products.tracking_mode` → `tracking`** (`none` \| `optional` \| `included`). Same English word as service/feature `porto_id` `tracking` — see `docs/identity.md`.
+- **Dropped service fields:** `enables_tracking`, `online_supported`, `source_id`. Tracking on a service is derived: `features[]` resolves (native id or `porto_id`) to a feature whose `porto_id` is `tracking`. Online orderability is a wire fact.
 - **Execution manifest:** Rename `integration.json` → `execution.json`, `integration.schema.json` → `execution.schema.json`, `file_type` `integration` → `execution`, manifest field `adapter` → `wire`, and `graph.dependencies.integration` → `graph.dependencies.execution`.
 - **Provider-scoped JSON:** Drop redundant top-level `provider` on every file under `providers/<id>/` — folder path is SoT; keep `file_type` for schema routing.
 - **Native catalog ids:** Normalize operator-assigned keys to local-language slugs (`maxibrief_ausland`, `option_suivi`, `zuschlag_dicke`, …) — no English semantic ids or abbreviated locale tokens (`inter`, `heavy`).
 - **Ukrposhta registered intl service:** `Міжнародне зареєстроване` / `mizhnarodne_zareiestrovane` (was реєстрування / `mizhnarodne_reiestruvannia`).
 
-### Added
+### Fixed
 
-- **Graph validator:** `execution_manifest` requires at least one billing or execution method when the manifest exists.
+- **Deutsche Post `zusatzversicherung`:** do not list feature `tracking` — Zusatzversicherung is priced insurance, not Sendungsnummer. `services[].features` may be empty.
+- **Layout window geometry (DIN 680 Form B):** C5/C4 `window.area.y` for DE/CH/FR was incorrectly using the DL/C6 15 mm-from-bottom rule (`y` 102 / 159). Corrected to Form B: C5 `y: 57` (60 mm from bottom), C4 `y: 57` (57 mm from top).
+- **`marks_profiles` calibrations:** Require ``calibrations[].mark_profile`` (wire checkout layout token), matching schema + Deutsche Post data — not legacy ``voucher_layout``.
 
 ## [0.5.1] - 2026-07-07
 
@@ -22,7 +42,7 @@ All notable changes to this project will be documented in this file.
 - **`integrations.schema.json`:** Per-operator execution adapter manifest (`adapter`, `capabilities[]`).
 - **Deutsche Post `integrations.json`:** Internetmarke adapter with `mark_purchase_sync` and `wallet_balance_read`.
 - **Deutsche Post `marks.json`:** `calibrations[]` for Internetmarke `FRANKING_ZONE` (per `mark_profile`) and `ADDRESS_ZONE` full label canvas (85×43 mm at checkout dpi 300).
-- **`marks.schema.json`:** Optional `calibrations[]` (integration × voucher layout × checkout dpi × px/mm).
+- **`marks.schema.json`:** Optional `calibrations[]` (wire × mark_profile × checkout dpi × px/mm).
 - **Graph validators:** `integrations_manifest` (adapter vs `edges.wire`); `marks_profiles` calibration cross-checks.
 
 ### Fixed

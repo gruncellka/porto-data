@@ -4,14 +4,14 @@
   "features": [
     {
       "id": "sendungsnummer",
-      "porto_id": "tracking_number",
+      "porto_id": "tracking",
       "name": "Sendungsnummer",
       "label": "Tracking number",
       "description": "Electronic tracking for supported letter products (e.g. A-Mail Plus via WebStamp). Letter-only scope; not a parcel scan pipeline."
     },
     {
       "id": "brief_dicke_band",
-      "porto_id": "thickness_surcharge",
+      "porto_id": "thickness",
       "name": "Zuschlag Dicke",
       "label": "Thickness surcharge",
       "description": "Automatic surcharge when thickness exceeds the standard band; amount from rules.json and prices/services.json."

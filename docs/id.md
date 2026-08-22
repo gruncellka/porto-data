@@ -2,15 +2,14 @@
 
 **See also:** [porto_id.md](porto_id.md) (live tables) · [resolution.md](resolution.md) (disambiguation) · [identity.md](identity.md) (full id/name diagram) · `porto_data/schemas/porto_ids.schema.json` (enum source of truth)
 
-Purpose: unify `porto_id` names across providers (letters-only scope) so that size/weight tiers and services are consistent. Provider native `id` and `native_id` stay operator-specific; **`porto_id` is the SDK normalization identifier**.
+Purpose: unify `porto_id` names across providers (letters-only scope) so that size/weight tiers and services are consistent. Provider native `id` stays operator-specific; **`porto_id` is the consumer normalization identifier**.
 
 ## Products (by size/weight role, no prefix)
 
-- `small` — smallest letter/postcard-sized (e.g., DP Standardbrief, La Poste Lettre verte, Swiss A-Post Standardbrief)
+- `small` — smallest letter-sized (e.g., DP Standardbrief, La Poste Lettre verte, Swiss A-Post Standardbrief)
 - `medium` — mid-step (e.g., DP Kompaktbrief)
 - `large` — larger/C4 (~500 g range); on Ukrposhta, **only** `dokument` (domestic flat document letter, ≤1 kg) — not used for international rows
 - `extra_large` — up to 1–2 kg letters (maxibrief-like)
-- `postcard` — only when explicitly in scope; otherwise fold into `small`
 
 ## Services (no prefix)
 
@@ -24,8 +23,8 @@ Purpose: unify `porto_id` names across providers (letters-only scope) so that si
 
 ## Features (capability vocabulary)
 
-- `tracking_number`, `proof_of_mailing`, `recipient_signature`, `return_receipt`, `proof_of_delivery`
-- `thickness_surcharge` — Swiss Post thickness capability on the feature row; **`thickness`** on the service row
+- `tracking`, `proof_of_mailing`, `recipient_signature`, `return_receipt`, `proof_of_delivery`
+- `thickness` — Swiss Post thickness capability on the feature row; same token as the service row
 
 ## Provider notes (Ukrposhta — letters only)
 
@@ -47,8 +46,8 @@ No `medium` or `extra_large` **product** rows for Ukrposhta. International regis
 
 | Layer | Identifier |
 |-------|------------|
-| SDK / app input | `porto_id` |
+| Consumer input | `porto_id` |
 | graph, prices, rules | native `id` |
-| Carrier API | `native_id` |
+| Carrier API | runtime catalog codes (not a catalog product/service field) |
 
 Full rules: [CONTRIBUTING.md](../CONTRIBUTING.md).

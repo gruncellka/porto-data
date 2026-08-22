@@ -3,11 +3,18 @@
   "file_type": "features",
   "features": [
     {
-      "id": "recipient_signature",
+      "id": "osobyste_vruchennia",
       "porto_id": "recipient_signature",
       "name": "Особисте вручення",
       "label": "Recipient signature",
       "description": "Delivery with recipient signature required."
+    },
+    {
+      "id": "nomer_vidstezhennia",
+      "porto_id": "tracking",
+      "name": "Номер відстеження",
+      "label": "Tracking number",
+      "description": "Shipment tracking identifier for registered international letters."
     },
     {
       "id": "paperove_povidomlennia_vruchennia",

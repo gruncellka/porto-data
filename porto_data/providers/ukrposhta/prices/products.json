@@ -57,6 +57,30 @@
     {
       "product_id": "dokument",
       "zone": "domestic",
+      "weight_tier": "W0050",
+      "price": [
+        {
+          "amount": 5500,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "dokument",
+      "zone": "domestic",
+      "weight_tier": "W0250",
+      "price": [
+        {
+          "amount": 5500,
+          "effective_from": "2026-01-01",
+          "effective_to": null
+        }
+      ]
+    },
+    {
+      "product_id": "dokument",
+      "zone": "domestic",
       "weight_tier": "W1000",
       "price": [
         {
