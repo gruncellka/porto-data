@@ -8,6 +8,7 @@
     {
       "id": "domestic",
       "name": "Schweiz",
+      "label": "Switzerland",
       "description": "Switzerland (domestic)",
       "country_codes": [
         "CH"
@@ -16,6 +17,7 @@
     {
       "id": "zone_1_eu",
       "name": "Zone 1 - Europe (letter tariff)",
+      "label": "Zone 1 - Europe",
       "description": "Swiss Post international letter tariff group for Europe (EU, EEA, UK, and other listed European states). Switzerland (CH) is not in the EU and is not part of this zone when posting from Switzerland — domestic applies for CH destinations.",
       "country_codes": [
         "AD",
@@ -71,6 +73,7 @@
     {
       "id": "world",
       "name": "Welt",
+      "label": "World",
       "description": "All countries outside Europe (international mail)",
       "country_codes": [
         "AF",

@@ -6,11 +6,10 @@ Purpose: unify `porto_id` names across providers (letters-only scope) so that si
 
 ## Products (by size/weight role, no prefix)
 
-- `small` — smallest letter/postcard-sized (e.g., DP Standardbrief, La Poste Lettre verte, Swiss A-Post Standardbrief)
+- `small` — smallest letter-sized (e.g., DP Standardbrief, La Poste Lettre verte, Swiss A-Post Standardbrief)
 - `medium` — mid-step (e.g., DP Kompaktbrief)
 - `large` — larger/C4 (~500 g range); on Ukrposhta, **only** `dokument` (domestic flat document letter, ≤1 kg) — not used for international rows
 - `extra_large` — up to 1–2 kg letters (maxibrief-like)
-- `postcard` — only when explicitly in scope; otherwise fold into `small`
 
 ## Services (no prefix)
 

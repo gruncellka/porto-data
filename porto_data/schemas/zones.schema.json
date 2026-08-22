@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/zones.schema.json",
   "title": "Zones Schema",
-  "description": "Schema for shipping zones definitions",
+  "description": "Schema for shipping zones definitions. Each row has provider `id`, native-market `name`, English `label`, and country coverage.",
   "type": "object",
   "required": [
     "file_type",
@@ -41,6 +41,7 @@
         "required": [
           "id",
           "name",
+          "label",
           "description",
           "country_codes"
         ],
@@ -53,7 +54,12 @@
           "name": {
             "type": "string",
             "minLength": 1,
-            "description": "Zone name"
+            "description": "Native-market zone name (operator primary language)"
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "description": "English human-readable label for unified tooling and UI"
           },
           "description": {
             "type": "string",

@@ -3,7 +3,7 @@
   "file_type": "features",
   "features": [
     {
-      "id": "recipient_signature",
+      "id": "osobyste_vruchennia",
       "porto_id": "recipient_signature",
       "name": "Особисте вручення",
       "label": "Recipient signature",

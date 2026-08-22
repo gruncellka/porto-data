@@ -10,8 +10,7 @@
         "small",
         "medium",
         "large",
-        "extra_large",
-        "postcard"
+        "extra_large"
       ],
       "description": "Letter size bucket for consumer product input only (no service semantics: registered, tracking, return_receipt, … belong on services/features)"
     },

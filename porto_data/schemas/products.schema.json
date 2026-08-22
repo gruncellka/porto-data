@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/products.schema.json",
   "title": "Products Schema",
-  "description": "Schema for postal products definitions",
+  "description": "Schema for postal products definitions. Each row has unified Porto `porto_id` (size bucket), provider `id` (native catalog key), native `name`, and English `label`.",
   "type": "object",
   "required": [
     "file_type",
@@ -43,6 +43,7 @@
           "id",
           "porto_id",
           "name",
+          "label",
           "envelope_ids",
           "zones",
           "effective_from",
@@ -61,6 +62,11 @@
             "type": "string",
             "minLength": 1,
             "description": "Official product name (original language)"
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "description": "English human-readable label for unified tooling and UI"
           },
           "porto_id": {
             "$ref": "porto_ids.schema.json#/definitions/product_porto_id",

@@ -58,8 +58,8 @@ Cross-file refs (graph, prices, rules) use **native `id`**. Consumer input uses 
 |-------------|------------|
 | `elektronne_povidomlennia_vruchennia` | `return_receipt` |
 | `nomer_vidstezhennia` | `tracking` |
+| `osobyste_vruchennia` | `recipient_signature` |
 | `paperove_povidomlennia_vruchennia` | `return_receipt` |
-| `recipient_signature` | `recipient_signature` |
 
 ## laposte
 

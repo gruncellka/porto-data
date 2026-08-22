@@ -37,7 +37,7 @@ Do **not** document consumer SDK class or method names here — that drifts with
 | **`provider`** | Porto registry + **`providers/<id>/` path** | `deutschepost` | consumer context, bundle layout | in-file repeat on path-scoped JSON |
 | **`label` / `name`** | Display / legal | `"Deutsche Post"`, `"Deutsche Post AG"` | UI, docs | resolution |
 | **`country`** | Registry → markets | `DE`, `FR`, `UA`, `CH` | VAT, currency, layouts | product id |
-| **`porto_id`** (product) | Porto enum | `small`, `medium`, `large`, `extra_large`, `postcard` | **consumer input** | graph, prices |
+| **`porto_id`** (product) | Porto enum | `small`, `medium`, `large`, `extra_large` | **consumer input** | graph, prices |
 | **`porto_id`** (service) | Porto enum | `registered`, `insurance` | **consumer input** | graph.services list |
 | **`porto_id`** (feature) | Porto enum | `tracking` | semantics | prices |
 | **`id`** (product/service) | Provider native | `standardbrief`, `einschreiben` | **graph, prices, rules** | consumer input |

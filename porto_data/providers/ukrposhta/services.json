@@ -30,7 +30,7 @@
       "description": "Registered surcharge for international letters (LETTER; no declared value)",
       "features": [
         "nomer_vidstezhennia",
-        "recipient_signature"
+        "osobyste_vruchennia"
       ]
     }
   ]

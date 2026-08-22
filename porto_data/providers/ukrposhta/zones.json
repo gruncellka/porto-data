@@ -8,6 +8,7 @@
     {
       "id": "domestic",
       "name": "Ukraine (domestic)",
+      "label": "Ukraine",
       "description": "Domestic Ukrainian destinations",
       "country_codes": [
         "UA"
@@ -16,6 +17,7 @@
     {
       "id": "world",
       "name": "World",
+      "label": "World",
       "description": "All international destinations for letters (flat pricing)",
       "country_codes": [
         "AD",

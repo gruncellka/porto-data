@@ -111,7 +111,7 @@ CI (`.github/workflows/validation.yml`) must run the same chain; include **`vali
 
 ## Catalog layering doctrine (strict)
 
-**Full rule:** `.cursor/rules/catalog-layering-doctrine.mdc` · **Review mirror:** `BUGBOT.md` § Catalog layering philosophy · **Diagram:** `docs/identity.md`
+**Full rule:** `.cursor/rules/data.mdc` · **Review mirror:** `BUGBOT.md` · **Diagram:** `docs/identity.md`
 
 porto-data = **facts + contracts**. SDK/app = **resolution + workflow**. Do not collapse layers to “make validate pass” or “make the doc table pretty”.
 
@@ -128,7 +128,7 @@ porto-data = **facts + contracts**. SDK/app = **resolution + workflow**. Do not 
 
 **`porto_id` (instance of the doctrine):**
 
-- Product enum: `small` … `extra_large`, `postcard` only — **disjoint** from service/feature enums (`_enum_overlap_errors` in CI).
+- Product enum: `small` … `extra_large` only — **disjoint** from service/feature enums (`_enum_overlap_errors` in CI).
 - Registered-letter SKUs → size `porto_id` + native `id` (La Poste recommandée → `small`).
 - Einschreiben → `registered` on **service** row only.
 
