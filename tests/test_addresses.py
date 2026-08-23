@@ -39,7 +39,7 @@ def _write_bundle(
         jurisdictions_doc = {
             "jurisdictions": {
                 "DE": {"timezone": "Europe/Berlin"},
-                "eu": {"members": ["DE", "FR", 1]},
+                "EU": {"members": ["DE", "FR", 1]},
             }
         }
     (tmp_path / "formats" / "addresses.json").write_text(

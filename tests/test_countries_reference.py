@@ -34,29 +34,37 @@ def test_jurisdictions_json_invariants() -> None:
     assert unit.get("date") == "ISO 8601"
     g = doc["jurisdictions"]
     assert isinstance(g, dict)
-    assert {"eu", "un"}.issubset(g.keys())
+    assert {"EU", "UN"}.issubset(g.keys())
     assert "ch" not in g
     assert "CH" in g
-    for tag in ("eu", "un"):
+    for tag in ("EU", "UN"):
         bloc = g[tag]
         assert isinstance(bloc, dict)
         assert "members" in bloc and "timezone" in bloc
         assert isinstance(bloc["members"], list)
         assert isinstance(bloc["timezone"], str) and bloc["timezone"].strip()
-    eu = set(g["eu"]["members"])
-    un = set(g["un"]["members"])
+    eu = set(g["EU"]["members"])
+    un = set(g["UN"]["members"])
     assert len(un) == 193
     assert len(eu) == 27
     assert eu <= un
-    assert g["eu"]["timezone"] == "Europe/Brussels"
-    assert g["un"]["timezone"] == "Europe/Zurich"
+    assert g["EU"]["timezone"] == "Europe/Brussels"
+    assert g["UN"]["timezone"] == "Europe/Zurich"
     assert g["CH"]["timezone"] == "Europe/Zurich"
     assert "registry_timezones" not in doc
     assert "jurisdiction_timezones" not in doc
-    country_keys = {k for k in g if len(k) == 2 and k.isalpha() and k.isupper()}
+    country_keys = {
+        k
+        for k, row in g.items()
+        if len(k) == 2
+        and k.isalpha()
+        and k.isupper()
+        and isinstance(row, dict)
+        and "members" not in row
+    }
     un_upper = {str(c).upper() for c in un}
     # Every UN member has a per-country timezone row; the bundle may add further
-    # ISO-like keys (e.g. territories) that are not listed under un.members.
+    # ISO-like keys (e.g. territories) that are not listed under UN.members.
     assert un_upper <= country_keys
     assert g["US"]["timezone"] == "America/New_York"
     assert g["AU"]["timezone"] == "Australia/Sydney"

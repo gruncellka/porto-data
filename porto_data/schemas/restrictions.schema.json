@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/restrictions.schema.json",
   "title": "Restrictions Schema",
-  "description": "Global destination restrictions (file: policy/restrictions.json). Grouped by ISO 3166-1 alpha-2 under destinations[].country_code. Per destination, restrictions holds only non-empty EU, UN, and/or CH arrays (sender legal lens); omit empty buckets. Each item: id, reason, notes, entity_type, optional region_code (ISO 3166-2) and optional description, status, reference (URL or null), effective_from / effective_to. Sender blocs: policy/jurisdictions.json. Operator overlays: providers/<id>/limits.json.",
+  "description": "Global destination restrictions (file: policy/restrictions.json). Grouped by ISO 3166-1 alpha-2 under destinations[].country_code. Per destination, restrictions holds only non-empty EU, UN, and/or CH arrays (sender legal lens); omit empty buckets. Each item: id, reason, notes, optional region_code (ISO 3166-2) and optional description, status, reference (URL or null), effective_from / effective_to, optional partial. Sender blocs: policy/jurisdictions.json. Operator overlays: providers/<id>/limits.json.",
   "type": "object",
   "required": [
     "file_type",
@@ -108,7 +108,6 @@
         "id",
         "reason",
         "notes",
-        "entity_type",
         "status",
         "reference",
         "effective_from",
@@ -139,14 +138,6 @@
           "additionalProperties": {
             "type": "string"
           }
-        },
-        "entity_type": {
-          "type": "string",
-          "enum": [
-            "country",
-            "territory",
-            "disputed"
-          ]
         },
         "partial": {
           "type": "boolean"

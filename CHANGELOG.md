@@ -13,12 +13,14 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+- **Jurisdiction blocs:** Uppercase bloc keys `jurisdictions.eu` / `jurisdictions.un` → `EU` / `UN` so they match restriction buckets `EU` / `UN` / `CH`. Schema excludes `EU`/`UN` from country timezone `patternProperties` (blocs keep `members` + `timezone`).
 - **Ukrposhta feature native id:** Rename `recipient_signature` → `osobyste_vruchennia` (keep `porto_id: recipient_signature`); service feature refs updated.
 - **Vocabulary:** Drop SDK type/method spine from porto-data docs (`identity.md`, BUGBOT, `.cursorrules`); keep catalog layer boundaries only. Graph validator helper `wire_integration_ids` → `wire_ids`. Identity cheat sheet `capability` → `billing[]` / `execution[]`. BUGBOT `edges.wire[wire]`. Validation chain includes **`addresses`** (Cursor rules, CONTRIBUTING, BUGBOT rule 37, pre-commit + CI job).
 - **`execution.schema.json`:** Capability description no longer says “Postage execution…”.
 
 ### Changed (breaking)
 
+- **Restrictions:** Drop `entity_type` (`country` | `territory` | `disputed`) from restriction items and schemas. Geography stays `destinations[].country_code` plus optional item `region_code` (ISO 3166-2) / `partial` — no political class. Same unused enum removed from `limits.schema.json`.
 - **Product `porto_id`:** Drop unused `postcard` from `porto_ids.schema.json` and docs (`id.md`, `identity.md`, BUGBOT, `.cursorrules`). Size buckets are `small` … `extra_large` only.
 - **Execution capability tokens:** `create_mark` → `mark`, `get_wallet_balance` → `wallet` in `execution.json` / `execution.schema.json`.
 - **Feature `porto_id`:** `tracking_number` → `tracking`, `thickness_surcharge` → `thickness` (share the matching service tokens).

@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/jurisdictions.schema.json",
   "title": "Jurisdictions (membership reference)",
-  "description": "Symbolic blocs eu and un (members + timezone) plus per-country IANA zones (uppercase ISO alpha-2 key, timezone only). Switzerland is keyed CH only (no lowercase ch bloc). providers.json resolves operational timezone via jurisdictions[COUNTRY].timezone.",
+  "description": "Symbolic blocs EU and UN (members + timezone) plus per-country IANA zones (uppercase ISO alpha-2 key, timezone only). EU is an exceptionally reserved ISO 3166-1 code used here as a membership bloc, not a country timezone row; UN is a symbolic bloc (not an ISO country). Switzerland is keyed CH only (no lowercase ch bloc). providers.json resolves operational timezone via jurisdictions[COUNTRY].timezone.",
   "type": "object",
   "required": [
     "file_type",
@@ -48,21 +48,21 @@
     },
     "jurisdictions": {
       "type": "object",
-      "description": "Keys: lowercase eu, un (blocs with members + timezone). Uppercase ISO alpha-2: timezone only. Framework tag CH resolves via country entry CH, not a ch bloc.",
+      "description": "Keys: EU, UN (blocs with members + timezone). Other uppercase ISO alpha-2: timezone only. Framework tag CH resolves via country entry CH, not a ch bloc.",
       "required": [
-        "eu",
-        "un"
+        "EU",
+        "UN"
       ],
       "properties": {
-        "eu": {
+        "EU": {
           "$ref": "#/definitions/jurisdiction_bloc"
         },
-        "un": {
+        "UN": {
           "$ref": "#/definitions/jurisdiction_bloc"
         }
       },
       "patternProperties": {
-        "^[A-Z]{2}$": {
+        "^(?!EU$|UN$)[A-Z]{2}$": {
           "$ref": "#/definitions/jurisdiction_country"
         }
       },

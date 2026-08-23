@@ -26,8 +26,8 @@ _MIN_JURISDICTIONS = {
     "file_type": "jurisdictions",
     "unit": {"country_code": "ISO 3166-1 alpha-2"},
     "jurisdictions": {
-        "eu": {"members": ["AT"], "timezone": "Europe/Brussels"},
-        "un": {"members": ["AD"], "timezone": "Europe/Zurich"},
+        "EU": {"members": ["AT"], "timezone": "Europe/Brussels"},
+        "UN": {"members": ["AD"], "timezone": "Europe/Zurich"},
         "CH": {"timezone": "Europe/Zurich"},
         "XX": {"timezone": "Etc/UTC"},
     },
@@ -357,6 +357,26 @@ class TestLimitsScopeHelpers:
                     "jurisdictions": {
                         "de": {"timezone": "Europe/Berlin"},
                         "D": {"timezone": "Europe/Berlin"},
+                        "AT": {"timezone": "Europe/Vienna"},
+                    },
+                }
+            ),
+            encoding="utf-8",
+        )
+        assert _jurisdiction_country_timezones(tmp_path) == {"AT": "Europe/Vienna"}
+
+    def test_jurisdiction_country_timezones_skips_membership_blocs(
+        self,
+        tmp_path: Path,
+    ) -> None:
+        (tmp_path / "policy").mkdir()
+        (tmp_path / "policy" / "jurisdictions.json").write_text(
+            json.dumps(
+                {
+                    "file_type": "jurisdictions",
+                    "jurisdictions": {
+                        "EU": {"members": ["AT"], "timezone": "Europe/Brussels"},
+                        "UN": {"members": ["AD"], "timezone": "Europe/Zurich"},
                         "AT": {"timezone": "Europe/Vienna"},
                     },
                 }
