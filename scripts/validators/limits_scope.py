@@ -65,6 +65,9 @@ def _jurisdiction_country_timezones(project_root: Path) -> dict[str, str]:
             continue
         if len(key) != 2 or not key.isalpha() or not key.isupper():
             continue
+        # Blocs (EU/UN) have members; country rows are timezone-only.
+        if "members" in bloc:
+            continue
         tz = bloc.get("timezone")
         if isinstance(tz, str) and tz.strip():
             out[key] = tz.strip()

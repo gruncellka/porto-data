@@ -17,7 +17,6 @@ def minimal_restrictions_document() -> dict:
                             "id": "_fixture_placeholder",
                             "reason": "test",
                             "notes": "test",
-                            "entity_type": "country",
                             "status": "operational",
                             "reference": None,
                             "effective_from": None,

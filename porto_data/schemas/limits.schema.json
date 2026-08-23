@@ -87,14 +87,6 @@
               "type": "string"
             }
           },
-          "entity_type": {
-            "type": "string",
-            "enum": [
-              "country",
-              "territory",
-              "disputed"
-            ]
-          },
           "effective_from": {
             "type": [
               "string",
