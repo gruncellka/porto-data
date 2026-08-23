@@ -5,7 +5,7 @@
     "version": "0.5.1",
     "description": "Multi-provider postal JSON: operator catalogs, pricing, shared policy (markets, restrictions), and schemas"
   },
-  "generated_at": "2026-08-23T09:42:11.564057Z",
+  "generated_at": "2026-08-23T13:59:05.403549Z",
   "policy": {
     "jurisdictions": {
       "data": {
@@ -113,8 +113,8 @@
         },
         "schema": {
           "path": "schemas/marks.schema.json",
-          "checksum": "793b21be16d76d61f88ab75a5f5cb96990bca15b78ffbe68b60d662f1fda5e4c",
-          "size": 6749,
+          "checksum": "1a64afde53766f59c9531adbcc93f30b55ae44a179db32ee2f69265753b61664",
+          "size": 6672,
           "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/marks.schema.json"
         }
       },
@@ -152,8 +152,8 @@
         },
         "schema": {
           "path": "schemas/services.schema.json",
-          "checksum": "26a5203841afade0e3aada9d11973d27f96a7bd5d777bcc2abcac5242ce73292",
-          "size": 3587,
+          "checksum": "7fa30010ecf0e7570bb9ac98243f89d89fd613140ec2fb16b11c3debbf279b8e",
+          "size": 3529,
           "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/services.schema.json"
         }
       },
@@ -230,8 +230,8 @@
         },
         "schema": {
           "path": "schemas/graph.schema.json",
-          "checksum": "36995d559f48663c3cf2509113ea3291919034ce12e11245d7cc4dcd264fd7ea",
-          "size": 7656,
+          "checksum": "9e496ca92d9efc7b539aafeab8fa33d893c34465afc369a1e27eb2f30f1c9b88",
+          "size": 7621,
           "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/graph.schema.json"
         }
       },
@@ -258,8 +258,8 @@
         },
         "schema": {
           "path": "schemas/marks.schema.json",
-          "checksum": "793b21be16d76d61f88ab75a5f5cb96990bca15b78ffbe68b60d662f1fda5e4c",
-          "size": 6749,
+          "checksum": "1a64afde53766f59c9531adbcc93f30b55ae44a179db32ee2f69265753b61664",
+          "size": 6672,
           "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/marks.schema.json"
         }
       },
@@ -297,8 +297,8 @@
         },
         "schema": {
           "path": "schemas/services.schema.json",
-          "checksum": "26a5203841afade0e3aada9d11973d27f96a7bd5d777bcc2abcac5242ce73292",
-          "size": 3587,
+          "checksum": "7fa30010ecf0e7570bb9ac98243f89d89fd613140ec2fb16b11c3debbf279b8e",
+          "size": 3529,
           "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/services.schema.json"
         }
       },
@@ -375,8 +375,8 @@
         },
         "schema": {
           "path": "schemas/graph.schema.json",
-          "checksum": "36995d559f48663c3cf2509113ea3291919034ce12e11245d7cc4dcd264fd7ea",
-          "size": 7656,
+          "checksum": "9e496ca92d9efc7b539aafeab8fa33d893c34465afc369a1e27eb2f30f1c9b88",
+          "size": 7621,
           "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/graph.schema.json"
         }
       }
@@ -390,8 +390,8 @@
         },
         "schema": {
           "path": "schemas/marks.schema.json",
-          "checksum": "793b21be16d76d61f88ab75a5f5cb96990bca15b78ffbe68b60d662f1fda5e4c",
-          "size": 6749,
+          "checksum": "1a64afde53766f59c9531adbcc93f30b55ae44a179db32ee2f69265753b61664",
+          "size": 6672,
           "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/marks.schema.json"
         }
       },
@@ -429,8 +429,8 @@
         },
         "schema": {
           "path": "schemas/services.schema.json",
-          "checksum": "26a5203841afade0e3aada9d11973d27f96a7bd5d777bcc2abcac5242ce73292",
-          "size": 3587,
+          "checksum": "7fa30010ecf0e7570bb9ac98243f89d89fd613140ec2fb16b11c3debbf279b8e",
+          "size": 3529,
           "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/services.schema.json"
         }
       },
@@ -507,8 +507,8 @@
         },
         "schema": {
           "path": "schemas/graph.schema.json",
-          "checksum": "36995d559f48663c3cf2509113ea3291919034ce12e11245d7cc4dcd264fd7ea",
-          "size": 7656,
+          "checksum": "9e496ca92d9efc7b539aafeab8fa33d893c34465afc369a1e27eb2f30f1c9b88",
+          "size": 7621,
           "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/graph.schema.json"
         }
       }
@@ -522,8 +522,8 @@
         },
         "schema": {
           "path": "schemas/marks.schema.json",
-          "checksum": "793b21be16d76d61f88ab75a5f5cb96990bca15b78ffbe68b60d662f1fda5e4c",
-          "size": 6749,
+          "checksum": "1a64afde53766f59c9531adbcc93f30b55ae44a179db32ee2f69265753b61664",
+          "size": 6672,
           "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/marks.schema.json"
         }
       },
@@ -574,8 +574,8 @@
         },
         "schema": {
           "path": "schemas/services.schema.json",
-          "checksum": "26a5203841afade0e3aada9d11973d27f96a7bd5d777bcc2abcac5242ce73292",
-          "size": 3587,
+          "checksum": "7fa30010ecf0e7570bb9ac98243f89d89fd613140ec2fb16b11c3debbf279b8e",
+          "size": 3529,
           "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/services.schema.json"
         }
       },
@@ -652,8 +652,8 @@
         },
         "schema": {
           "path": "schemas/graph.schema.json",
-          "checksum": "36995d559f48663c3cf2509113ea3291919034ce12e11245d7cc4dcd264fd7ea",
-          "size": 7656,
+          "checksum": "9e496ca92d9efc7b539aafeab8fa33d893c34465afc369a1e27eb2f30f1c9b88",
+          "size": 7621,
           "url": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/graph.schema.json"
         }
       }
