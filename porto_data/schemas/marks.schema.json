@@ -135,7 +135,7 @@
           "mark_profile": {
             "type": "string",
             "minLength": 1,
-            "description": "Wire checkout layout token at purchase time (e.g. Internetmarke FRANKING_ZONE / ADDRESS_ZONE). Not the same as profiles[].id. Do not use voucher_layout."
+            "description": "Wire checkout layout token at purchase time. Not the same as profiles[].id."
           },
           "mime_type": {
             "type": "string",

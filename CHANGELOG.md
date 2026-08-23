@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+- **Shared schema descriptions:** Neutralized vendor-specific wording in `marks`, `graph`, and `services` schema descriptions.
 - **Jurisdiction blocs:** Uppercase bloc keys `jurisdictions.eu` / `jurisdictions.un` → `EU` / `UN` so they match restriction buckets `EU` / `UN` / `CH`. Schema excludes `EU`/`UN` from country timezone `patternProperties` (blocs keep `members` + `timezone`).
 - **Ukrposhta feature native id:** Rename `recipient_signature` → `osobyste_vruchennia` (keep `porto_id: recipient_signature`); service feature refs updated.
 - **Vocabulary:** Drop SDK type/method spine from porto-data docs (`identity.md`, BUGBOT, `.cursorrules`); keep catalog layer boundaries only. Graph validator helper `wire_integration_ids` → `wire_ids`. Identity cheat sheet `capability` → `billing[]` / `execution[]`. BUGBOT `edges.wire[wire]`. Validation chain includes **`addresses`** (Cursor rules, CONTRIBUTING, BUGBOT rule 37, pre-commit + CI job).
