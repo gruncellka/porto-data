@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-08-24
+
 ### Added
 
 - **English `label` on products and zones:** Required `label` (English UI/tooling) alongside native `name` on all provider `products.json` and `zones.json` rows; schemas updated.
