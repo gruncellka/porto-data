@@ -21,7 +21,7 @@ Examples:
 - `id: einschreiben`, `kind: registered`
 - `id: sendungsnummer`, `kind: tracking`
 
-Many-to-one is expected (`einschreiben` and `einschreiben_einwurf` both `registered`). The resolver may accept a `kind` as consumer intent and map it to this provider’s concrete `id`s.
+Many-to-one is expected (`einschreiben` and `einschreiben_einwurf` both `registered`). Consumer `kind` is intent; matching catalog `id`s are options. Pin with `service_ids` when more than one row matches. Do not map `kind` to a single `id`.
 
 ### Service kinds
 
@@ -35,9 +35,9 @@ La Poste recommandée is a **product** with features/indemnity, not service `reg
 
 ## Products
 
-Resolve from envelope + weight + zone (+ optional product `id` pin). `envelope_ids` is the physical filter. Do not invent `small` \| `medium` \| `large` \| `extra_large`.
+Country + weight + zone are the core facts. Optional `envelope_id` **filters** `envelope_ids[]` (absent = no constraint; present = drop incompatible rows; never selects among remaining). Selection is via `product_id` / preference / unique remaining row, or ambiguity. Do not invent `small` \| `medium` \| `large` \| `extra_large`.
 
-Ukrposhta: `lyst_standartnyi` and `dokument` are two product ids; pick by envelope/weight/pin, not a size class.
+Ukrposhta: `lyst_standartnyi` and `dokument` are two product ids; filter by envelope/weight/zone, pin with `product_id` — not a size class.
 
 ## Reference direction
 

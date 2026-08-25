@@ -1,6 +1,6 @@
 # Product resolution
 
-Consumers resolve a native **`product.id`** from provider context, destination zone, weight, envelope membership, and optional explicit product pin. There is no cross-provider product size taxonomy — see [id.md](id.md).
+Consumers resolve catalog **`product.id`** from provider context, destination zone, weight, optional envelope filter, and optional explicit product pin. There is no cross-provider product size taxonomy — see [id.md](id.md).
 
 ## Inputs
 
@@ -9,30 +9,31 @@ Consumers resolve a native **`product.id`** from provider context, destination z
 | `provider` | Operator id (`deutschepost`, `ukrposhta`, `laposte`, `swisspost`, …) |
 | `zone` | Resolved from destination country |
 | `weight` | Shipment weight (unit from `graph.unit.weight` / `weights.json`) → `weight_tier` |
-| `envelope_id` | Optional; filter rows whose `envelope_ids[]` includes the envelope |
-| `product_id` | Optional explicit pin to a native `products.id` |
-| `services[]` | Optional selected service native ids or kinds (consumer) |
+| `envelope_id` | Optional physical fit filter on `envelope_ids[]`. Absent = no constraint. Present = drop incompatible products. Never selects among remaining rows. Empty `envelope_ids[]` currently matches any envelope. |
+| `product_id` | Optional explicit pin to catalog `products.id` |
+| `services[]` | Optional requested service **kinds** (consumer intent). Never catalog ids. |
+| `service_ids[]` | Optional pins to catalog `services.id` among options for those kinds |
 
 ## Resolution order
 
 1. Filter `products.json` rows whose `zones` contains the target zone.
-2. When `envelope_id` is known, keep rows whose `envelope_ids[]` includes it.
-3. When `product_id` is pinned, select that row (must still match zone and graph).
+2. When `envelope_id` is present, keep rows whose `envelope_ids[]` includes it (filter only).
+3. When `product_id` is pinned, select that row (must still match zone, envelope filter, and graph).
 4. Resolve `weight_tier` from `weights.json` for the given `weight`.
 5. Intersect with `graph.json` → `edges.products[product_id].zones` and `edges.products[product_id].weight_tiers`.
 6. If exactly one product remains, use that `product.id`.
 7. If multiple products remain, apply provider-specific disambiguation below.
-8. Price lookup uses native `product_id` × `zone` × `weight_tier` in `prices/products.json`.
+8. Price lookup uses catalog `product_id` × `zone` × `weight_tier` in `prices/products.json`.
 9. **Delivery hint:** pick the `products.delivery[]` entry whose `zones` contains the shipment `zone`; join with `markets[CC].working_days` from `providers.json` → `country` (see below).
 10. **Wire code (online purchase only):** when `execution.json` exists, `execution.wire` selects the active **`edges.wire`** channel; then `graph.edges.wire[wire][product_id][zone_id]` — optional `services[service_id]` override when `strategy` is `service` (Deutsche Post Internetmarke). See [Wire resolution](#wire-resolution) below.
 
 When step 7 still leaves multiple products, the consumer must apply the provider-specific rules below (or an explicit user/operator hint). The bundle does not encode speed class or registered tier as separate product kinds.
 
-Cross-file refs (graph, prices, rules) always use **native `id`**, never `kind`. See [CONTRIBUTING.md](../CONTRIBUTING.md).
+Cross-file refs (graph, prices, rules) always use catalog **`id`**, never `kind`. See [CONTRIBUTING.md](../CONTRIBUTING.md).
 
 ## Delivery hints (operator SLA, zone-scoped)
 
-After native `product.id` is resolved, expose an indicative **`delivery_hint`** for the shipment zone:
+After catalog `product.id` is resolved, expose an indicative **`delivery_hint`** for the shipment zone:
 
 1. Find `products.delivery[]` entry where `zones` includes the target **zone**.
 2. Resolve market calendar: `providers.json` → `country` → `policy/markets.json` → `markets[CC].working_days`.
@@ -45,7 +46,7 @@ After native `product.id` is resolved, expose an indicative **`delivery_hint`** 
 | `working_days.weekdays` | Entry override or `markets[CC].working_days.weekdays` |
 | `working_days.exclude_public_holidays` | `markets[CC].working_days.exclude_public_holidays` |
 
-Indicative only — not a guaranteed delivery date. No consumer speed-class enum (`lane`); disambiguation uses native `product.id`, delivery preference, or explicit user choice.
+Indicative only — not a guaranteed delivery date. No consumer speed-class enum (`lane`); disambiguation uses catalog `product.id`, delivery preference, or explicit user choice.
 
 **Coverage:** each product’s `delivery[].zones` must partition `product.zones` exactly (validated in CI).
 
@@ -74,8 +75,8 @@ When multiple products share the same `(zone, weight_tier)` after graph filterin
 | **La Poste** R1/R2/R3 | `indemnity.tier` | price row |
 | **La Poste** verte / suivie / Services Plus | `included_features[]`, `tracking` | price row |
 | **Deutsche Post** extra_large twins | zone + weight_tier | — |
-| **Ukrposhta** standard vs document | zone (`dokument` is domestic-only) | envelope / explicit `product.id` |
-| **Else** | explicit native **`product.id`** or user preference | — |
+| **Ukrposhta** standard vs document | zone (`dokument` is domestic-only) | envelope filter / explicit `product.id` |
+| **Else** | explicit catalog **`product.id`** or user preference | — |
 
 CI rejects twins that share the same resolution fingerprint (`delivery` sig per zone, `indemnity.tier`, `included_features`, `tracking`) for the same graph edge key.
 
@@ -108,7 +109,7 @@ If `dokument` is requested for a non-domestic zone, resolution fails — use `ly
 
 Several products share zone + weight (`lettre_verte`, `lettre_recommandee_r_un`, `r_deux`, `r_trois`, international variants, …).
 
-Disambiguation: **native product id** and **`indemnity.tier`** (R1/R2/R3). Recommandée is a distinct product SKU — not a `registered` service add-on like Deutsche Post Einschreiben. Compare **`included_features[]`** and price when choosing verte vs suivie vs Services Plus.
+Disambiguation: catalog **`product.id`** and **`indemnity.tier`** (R1/R2/R3). Recommandée is a distinct product SKU — not a `registered` service add-on like Deutsche Post Einschreiben. Compare **`included_features[]`** and price when choosing verte vs suivie vs Services Plus.
 
 ### Swiss Post — same zone + weight, different speed class
 
@@ -117,11 +118,11 @@ Multiple products may share zone + weight:
 - `a_post_standardbrief` vs `b_post_standardbrief` (domestic speed)
 - `international_standardbrief` vs domestic variants
 
-Disambiguation: prefer **zone** (domestic vs international) first, then compare **delivery hints** (`span`, `days_max`) or explicit **native `product.id`** when the user selects a tariff (e.g. A-Post vs B-Post).
+Disambiguation: prefer **zone** (domestic vs international) first, then compare **delivery hints** (`span`, `days_max`) or explicit catalog **`product.id`** when the user selects a tariff (e.g. A-Post vs B-Post).
 
 ## Service variants
 
-Multiple `services[].id` rows may share one `kind` (e.g. two `registered` variants on Deutsche Post). Select by native service id or operator-specific option once the user picks a variant.
+Multiple `services[].id` rows may share one `kind` (e.g. two `registered` variants on Deutsche Post). Pin with `service_ids`; do not map `kind` to one catalog `id`.
 
 ## Mark profile resolution
 
@@ -129,7 +130,7 @@ Lane and service mark mapping: **`graph.edges.marks[zone]`**. Catalog sizes: **`
 
 ## Wire resolution
 
-After native `product.id`, `zone`, and optional `service_ids[]` are known:
+After catalog `product.id`, `zone`, and optional `service_ids[]` are known:
 
 | Step | Graph field | Role |
 |------|-------------|-----|

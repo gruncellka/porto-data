@@ -11,7 +11,8 @@ One-page map of **who names what** across **porto-data** (JSON + schemas) and **
 ```text
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │  CONSUMER (SDK / app)                                                        │
-│  input:  country_code, weight, envelope?, service kind or id                │
+│  input:  country_code, weight, envelope?, services (kind),                  │
+│          optional product_id / service_ids                                  │
 │  output: resolved product/price facts (+ mark bytes after adapter call)     │
 └───────────────────────────────────┬─────────────────────────────────────────┘
                                     │ reads bundle only via loader
@@ -69,21 +70,22 @@ Product rows have **no `kind`**. Service/feature `kind` enums may share tokens (
   └─ mark_profile in marks.json    → domestic registered STAMP size (layout output)
 
 La Poste recommandée
-  └─ products.id (e.g. lettre_recommandee_r_un) → full registered-letter SKU; pick native id (R1/R2/R3)
+  └─ products.id (e.g. lettre_recommandee_r_un) → full registered-letter SKU;
+     disambiguate via product_id or indemnity.tier (R1/R2/R3) — not a silent pick
 
 "domestic"
   ├─ zone id                       → destination lane in prices/graph
   └─ mark_profile id               → stamp footprint variant in marks.json
 
 "id"
-  ├─ products.id / services.id     → provider-native (standardbrief)
+  ├─ products.id / services.id     → catalog id (standardbrief, einschreiben)
   ├─ marks.profiles[].id           → mark_profile (domestic)
   └─ mark result id (consumer)     → UUID after purchase — not a provider handle
 
 "tracking"
   ├─ products.tracking             → none | optional | included
   ├─ service kind                  → priced add-on (option suivi, A-Mail Plus)
-  ├─ feature kind                  → capability (native id still sendungsnummer / numero_suivi)
+  ├─ feature kind                  → capability (catalog id still sendungsnummer / numero_suivi)
   └─ Internetmarke mark / shop id  → runtime mark handle; basic scan/status only
                                      NOT the tracking service; does not make DE products `included`
 ```
@@ -122,7 +124,7 @@ graph.json
   edges.marks[zone].services[id] ───────► profile override when service selected
   edges.wire[wire][product][zone].base ► adapter catalog code (purchase)
   edges.wire[wire][product][zone].services[id] ► service-composed code (DE Internetmarke)
-  services[] (native service ids) ► services.json id list
+  services[] (catalog service ids) ► services.json id list
 
 services.json
   id ─────────────────────────────► prices/services.json service_id
@@ -152,20 +154,22 @@ formats/addresses.json
 
 ## Resolution sequence (variable flow)
 
+Envelope is an optional physical **filter**, not a product selector. Empty `products.envelope_ids[]` currently matches any envelope. `services` is `kind` intent (options); pin catalog rows with `product_id` / `service_ids`. Several remaining rows → selection or ambiguity — not a silent pick.
+
 ```text
-INPUT                          RESOLVE TO NATIVE              OUTPUT FIELD
-─────                          ─────────────────              ────────────
+INPUT                          RESOLVE                        OUTPUT FIELD
+─────                          ───────                        ────────────
 provider: deutschepost    →    (loader scope)
 country_code: US          →    zone: world
 weight: 20               →    weight_tier: W0020
-envelope: DL             →    filter envelope_ids[]
-                          →    product.id: standardbrief      product
+envelope?: DL            →    filter envelope_ids[]           (does not select product)
+product_id?              →    pin products.id                 product (unique / pin / preference / ambiguous)
                           →    base_price from prices         pricing
 
-services: [registered]    →    kind: registered
-                          →    service.id: einschreiben
+services: [registered]    →    kind: registered               matching services.json rows as options
+service_ids?             →    pin services.id                 bound service (or ambiguous if kind has twins)
 
-zone + services           →    graph.edges.marks[zone] + services overrides
+zone + bound services     →    graph.edges.marks[zone] + services overrides
                           →    mark_profile: registered_international
                           →    size 57×30, type stamp
 

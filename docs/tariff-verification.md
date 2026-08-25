@@ -10,7 +10,7 @@ How we reconcile **product and service prices** in this bundle with official car
 
 | Layer | Tool | Proves |
 |-------|------|--------|
-| Structure | `make validate` | Schema, graph edges, native ids, cross-file refs, service/feature `kind` enum |
+| Structure | `make validate` | Schema, graph edges, catalog ids, cross-file refs, service/feature `kind` enum |
 | Amounts | Manual reconciliation (this doc + provider notes) | Cent/rappen amounts match official tables on a given date |
 
 There is **no automated tariff oracle** in CI. Wrong amounts that still satisfy the schema will pass validation.
@@ -67,7 +67,7 @@ Use **per-country or multi-zone** models when the official table is country- or 
 ## Common pitfalls (all carriers)
 
 - **VAT vs net:** some sites show VAT-inclusive (Ukrposhta domestic page) vs VAT-exempt (Deutsche Post letters). Match the column the carrier uses for the product you model.
-- **Product vs surcharge:** registered / Einschreiben / AR are **services** (`service_prices.json`) when sold as add-ons. Carriers may also sell registered letters as **standalone product SKUs** — use native `products.id` (e.g. La Poste recommandée rows).
+- **Product vs surcharge:** registered / Einschreiben / AR are **services** (`service_prices.json`) when sold as add-ons. Carriers may also sell registered letters as **standalone product SKUs** — use catalog `products.id` (e.g. La Poste recommandée rows).
 - **Weight tier ids:** JSON uses `W0020`, `W0050`, … — must match `graph.json` edges and official weight breaks.
 - **Effective dating:** bundle baseline `effective_from: 2026-01-01` unless a row has a known later tariff start (e.g. Ukrposhta international letters `2026-04-01`).
 

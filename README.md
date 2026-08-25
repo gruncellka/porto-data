@@ -63,7 +63,7 @@ E-commerce and logistics (multi-carrier quotes, letters), compliance (sanctions,
 
 All JSON validates against **`schemas/`**; **`mappings.json`** maps entities to paths; **`metadata.json`** has checksums and schema URLs.
 
-**Cross-file rules:** native **`id`** in graph/prices; **`kind`** on services/features for cross-operator intent — see [docs/resolution.md](docs/resolution.md). Envelope membership + weight (not mm handbook): [docs/envelope-product-matrix.md](docs/envelope-product-matrix.md).
+**Cross-file rules:** catalog **`id`** in graph/prices; **`kind`** on services/features for cross-operator intent — see [docs/resolution.md](docs/resolution.md). Envelope membership + weight (not mm handbook): [docs/envelope-product-matrix.md](docs/envelope-product-matrix.md).
 
 **Tariff verification:** CI validates structure only — not that amounts match live carrier tables. See [docs/tariff-verification.md](docs/tariff-verification.md) and per-provider notes under [docs/providers/](docs/providers/).
 
