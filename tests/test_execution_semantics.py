@@ -76,7 +76,6 @@ class TestProductsSchemaExecutionSemantics:
             "products": [
                 {
                     "id": "prod_one",
-                    "porto_id": "small",
                     "name": "P",
                     "label": "Product",
                     "envelope_ids": ["C6"],
@@ -137,7 +136,7 @@ class TestDeutschepostInsuranceIsNotTracking:
             "services": [
                 {
                     "id": "zusatzversicherung",
-                    "porto_id": "insurance",
+                    "kind": "insurance",
                     "name": "Z",
                     "label": "I",
                     "description": "d",

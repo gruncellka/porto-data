@@ -1,0 +1,34 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/kinds.schema.json",
+  "title": "Service and feature kinds",
+  "description": "Cross-provider semantic grouping for services and features only. Not an identifier. Products have no kind. Normative list: docs/id.md. Service and feature may share tokens where a priced add-on and a capability align. Do not add values without semver-major review.",
+  "definitions": {
+    "service_kind": {
+      "type": "string",
+      "enum": [
+        "registered",
+        "registered_return_receipt",
+        "tracking",
+        "insurance",
+        "return_receipt",
+        "thickness",
+        "acceptance_proof",
+        "delivery_proof"
+      ],
+      "description": "Cross-provider service grouping. Catalog identity is services[].id."
+    },
+    "feature_kind": {
+      "type": "string",
+      "enum": [
+        "tracking",
+        "acceptance_proof",
+        "recipient_signature",
+        "return_receipt",
+        "delivery_proof",
+        "thickness"
+      ],
+      "description": "Cross-provider feature grouping. Catalog identity is features[].id."
+    }
+  }
+}

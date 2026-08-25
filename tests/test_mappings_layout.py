@@ -6,8 +6,8 @@ from pathlib import Path
 
 import pytest
 
+from scripts.validators.kinds import REQUIRED_PROVIDER_SCHEMAS
 from scripts.validators.mappings_layout import validate_mappings_layout
-from scripts.validators.porto_ids import REQUIRED_PROVIDER_SCHEMAS
 
 
 def _full_provider_schema_map(provider_id: str, **extra: str) -> dict[str, str]:

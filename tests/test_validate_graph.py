@@ -110,7 +110,7 @@ class TestServicePriceConsistency:
         """Template for service data."""
         return {
             "id": "test_service",
-            "porto_id": "test_service",
+            "kind": "test_service",
             "name": "Test Service",
             "label": "Test service",
             "description": "A test service",
@@ -143,7 +143,7 @@ class TestServicePriceConsistency:
             "services": [
                 {
                     "id": "test_service",
-                    "porto_id": "test_service",
+                    "kind": "test_service",
                     "name": "Test Service",
                     "label": "Test service",
                     "description": "A test service",
@@ -230,7 +230,7 @@ class TestServicePriceConsistency:
                 "features": [
                     {
                         "id": "tracking_number",
-                        "porto_id": "tracking",
+                        "kind": "tracking",
                         "name": "Sendungsnummer",
                         "label": "Tracking number",
                         "description": "Test",
@@ -242,7 +242,7 @@ class TestServicePriceConsistency:
                 "provider": "deutschepost",
                 "default_profile": "test_stamp",
                 "profiles": [
-                    {"id": "test_stamp", "mark_type": "stamp", "label": "Test stamp profile"}
+                    {"id": "test_stamp", "type": "stamp", "label": "Test stamp profile"}
                 ],
             },
             "restrictions.json": minimal_restrictions_document(),
@@ -379,7 +379,7 @@ class TestServicePriceConsistency:
                 "features": [
                     {
                         "id": "tracking_number",
-                        "porto_id": "tracking",
+                        "kind": "tracking",
                         "name": "Sendungsnummer",
                         "label": "Tracking number",
                         "description": "Test",
@@ -391,7 +391,7 @@ class TestServicePriceConsistency:
                 "provider": "deutschepost",
                 "default_profile": "test_stamp",
                 "profiles": [
-                    {"id": "test_stamp", "mark_type": "stamp", "label": "Test stamp profile"}
+                    {"id": "test_stamp", "type": "stamp", "label": "Test stamp profile"}
                 ],
             },
             "restrictions.json": minimal_restrictions_document(),

@@ -1,4 +1,4 @@
-"""Tests for porto_id validator."""
+"""Tests for kinds validator."""
 
 from __future__ import annotations
 
@@ -8,23 +8,22 @@ from typing import Any
 
 import pytest
 
-from scripts.validators.porto_ids import (
+from scripts.validators.kinds import (
     MAPPING_DOC,
     REQUIRED_PROVIDER_SCHEMAS,
-    _enum_overlap_errors,
-    _porto_ids_by_entity,
+    _kinds_by_entity,
     _product_ids,
     _render_mapping_doc,
     _service_ids,
-    validate_porto_ids,
+    validate_kinds,
 )
 
-_SCHEMA_SRC = Path(__file__).parent.parent / "porto_data/schemas/porto_ids.schema.json"
+_SCHEMA_SRC = Path(__file__).parent.parent / "porto_data/schemas/kinds.schema.json"
 
 
-def _write_porto_ids_schema(schemas_dir: Path) -> None:
+def _write_kinds_schema(schemas_dir: Path) -> None:
     schemas_dir.mkdir(parents=True, exist_ok=True)
-    (schemas_dir / "porto_ids.schema.json").write_text(
+    (schemas_dir / "kinds.schema.json").write_text(
         _SCHEMA_SRC.read_text(encoding="utf-8"),
         encoding="utf-8",
     )
@@ -61,7 +60,7 @@ def _write_registry(tmp_path: Path, provider_id: str = "testco") -> Path:
         ),
         encoding="utf-8",
     )
-    _write_porto_ids_schema(root / "schemas")
+    _write_kinds_schema(root / "schemas")
     return root
 
 
@@ -80,12 +79,10 @@ def _write_provider_files(
     defaults = {
         "products": {
             "file_type": "products",
-            "provider": "testco",
             "unit": {"weight": "g"},
             "products": [
                 {
                     "id": "p1",
-                    "porto_id": "small",
                     "name": "P",
                     "envelope_ids": ["DL"],
                     "zones": ["domestic"],
@@ -98,11 +95,10 @@ def _write_provider_files(
         },
         "services": {
             "file_type": "services",
-            "provider": "testco",
             "services": [
                 {
                     "id": "svc_native",
-                    "porto_id": "tracking",
+                    "kind": "tracking",
                     "name": "S",
                     "label": "S",
                     "description": "d",
@@ -112,11 +108,10 @@ def _write_provider_files(
         },
         "features": {
             "file_type": "features",
-            "provider": "testco",
             "features": [
                 {
                     "id": "f1",
-                    "porto_id": "tracking",
+                    "kind": "tracking",
                     "name": "F",
                     "label": "F",
                     "description": "d",
@@ -125,7 +120,6 @@ def _write_provider_files(
         },
         "graph": {
             "file_type": "graph",
-            "provider": "testco",
             "unit": {"weight": "g", "dimension": "mm", "price": "cents", "currency": "EUR"},
             "dependencies": {},
             "edges": {
@@ -136,13 +130,11 @@ def _write_provider_files(
         },
         "product_prices": {
             "file_type": "product_prices",
-            "provider": "testco",
             "unit": {"price": "cents", "currency": "EUR"},
             "product_prices": [],
         },
         "service_prices": {
             "file_type": "service_prices",
-            "provider": "testco",
             "unit": {"price": "cents", "currency": "EUR"},
             "service_prices": [],
         },
@@ -169,24 +161,17 @@ def _write_provider_files(
 
 
 @pytest.fixture
-def porto_ids_sandbox(tmp_path: Path, monkeypatch):
-    """Minimal provider tree with monkeypatched project root."""
+def kinds_sandbox(tmp_path: Path, monkeypatch):
     root = _write_registry(tmp_path)
     prov = root / "providers" / "testco"
     prov.mkdir(parents=True)
     _write_provider_files(prov)
-    monkeypatch.setattr(
-        "scripts.validators.porto_ids.list_provider_ids",
-        lambda: ["testco"],
-    )
-    monkeypatch.setattr(
-        "scripts.validators.porto_ids.get_project_root",
-        lambda: root,
-    )
+    monkeypatch.setattr("scripts.validators.kinds.list_provider_ids", lambda: ["testco"])
+    monkeypatch.setattr("scripts.validators.kinds.get_project_root", lambda: root)
     return tmp_path, root, prov
 
 
-class TestPortoIdsHelpers:
+class TestKindsHelpers:
     def test_service_ids_empty_inputs(self) -> None:
         assert _service_ids(None) == set()
         assert _service_ids({}) == set()
@@ -195,13 +180,13 @@ class TestPortoIdsHelpers:
         assert _product_ids(None) == set()
         assert _product_ids({}) == set()
 
-    def test_porto_ids_by_entity_skips_non_dict_rows(self) -> None:
-        assert _porto_ids_by_entity(["not-a-dict", {"id": "a", "porto_id": "small"}]) == {
-            "small": ["a"]
+    def test_kinds_by_entity_skips_non_dict_rows(self) -> None:
+        assert _kinds_by_entity(["not-a-dict", {"id": "a", "kind": "registered"}]) == {
+            "registered": ["a"]
         }
 
 
-class TestPortoIdsValidator:
+class TestKindsValidator:
     def test_required_provider_schemas_count(self) -> None:
         assert len(REQUIRED_PROVIDER_SCHEMAS) == 10
         assert "schemas/graph.schema.json" in REQUIRED_PROVIDER_SCHEMAS
@@ -210,137 +195,84 @@ class TestPortoIdsValidator:
         doc = _render_mapping_doc(
             {
                 "deutschepost": {
-                    "products": [("standardbrief", "small")],
-                    "services": [],
+                    "products": [("standardbrief", "")],
+                    "services": [("einschreiben", "registered")],
                     "features": [],
                 }
             }
         )
         assert "deutschepost" in doc
         assert "`standardbrief`" in doc
-        assert "`small`" in doc
-        assert "products `porto_id`" in doc
+        assert "`einschreiben`" in doc
+        assert "`registered`" in doc
 
-    def test_product_service_enum_must_not_overlap(self) -> None:
-        overlap = _enum_overlap_errors(
-            {
-                "product_porto_id": {"small", "registered"},
-                "service_porto_id": {"registered", "tracking"},
-                "feature_porto_id": {"tracking"},
-            }
-        )
-        assert len(overlap) == 1
-        assert "product_porto_id and service_porto_id overlap" in overlap[0]
-
-    def test_product_feature_enum_must_not_overlap(self) -> None:
-        overlap = _enum_overlap_errors(
-            {
-                "product_porto_id": {"small", "return_receipt"},
-                "service_porto_id": {"registered"},
-                "feature_porto_id": {"return_receipt", "tracking"},
-            }
-        )
-        assert len(overlap) == 1
-        assert "product_porto_id and feature_porto_id overlap" in overlap[0]
-
-    def test_live_schema_porto_id_enums_disjoint(self) -> None:
-        defs = json.loads(_SCHEMA_SRC.read_text(encoding="utf-8"))["definitions"]
-        enums = {
-            key: set(defs[key]["enum"])
-            for key in ("product_porto_id", "service_porto_id", "feature_porto_id")
-        }
-        assert _enum_overlap_errors(enums) == []
-
-    def test_validate_porto_ids_live_bundle(self, project_root: Path) -> None:
-        rc = validate_porto_ids(write_mapping_doc=True)
+    def test_validate_kinds_live_bundle(self, project_root: Path) -> None:
+        rc = validate_kinds(write_mapping_doc=True)
         assert rc == 0
-        mapping = project_root / "docs" / "porto_id.md"
+        mapping = project_root / "docs" / "kinds.md"
         assert mapping.is_file()
 
     def test_validate_success_without_rewriting_current_mapping(
-        self, porto_ids_sandbox, capsys
+        self, kinds_sandbox, capsys
     ) -> None:
-        _tmp, root, _prov = porto_ids_sandbox
+        _tmp, root, _prov = kinds_sandbox
         mapping_path = root / MAPPING_DOC
         mapping_path.parent.mkdir(parents=True, exist_ok=True)
-        while validate_porto_ids(write_mapping_doc=True) != 0:
+        while validate_kinds(write_mapping_doc=True) != 0:
             pass
         content = mapping_path.read_text(encoding="utf-8")
-        rc_second = validate_porto_ids(write_mapping_doc=True)
+        rc_second = validate_kinds(write_mapping_doc=True)
         assert rc_second == 0
         assert "is current" in capsys.readouterr().out
         assert mapping_path.read_text(encoding="utf-8") == content
 
-    def test_validate_updates_mapping_when_content_differs(self, porto_ids_sandbox) -> None:
-        _tmp, root, _prov = porto_ids_sandbox
+    def test_validate_updates_mapping_when_content_differs(self, kinds_sandbox) -> None:
+        _tmp, root, _prov = kinds_sandbox
         mapping_path = root / MAPPING_DOC
         mapping_path.parent.mkdir(parents=True, exist_ok=True)
         mapping_path.write_text("# stale\n", encoding="utf-8")
-        rc = validate_porto_ids(write_mapping_doc=True)
+        rc = validate_kinds(write_mapping_doc=True)
         assert rc == 1
         text = mapping_path.read_text(encoding="utf-8")
         assert "p1" in text
-        assert text.startswith("# Porto ID mapping tables")
-        rc_again = validate_porto_ids(write_mapping_doc=True)
+        assert text.startswith("# Kind mapping tables")
+        rc_again = validate_kinds(write_mapping_doc=True)
         assert rc_again == 0
 
-    def test_rejects_porto_id_in_services(self, porto_ids_sandbox) -> None:
-        _tmp, _root, prov = porto_ids_sandbox
+    def test_rejects_kind_used_as_graph_service_id(self, kinds_sandbox) -> None:
+        _tmp, _root, prov = kinds_sandbox
         graph = json.loads((prov / "graph.json").read_text(encoding="utf-8"))
         graph["services"] = ["tracking"]
         (prov / "graph.json").write_text(json.dumps(graph), encoding="utf-8")
-        assert validate_porto_ids(write_mapping_doc=False) == 1
+        assert validate_kinds(write_mapping_doc=False) == 1
 
-    def test_rejects_unknown_available_service(self, porto_ids_sandbox) -> None:
-        _tmp, _root, prov = porto_ids_sandbox
+    def test_rejects_unknown_available_service(self, kinds_sandbox) -> None:
+        _tmp, _root, prov = kinds_sandbox
         graph = json.loads((prov / "graph.json").read_text(encoding="utf-8"))
         graph["services"] = ["missing_svc"]
         (prov / "graph.json").write_text(json.dumps(graph), encoding="utf-8")
-        assert validate_porto_ids(write_mapping_doc=False) == 1
+        assert validate_kinds(write_mapping_doc=False) == 1
 
-    def test_rejects_intl_suffix_on_native_product_id(self, porto_ids_sandbox) -> None:
-        _tmp, _root, prov = porto_ids_sandbox
+    def test_rejects_intl_suffix_on_native_product_id(self, kinds_sandbox) -> None:
+        _tmp, _root, prov = kinds_sandbox
         products = json.loads((prov / "products.json").read_text(encoding="utf-8"))
         products["products"][0]["id"] = "letter_intl"
         (prov / "products.json").write_text(json.dumps(products), encoding="utf-8")
-        assert validate_porto_ids(write_mapping_doc=False) == 1
+        assert validate_kinds(write_mapping_doc=False) == 1
 
-    def test_rejects_intl_suffix_on_native_service_id(self, porto_ids_sandbox) -> None:
-        _tmp, _root, prov = porto_ids_sandbox
+    def test_rejects_intl_suffix_on_native_service_id(self, kinds_sandbox) -> None:
+        _tmp, _root, prov = kinds_sandbox
         services = json.loads((prov / "services.json").read_text(encoding="utf-8"))
         services["services"][0]["id"] = "registered_intl"
         (prov / "services.json").write_text(json.dumps(services), encoding="utf-8")
-        assert validate_porto_ids(write_mapping_doc=False) == 1
+        assert validate_kinds(write_mapping_doc=False) == 1
 
-    def test_rejects_porto_id_in_product_prices(self, porto_ids_sandbox) -> None:
-        _tmp, _root, prov = porto_ids_sandbox
+    def test_rejects_unknown_product_price_ref(self, kinds_sandbox) -> None:
+        _tmp, _root, prov = kinds_sandbox
         (prov / "prices" / "products.json").write_text(
             json.dumps(
                 {
                     "file_type": "product_prices",
-                    "provider": "testco",
-                    "unit": {"price": "cents", "currency": "EUR"},
-                    "product_prices": [
-                        {
-                            "product_id": "small",
-                            "zone": "domestic",
-                            "weight_tier": "W0020",
-                            "price": 100,
-                        }
-                    ],
-                }
-            ),
-            encoding="utf-8",
-        )
-        assert validate_porto_ids(write_mapping_doc=False) == 1
-
-    def test_rejects_unknown_product_price_ref(self, porto_ids_sandbox) -> None:
-        _tmp, _root, prov = porto_ids_sandbox
-        (prov / "prices" / "products.json").write_text(
-            json.dumps(
-                {
-                    "file_type": "product_prices",
-                    "provider": "testco",
                     "unit": {"price": "cents", "currency": "EUR"},
                     "product_prices": [
                         {
@@ -354,45 +286,42 @@ class TestPortoIdsValidator:
             ),
             encoding="utf-8",
         )
-        assert validate_porto_ids(write_mapping_doc=False) == 1
+        assert validate_kinds(write_mapping_doc=False) == 1
 
-    def test_rejects_porto_id_in_service_prices(self, porto_ids_sandbox) -> None:
-        _tmp, _root, prov = porto_ids_sandbox
+    def test_rejects_kind_in_service_prices(self, kinds_sandbox) -> None:
+        _tmp, _root, prov = kinds_sandbox
         (prov / "prices" / "services.json").write_text(
             json.dumps(
                 {
                     "file_type": "service_prices",
-                    "provider": "testco",
                     "unit": {"price": "cents", "currency": "EUR"},
                     "service_prices": [{"service_id": "tracking", "price": 50}],
                 }
             ),
             encoding="utf-8",
         )
-        assert validate_porto_ids(write_mapping_doc=False) == 1
+        assert validate_kinds(write_mapping_doc=False) == 1
 
-    def test_rejects_unknown_service_price_ref(self, porto_ids_sandbox) -> None:
-        _tmp, _root, prov = porto_ids_sandbox
+    def test_rejects_unknown_service_price_ref(self, kinds_sandbox) -> None:
+        _tmp, _root, prov = kinds_sandbox
         (prov / "prices" / "services.json").write_text(
             json.dumps(
                 {
                     "file_type": "service_prices",
-                    "provider": "testco",
                     "unit": {"price": "cents", "currency": "EUR"},
                     "service_prices": [{"service_id": "ghost_service", "price": 50}],
                 }
             ),
             encoding="utf-8",
         )
-        assert validate_porto_ids(write_mapping_doc=False) == 1
+        assert validate_kinds(write_mapping_doc=False) == 1
 
-    def test_skips_non_dict_and_empty_price_rows(self, porto_ids_sandbox) -> None:
-        _tmp, _root, prov = porto_ids_sandbox
+    def test_skips_non_dict_and_empty_price_rows(self, kinds_sandbox) -> None:
+        _tmp, _root, prov = kinds_sandbox
         (prov / "prices" / "products.json").write_text(
             json.dumps(
                 {
                     "file_type": "product_prices",
-                    "provider": "testco",
                     "unit": {"price": "cents", "currency": "EUR"},
                     "product_prices": [
                         "skip",
@@ -406,88 +335,80 @@ class TestPortoIdsValidator:
             json.dumps(
                 {
                     "file_type": "service_prices",
-                    "provider": "testco",
                     "unit": {"price": "cents", "currency": "EUR"},
                     "service_prices": ["skip", {"price": 50}],
                 }
             ),
             encoding="utf-8",
         )
-        assert validate_porto_ids(write_mapping_doc=False) == 0
+        assert validate_kinds(write_mapping_doc=False) == 0
 
-    def test_rejects_invalid_porto_id_on_catalog_rows(self, porto_ids_sandbox) -> None:
-        _tmp, _root, prov = porto_ids_sandbox
-        products = json.loads((prov / "products.json").read_text(encoding="utf-8"))
-        products["products"] = [
-            products["products"][0],
-            "bad-row",
-            {
-                **products["products"][0],
-                "id": "p2",
-                "porto_id": "not_a_real_porto_id",
-            },
-        ]
+    def test_rejects_invalid_kind_on_catalog_rows(self, kinds_sandbox) -> None:
+        _tmp, _root, prov = kinds_sandbox
         services = json.loads((prov / "services.json").read_text(encoding="utf-8"))
         services["services"] = [
             services["services"][0],
             "bad-row",
-            {
-                **services["services"][0],
-                "id": "svc2",
-                "porto_id": "not_a_real_porto_id",
-            },
+            {**services["services"][0], "id": "svc2", "kind": "not_a_real_kind"},
         ]
         features = json.loads((prov / "features.json").read_text(encoding="utf-8"))
         features["features"] = [
             features["features"][0],
             "bad-row",
-            {
-                **features["features"][0],
-                "id": "f2",
-                "porto_id": "not_a_real_porto_id",
-            },
+            {**features["features"][0], "id": "f2", "kind": "not_a_real_kind"},
         ]
-        (prov / "products.json").write_text(json.dumps(products), encoding="utf-8")
         (prov / "services.json").write_text(json.dumps(services), encoding="utf-8")
         (prov / "features.json").write_text(json.dumps(features), encoding="utf-8")
-        assert validate_porto_ids(write_mapping_doc=False) == 1
+        assert validate_kinds(write_mapping_doc=False) == 1
 
-    def test_rejects_unknown_service_feature_ref(self, porto_ids_sandbox, capsys) -> None:
-        _tmp, _root, prov = porto_ids_sandbox
+    def test_skips_non_dict_product_rows(self, kinds_sandbox) -> None:
+        _tmp, _root, prov = kinds_sandbox
+        products = json.loads((prov / "products.json").read_text(encoding="utf-8"))
+        products["products"].insert(0, "bad-row")
+        (prov / "products.json").write_text(json.dumps(products), encoding="utf-8")
+        assert validate_kinds(write_mapping_doc=False) == 0
+
+    def test_rejects_product_kind_field(self, kinds_sandbox) -> None:
+        _tmp, _root, prov = kinds_sandbox
+        products = json.loads((prov / "products.json").read_text(encoding="utf-8"))
+        products["products"][0]["kind"] = "small"
+        (prov / "products.json").write_text(json.dumps(products), encoding="utf-8")
+        assert validate_kinds(write_mapping_doc=False) == 1
+
+    def test_rejects_missing_service_and_feature_kind(self, kinds_sandbox) -> None:
+        _tmp, _root, prov = kinds_sandbox
+        services = json.loads((prov / "services.json").read_text(encoding="utf-8"))
+        del services["services"][0]["kind"]
+        (prov / "services.json").write_text(json.dumps(services), encoding="utf-8")
+        features = json.loads((prov / "features.json").read_text(encoding="utf-8"))
+        del features["features"][0]["kind"]
+        (prov / "features.json").write_text(json.dumps(features), encoding="utf-8")
+        assert validate_kinds(write_mapping_doc=False) == 1
+
+    def test_rejects_unknown_service_feature_ref(self, kinds_sandbox, capsys) -> None:
+        _tmp, _root, prov = kinds_sandbox
         services = json.loads((prov / "services.json").read_text(encoding="utf-8"))
         services["services"][0]["features"] = ["ghost_feat", 1]
         (prov / "services.json").write_text(json.dumps(services), encoding="utf-8")
-        assert validate_porto_ids(write_mapping_doc=False) == 1
+        assert validate_kinds(write_mapping_doc=False) == 1
         assert "ghost_feat" in capsys.readouterr().out
 
-    def test_warns_on_duplicate_product_and_service_porto_ids(
-        self, porto_ids_sandbox, capsys
-    ) -> None:
-        _tmp, _root, prov = porto_ids_sandbox
-        products = json.loads((prov / "products.json").read_text(encoding="utf-8"))
-        products["products"].append({**products["products"][0], "id": "p2"})
+    def test_warns_on_duplicate_service_kind(self, kinds_sandbox, capsys) -> None:
+        _tmp, _root, prov = kinds_sandbox
         services = json.loads((prov / "services.json").read_text(encoding="utf-8"))
-        services["services"].append(
-            {
-                **services["services"][0],
-                "id": "svc_dup",
-                "porto_id": "tracking",
-            }
-        )
-        (prov / "products.json").write_text(json.dumps(products), encoding="utf-8")
+        services["services"].append({**services["services"][0], "id": "svc_dup"})
         (prov / "services.json").write_text(json.dumps(services), encoding="utf-8")
-        assert validate_porto_ids(write_mapping_doc=False) == 0
+        assert validate_kinds(write_mapping_doc=False) == 0
         out = capsys.readouterr().out
         assert "WARNING" in out
-        assert "product porto_id 'small'" in out
-        assert "service porto_id 'tracking'" in out
+        assert "service kind 'tracking'" in out
 
-    def test_load_failure_reports_error(self, porto_ids_sandbox) -> None:
-        _tmp, _root, prov = porto_ids_sandbox
+    def test_load_failure_reports_error(self, kinds_sandbox) -> None:
+        _tmp, _root, prov = kinds_sandbox
         (prov / "products.json").write_text("{not json", encoding="utf-8")
-        assert validate_porto_ids(write_mapping_doc=False) == 1
+        assert validate_kinds(write_mapping_doc=False) == 1
 
-    def test_missing_catalog_file_reports_error(self, porto_ids_sandbox) -> None:
-        _tmp, _root, prov = porto_ids_sandbox
+    def test_missing_catalog_file_reports_error(self, kinds_sandbox) -> None:
+        _tmp, _root, prov = kinds_sandbox
         (prov / "products.json").unlink()
-        assert validate_porto_ids(write_mapping_doc=False) == 1
+        assert validate_kinds(write_mapping_doc=False) == 1

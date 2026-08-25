@@ -128,7 +128,7 @@ def minimal_data_files(
             "features": [
                 {
                     "id": "tracking_number",
-                    "porto_id": "tracking",
+                    "kind": "tracking",
                     "name": "Sendungsnummer",
                     "label": "Tracking number",
                     "description": "Test",
@@ -141,7 +141,7 @@ def minimal_data_files(
             "profiles": [
                 {
                     "id": "test_stamp",
-                    "mark_type": "stamp",
+                    "type": "stamp",
                     "label": "Test stamp profile",
                 }
             ],
@@ -217,7 +217,7 @@ def create_test_data_files(tmp_path, **file_data):
             "features": [
                 {
                     "id": "tracking_number",
-                    "porto_id": "tracking",
+                    "kind": "tracking",
                     "name": "Sendungsnummer",
                     "label": "Tracking number",
                     "description": "Test",
@@ -230,7 +230,7 @@ def create_test_data_files(tmp_path, **file_data):
             "profiles": [
                 {
                     "id": "test_stamp",
-                    "mark_type": "stamp",
+                    "type": "stamp",
                     "label": "Test stamp profile",
                 }
             ],

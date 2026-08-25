@@ -89,7 +89,7 @@ def _default_marks():
     return {
         "file_type": "marks",
         "default_profile": "p",
-        "profiles": [{"id": "p", "mark_type": "stamp", "label": "P"}],
+        "profiles": [{"id": "p", "type": "stamp", "label": "P"}],
     }
 
 
@@ -99,7 +99,7 @@ def _default_features():
         "features": [
             {
                 "id": "tracking_number",
-                "porto_id": "tracking",
+                "kind": "tracking",
                 "name": "T",
                 "label": "T",
                 "description": "D",
@@ -224,7 +224,7 @@ class TestGraphExecutionSemantics:
                 "marks.json": {
                     "file_type": "marks",
                     "default_profile": "p",
-                    "profiles": [{"id": "p", "mark_type": "label", "label": "P"}],
+                    "profiles": [{"id": "p", "type": "label", "label": "P"}],
                 },
             }
         )
@@ -263,11 +263,11 @@ class TestGraphExecutionSemantics:
             "services": [
                 {
                     "id": "no_track",
-                    "porto_id": "x",
+                    "kind": "x",
                     "name": "N",
                     "label": "L",
                     "description": "D",
-                    "features": ["proof_of_mailing"],
+                    "features": ["other"],
                 }
             ],
         }
@@ -308,8 +308,8 @@ class TestGraphMarksAndRules:
                     "file_type": "marks",
                     "default_profile": "a",
                     "profiles": [
-                        {"id": "a", "mark_type": "stamp", "label": "A"},
-                        {"id": "a", "mark_type": "stamp", "label": "Dup"},
+                        {"id": "a", "type": "stamp", "label": "A"},
+                        {"id": "a", "type": "stamp", "label": "Dup"},
                     ],
                 },
             },
@@ -339,7 +339,7 @@ class TestGraphMarksAndRules:
             "services": [
                 {
                     "id": "svc_thick",
-                    "porto_id": "thickness",
+                    "kind": "thickness",
                     "name": "T",
                     "label": "T",
                     "description": "D",

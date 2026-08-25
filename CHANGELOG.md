@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Changed (breaking)
+
+- **Drop `porto_id`.** Catalog identity is concrete `id` only (`name` native, `label` English). Products have no size bucket / `kind` — resolve via envelope + weight + zone (+ optional product `id`). Services/features use **`kind`** for cross-provider grouping; graph, prices, and `services[].features[]` stay on `id`.
+- **`porto_ids.schema.json` → `kinds.schema.json`**; `porto validate --type kinds` regenerates `docs/kinds.md` (removed `docs/porto_id.md`). Kind renames: `proof_of_mailing` → `acceptance_proof`, `proof_of_delivery` → `delivery_proof`.
+- Optional **`requires`** (`ADDRESS_SENDER` / `ADDRESS_RECIPIENT`) on product, service, feature, and mark profile (omit when unused; no empty arrays).
+- Marks: `profiles[].type` replaces `profiles[].mark_type`; drop `presentations[]` (checkout layout is wire, not catalog).
+
 ## [0.6.0] - 2026-08-24
 
 ### Added

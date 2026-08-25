@@ -8,7 +8,7 @@
   "profiles": [
     {
       "id": "domestic",
-      "mark_type": "label",
+      "type": "label",
       "label": "Shipment label PDF",
       "description": "Standard Ukrposhta eCom sticker PDF for letters and documents",
       "scope_notes": "Domestic and international letters share one label model (A5-class PDF from API)",

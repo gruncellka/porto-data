@@ -5,14 +5,14 @@ alwaysApply: true
 
 # Data
 
-Mistake without this: smuggle compose/workflow into catalog JSON, put service semantics on product `porto_id`, or swap `execution.json` with `graph.edges.wire`.
+Mistake without this: smuggle compose/workflow into catalog JSON, put service semantics on product rows, or swap `execution.json` with `graph.edges.wire`.
 
 **Hub:** `docs/identity.md` · `docs/id.md` · Bugbot: [BUGBOT.md](../../BUGBOT.md)
 
 porto-data is a **factual bundle** + schemas + validators — not UI, compose, or SDK resolver. One fact per layer; SDK/app resolve across layers.
 
 ```text
-SDK / app input     →  porto_id, country, weight, service picks
+SDK / app input     →  country, weight, envelope?, service kind or id, optional product id
 Catalog facts       →  native id, zones, weights, prices, geometry (this repo)
 Layout output       →  mark_profile, window, post_mark
 Adapter wiring      →  graph.edges.wire productCode
@@ -20,13 +20,13 @@ Execution gate      →  execution.json wire + billing/execution tokens
 Runtime             →  mark bytes, tracking (not here)
 ```
 
-1. One identifier, one job — product `porto_id` is size-only; never service tokens on products.
+1. One identifier, one job — products have concrete `id` only; no `kind` or size-bucket taxonomy.
 2. Facts vs normalization vs workflow — workflow stays in SDK/consumer compose.
-3. Native `id` in graph/prices/rules; `porto_id` at the edge only.
+3. Native `id` in graph/prices/rules; `kind` on services/features for cross-operator intent only.
 4. `execution.json` ≠ wire tables; `graph.edges.wire` holds checkout codes.
 5. Layouts: `window` / `post_mark` / `standard` only; address forms in `formats/addresses.json`.
 6. Validators enforce philosophy — not prose alone.
 
-**Red flags:** compose fields on products; `porto_id` keys in graph/prices; `productCode` in execution.json; `lane` on products; SDK method names in catalog docs.
+**Red flags:** compose fields on products; `kind` keys in graph/prices; `productCode` in execution.json; `lane` on products; SDK method names in catalog docs.
 
 Before merge: name owning layer → `make validate` → refresh metadata → `make test-cov` → CHANGELOG when consumer-facing.

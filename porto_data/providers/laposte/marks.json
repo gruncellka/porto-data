@@ -8,7 +8,7 @@
   "profiles": [
     {
       "id": "domestic",
-      "mark_type": "label",
+      "type": "label",
       "label": "Mon Timbre en ligne domestic",
       "description": "MTEL stamp label for France and Outre-mer",
       "scope_notes": "Nominal Avery L7159 label 63.5×33.9 mm; registered MTEL uses same stamp size (no separate profile until measured) plus paper liasse",
@@ -22,7 +22,7 @@
     },
     {
       "id": "international",
-      "mark_type": "label",
+      "type": "label",
       "label": "Mon Timbre en ligne international",
       "description": "MTEL stamp label for international destinations",
       "scope_notes": "Same label dimensions as domestic; international registered MTEL discontinued online",

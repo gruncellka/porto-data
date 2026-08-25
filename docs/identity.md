@@ -11,7 +11,7 @@ One-page map of **who names what** across **porto-data** (JSON + schemas) and **
 ```text
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │  CONSUMER (SDK / app)                                                        │
-│  input:  porto_id, country_code, weight, service porto_ids                  │
+│  input:  country_code, weight, envelope?, service kind or id                │
 │  output: resolved product/price facts (+ mark bytes after adapter call)     │
 └───────────────────────────────────┬─────────────────────────────────────────┘
                                     │ reads bundle only via loader
@@ -37,56 +37,58 @@ Do **not** document consumer SDK class or method names here — that drifts with
 | **`provider`** | Porto registry + **`providers/<id>/` path** | `deutschepost` | consumer context, bundle layout | in-file repeat on path-scoped JSON |
 | **`label` / `name`** | Display / legal | `"Deutsche Post"`, `"Deutsche Post AG"` | UI, docs | resolution |
 | **`country`** | Registry → markets | `DE`, `FR`, `UA`, `CH` | VAT, currency, layouts | product id |
-| **`porto_id`** (product) | Porto enum | `small`, `medium`, `large`, `extra_large` | **consumer input** | graph, prices |
-| **`porto_id`** (service) | Porto enum | `registered`, `insurance` | **consumer input** | graph.services list |
-| **`porto_id`** (feature) | Porto enum | `tracking` | semantics | prices |
-| **`id`** (product/service) | Provider native | `standardbrief`, `einschreiben` | **graph, prices, rules** | consumer input |
+| **`id`** (product/service/feature) | Porto catalog | `standardbrief`, `einschreiben` | **graph, prices, rules, pins** | — |
+| **`name`** | Provider original | `Standardbrief`, `Einschreiben` | display | resolution key |
+| **`label`** | Porto English | `Standard Letter` | UI, docs | resolution key |
+| **`kind`** (service/feature) | Porto enum | `registered`, `tracking` | **cross-provider intent** | graph, prices |
 | **`wire_code`** | Graph wire edge | `10001`, `"letter"` | **adapter API only** | products/services rows |
-| **`zone`** | Provider | `domestic`, `world`, `zone_1_eu` | prices, graph edges | porto_id |
-| **`weight_tier`** | Provider | `W0020`, `W1000` | prices, graph edges | porto_id |
-| **`mark_profile`** | Porto convention | `domestic`, `registered_international` | **layout output** | porto_id |
-| **`mark_type`** | Porto enum | `stamp`, `label` | product + marks profile | — |
+| **`zone`** | Provider | `domestic`, `world`, `zone_1_eu` | prices, graph edges | product id |
+| **`weight_tier`** | Provider | `W0020`, `W1000` | prices, graph edges | product id |
+| **`mark_profile`** | Porto convention | `domestic`, `registered_international` | **layout output** | product id |
+| **`mark_type`** | Porto enum | `stamp`, `label` | product row | — |
+| **`type`** (marks profile) | Porto enum | `stamp`, `label` | `marks.profiles[]` (must match product `mark_type`) | not address |
+| **`requires`** | Porto tokens | `ADDRESS_SENDER`, `ADDRESS_RECIPIENT` | product / service / feature / mark profile | omit when none |
 | **`tracking`** | Porto enum | `none`, `optional`, `included` | product row | — |
 | **`envelope_id`** | Shared formats | `DL`, `C6`, `C4` | products, layouts | — |
 | **`wire`** | `execution.json` | `internetmarke` | execution manifest | graph body |
 | **`billing[]` / `execution[]`** | `execution.json` | `wallet`, `mark` | capability tokens | graph body |
-| **`graph.strategy`** | Provider graph | `service`, `id`, `speed`, `min` | **Disambiguation policy** when multiple products share a `porto_id` | hard-coded provider rules in consumers |
+| **`graph.strategy`** | Provider graph | `service`, `id`, `speed`, `min` | **Disambiguation** when multiple products share zone+weight | hard-coded provider rules in consumers |
 | **`features[].id`** | Provider | `sendungsnummer` | services link | cross-provider |
 
-Product and service `porto_id` enums are **disjoint** — products are size buckets only; `registered` is a **service** add-on (e.g. DE Einschreiben, UA intl registered surcharge).
+Product rows have **no `kind`**. Service/feature `kind` enums may share tokens (`tracking`) where a priced add-on and a capability align.
 
 ---
 
 ## Same word, different layer (common traps)
 
 ```text
-"registered" (service porto_id)
-  └─ porto_id on SERVICE row     → Einschreiben / intl registered surcharge (consumer input)
+"registered" (service kind)
+  └─ kind on SERVICE row           → Einschreiben / intl registered surcharge (consumer intent)
 
 "registered" (mark_profile id)
-  └─ mark_profile in marks.json  → domestic registered STAMP size (layout output)
+  └─ mark_profile in marks.json    → domestic registered STAMP size (layout output)
 
 La Poste recommandée
-  └─ products.porto_id: small    → full registered-letter SKU; pick native id (R1/R2/R3)
+  └─ products.id (e.g. lettre_recommandee_r_un) → full registered-letter SKU; pick native id (R1/R2/R3)
 
 "domestic"
-  ├─ zone id                     → destination lane in prices/graph
-  └─ mark_profile id             → stamp footprint variant in marks.json
+  ├─ zone id                       → destination lane in prices/graph
+  └─ mark_profile id               → stamp footprint variant in marks.json
 
 "id"
-  ├─ products.id / services.id   → provider-native (standardbrief)
-  ├─ marks.profiles[].id         → mark_profile (domestic)
-  └─ mark result id (consumer)   → UUID after purchase — not a provider handle
+  ├─ products.id / services.id     → provider-native (standardbrief)
+  ├─ marks.profiles[].id           → mark_profile (domestic)
+  └─ mark result id (consumer)     → UUID after purchase — not a provider handle
 
 "tracking"
-  ├─ products.tracking            → none | optional | included
-  ├─ service porto_id             → priced add-on (option suivi, A-Mail Plus)
-  ├─ feature porto_id             → capability (native id still sendungsnummer / numero_suivi)
-  └─ Internetmarke mark / shop id → runtime mark handle; basic scan/status only
-                                    NOT the tracking service; does not make DE products `included`
+  ├─ products.tracking             → none | optional | included
+  ├─ service kind                  → priced add-on (option suivi, A-Mail Plus)
+  ├─ feature kind                  → capability (native id still sendungsnummer / numero_suivi)
+  └─ Internetmarke mark / shop id  → runtime mark handle; basic scan/status only
+                                     NOT the tracking service; does not make DE products `included`
 ```
 
-Deutsche Post letters stay `products.tracking: optional`. Buying the stamp yields a mark number the host may use for basic IM status; **Sendungsverfolgung / Sendungsnummer** is the Einschreiben feature `tracking`. Do not catalog IM shop-id as feature `tracking`. Do not set DE `tracking: included` because a stamp has a number.
+Deutsche Post letters stay `products.tracking: optional`. Buying the stamp yields a mark number the host may use for basic IM status; **Sendungsverfolgung / Sendungsnummer** is the Einschreiben feature `kind: tracking`. Do not catalog IM shop-id as feature `kind: tracking`. Do not set DE `tracking: included` because a stamp has a number.
 
 ---
 
@@ -99,14 +101,13 @@ providers.json
 products.json
   id ─────────────────────────────► graph.edges.products[id]
   id ─────────────────────────────► prices/products.json product_id
-  porto_id ◄────────────────────── consumer porto_id input
   zones[] ────────────────────────► zones.json (subset)
   weight_tier? (optional) ──────► hint only (Deutsche Post); resolve weight via weights.json + graph
   envelope_ids[] ─────────────────► formats/envelopes.json
-  mark_type ──────────────────────► marks.profiles[].mark_type (must match)
+  mark_type ──────────────────────► marks.profiles[].type (must match)
   delivery[] (zones, span, days) ─► operator SLA per zone group
   delivery[].weekdays? ───────────► override of markets[CC].working_days.weekdays
-  tracking ───────────────────────► none | optional | included (not service/feature porto_id)
+  tracking ───────────────────────► none | optional | included (product posture; not service/feature kind)
   included_features[] ────────────► features.json (bundled capabilities, not services)
   indemnity { tier, max.amount } ─► operator tier cap; currency from markets[CC]
 
@@ -126,8 +127,8 @@ graph.json
 services.json
   id ─────────────────────────────► prices/services.json service_id
   id ─────────────────────────────► graph.services[]
-  porto_id ◄────────────────────── cross-operator service input
-  features[] ─────────────────────► features.json id or porto_id; tracking iff feature porto_id is tracking
+  kind ◄────────────────────────── cross-operator service intent
+  features[] ─────────────────────► features.json id only; tracking iff linked feature kind is tracking
 
 marks.json
   profiles[].id = mark_profile
@@ -157,23 +158,23 @@ INPUT                          RESOLVE TO NATIVE              OUTPUT FIELD
 provider: deutschepost    →    (loader scope)
 country_code: US          →    zone: world
 weight: 20               →    weight_tier: W0020
-porto_id: small           →    porto_id: small
+envelope: DL             →    filter envelope_ids[]
                           →    product.id: standardbrief      product
                           →    base_price from prices         pricing
 
-services: [registered]    →    porto_id: registered
+services: [registered]    →    kind: registered
                           →    service.id: einschreiben
 
 zone + services           →    graph.edges.marks[zone] + services overrides
                           →    mark_profile: registered_international
-                          →    size 57×30, mark_type stamp
+                          →    size 57×30, type stamp
 
 adapter purchase          →    graph.edges.wire.internetmarke[product][zone][service?]
                           →    wire_code (e.g. 10001) + API payload
                           →    execution.json.wire selects wire table
                           →    execution.json billing/execution gate capabilities
                           →    PDF/PNG bytes                      mark content
-                          →    carrier tracking ref          (runtime string; not a porto_id)
+                          →    carrier tracking ref          (runtime string; not catalog id)
 ```
 
 ---
@@ -185,7 +186,7 @@ adapter purchase          →    graph.edges.wire.internetmarke[product][zone][s
 | `deutschepost` | DE | stamp | 4 (domestic … registered_international) |
 | `laposte` | FR | label | 2 (domestic, international) |
 | `swisspost` | CH | stamp | 2 |
-| `ukrposhta` | UA | label | 1 (`domestic`; `world` zone maps to same profile via `graph.edges.marks`) — **letters only**; products `small` + domestic `large` (`dokument`) |
+| `ukrposhta` | UA | label | 1 (`domestic`; `world` zone maps to same profile via `graph.edges.marks`) — **letters only**; products `lyst_standartnyi` + domestic `dokument` |
 
 Folder rule: **`providers.json` key = `providers/<key>/` directory = consumer `provider` string.**
 
@@ -195,7 +196,7 @@ Folder rule: **`providers.json` key = `providers/<key>/` directory = consumer `p
 
 | Enum | Schema file |
 |------|-------------|
-| Product / service / feature `porto_id` | `schemas/porto_ids.schema.json` |
+| Service / feature `kind` | `schemas/kinds.schema.json` |
 | `mark_type`, `tracking` | `schemas/products.schema.json` |
 | `mark_profile` ids | convention + per-provider `marks.json` (no global enum yet) |
 | Provider keys | `providers.json` + directory names |

@@ -10,11 +10,11 @@ This catalog models **letters only** — no parcels, postcards, personal-deliver
 
 | Layer | In bundle |
 |-------|-----------|
-| Products | `lyst_standartnyi` (`porto_id` **`small`**) — domestic + international; `dokument` (`porto_id` **`large`**) — domestic flat document letter only |
+| Products | `lyst_standartnyi` — domestic + international letters; `dokument` — domestic flat document letter only |
 | Services | Return receipt (paper/electronic); international registered surcharge |
 | Zones | `domestic`, flat `world` (international letters) |
 
-**`porto_id`:** consumer input uses `small` or `large` only for Ukrposhta products. `large` is **only** `dokument` (domestic); international letter postage is always `small` on `lyst_standartnyi`. See [resolution.md](../resolution.md) § Ukrposhta.
+**Product ids:** international letter postage is always `lyst_standartnyi`. `dokument` is **domestic only** (flat document letter). See [resolution.md](../resolution.md) § Ukrposhta.
 
 ---
 
@@ -59,7 +59,7 @@ This catalog models **letters only** — no parcels, postcards, personal-deliver
 
 ## Pricing & geography rules (how we model)
 
-- **Domestic:** `lyst_standartnyi` (`porto_id` **`small`**) — ≤50 g and 50 g–2 kg steps; `dokument` (`porto_id` **`large`**) — flat domestic document letter to 1 kg (Ukrposhta “Документ”; not a parcel SKU).
+- **Domestic:** `lyst_standartnyi` — ≤50 g and 50 g–2 kg steps; `dokument` — flat domestic document letter to 1 kg (Ukrposhta “Документ”; not a parcel SKU).
 - **International letters:** single product `lyst_standartnyi` + zone **`world`** + USD amounts; flat table applies to all destinations in `zones.json` `world.country_codes`.
 - **Services:** AR paper/electronic and international registered are **surcharges** in `prices/services.json`.
 

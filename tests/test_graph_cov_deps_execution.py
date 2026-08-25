@@ -153,14 +153,17 @@ class TestExecutionSemanticsCoverage:
         }
         services = {
             "services": [
-                {"id": "no_trk", "porto_id": "n1"},
+                {"id": "no_trk", "kind": "n1"},
                 {
                     "id": "trk",
-                    "porto_id": "t1",
-                    "features": ["tracking"],
+                    "kind": "t1",
+                    "features": ["sendungsnummer"],
                     "supported_zones": ["domestic"],
                 },
             ]
+        }
+        features = {
+            "features": [{"id": "sendungsnummer", "kind": "tracking"}],
         }
         by_id = {s["id"]: s for s in services["services"]}
         run_validate_execution_semantics(
@@ -170,6 +173,7 @@ class TestExecutionSemanticsCoverage:
             services=services,
             services_by_id=by_id,
             product_dict={p["id"]: p for p in products["products"]},
+            features=features,
         )
         assert not r["errors"]
 
@@ -192,7 +196,7 @@ class TestExecutionSemanticsCoverage:
             ]
         }
         features = {
-            "features": [{"id": "sendungsnummer", "porto_id": "tracking"}],
+            "features": [{"id": "sendungsnummer", "kind": "tracking"}],
         }
         by_id = {s["id"]: s for s in services["services"]}
         run_validate_execution_semantics(
@@ -221,10 +225,10 @@ class TestExecutionSemanticsCoverage:
         }
         services = {
             "services": [
-                {"id": "trk", "features": [1, None, "tracking"]},
+                {"id": "trk", "features": [1, None, "sendungsnummer"]},
             ]
         }
-        features = {"features": [{"porto_id": "tracking"}, "skip"]}
+        features = {"features": [{"id": "sendungsnummer", "kind": "tracking"}, "skip"]}
         by_id = {s["id"]: s for s in services["services"]}
         run_validate_execution_semantics(
             r,
@@ -252,9 +256,10 @@ class TestExecutionSemanticsCoverage:
         }
         services = {
             "services": [
-                {"id": "trk", "features": ["tracking"]},
+                {"id": "trk", "features": ["sendungsnummer"]},
             ]
         }
+        features = {"features": [{"id": "sendungsnummer", "kind": "tracking"}]}
         by_id = {s["id"]: s for s in services["services"]}
         run_validate_execution_semantics(
             r,
@@ -263,6 +268,7 @@ class TestExecutionSemanticsCoverage:
             services=services,
             services_by_id=by_id,
             product_dict={p["id"]: p for p in products["products"]},
+            features=features,
         )
         assert not r["errors"]
 
@@ -309,11 +315,12 @@ class TestExecutionSemanticsCoverage:
                 {"id": "only_plain", "features": ["other"]},
                 {
                     "id": "hidden_trk",
-                    "features": ["tracking"],
+                    "features": ["sendungsnummer"],
                     "supported_zones": ["domestic"],
                 },
             ]
         }
+        features = {"features": [{"id": "sendungsnummer", "kind": "tracking"}]}
         by_id = {s["id"]: s for s in services["services"]}
         run_validate_execution_semantics(
             r,
@@ -322,5 +329,6 @@ class TestExecutionSemanticsCoverage:
             services=services,
             services_by_id=by_id,
             product_dict={p["id"]: p for p in products["products"]},
+            features=features,
         )
         assert not r["errors"]

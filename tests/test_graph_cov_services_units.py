@@ -39,7 +39,7 @@ class TestServicesHelpersCoverage:
     def test_services_invalid_and_missing_price_warn(self) -> None:
         r = _empty_results()
         graph = {"services": ["ghost", "real"]}
-        services = {"services": [{"id": "real", "porto_id": "r1"}]}
+        services = {"services": [{"id": "real", "kind": "r1"}]}
         prices = [{"service_id": "other"}]
         run_validate_graph_services(r, graph=graph, services=services, service_prices=prices)
         assert any("ghost" in e for e in r["errors"])

@@ -9,7 +9,7 @@ from scripts.validators.base import ValidationResults
 
 from .services import get_service_by_ref
 
-TRACKING_PORTO_ID = "tracking"
+TRACKING_KIND = "tracking"
 
 
 def _features_by_id(features: dict[str, Any] | None) -> dict[str, dict[str, Any]]:
@@ -26,14 +26,12 @@ def service_enables_tracking(
     svc: dict[str, Any],
     features_by_id: dict[str, dict[str, Any]],
 ) -> bool:
-    """True iff ``features[]`` resolves to a feature whose ``porto_id`` is tracking."""
+    """True iff ``features[]`` is a feature whose ``kind`` is tracking."""
     for ref in svc.get("features") or []:
         if not isinstance(ref, str):
             continue
-        if ref == TRACKING_PORTO_ID:
-            return True
         feat = features_by_id.get(ref)
-        if isinstance(feat, dict) and feat.get("porto_id") == TRACKING_PORTO_ID:
+        if isinstance(feat, dict) and feat.get("kind") == TRACKING_KIND:
             return True
     return False
 
@@ -107,6 +105,6 @@ def run_validate_execution_semantics(
         if not ok:
             results["errors"].append(
                 f"Product '{product_id}' has tracking optional but no service with "
-                f"feature porto_id {TRACKING_PORTO_ID} covers its zones in "
+                f"feature kind {TRACKING_KIND!r} covers its zones in "
                 f"{SERVICES_FILE} / graph.services ({GRAPH_FILE})"
             )

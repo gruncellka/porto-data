@@ -2,14 +2,14 @@
 
 How franking **graphic footprints** are named and stored in **porto-data**.
 
-**Not the same as `porto_id`.** Product `porto_id` is size-only (`small` … `extra_large`). Service `porto_id` covers add-ons (`registered`, `tracking`, …). `mark_profile` (`domestic`, `international`, …) is **layout output** after zone + services are resolved.
+**Not the same as `kind`.** Products have no `kind`. Service/feature `kind` covers cross-provider grouping (`registered`, `tracking`, …). `mark_profile` (`domestic`, `international`, …) is **layout output** after zone + services are resolved.
 
 ## Three naming layers
 
 | Layer | Where defined | Examples |
 |-------|---------------|----------|
 | **Carrier native** | `products.json` (`id`), `graph.edges.wire` | `standardbrief`, wire `10001` (Deutsche Post Internetmarke) |
-| **Porto `porto_id`** | `schemas/porto_ids.schema.json` | `small` … `extra_large` (product); `registered` (service) |
+| **Porto `kind`** | `schemas/kinds.schema.json` | `registered` (service); `tracking` (feature) |
 | **Porto `mark_profile`** | `marks.json` → `profiles[].id` | `domestic`, `registered_international` |
 
 Display-only: `marks.profiles[].label` — operator-facing text in `marks.json`.
@@ -18,13 +18,13 @@ Display-only: `marks.profiles[].label` — operator-facing text in `marks.json`.
 
 | File | Fields |
 |------|--------|
-| `marks.json` → `profiles[]` | `id`, `mark_type`, `size` (mm), `mime_type` |
-| `marks.json` → `calibrations[]` | Optional checkout output dimensions: `wire` × `mark_profile` (wire layout token) × dpi; franking sizes keyed by Porto profile id in `by_mark_profile` |
+| `marks.json` → `profiles[]` | `id`, `type` (`stamp` \| `label`), `size` (mm), `mime_type`; optional `requires` |
+| `marks.json` → `calibrations[]` | Optional checkout output dimensions: `wire` × `mark_profile` (provider layout token) × dpi; franking sizes keyed by Porto profile id in `by_mark_profile` |
 | `marks.json` → `default_profile` | Fallback when `graph.edges.marks` omits a zone |
 | `graph.json` → `edges.marks` | Per zone: `profile` + optional `services` overrides |
 | `graph.json` → `edges.products` | Product × zone × weight (unchanged) |
 | `zones.json` | Zone catalog — every zone id must appear in **`edges.marks`** |
-| `services.json` | `porto_id`, features — no mark fields |
+| `services.json` | `kind`, features — no mark fields |
 | `formats/layouts.json` | Envelope `post_mark` anchor (x/y mm) |
 
 Validators check profile ids, `edges.marks` keys vs `zones.json`, service ids vs `graph.services`, and schema shape.
@@ -67,7 +67,7 @@ Example (Deutsche Post native ids — other operators use their own `products.js
 3. Look up `marks.profiles[id].size` and `formats/layouts.json` `post_mark`.
 4. When `marks.calibrations[]` is present, use it for wire-specific checkout output size (mm/px at a given dpi).
 
-Service keys are **native ids** from `graph.services` / `services.json`, not `porto_id`.
+Service keys are **native ids** from `graph.services` / `services.json`, not `kind`.
 
 ## Per-provider mark tables
 
@@ -83,5 +83,5 @@ Operator-specific profile matrices, measured sizes, and adapter calibrations liv
 ## See also
 
 - [resolution.md](resolution.md) — product disambiguation via `graph.edges.products`
-- [id.md](id.md) — `porto_id` vocabulary
+- [id.md](id.md) — catalog identity and `kind` vocabulary
 - `porto_data/schemas/marks.schema.json` · `porto_data/schemas/graph.schema.json`

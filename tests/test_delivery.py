@@ -499,21 +499,21 @@ def _write_laposte_bundle(
                 "features": [
                     {
                         "id": "numero_suivi",
-                        "porto_id": "tracking",
+                        "kind": "tracking",
                         "name": "Suivi",
                         "label": "Tracking",
                         "description": "Tracking",
                     },
                     {
                         "id": "preuve_depot",
-                        "porto_id": "proof_of_mailing",
+                        "kind": "acceptance_proof",
                         "name": "Depot",
                         "label": "Depot",
                         "description": "Depot",
                     },
                     {
                         "id": "signature_destinataire",
-                        "porto_id": "recipient_signature",
+                        "kind": "recipient_signature",
                         "name": "Sig",
                         "label": "Sig",
                         "description": "Sig",
@@ -555,7 +555,6 @@ class TestProductsIndemnityAndFeatures:
             products=[
                 {
                     "id": "lettre_verte_suivie",
-                    "porto_id": "small",
                     "zones": ["domestic"],
                     "included_features": ["missing_feat"],
                     "delivery": [{"zones": ["domestic"], "span": "within", "days_max": 3}],
@@ -572,7 +571,6 @@ class TestProductsIndemnityAndFeatures:
             products=[
                 {
                     "id": "lettre_recommandee_r_un",
-                    "porto_id": "small",
                     "zones": ["domestic"],
                     "delivery": [
                         {"zones": ["domestic"], "span": "between", "days_min": 1, "days_max": 2}
@@ -590,7 +588,6 @@ class TestProductsIndemnityAndFeatures:
             products=[
                 {
                     "id": "lettre_verte",
-                    "porto_id": "small",
                     "zones": ["domestic"],
                     "indemnity": {
                         "tier": "R1",
@@ -610,7 +607,6 @@ class TestProductsIndemnityAndFeatures:
             products=[
                 {
                     "id": "lettre_recommandee_r_deux",
-                    "porto_id": "small",
                     "zones": ["domestic"],
                     "indemnity": {
                         "tier": "R1",
@@ -633,14 +629,12 @@ class TestProductsIndemnityAndFeatures:
             products=[
                 {
                     "id": "prod_a",
-                    "porto_id": "small",
                     "zones": ["domestic"],
                     "tracking": "optional",
                     "delivery": delivery,
                 },
                 {
                     "id": "prod_b",
-                    "porto_id": "small",
                     "zones": ["domestic"],
                     "tracking": "optional",
                     "delivery": delivery,
@@ -661,7 +655,6 @@ class TestProductsIndemnityAndFeatures:
             products=[
                 {
                     "id": "lettre_verte_suivie",
-                    "porto_id": "small",
                     "zones": ["domestic"],
                     "included_features": "bad",
                     "delivery": [{"zones": ["domestic"], "span": "within", "days_max": 3}],
@@ -678,7 +671,6 @@ class TestProductsIndemnityAndFeatures:
             products=[
                 {
                     "id": "lettre_recommandee_r_un",
-                    "porto_id": "small",
                     "zones": ["domestic"],
                     "indemnity": {"tier": "R1", "max": {"amount": 0}},
                     "delivery": [
@@ -713,7 +705,6 @@ class TestProductsIndemnityAndFeatures:
             products=[
                 {
                     "id": "lettre_verte_suivie",
-                    "porto_id": "small",
                     "zones": ["domestic"],
                     "included_features": ["numero_suivi", 1, "numero_suivi"],
                     "delivery": [{"zones": ["domestic"], "span": "within", "days_max": 3}],
@@ -748,7 +739,6 @@ class TestProductsIndemnityAndFeatures:
             products=[
                 {
                     "id": "lettre_recommandee_r_un",
-                    "porto_id": "small",
                     "zones": ["domestic"],
                     "indemnity": {"tier": "", "max": {"amount": 1600, "currency": "EUR"}},
                     "delivery": [
@@ -767,7 +757,6 @@ class TestProductsIndemnityAndFeatures:
             products=[
                 {
                     "id": "lettre_recommandee_r_un",
-                    "porto_id": "small",
                     "zones": ["domestic"],
                     "indemnity": {"tier": "R1", "max": "bad"},
                     "delivery": [
@@ -787,7 +776,6 @@ class TestProductsIndemnityAndFeatures:
                 "skip",
                 {
                     "id": "lettre_verte",
-                    "porto_id": "small",
                     "zones": ["domestic"],
                     "delivery": [{"zones": ["domestic"], "span": "within", "days_max": 3}],
                 },
@@ -803,14 +791,12 @@ class TestProductsIndemnityAndFeatures:
             products=[
                 {
                     "id": "prod_a",
-                    "porto_id": "small",
                     "zones": ["domestic"],
                     "tracking": "optional",
                     "delivery": delivery,
                 },
                 {
                     "id": "prod_b",
-                    "porto_id": "small",
                     "zones": ["domestic"],
                     "tracking": "included",
                     "delivery": delivery,
@@ -838,25 +824,21 @@ class TestProductsIndemnityAndFeatures:
                 },
                 {
                     "id": "bad_zones",
-                    "porto_id": "small",
                     "zones": ["domestic"],
                     "delivery": delivery,
                 },
                 {
                     "id": "bad_tiers",
-                    "porto_id": "small",
                     "zones": ["domestic"],
                     "delivery": delivery,
                 },
                 {
                     "id": "bad_zone_type",
-                    "porto_id": "small",
                     "zones": ["domestic"],
                     "delivery": delivery,
                 },
                 {
                     "id": "bad_tier_type",
-                    "porto_id": "small",
                     "zones": ["domestic"],
                     "delivery": delivery,
                 },

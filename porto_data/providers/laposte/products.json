@@ -7,7 +7,6 @@
   "products": [
     {
       "id": "lettre_verte",
-      "porto_id": "small",
       "name": "Lettre verte",
       "label": "Green Letter",
       "envelope_ids": [
@@ -36,7 +35,6 @@
     },
     {
       "id": "lettre_verte_suivie",
-      "porto_id": "small",
       "name": "Lettre verte suivie",
       "label": "Green Letter Tracked",
       "envelope_ids": [
@@ -80,7 +78,6 @@
     },
     {
       "id": "lettre_services_plus",
-      "porto_id": "small",
       "name": "Lettre Services Plus",
       "label": "Letter Services Plus",
       "envelope_ids": [
@@ -113,7 +110,6 @@
     },
     {
       "id": "lettre_recommandee_r_un",
-      "porto_id": "small",
       "name": "Lettre recommandée R1",
       "label": "Registered Letter R1",
       "envelope_ids": [
@@ -154,7 +150,6 @@
     },
     {
       "id": "lettre_recommandee_r_deux",
-      "porto_id": "small",
       "name": "Lettre recommandée R2",
       "label": "Registered Letter R2",
       "envelope_ids": [
@@ -195,7 +190,6 @@
     },
     {
       "id": "lettre_recommandee_r_trois",
-      "porto_id": "small",
       "name": "Lettre recommandée R3",
       "label": "Registered Letter R3",
       "envelope_ids": [
@@ -236,7 +230,6 @@
     },
     {
       "id": "lettre_recommandee_internationale_r_un",
-      "porto_id": "small",
       "name": "Lettre recommandée internationale R1",
       "label": "International Registered Letter R1",
       "envelope_ids": [

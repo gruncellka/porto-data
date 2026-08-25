@@ -90,11 +90,17 @@ def _resolution_fingerprint(product: dict[str, Any], zone: str) -> tuple[Any, ..
         features_key = frozenset(str(x) for x in included if isinstance(x, str))
     else:
         features_key = frozenset()
+    envelopes = product.get("envelope_ids")
+    if isinstance(envelopes, list):
+        envelope_key = frozenset(str(x) for x in envelopes if isinstance(x, str))
+    else:
+        envelope_key = frozenset()
     return (
         _delivery_zone_signature(product, zone),
         tier,
         features_key,
         product.get("tracking"),
+        envelope_key,
     )
 
 
@@ -329,13 +335,10 @@ def _validate_twin_disambiguation(
     graph_edges: dict[str, dict[str, Any]],
     errors: list[str],
 ) -> None:
-    twin_groups: dict[tuple[str, str, str], list[str]] = {}
+    twin_groups: dict[tuple[str, str], list[str]] = {}
     for product_id, edge in graph_edges.items():
         product = products_by_id.get(product_id)
         if product is None:
-            continue
-        porto_id = product.get("porto_id")
-        if not isinstance(porto_id, str):
             continue
         zones_raw = edge.get("zones")
         tiers_raw = edge.get("weight_tiers")
@@ -347,10 +350,10 @@ def _validate_twin_disambiguation(
             for tier in tiers_raw:
                 if not isinstance(tier, str):
                     continue
-                key = (porto_id, zone, tier)
+                key = (zone, tier)
                 twin_groups.setdefault(key, []).append(product_id)
 
-    for (porto_id, zone, tier), product_ids in twin_groups.items():
+    for (zone, tier), product_ids in twin_groups.items():
         unique_ids = sorted(set(product_ids))
         if len(unique_ids) < 2:
             continue
@@ -363,9 +366,9 @@ def _validate_twin_disambiguation(
             if len(pids) < 2:
                 continue
             errors.append(
-                f"providers/{provider}: products {pids} share porto_id={porto_id!r}, "
+                f"providers/{provider}: products {pids} share "
                 f"zone={zone!r}, weight_tier={tier!r} and identical resolution fingerprint "
-                f"{fp!r}; distinguish via delivery[], indemnity.tier, included_features, or tracking"
+                f"{fp!r}; distinguish via envelope_ids, delivery[], indemnity.tier, included_features, or tracking"
             )
 
 

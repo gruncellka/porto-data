@@ -23,7 +23,7 @@ from scripts.data_files import (
     provider_key_order_error,
     redundant_provider_field_error,
 )
-from scripts.validators.porto_ids import REQUIRED_PROVIDER_SCHEMAS
+from scripts.validators.kinds import REQUIRED_PROVIDER_SCHEMAS
 
 
 def validate_mappings_layout() -> int:

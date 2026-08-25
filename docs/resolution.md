@@ -1,31 +1,34 @@
-# Product resolution when `porto_id` is ambiguous
+# Product resolution
 
-Consumers should pass **`porto_id`** (canonical bucket). The bundle resolves to a native **`product.id`** using provider context plus shipment facts.
+Consumers resolve a native **`product.id`** from provider context, destination zone, weight, envelope membership, and optional explicit product pin. There is no cross-provider product size taxonomy — see [id.md](id.md).
 
 ## Inputs
 
 | Input | Role |
 |-------|------|
 | `provider` | Operator id (`deutschepost`, `ukrposhta`, `laposte`, `swisspost`, …) |
-| `porto_id` | Canonical product size bucket (`small`, `large`, …) |
 | `zone` | Resolved from destination country |
 | `weight` | Shipment weight (unit from `graph.unit.weight` / `weights.json`) → `weight_tier` |
-| `services[]` | Optional selected service native ids or porto_ids (consumer) |
+| `envelope_id` | Optional; filter rows whose `envelope_ids[]` includes the envelope |
+| `product_id` | Optional explicit pin to a native `products.id` |
+| `services[]` | Optional selected service native ids or kinds (consumer) |
 
 ## Resolution order
 
-1. Filter `products.json` rows where `porto_id` matches and `zones` contains the target zone.
-2. Resolve `weight_tier` from `weights.json` for the given `weight`.
-3. Intersect with `graph.json` → `edges.products[product_id].zones` and `edges.products[product_id].weight_tiers`.
-4. If exactly one product remains, use that `product.id`.
-5. If multiple products remain, apply provider-specific disambiguation below.
-6. Price lookup uses native `product_id` × `zone` × `weight_tier` in `prices/products.json`.
-7. **Delivery hint:** pick the `products.delivery[]` entry whose `zones` contains the shipment `zone`; join with `markets[CC].working_days` from `providers.json` → `country` (see below).
-8. **Wire code (online purchase only):** when `execution.json` exists, `execution.wire` selects the active **`edges.wire`** channel; then `graph.edges.wire[wire][product_id][zone_id]` — optional `services[service_id]` override when `strategy` is `service` (Deutsche Post Internetmarke). See [Wire resolution](#wire-resolution) below.
+1. Filter `products.json` rows whose `zones` contains the target zone.
+2. When `envelope_id` is known, keep rows whose `envelope_ids[]` includes it.
+3. When `product_id` is pinned, select that row (must still match zone and graph).
+4. Resolve `weight_tier` from `weights.json` for the given `weight`.
+5. Intersect with `graph.json` → `edges.products[product_id].zones` and `edges.products[product_id].weight_tiers`.
+6. If exactly one product remains, use that `product.id`.
+7. If multiple products remain, apply provider-specific disambiguation below.
+8. Price lookup uses native `product_id` × `zone` × `weight_tier` in `prices/products.json`.
+9. **Delivery hint:** pick the `products.delivery[]` entry whose `zones` contains the shipment `zone`; join with `markets[CC].working_days` from `providers.json` → `country` (see below).
+10. **Wire code (online purchase only):** when `execution.json` exists, `execution.wire` selects the active **`edges.wire`** channel; then `graph.edges.wire[wire][product_id][zone_id]` — optional `services[service_id]` override when `strategy` is `service` (Deutsche Post Internetmarke). See [Wire resolution](#wire-resolution) below.
 
-When step 4 still leaves multiple products, the consumer must apply the provider-specific rules below (or an explicit user/operator hint). The bundle does not encode speed class or registered tier as separate `porto_id` values today.
+When step 7 still leaves multiple products, the consumer must apply the provider-specific rules below (or an explicit user/operator hint). The bundle does not encode speed class or registered tier as separate product kinds.
 
-Cross-file refs (graph, prices, rules) always use **native `id`**, never `porto_id`. See [CONTRIBUTING.md](../CONTRIBUTING.md).
+Cross-file refs (graph, prices, rules) always use **native `id`**, never `kind`. See [CONTRIBUTING.md](../CONTRIBUTING.md).
 
 ## Delivery hints (operator SLA, zone-scoped)
 
@@ -63,7 +66,7 @@ After graph filtering, each remaining candidate carries optional facts for SDK/U
 
 ### Disambiguation matrix
 
-When multiple products share `(porto_id, zone, weight_tier)` after graph filtering:
+When multiple products share the same `(zone, weight_tier)` after graph filtering:
 
 | Provider / family | Primary axis | Secondary |
 |-------------------|--------------|-----------|
@@ -71,7 +74,7 @@ When multiple products share `(porto_id, zone, weight_tier)` after graph filteri
 | **La Poste** R1/R2/R3 | `indemnity.tier` | price row |
 | **La Poste** verte / suivie / Services Plus | `included_features[]`, `tracking` | price row |
 | **Deutsche Post** extra_large twins | zone + weight_tier | — |
-| **Ukrposhta** small vs large | zone (large is domestic-only) | — |
+| **Ukrposhta** standard vs document | zone (`dokument` is domestic-only) | envelope / explicit `product.id` |
 | **Else** | explicit native **`product.id`** or user preference | — |
 
 CI rejects twins that share the same resolution fingerprint (`delivery` sig per zone, `indemnity.tier`, `included_features`, `tracking`) for the same graph edge key.
@@ -80,7 +83,7 @@ CI rejects twins that share the same resolution fingerprint (`delivery` sig per 
 
 ### Deutsche Post — extra_large variants
 
-`maxibrief` and `maxibrief_ausland` both map to `extra_large`.
+`maxibrief` and `maxibrief_ausland` both serve the extra-large weight band.
 
 Disambiguation is **deterministic** from **zone + weight_tier** (not user choice):
 
@@ -90,26 +93,26 @@ Disambiguation is **deterministic** from **zone + weight_tier** (not user choice
 | 1001–2000 | W2000 | `zone_1_eu`, `zone_2_europe`, `world` | `maxibrief_ausland` |
 | 1001–2000 | W2000 | `domestic` | *(no product — `maxibrief_ausland` is abroad-only)* |
 
-`maxibrief_ausland` never appears in `domestic` zone, so `extra_large` + DE is never ambiguous. BDD and adapter matrices should use **501 g** for `maxibrief` (W1000) and **1001 g** (or higher in W2000) for `maxibrief_ausland` — not 500 g (W0500, `grossbrief` tier).
+`maxibrief_ausland` never appears in `domestic` zone. BDD and adapter matrices should use **501 g** for `maxibrief` (W1000) and **1001 g** (or higher in W2000) for `maxibrief_ausland` — not 500 g (W0500, `grossbrief` tier).
 
-### Ukrposhta — `small` vs `large` (letters only)
+### Ukrposhta — standard letter vs document (letters only)
 
-| `porto_id` | `product.id` | Zones | Disambiguation |
-|------------|--------------|-------|----------------|
-| `small` | `lyst_standartnyi` | `domestic`, `world` | Default letter; all international letter postage |
-| `large` | `dokument` | `domestic` only | Flat domestic “Документ” letter (≤1 kg); never international |
+| `product.id` | Zones | Disambiguation |
+|--------------|-------|----------------|
+| `lyst_standartnyi` | `domestic`, `world` | Default letter; all international letter postage |
+| `dokument` | `domestic` only | Flat domestic “Документ” letter (≤1 kg); never international |
 
-If `porto_id: large` is requested for a non-domestic zone, resolution fails — use `small`. Parcels and non-letter Ukrposhta SKUs are out of bundle scope.
+If `dokument` is requested for a non-domestic zone, resolution fails — use `lyst_standartnyi`. Parcels and non-letter Ukrposhta SKUs are out of bundle scope.
 
 ### La Poste — registered letter tiers
 
-Several products share `porto_id: small` (`lettre_verte`, `lettre_recommandee_r_un`, `r_deux`, `r_trois`, international variants, …).
+Several products share zone + weight (`lettre_verte`, `lettre_recommandee_r_un`, `r_deux`, `r_trois`, international variants, …).
 
-Disambiguation: **native product id** and **`indemnity.tier`** (R1/R2/R3), not `porto_id` alone. Recommandée is a distinct product SKU at the same letter size — not a `registered` service add-on like Deutsche Post Einschreiben. Compare **`included_features[]`** and price when choosing verte vs suivie vs Services Plus.
+Disambiguation: **native product id** and **`indemnity.tier`** (R1/R2/R3). Recommandée is a distinct product SKU — not a `registered` service add-on like Deutsche Post Einschreiben. Compare **`included_features[]`** and price when choosing verte vs suivie vs Services Plus.
 
-### Swiss Post — same `porto_id`, different speed class
+### Swiss Post — same zone + weight, different speed class
 
-Multiple products share `porto_id: small` or `large`:
+Multiple products may share zone + weight:
 
 - `a_post_standardbrief` vs `b_post_standardbrief` (domestic speed)
 - `international_standardbrief` vs domestic variants
@@ -118,7 +121,7 @@ Disambiguation: prefer **zone** (domestic vs international) first, then compare 
 
 ## Service variants
 
-Multiple `services[].id` rows may share one `porto_id` (e.g. two `registered` variants on Deutsche Post). Select by native service id or operator-specific option once the user picks a variant.
+Multiple `services[].id` rows may share one `kind` (e.g. two `registered` variants on Deutsche Post). Select by native service id or operator-specific option once the user picks a variant.
 
 ## Mark profile resolution
 
@@ -146,7 +149,7 @@ After native `product.id`, `zone`, and optional `service_ids[]` are known:
 
 **`execution.json`:** optional until an execution adapter ships. When present, `wire` must equal one key under `graph.edges.wire`; `billing[]` / `execution[]` gate **capability tokens** only — wire product codes stay in `edges.wire`.
 
-**La Poste `strategy: id`:** each `products.id` is a distinct purchasable product line (Lettre verte, R1–R3, …). `porto_id: small` is a coarse cross-provider size bucket only — resolution requires explicit `products.id` (or indemnity tier). Wire `base` must equal `products.id`.
+**La Poste `strategy: id`:** each `products.id` is a distinct purchasable product line (Lettre verte, R1–R3, …). Resolution requires explicit `products.id` (or indemnity tier). Wire `base` must equal `products.id`.
 
 Adapter wire codes live in **`graph.edges.wire` only** — not on `products.json` or `services.json` rows. Validators reject `native_id`, `zone_native_ids`, and `product_native_ids` on entity files.
 
@@ -172,6 +175,6 @@ Resolve the provider’s market from `providers.json` → `country` → `policy/
 
 ## See also
 
-- [id.md](id.md) — canonical `porto_id` vocabulary
-- [porto_id.md](porto_id.md) — live id → porto_id tables
-- `porto_data/schemas/porto_ids.schema.json` — enum source of truth
+- [id.md](id.md) — catalog identity and `kind` vocabulary
+- [kinds.md](kinds.md) — live id → kind tables
+- `porto_data/schemas/kinds.schema.json` — service/feature kind enum source of truth

@@ -7,7 +7,6 @@
   "products": [
     {
       "id": "a_post_standardbrief",
-      "porto_id": "small",
       "name": "A-Post Standardbrief",
       "label": "A-Post Standard Letter",
       "envelope_ids": [
@@ -34,7 +33,6 @@
     },
     {
       "id": "a_post_grossbrief",
-      "porto_id": "large",
       "name": "A-Post Grossbrief",
       "label": "A-Post Large Letter",
       "envelope_ids": [
@@ -60,7 +58,6 @@
     },
     {
       "id": "b_post_standardbrief",
-      "porto_id": "small",
       "name": "B-Post Standardbrief",
       "label": "B-Post Standard Letter",
       "envelope_ids": [
@@ -88,7 +85,6 @@
     },
     {
       "id": "b_post_grossbrief",
-      "porto_id": "large",
       "name": "B-Post Grossbrief",
       "label": "B-Post Large Letter",
       "envelope_ids": [
@@ -115,7 +111,6 @@
     },
     {
       "id": "international_standardbrief",
-      "porto_id": "small",
       "name": "International Standardbrief (documents)",
       "label": "International Standard Letter",
       "envelope_ids": [
@@ -144,7 +139,6 @@
     },
     {
       "id": "international_grossbrief",
-      "porto_id": "large",
       "name": "International Grossbrief (documents)",
       "label": "International Large Letter",
       "envelope_ids": [
@@ -172,7 +166,6 @@
     },
     {
       "id": "international_maxibrief",
-      "porto_id": "extra_large",
       "name": "International Maxibrief (documents)",
       "label": "International Maxi Letter",
       "envelope_ids": [
