@@ -55,23 +55,23 @@ Cross-file structure lives in each provider’s **`graph.json`** (`edges.product
 
 ## Reference direction (frozen)
 
-1. **Consumer input** → `porto_id` (canonical enum in `schemas/porto_ids.schema.json`).
-2. **graph.json, prices, rules** → native **`id`** only (never `porto_id`).
-3. **Carrier API codes** → runtime / `graph.edges.wire` only (not a `native_id` field on product or service rows).
-4. **`porto_id` on catalog rows** → cross-operator normalization on products, services, features.
-5. **`services[].features`** → each entry is a `features.json` `id` or `porto_id`.
+1. **Consumer input** → destination, weight, optional envelope, optional product `id`, optional service `id` or `kind`.
+2. **graph.json, prices, rules** → concrete **`id`** only (never `kind`).
+3. **Carrier API codes** → runtime / `graph.edges.wire` only (not a field on product or service rows).
+4. **`kind` on services/features** → cross-operator grouping only. Products have no `kind`.
+5. **`services[].features`** → each entry is a `features.json` `id`.
 
-Disambiguation when multiple native rows share one `porto_id`: [docs/resolution.md](docs/resolution.md). Provider file checklist: [docs/provider-template.md](docs/provider-template.md). **Tariff amounts:** [docs/tariff-verification.md](docs/tariff-verification.md) and [docs/providers/](docs/providers/) — reconcile against official sources; `make validate` does not check cent amounts.
+Disambiguation when multiple products share zone + weight: [docs/resolution.md](docs/resolution.md). Provider file checklist: [docs/provider-template.md](docs/provider-template.md). **Tariff amounts:** [docs/tariff-verification.md](docs/tariff-verification.md) and [docs/providers/](docs/providers/) — reconcile against official sources; `make validate` does not check cent amounts.
 
 ## Typical loop
 
 1. Edit JSON and/or schemas.
 2. `make validate` then `make format` (or just `make` for the full gate).
-3. Commit. If hooks regenerate **`porto_data/metadata.json`** or **`docs/porto_id.md`**, include those files in the commit (pre-commit stages both when catalog data changes).
+3. Commit. If hooks regenerate **`porto_data/metadata.json`** or **`docs/kinds.md`**, include those files in the commit (pre-commit stages both when catalog data changes).
 
 ## Commands
 
-**Default validation order:** schema → mappings → markets → addresses → limits → porto_ids → delivery → graph (all providers).
+**Default validation order:** schema → mappings → markets → addresses → limits → kinds → delivery → graph (all providers).
 
 | CLI                                     | Purpose                                            |
 | --------------------------------------- | -------------------------------------------------- |
@@ -81,7 +81,7 @@ Disambiguation when multiple native rows share one `porto_id`: [docs/resolution.
 | `porto validate --type markets`         | `policy/markets.json` vs provider countries        |
 | `porto validate --type addresses`       | `formats/addresses.json` vs layouts/jurisdictions  |
 | `porto validate --type limits`          | `providers/*/limits.json`                          |
-| `porto validate --type porto_ids`       | `porto_id` enums, native-id cross-file refs; regenerates **`docs/porto_id.md`** (must be committed) |
+| `porto validate --type kinds`           | service/feature kinds, concrete-id cross-file refs; regenerates **`docs/kinds.md`** (must be committed) |
 | `porto validate --type delivery` | Zone-scoped **`delivery[]`**, optional **`included_features[]`** / **`indemnity`**, twin resolution fingerprint |
 | `porto validate --type graph`           | `graph.json` (incl. `edges.products`, `edges.marks`) |
 | `porto validate --type graph --analyze` | Verbose graph report                               |
@@ -129,7 +129,7 @@ Packages: npm `@gruncellka/porto-data`, PyPI `gruncellka-porto-data`.
 
 4. **On the release branch only:**
    - Move `CHANGELOG.md` `[Unreleased]` → `[X.Y.Z] - YYYY-MM-DD`
-   - `bump2version minor` (or `patch` / `major`) — updates `package.json` and `pyproject.toml`
+   - `bump2version minor` (or `patch` / `major`) — updates `package.json` and `pyproject.toml`; commit message is `release: vX.Y.Z` (see `.bumpversion.cfg`)
    - `make metadata` — commit regenerated `porto_data/metadata.json` (pre-commit also runs this on version bumps)
    - `make quality` and `make test-cov`
 5. **Tag and publish** from the release branch:

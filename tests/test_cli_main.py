@@ -112,14 +112,14 @@ class TestMainFunction:
             assert result == 0
             mock_validate_limits.assert_called_once()
 
-    @patch("cli.commands.validate.validate_porto_ids")
-    def test_main_validate_porto_ids(self, mock_validate_porto_ids):
-        """Test main with validate --type porto_ids."""
-        mock_validate_porto_ids.return_value = 0
-        with patch("sys.argv", ["porto", "validate", "--type", "porto_ids"]):
+    @patch("cli.commands.validate.validate_kinds")
+    def test_main_validate_kinds(self, mock_validate_kinds):
+        """Test main with validate --type kinds."""
+        mock_validate_kinds.return_value = 0
+        with patch("sys.argv", ["porto", "validate", "--type", "kinds"]):
             result = main()
             assert result == 0
-            mock_validate_porto_ids.assert_called_once()
+            mock_validate_kinds.assert_called_once()
 
     @patch("cli.commands.validate.validate_delivery_cmd")
     def test_main_validate_delivery(self, mock_validate_delivery):

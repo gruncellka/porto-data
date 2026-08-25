@@ -4,7 +4,7 @@
   "services": [
     {
       "id": "a_mail_plus",
-      "porto_id": "tracking",
+      "kind": "tracking",
       "name": "A-Mail Plus",
       "label": "Tracked letter with next-day domestic delivery (A-Mail Plus)",
       "description": "Premium domestic letter with electronic tracking; orderable online where Swiss Post offers it (e.g. WebStamp). International letters in this catalog use untracked products unless the operator adds a supported service.",
@@ -17,7 +17,7 @@
     },
     {
       "id": "zuschlag_dicke",
-      "porto_id": "thickness",
+      "kind": "thickness",
       "name": "Zuschlag Dicke",
       "label": "Letter thickness surcharge (>2 cm up to 5 cm)",
       "description": "Rule-attached surcharge when thickness > 20 mm and <= 50 mm for domestic A/B letters; not user-selectable. Amount in prices/services.json.",

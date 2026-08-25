@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/features.schema.json",
   "title": "Features Schema",
-  "description": "Provider-scoped service feature catalog. Each row has a unified Porto `porto_id` (cross-provider vocabulary) and a provider `id` (this bundle’s primary key; `services[].features` references `id`, and may match `porto_id` when vocabulary aligns). Native-market `name` and English `label`.",
+  "description": "Provider-scoped service feature catalog. Identity is `id`. `name` is the operator’s original name; `label` is English. `kind` is cross-provider grouping only. `services[].features` references feature `id`.",
   "type": "object",
   "required": [
     "file_type",
@@ -26,7 +26,7 @@
         "type": "object",
         "required": [
           "id",
-          "porto_id",
+          "kind",
           "name",
           "label",
           "description"
@@ -35,11 +35,11 @@
           "id": {
             "type": "string",
             "pattern": "^[a-z_]+$",
-            "description": "Provider-scoped feature id in this catalog; referenced from services.json feature lists within the same provider"
+            "description": "Concrete provider-scoped feature id; referenced from services.json feature lists within the same provider"
           },
-          "porto_id": {
-            "$ref": "porto_ids.schema.json#/definitions/feature_porto_id",
-            "description": "Unified Porto feature id for cross-provider resolution and consumer semantics"
+          "kind": {
+            "$ref": "kinds.schema.json#/definitions/feature_kind",
+            "description": "Cross-provider semantic grouping (e.g. tracking). Not unique. Not a graph key."
           },
           "name": {
             "type": "string",
@@ -55,6 +55,10 @@
             "type": "string",
             "minLength": 1,
             "description": "Feature description"
+          },
+          "requires": {
+            "$ref": "requires.schema.json#/definitions/requires",
+            "description": "Optional extra inputs this feature always needs. Omit when none."
           }
         },
         "additionalProperties": false

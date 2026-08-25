@@ -89,7 +89,7 @@ def _default_marks():
     return {
         "file_type": "marks",
         "default_profile": "p",
-        "profiles": [{"id": "p", "mark_type": "stamp", "label": "P"}],
+        "profiles": [{"id": "p", "type": "stamp", "label": "P"}],
     }
 
 
@@ -99,7 +99,7 @@ def _default_features():
         "features": [
             {
                 "id": "tracking_number",
-                "porto_id": "tracking",
+                "kind": "tracking",
                 "name": "T",
                 "label": "T",
                 "description": "D",
@@ -224,7 +224,7 @@ class TestGraphExecutionSemantics:
                 "marks.json": {
                     "file_type": "marks",
                     "default_profile": "p",
-                    "profiles": [{"id": "p", "mark_type": "label", "label": "P"}],
+                    "profiles": [{"id": "p", "type": "label", "label": "P"}],
                 },
             }
         )
@@ -263,11 +263,11 @@ class TestGraphExecutionSemantics:
             "services": [
                 {
                     "id": "no_track",
-                    "porto_id": "x",
+                    "kind": "x",
                     "name": "N",
                     "label": "L",
                     "description": "D",
-                    "features": ["proof_of_mailing"],
+                    "features": ["other"],
                 }
             ],
         }
@@ -290,6 +290,23 @@ class TestGraphExecutionSemantics:
 
 
 class TestGraphMarksAndRules:
+    def test_marks_presentations_field_is_error(self, tmp_path):
+        data_dir = tmp_path / "d"
+        docs = _minimal_extras(
+            {
+                "marks.json": {
+                    "file_type": "marks",
+                    "default_profile": "a",
+                    "presentations": {"stamp": "x"},
+                    "profiles": [{"id": "a", "type": "stamp", "label": "A"}],
+                },
+            },
+        )
+        _write_bundle(data_dir, _base_graph(services=[]), docs)
+        v = GraphValidator(data_dir)
+        v.validate_all()
+        assert any("presentations" in e for e in v.results["errors"])
+
     def test_marks_wrong_file_type(self, tmp_path):
         data_dir = tmp_path / "d"
         docs = _minimal_extras(
@@ -308,8 +325,8 @@ class TestGraphMarksAndRules:
                     "file_type": "marks",
                     "default_profile": "a",
                     "profiles": [
-                        {"id": "a", "mark_type": "stamp", "label": "A"},
-                        {"id": "a", "mark_type": "stamp", "label": "Dup"},
+                        {"id": "a", "type": "stamp", "label": "A"},
+                        {"id": "a", "type": "stamp", "label": "Dup"},
                     ],
                 },
             },
@@ -339,7 +356,7 @@ class TestGraphMarksAndRules:
             "services": [
                 {
                     "id": "svc_thick",
-                    "porto_id": "thickness",
+                    "kind": "thickness",
                     "name": "T",
                     "label": "T",
                     "description": "D",

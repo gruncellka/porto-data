@@ -4,13 +4,13 @@
   "services": [
     {
       "id": "einschreiben",
-      "porto_id": "registered",
+      "kind": "registered",
       "name": "Einschreiben",
       "label": "Registered mail",
       "description": "Tracking with proof of mailing",
       "features": [
-        "tracking",
-        "proof_of_mailing"
+        "sendungsnummer",
+        "einliefernachweis"
       ],
       "supported_zones": [
         "domestic",
@@ -24,12 +24,12 @@
     },
     {
       "id": "einschreiben_einwurf",
-      "porto_id": "registered",
+      "kind": "registered",
       "name": "Einschreiben Einwurf",
       "label": "Registered mail (mailbox delivery)",
       "description": "Registered delivery into mailbox (service variant, not a feature). Internetmarke API: domestic only.",
       "features": [
-        "tracking"
+        "sendungsnummer"
       ],
       "supported_zones": [
         "domestic"
@@ -40,15 +40,15 @@
     },
     {
       "id": "einschreiben_rueckschein",
-      "porto_id": "registered_return_receipt",
+      "kind": "registered_return_receipt",
       "name": "Einschreiben Rückschein",
       "label": "Registered mail with return receipt",
       "description": "Registered mail with signature and return receipt. Internetmarke API: domestic only.",
       "features": [
-        "tracking",
-        "recipient_signature",
-        "return_receipt",
-        "proof_of_delivery"
+        "sendungsnummer",
+        "unterschrift_empfanger",
+        "rueckschein",
+        "zustellnachweis"
       ],
       "supported_zones": [
         "domestic"
@@ -59,7 +59,7 @@
     },
     {
       "id": "zusatzversicherung",
-      "porto_id": "insurance",
+      "kind": "insurance",
       "name": "Zusatzversicherung 500",
       "label": "Additional insurance (500 EUR)",
       "description": "Additional insurance up to 500 EUR",

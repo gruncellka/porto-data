@@ -31,7 +31,7 @@ const files = fs.readdirSync(pdir);
 const hasPy = files.some(f => f.endsWith('.py'));
 if (hasPy) { console.error('FAIL: .py file in npm package'); process.exit(1); }
 const mustHave = [
-  'porto_data/schemas/porto_ids.schema.json',
+  'porto_data/schemas/kinds.schema.json',
 ];
 for (const rel of mustHave) {
   if (!fs.existsSync(path.join(root, rel))) {
@@ -49,7 +49,7 @@ if (!pkg.policy || !pkg.providers || pkg.global) {
 }
 console.log('✓ require() OK, project.version:', pkg.project?.version);
 console.log('✓ No Python files in porto_data/');
-console.log('✓ porto_ids.schema.json present; docs/ excluded');
+console.log('✓ kinds.schema.json present; docs/ excluded');
 "
 cd "$ROOT"
 rm -f "$TARBALL"
@@ -73,10 +73,10 @@ assert __version__, 'missing __version__'
 assert 'project' in metadata, 'missing metadata.project'
 assert 'policy' in metadata and 'formats' in metadata, 'missing policy/formats'
 assert 'global' not in metadata, 'stale global key in metadata'
-assert (root / 'schemas' / 'porto_ids.schema.json').is_file(), 'missing porto_ids.schema.json'
+assert (root / 'schemas' / 'kinds.schema.json').is_file(), 'missing kinds.schema.json'
 assert root.exists(), 'get_package_root() failed'
 print('✓ __version__:', __version__)
-print('✓ metadata, get_package_root(), porto_ids.schema.json OK')
+print('✓ metadata, get_package_root(), kinds.schema.json OK')
 "
 cd "$ROOT"
 echo "✓ PyPI package test passed"

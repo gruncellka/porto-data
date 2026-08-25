@@ -10,7 +10,7 @@ How we reconcile **product and service prices** in this bundle with official car
 
 | Layer | Tool | Proves |
 |-------|------|--------|
-| Structure | `make validate` | Schema, graph edges, native ids, cross-file refs, porto_id enum |
+| Structure | `make validate` | Schema, graph edges, native ids, cross-file refs, service/feature `kind` enum |
 | Amounts | Manual reconciliation (this doc + provider notes) | Cent/rappen amounts match official tables on a given date |
 
 There is **no automated tariff oracle** in CI. Wrong amounts that still satisfy the schema will pass validation.
@@ -58,7 +58,7 @@ Use **per-country or multi-zone** models when the official table is country- or 
 | Provider | Last checked (UTC) | Confidence | Notes |
 |----------|-------------------|------------|-------|
 | Deutsche Post | 2026-06-21 | verified | Letter ladder + Einschreiben surcharges vs deutschepost.de |
-| Ukrposhta | 2026-06-21 | verified | **Letters only** — domestic `small`/`large` + international `small` + AR / intl registered; parcels and non-letter variants out of scope |
+| Ukrposhta | 2026-06-21 | verified | **Letters only** — `lyst_standartnyi` + domestic `dokument` + international letters + AR / intl registered; parcels and non-letter variants out of scope |
 | La Poste | 2026-06-21 | verified | Lettre verte / suivie / Services Plus / recommandée vs laposte.fr 2026 tables |
 | Swiss Post | 2026-06-21 | verified | A/B domestic + international documents + thickness surcharge vs post.ch |
 
@@ -67,7 +67,7 @@ Use **per-country or multi-zone** models when the official table is country- or 
 ## Common pitfalls (all carriers)
 
 - **VAT vs net:** some sites show VAT-inclusive (Ukrposhta domestic page) vs VAT-exempt (Deutsche Post letters). Match the column the carrier uses for the product you model.
-- **Product vs surcharge:** registered / Einschreiben / AR are **services** (`service_prices.json`) when sold as add-ons. Carriers may also sell registered letters as **standalone product SKUs** — still use size `porto_id` (e.g. La Poste recommandée → `small`; disambiguate by native `id`).
+- **Product vs surcharge:** registered / Einschreiben / AR are **services** (`service_prices.json`) when sold as add-ons. Carriers may also sell registered letters as **standalone product SKUs** — use native `products.id` (e.g. La Poste recommandée rows).
 - **Weight tier ids:** JSON uses `W0020`, `W0050`, … — must match `graph.json` edges and official weight breaks.
 - **Effective dating:** bundle baseline `effective_from: 2026-01-01` unless a row has a known later tariff start (e.g. Ukrposhta international letters `2026-04-01`).
 

@@ -57,7 +57,7 @@ class TestMarksProfilesCoverage:
 
     def test_provider_mismatch(self) -> None:
         r = _empty_results()
-        marks = _marks_doc(profiles=[{"id": "a", "mark_type": "stamp", "label": "A"}])
+        marks = _marks_doc(profiles=[{"id": "a", "type": "stamp", "label": "A"}])
         marks["provider"] = "other"
         run_validate_marks_profiles(r, graph={}, marks=marks)
         assert any("path-implied" in e for e in r["errors"])
@@ -74,8 +74,8 @@ class TestMarksProfilesCoverage:
             "file_type": "marks",
             "profiles": [
                 "bad",
-                {"id": "dup", "mark_type": "stamp", "label": "A"},
-                {"id": "dup", "mark_type": "stamp", "label": "B"},
+                {"id": "dup", "type": "stamp", "label": "A"},
+                {"id": "dup", "type": "stamp", "label": "B"},
             ],
             "default_profile": 123,
         }
@@ -86,21 +86,21 @@ class TestMarksProfilesCoverage:
 
     def test_default_profile_not_in_profiles(self) -> None:
         r = _empty_results()
-        marks = _marks_doc(profiles=[{"id": "a", "mark_type": "stamp", "label": "A"}])
+        marks = _marks_doc(profiles=[{"id": "a", "type": "stamp", "label": "A"}])
         marks["default_profile"] = "missing"
         run_validate_marks_profiles(r, graph={}, marks=marks)
         assert any("not found in profiles" in e for e in r["errors"])
 
     def test_legacy_marks_zones_rejected(self) -> None:
         r = _empty_results()
-        marks = _marks_doc(profiles=[{"id": "a", "mark_type": "stamp", "label": "A"}])
+        marks = _marks_doc(profiles=[{"id": "a", "type": "stamp", "label": "A"}])
         marks["zones"] = {"domestic": "a"}
         run_validate_marks_profiles(r, graph={}, marks=marks)
         assert any("edges.marks" in e for e in r["errors"])
 
     def test_calibration_wire_must_match_graph(self) -> None:
         r = _empty_results()
-        marks = _marks_doc(profiles=[{"id": "domestic", "mark_type": "stamp", "label": "D"}])
+        marks = _marks_doc(profiles=[{"id": "domestic", "type": "stamp", "label": "D"}])
         marks["calibrations"] = [
             {
                 "wire": "unknown_api",
@@ -128,7 +128,7 @@ class TestMarksProfilesCoverage:
 
     def test_calibration_by_mark_profile_requires_known_profiles(self) -> None:
         r = _empty_results()
-        marks = _marks_doc(profiles=[{"id": "domestic", "mark_type": "stamp", "label": "D"}])
+        marks = _marks_doc(profiles=[{"id": "domestic", "type": "stamp", "label": "D"}])
         marks["calibrations"] = [
             {
                 "wire": "webstamp",
@@ -145,7 +145,7 @@ class TestMarksProfilesCoverage:
 
     def test_calibration_rejects_source_run(self) -> None:
         r = _empty_results()
-        marks = _marks_doc(profiles=[{"id": "domestic", "mark_type": "stamp", "label": "D"}])
+        marks = _marks_doc(profiles=[{"id": "domestic", "type": "stamp", "label": "D"}])
         marks["calibrations"] = [
             {
                 "wire": "mtel",
@@ -166,21 +166,21 @@ class TestMarksProfilesCoverage:
 
     def test_calibrations_must_be_array_when_present(self) -> None:
         r = _empty_results()
-        marks = _marks_doc(profiles=[{"id": "a", "mark_type": "stamp", "label": "A"}])
+        marks = _marks_doc(profiles=[{"id": "a", "type": "stamp", "label": "A"}])
         marks["calibrations"] = "bad"
         run_validate_marks_profiles(r, graph={}, marks=marks)
         assert any("calibrations must be an array" in e for e in r["errors"])
 
     def test_calibration_row_must_be_object(self) -> None:
         r = _empty_results()
-        marks = _marks_doc(profiles=[{"id": "a", "mark_type": "stamp", "label": "A"}])
+        marks = _marks_doc(profiles=[{"id": "a", "type": "stamp", "label": "A"}])
         marks["calibrations"] = ["bad"]
         run_validate_marks_profiles(r, graph={}, marks=marks)
         assert any("calibrations[0] must be an object" in e for e in r["errors"])
 
     def test_calibration_requires_wire_and_layout(self) -> None:
         r = _empty_results()
-        marks = _marks_doc(profiles=[{"id": "a", "mark_type": "stamp", "label": "A"}])
+        marks = _marks_doc(profiles=[{"id": "a", "type": "stamp", "label": "A"}])
         marks["calibrations"] = [{"wire": "", "mark_profile": ""}]
         run_validate_marks_profiles(r, graph={}, marks=marks)
         assert any("wire must be a non-empty string" in e for e in r["errors"])
@@ -188,7 +188,7 @@ class TestMarksProfilesCoverage:
 
     def test_calibration_requires_dimension_data(self) -> None:
         r = _empty_results()
-        marks = _marks_doc(profiles=[{"id": "a", "mark_type": "stamp", "label": "A"}])
+        marks = _marks_doc(profiles=[{"id": "a", "type": "stamp", "label": "A"}])
         marks["calibrations"] = [
             {"wire": "api", "mark_profile": "stamp_only", "by_mark_profile": {}}
         ]
@@ -197,7 +197,7 @@ class TestMarksProfilesCoverage:
 
     def test_calibration_dimension_box_validation(self) -> None:
         r = _empty_results()
-        marks = _marks_doc(profiles=[{"id": "a", "mark_type": "stamp", "label": "A"}])
+        marks = _marks_doc(profiles=[{"id": "a", "type": "stamp", "label": "A"}])
         marks["calibrations"] = [
             {
                 "wire": "api",
@@ -263,7 +263,7 @@ class TestMarkEdgesCoverage:
         run_validate_mark_edges(
             r,
             graph={"file_type": "graph", "edges": {"products": {}, "marks": "bad"}},
-            marks=_marks_doc(profiles=[{"id": "a", "mark_type": "stamp", "label": "A"}]),
+            marks=_marks_doc(profiles=[{"id": "a", "type": "stamp", "label": "A"}]),
         )
         assert any("edges.marks must be an object" in e for e in r["errors"])
 
@@ -272,7 +272,7 @@ class TestMarkEdgesCoverage:
         run_validate_mark_edges(
             r,
             graph={"file_type": "graph", "edges": {"products": {}, "marks": {}}, "mark_edges": {}},
-            marks=_marks_doc(profiles=[{"id": "a", "mark_type": "stamp", "label": "A"}]),
+            marks=_marks_doc(profiles=[{"id": "a", "type": "stamp", "label": "A"}]),
         )
         assert any("mark_edges is removed" in e for e in r["errors"])
 
@@ -283,14 +283,14 @@ class TestMarkEdgesCoverage:
 
     def test_marks_map_empty_when_zones_defined(self) -> None:
         r = _empty_results()
-        marks = _marks_doc(profiles=[{"id": "a", "mark_type": "stamp", "label": "A"}])
+        marks = _marks_doc(profiles=[{"id": "a", "type": "stamp", "label": "A"}])
         zones = {"zones": [{"id": "domestic"}]}
         run_validate_mark_edges(r, graph=_graph_doc(marks_map={}), marks=marks, zones=zones)
         assert any("must be non-empty when zones.json" in e for e in r["errors"])
 
     def test_marks_map_unknown_zone_key(self) -> None:
         r = _empty_results()
-        marks = _marks_doc(profiles=[{"id": "a", "mark_type": "stamp", "label": "A"}])
+        marks = _marks_doc(profiles=[{"id": "a", "type": "stamp", "label": "A"}])
         graph = _graph_doc(marks_map={"world": {"profile": "a"}})
         zones = {"zones": [{"id": "domestic"}]}
         run_validate_mark_edges(r, graph=graph, marks=marks, zones=zones)
@@ -298,7 +298,7 @@ class TestMarkEdgesCoverage:
 
     def test_marks_map_missing_zone_from_zones_json(self) -> None:
         r = _empty_results()
-        marks = _marks_doc(profiles=[{"id": "a", "mark_type": "stamp", "label": "A"}])
+        marks = _marks_doc(profiles=[{"id": "a", "type": "stamp", "label": "A"}])
         graph = _graph_doc(marks_map={"domestic": {"profile": "a"}})
         zones = {"zones": [{"id": "domestic"}, {"id": "world"}]}
         run_validate_mark_edges(r, graph=graph, marks=marks, zones=zones)
@@ -306,7 +306,7 @@ class TestMarkEdgesCoverage:
 
     def test_marks_map_unknown_profile_and_service(self) -> None:
         r = _empty_results()
-        marks = _marks_doc(profiles=[{"id": "a", "mark_type": "stamp", "label": "A"}])
+        marks = _marks_doc(profiles=[{"id": "a", "type": "stamp", "label": "A"}])
         graph = _graph_doc(
             marks_map={
                 "domestic": {
@@ -323,7 +323,7 @@ class TestMarkEdgesCoverage:
 
     def test_marks_map_bad_shape(self) -> None:
         r = _empty_results()
-        marks = _marks_doc(profiles=[{"id": "a", "mark_type": "stamp", "label": "A"}])
+        marks = _marks_doc(profiles=[{"id": "a", "type": "stamp", "label": "A"}])
         graph = _graph_doc(
             marks_map={
                 "domestic": "bad",
@@ -340,20 +340,20 @@ class TestMarkEdgesCoverage:
         run_validate_mark_edges(
             r,
             graph=None,
-            marks=_marks_doc(profiles=[{"id": "a", "mark_type": "stamp", "label": "A"}]),
+            marks=_marks_doc(profiles=[{"id": "a", "type": "stamp", "label": "A"}]),
         )
         assert not r["errors"]
 
     def test_marks_map_services_not_object(self) -> None:
         r = _empty_results()
-        marks = _marks_doc(profiles=[{"id": "a", "mark_type": "stamp", "label": "A"}])
+        marks = _marks_doc(profiles=[{"id": "a", "type": "stamp", "label": "A"}])
         graph = _graph_doc(marks_map={"domestic": {"profile": "a", "services": "bad"}})
         run_validate_mark_edges(r, graph=graph, marks=marks)
         assert any(".services must be an object" in e for e in r["errors"])
 
     def test_marks_map_empty_service_profile_value(self) -> None:
         r = _empty_results()
-        marks = _marks_doc(profiles=[{"id": "a", "mark_type": "stamp", "label": "A"}])
+        marks = _marks_doc(profiles=[{"id": "a", "type": "stamp", "label": "A"}])
         graph = _graph_doc(
             marks_map={"domestic": {"profile": "a", "services": {"einschreiben": ""}}},
             services=["einschreiben"],
@@ -365,8 +365,8 @@ class TestMarkEdgesCoverage:
         r = _empty_results()
         marks = _marks_doc(
             profiles=[
-                {"id": "domestic", "mark_type": "stamp", "label": "D"},
-                {"id": "registered", "mark_type": "stamp", "label": "R"},
+                {"id": "domestic", "type": "stamp", "label": "D"},
+                {"id": "registered", "type": "stamp", "label": "R"},
             ]
         )
         graph = _graph_doc(

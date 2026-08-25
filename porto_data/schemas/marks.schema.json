@@ -46,7 +46,7 @@
         "type": "object",
         "required": [
           "id",
-          "mark_type",
+          "type",
           "label"
         ],
         "properties": {
@@ -55,13 +55,17 @@
             "pattern": "^[a-z0-9_]+$",
             "description": "Stable profile id; referenced from graph.edges.marks"
           },
-          "mark_type": {
+          "type": {
             "type": "string",
             "enum": [
               "stamp",
               "label"
             ],
-            "description": "Must match product.mark_type for products using this profile"
+            "description": "Artifact kind. Must match product.mark_type for products using this profile. Does not imply address requirements."
+          },
+          "requires": {
+            "$ref": "requires.schema.json#/definitions/requires",
+            "description": "Optional extra inputs this profile always needs. Omit when none."
           },
           "label": {
             "type": "string",

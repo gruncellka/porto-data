@@ -60,6 +60,11 @@ def run_validate_marks_profiles(
             f"{MARKS_FILE}: zones is removed; use {GRAPH_FILE} edges.marks for resolution"
         )
 
+    if marks.get("presentations") is not None:
+        results["errors"].append(
+            f"{MARKS_FILE}: presentations is not a catalog field; checkout layout belongs to the adapter"
+        )
+
     _validate_calibrations(
         results,
         marks=marks,

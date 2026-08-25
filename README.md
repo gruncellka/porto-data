@@ -45,12 +45,12 @@ E-commerce and logistics (multi-carrier quotes, letters), compliance (sanctions,
 | File                        | Description                                                                                                                                                                                                                                            |
 | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `products.json`             | Letter (and related) products; **`unit.weight`** only (`g`); physical sizes via **`envelope_ids`** + global **`envelopes.json`** (`envelopes[]`: **`id`**, **`width`/`height`** mm)                                                                    |
-| `services.json`             | Add-on services: **`porto_id`** (unified), provider **`id`**, native **`name`**, English **`label`**                                                                                                                                                   |
+| `services.json`             | Add-on services: **`kind`** (cross-provider grouping), provider **`id`**, native **`name`**, English **`label`**                                                                                                                                         |
 | `prices/products.json`      | Base letter postage grid (`file_type` **`product_prices`**): **`product_id`** × **`zone`** × **`weight_tier`** (effective-dated **`amount`** in cents)                                                                                                 |
 | `prices/services.json`      | Add-on service amounts (`file_type` **`service_prices`**) keyed by **`service_id`** (matches catalog **`services.json`** **`id`**)                                                                                                                     |
 | `zones.json`                | Geographic zones and country mappings                                                                                                                                                                                                                  |
 | `weights.json`              | Weight brackets for pricing                                                                                                                                                                                                                            |
-| `features.json`             | Operator-scoped **`id`**, unified **`porto_id`**, native **`name`**, English **`label`**                                                                                                                                                               |
+| `features.json`             | Operator-scoped **`id`**, **`kind`** (cross-provider grouping), native **`name`**, English **`label`**                                                                                                                                                 |
 | `limits.json`               | Provider operational overlay on global policy (**`limits[]` often empty**; see [docs/policy.md](docs/policy.md)) |
 | `graph.json`                | **`dependencies`**, **`edges.products`**, **`edges.marks`**, **`services`**, **`unit`** |
 | `marks.json`                | Franking footprint **catalog**: **`profiles[]`** only; resolution in **`graph.edges.marks`** |
@@ -63,7 +63,7 @@ E-commerce and logistics (multi-carrier quotes, letters), compliance (sanctions,
 
 All JSON validates against **`schemas/`**; **`mappings.json`** maps entities to paths; **`metadata.json`** has checksums and schema URLs.
 
-**Cross-file rules:** native **`id`** in graph/prices; **`porto_id`** for cross-operator input — see [docs/resolution.md](docs/resolution.md). Envelope membership + weight (not mm handbook): [docs/envelope-product-matrix.md](docs/envelope-product-matrix.md).
+**Cross-file rules:** native **`id`** in graph/prices; **`kind`** on services/features for cross-operator intent — see [docs/resolution.md](docs/resolution.md). Envelope membership + weight (not mm handbook): [docs/envelope-product-matrix.md](docs/envelope-product-matrix.md).
 
 **Tariff verification:** CI validates structure only — not that amounts match live carrier tables. See [docs/tariff-verification.md](docs/tariff-verification.md) and per-provider notes under [docs/providers/](docs/providers/).
 
@@ -89,7 +89,7 @@ All JSON validates against **`schemas/`**; **`mappings.json`** maps entities to 
 
 - **Mark profiles:** [docs/marks.md](docs/marks.md) — sizes and `zones`.
 - **Policy & fiscal defaults:** [docs/policy.md](docs/policy.md)
-- **Unified `porto_id`:** [docs/id.md](docs/id.md) · [docs/porto_id.md](docs/porto_id.md) · [docs/resolution.md](docs/resolution.md) · [docs/provider-template.md](docs/provider-template.md)
+- **Catalog identity:** [docs/id.md](docs/id.md) · [docs/kinds.md](docs/kinds.md) · [docs/resolution.md](docs/resolution.md) · [docs/provider-template.md](docs/provider-template.md)
 - **Tariff reconciliation:** [docs/tariff-verification.md](docs/tariff-verification.md)
 
 **Carriers in this bundle** — tariff / modeling notes, shipped JSON folder, and official site:

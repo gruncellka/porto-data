@@ -7,7 +7,7 @@ from scripts.validators.graph import validate_graph as _validate_provider_graph
 from scripts.validators.limits_scope import validate_limits_scope
 from scripts.validators.mappings_layout import validate_mappings_layout
 from scripts.validators.markets import validate_markets
-from scripts.validators.porto_ids import validate_porto_ids as _validate_porto_ids_impl
+from scripts.validators.kinds import validate_kinds as _validate_kinds_impl
 from scripts.validators.schema import validate_all_schemas
 
 
@@ -27,9 +27,9 @@ def validate_mappings() -> int:
     return validate_mappings_layout()
 
 
-def validate_porto_ids() -> int:
-    """Validate porto_id enums and native-id cross-file references."""
-    return _validate_porto_ids_impl()
+def validate_kinds() -> int:
+    """Validate service/feature kinds and concrete-id cross-file references."""
+    return _validate_kinds_impl()
 
 
 def validate_markets_cmd() -> int:
@@ -60,7 +60,7 @@ def validate_graph(analyze: bool = False, provider: str | None = None) -> int:
 
 
 def validate_all() -> int:
-    """Validate data bundle: schema → mappings → markets → addresses → limits → porto_ids → delivery → graph."""
+    """Validate data bundle: schema → mappings → markets → addresses → limits → kinds → delivery → graph."""
     schema_result = validate_schema()
     if schema_result != 0:
         return schema_result
@@ -76,9 +76,9 @@ def validate_all() -> int:
     limits_result = validate_limits()
     if limits_result != 0:
         return limits_result
-    porto_ids_result = validate_porto_ids()
-    if porto_ids_result != 0:
-        return porto_ids_result
+    kinds_result = validate_kinds()
+    if kinds_result != 0:
+        return kinds_result
     delivery_result = validate_delivery_cmd()
     if delivery_result != 0:
         return delivery_result

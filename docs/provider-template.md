@@ -45,7 +45,7 @@ Provider `graph.json` → `dependencies` may reference:
 - **`label`** — short display name in `providers.json` (UI / prose).
 - **`name`** — registered legal entity in `providers.json`.
 - **`id`** — native catalog key: **local display name → ASCII snake_case** (operator language; disambiguation suffixes in that language). Used in graph, prices, rules. Not English semantic names (`return_receipt_*`) or mixed-locale abbreviations (`inter`).
-- **`porto_id`** — canonical consumer bucket; enum in `schemas/porto_ids.schema.json`.
+- **`kind`** — cross-provider grouping on services/features only; enum in `schemas/kinds.schema.json`. Products have no `kind`.
 - **Wire checkout codes** — adapter payload values in `graph.edges.wire[wire]` only (not on product/service rows).
 - **Execution manifest** — `execution.json` declares active wire channel + billing/execution capability tokens; not checkout product codes.
 

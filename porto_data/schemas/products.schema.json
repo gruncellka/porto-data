@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/products.schema.json",
   "title": "Products Schema",
-  "description": "Schema for postal products definitions. Each row has unified Porto `porto_id` (size bucket), provider `id` (native catalog key), native `name`, and English `label`.",
+  "description": "Schema for postal product rows. Identity is provider-scoped `id`. `name` is the operator’s original name; `label` is the English display name. Products have no kind and no size-bucket taxonomy.",
   "type": "object",
   "required": [
     "file_type",
@@ -41,7 +41,6 @@
         "type": "object",
         "required": [
           "id",
-          "porto_id",
           "name",
           "label",
           "envelope_ids",
@@ -56,7 +55,7 @@
           "id": {
             "type": "string",
             "pattern": "^[a-z_]+$",
-            "description": "Native operator product id (local-language slug, ASCII snake_case). Used in graph, prices, and rules — not porto_id."
+            "description": "Concrete provider-scoped product id (ASCII snake_case). Graph, prices, wire, and pins use this — the only identifier."
           },
           "name": {
             "type": "string",
@@ -67,10 +66,6 @@
             "type": "string",
             "minLength": 1,
             "description": "English human-readable label for unified tooling and UI"
-          },
-          "porto_id": {
-            "$ref": "porto_ids.schema.json#/definitions/product_porto_id",
-            "description": "Unified Porto letter size bucket (small … extra_large). Not service semantics — use services.json for registered/tracking add-ons. Graph and prices use native `id`, not `porto_id`."
           },
           "envelope_ids": {
             "type": "array",
@@ -130,6 +125,10 @@
             ],
             "description": "What kind of provider mark this product produces when executed (data-driven; not inferred in adapters)."
           },
+          "requires": {
+            "$ref": "requires.schema.json#/definitions/requires",
+            "description": "Optional extra inputs this product always needs. Omit when none."
+          },
           "tracking": {
             "type": "string",
             "enum": [
@@ -137,7 +136,7 @@
               "optional",
               "included"
             ],
-            "description": "Product tracking posture (none | optional | included). Not the service/feature porto_id tracking. Actual tracking numbers are runtime-only, never stored in porto-data."
+            "description": "Product tracking posture (none | optional | included). Not service/feature kind tracking. Actual tracking numbers are runtime-only, never stored in porto-data."
           },
           "delivery": {
             "type": "array",

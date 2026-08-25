@@ -1,4 +1,4 @@
-"""Validate porto_id vocabulary and native-id cross-file references."""
+"""Validate service/feature kind vocabulary and concrete-id cross-file references."""
 
 from __future__ import annotations
 
@@ -19,9 +19,8 @@ from scripts.data_files import (
 )
 from scripts.utils import load_json
 
-PORTO_IDS_SCHEMA = "schemas/porto_ids.schema.json"
-MAPPING_DOC = "docs/porto_id.md"
-RESOLUTION_DOC = "docs/resolution.md"
+KINDS_SCHEMA = "schemas/kinds.schema.json"
+MAPPING_DOC = "docs/kinds.md"
 
 REQUIRED_PROVIDER_SCHEMAS: tuple[str, ...] = (
     "schemas/marks.schema.json",
@@ -37,14 +36,13 @@ REQUIRED_PROVIDER_SCHEMAS: tuple[str, ...] = (
 )
 
 
-def _load_porto_id_enums(root: Path) -> dict[str, set[str]]:
-    """Load canonical porto_id enums from porto_ids.schema.json."""
-    schema_path = root / PORTO_IDS_SCHEMA
+def _load_kind_enums(root: Path) -> dict[str, set[str]]:
+    schema_path = root / KINDS_SCHEMA
     with open(schema_path, encoding="utf-8") as f:
         doc = json.load(f)
     defs = doc.get("definitions", {})
     out: dict[str, set[str]] = {}
-    for key in ("product_porto_id", "service_porto_id", "feature_porto_id"):
+    for key in ("service_kind", "feature_kind"):
         enum = defs.get(key, {}).get("enum", [])
         out[key] = set(enum)
     return out
@@ -66,46 +64,27 @@ def _product_ids(products: dict[str, Any] | None) -> set[str]:
     }
 
 
-def _porto_ids_by_entity(
-    rows: list[dict[str, Any]],
-) -> dict[str, list[str]]:
-    """Map porto_id -> list of native ids for duplicate detection."""
+def _kinds_by_entity(rows: list[dict[str, Any]]) -> dict[str, list[str]]:
     grouped: dict[str, list[str]] = defaultdict(list)
     for row in rows:
         if not isinstance(row, dict):
             continue
-        pid = row.get("porto_id")
+        kind = row.get("kind")
         nid = row.get("id")
-        if pid and nid:
-            grouped[str(pid)].append(str(nid))
+        if kind and nid:
+            grouped[str(kind)].append(str(nid))
     return dict(grouped)
 
 
-def _enum_overlap_errors(enums: dict[str, set[str]]) -> list[str]:
-    """Product porto_id must not share tokens with service or feature enums."""
-    errors: list[str] = []
-    for other_key in ("service_porto_id", "feature_porto_id"):
-        overlap = enums["product_porto_id"] & enums[other_key]
-        if overlap:
-            joined = ", ".join(f"'{v}'" for v in sorted(overlap))
-            errors.append(
-                f"porto_ids.schema.json: product_porto_id and {other_key} overlap on {joined}; "
-                "products are size buckets only — move service/feature semantics to the correct enum"
-            )
-    return errors
-
-
 def _render_mapping_doc(providers_data: dict[str, dict[str, list[tuple[str, str]]]]) -> str:
-    """Build porto_id.md from collected provider rows."""
     lines = [
-        "# Porto ID mapping tables",
+        "# Kind mapping tables",
         "",
         "Generated from live bundle data. Normative enum: "
-        "`porto_data/schemas/porto_ids.schema.json`. Policy: [id.md](id.md).",
+        "`porto_data/schemas/kinds.schema.json`. Policy: [id.md](id.md).",
         "",
-        "Cross-file refs (graph, prices, rules) use **native `id`**. "
-        "Consumer input uses **`porto_id`** — see [resolution.md](resolution.md) when "
-        "multiple native rows share one `porto_id`.",
+        "Identity is always concrete **`id`**. Graph, prices, and rules use **`id`**. "
+        "`kind` on services and features is cross-provider grouping only. Products have no kind.",
         "",
     ]
     for provider in list_provider_ids():
@@ -114,30 +93,39 @@ def _render_mapping_doc(providers_data: dict[str, dict[str, list[tuple[str, str]
         blocks = providers_data[provider]
         lines.append(f"## {provider}")
         lines.append("")
-        for entity, rows in blocks.items():
+        products = blocks.get("products") or []
+        if products:
+            lines.append("### products")
+            lines.append("")
+            lines.append("| `id` |")
+            lines.append("|------|")
+            for native_id, _ in sorted(products):
+                lines.append(f"| `{native_id}` |")
+            lines.append("")
+        for entity in ("services", "features"):
+            rows = blocks.get(entity) or []
             if not rows:
                 continue
             lines.append(f"### {entity}")
             lines.append("")
-            porto_col = f"{entity} `porto_id`"
-            lines.append(f"| native `id` | {porto_col} |")
-            lines.append("|-------------|------------|")
-            for native_id, porto_id in sorted(rows):
-                lines.append(f"| `{native_id}` | `{porto_id}` |")
+            lines.append(f"| `id` | {entity} `kind` |")
+            lines.append("|------|----------------|")
+            for native_id, kind in sorted(rows):
+                lines.append(f"| `{native_id}` | `{kind}` |")
             lines.append("")
     return "\n".join(lines).rstrip() + "\n"
 
 
-def validate_porto_ids(*, write_mapping_doc: bool = True) -> int:
-    """Validate porto_id usage and native-id refs across all providers."""
+def validate_kinds(*, write_mapping_doc: bool = True) -> int:
+    """Validate kind usage and concrete-id refs across all providers."""
     root = get_project_root()
     repo_root = root.parent if (root.parent / "pyproject.toml").exists() else root
     mapping_path = repo_root / MAPPING_DOC
 
-    print("Validating porto_id vocabulary and native-id references...\n")
+    print("Validating service/feature kinds and concrete-id references...\n")
 
-    enums = _load_porto_id_enums(root)
-    errors: list[str] = _enum_overlap_errors(enums)
+    enums = _load_kind_enums(root)
+    errors: list[str] = []
     warnings: list[str] = []
     doc_data: dict[str, dict[str, list[tuple[str, str]]]] = {}
 
@@ -164,58 +152,63 @@ def validate_porto_ids(*, write_mapping_doc: bool = True) -> int:
             if not isinstance(p, dict):
                 continue
             native_id = p.get("id")
-            porto_id = p.get("porto_id")
             if isinstance(native_id, str) and native_id.endswith("_intl"):
                 errors.append(
                     f"{pid}: product id '{native_id}' uses deprecated _intl suffix; "
-                    f"use a local-language slug (e.g. mizhnarodne_zareiestrovane); "
-                    f"abbreviated locale tokens like inter_ are discouraged"
+                    f"use a local-language slug"
                 )
-            if native_id and porto_id:
-                doc_data[pid]["products"].append((str(native_id), str(porto_id)))
-            if porto_id and porto_id not in enums["product_porto_id"]:
+            if p.get("porto_id") is not None:
                 errors.append(
-                    f"{pid}: product '{native_id}' porto_id '{porto_id}' "
-                    f"not in canonical product enum"
+                    f"{pid}: product '{native_id}' must not have porto_id "
+                    "(products have no size-bucket or kind field)"
                 )
+            if p.get("kind") is not None:
+                errors.append(
+                    f"{pid}: product '{native_id}' must not have kind "
+                    "(no cross-provider product taxonomy)"
+                )
+            if native_id:
+                doc_data[pid]["products"].append((str(native_id), ""))
 
         for s in services.get("services", []):
             if not isinstance(s, dict):
                 continue
             native_id = s.get("id")
-            porto_id = s.get("porto_id")
+            kind = s.get("kind")
             if isinstance(native_id, str) and native_id.endswith("_intl"):
                 errors.append(
                     f"{pid}: service id '{native_id}' uses deprecated _intl suffix; "
-                    f"use a local-language slug (e.g. mizhnarodne_zareiestrovane); "
-                    f"abbreviated locale tokens like inter_ are discouraged"
+                    f"use a local-language slug"
                 )
-            if native_id and porto_id:
-                doc_data[pid]["services"].append((str(native_id), str(porto_id)))
-            if porto_id and porto_id not in enums["service_porto_id"]:
+            if s.get("porto_id") is not None:
+                errors.append(f"{pid}: service '{native_id}' must use kind, not porto_id")
+            if native_id and kind:
+                doc_data[pid]["services"].append((str(native_id), str(kind)))
+            if kind and kind not in enums["service_kind"]:
                 errors.append(
-                    f"{pid}: service '{native_id}' porto_id '{porto_id}' "
-                    f"not in canonical service enum"
+                    f"{pid}: service '{native_id}' kind '{kind}' not in canonical service_kind enum"
                 )
+            elif not kind:
+                errors.append(f"{pid}: service '{native_id}' missing kind")
 
         feature_ids: set[str] = set()
-        feature_porto_ids: set[str] = set()
         for f in features.get("features", []):
             if not isinstance(f, dict):
                 continue
             native_id = f.get("id")
-            porto_id = f.get("porto_id")
-            if native_id and porto_id:
-                doc_data[pid]["features"].append((str(native_id), str(porto_id)))
+            kind = f.get("kind")
+            if f.get("porto_id") is not None:
+                errors.append(f"{pid}: feature '{native_id}' must use kind, not porto_id")
+            if native_id and kind:
+                doc_data[pid]["features"].append((str(native_id), str(kind)))
             if isinstance(native_id, str):
                 feature_ids.add(native_id)
-            if porto_id and porto_id not in enums["feature_porto_id"]:
+            if kind and kind not in enums["feature_kind"]:
                 errors.append(
-                    f"{pid}: feature '{native_id}' porto_id '{porto_id}' "
-                    f"not in canonical feature enum"
+                    f"{pid}: feature '{native_id}' kind '{kind}' not in canonical feature_kind enum"
                 )
-            elif isinstance(porto_id, str):
-                feature_porto_ids.add(porto_id)
+            elif not kind:
+                errors.append(f"{pid}: feature '{native_id}' missing kind")
 
         for s in services.get("services", []):
             if not isinstance(s, dict):
@@ -223,28 +216,19 @@ def validate_porto_ids(*, write_mapping_doc: bool = True) -> int:
             for ref in s.get("features") or []:
                 if not isinstance(ref, str):
                     continue
-                if ref in feature_ids or ref in feature_porto_ids:
+                if ref in feature_ids:
                     continue
                 errors.append(
                     f"{pid}: service '{s.get('id')}' features[] {ref!r} "
-                    f"must match a features.json id or porto_id"
+                    f"must match a features.json id (not kind)"
                 )
 
-        prod_dupes = _porto_ids_by_entity(products.get("products", []))
-        for porto_id, native_ids in sorted(prod_dupes.items()):
+        svc_dupes = _kinds_by_entity(services.get("services", []))
+        for kind, native_ids in sorted(svc_dupes.items()):
             if len(native_ids) > 1:
                 warnings.append(
-                    f"{pid}: product porto_id '{porto_id}' maps to multiple native ids "
-                    f"{native_ids} — disambiguate via zone/weight/services "
-                    f"(see {RESOLUTION_DOC})"
-                )
-
-        svc_dupes = _porto_ids_by_entity(services.get("services", []))
-        for porto_id, native_ids in sorted(svc_dupes.items()):
-            if len(native_ids) > 1:
-                warnings.append(
-                    f"{pid}: service porto_id '{porto_id}' maps to native ids {native_ids} "
-                    f"(expected for operator variants)"
+                    f"{pid}: service kind '{kind}' maps to ids {native_ids} "
+                    "(expected for operator variants)"
                 )
 
         for product_id in product_prices_doc.get("product_prices", []):
@@ -255,15 +239,9 @@ def validate_porto_ids(*, write_mapping_doc: bool = True) -> int:
                 continue
             ref_str = str(ref)
             if ref_str not in product_id_set:
-                if ref_str in enums["product_porto_id"]:
-                    errors.append(
-                        f"{pid}: product_prices product_id '{ref_str}' is a porto_id; "
-                        f"use native product id from {PRODUCTS_FILE}"
-                    )
-                else:
-                    errors.append(
-                        f"{pid}: product_prices product_id '{ref_str}' not found in {PRODUCTS_FILE}"
-                    )
+                errors.append(
+                    f"{pid}: product_prices product_id '{ref_str}' not found in {PRODUCTS_FILE}"
+                )
 
         for sp in service_prices_doc.get("service_prices", []):
             if not isinstance(sp, dict):
@@ -273,28 +251,23 @@ def validate_porto_ids(*, write_mapping_doc: bool = True) -> int:
                 continue
             ref_str = str(ref)
             if ref_str not in service_id_set:
-                if ref_str in enums["service_porto_id"]:
-                    errors.append(
-                        f"{pid}: service_prices service_id '{ref_str}' is a porto_id; "
-                        f"use native service id from {SERVICES_FILE}"
-                    )
-                else:
-                    errors.append(
-                        f"{pid}: service_prices service_id '{ref_str}' not found in {SERVICES_FILE}"
-                    )
+                hint = ""
+                if ref_str in enums["service_kind"]:
+                    hint = " (kind is not a service id; use concrete id)"
+                errors.append(
+                    f"{pid}: service_prices service_id '{ref_str}' not found in {SERVICES_FILE}{hint}"
+                )
 
         available = graph.get("services", [])
         for sid in available:
             sid_str = str(sid)
             if sid_str not in service_id_set:
-                if sid_str in enums["service_porto_id"]:
-                    errors.append(
-                        f"{pid}: services '{sid_str}' is a porto_id; "
-                        f"use native service id from {SERVICES_FILE} "
-                        f"({GRAPH_FILE} -> services)"
-                    )
-                else:
-                    errors.append(f"{pid}: services '{sid_str}' not found in {SERVICES_FILE}")
+                hint = ""
+                if sid_str in enums["service_kind"]:
+                    hint = " (kind is not a service id; use concrete id)"
+                errors.append(
+                    f"{pid}: graph services '{sid_str}' not found in {SERVICES_FILE}{hint}"
+                )
 
     for w in warnings:
         print(f"⚠️  WARNING: {w}")
@@ -305,7 +278,7 @@ def validate_porto_ids(*, write_mapping_doc: bool = True) -> int:
         print(f"❌ ERROR: {err}")
     if errors:
         print()
-        print("❌ porto_id validation failed.")
+        print("❌ kind validation failed.")
         return 1
 
     if write_mapping_doc:
@@ -315,13 +288,11 @@ def validate_porto_ids(*, write_mapping_doc: bool = True) -> int:
         if not mapping_path.exists() or mapping_path.read_text(encoding="utf-8") != content:
             mapping_path.write_text(content, encoding="utf-8")
             print(f"❌ ERROR: {rel} was out of date and has been regenerated.")
-            print(
-                "   Commit the updated file (or run 'porto validate --type porto_ids' and review)."
-            )
+            print("   Commit the updated file (or run 'porto validate --type kinds' and review).")
             print()
-            print("❌ porto_id validation failed (mapping doc drift).")
+            print("❌ kind validation failed (mapping doc drift).")
             return 1
         print(f"✓ {rel} is current")
 
-    print(f"✅ porto_id validation OK ({len(list_provider_ids())} providers).\n")
+    print(f"✅ kind validation OK ({len(list_provider_ids())} providers).\n")
     return 0

@@ -8,7 +8,7 @@
   "profiles": [
     {
       "id": "domestic",
-      "mark_type": "stamp",
+      "type": "stamp",
       "label": "WebStamp domestic",
       "description": "Domestic WebStamp franking graphic",
       "scope_notes": "Nominal footprint; registered WebStamp uses same size as domestic until measured separately",
@@ -23,7 +23,7 @@
     },
     {
       "id": "international",
-      "mark_type": "stamp",
+      "type": "stamp",
       "label": "WebStamp international",
       "description": "International WebStamp franking graphic",
       "scope_notes": "Same as domestic; registered WebStamp uses same size until measured separately",

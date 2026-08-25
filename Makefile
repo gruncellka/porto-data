@@ -26,7 +26,7 @@ help:
 	@echo ""
 	@echo "Most Common Commands:"
 	@echo "  make quality       - validate + format + lint + type-check"
-	@echo "  make validate      - Validate all JSON (schema → mappings → markets → addresses → limits → porto_ids → delivery → graph)"
+	@echo "  make validate      - Validate all JSON (schema → mappings → markets → addresses → limits → kinds → delivery → graph)"
 	@echo "  make format        - Format JSON and Python"
 	@echo "  make lint          - Lint JSON and Python"
 	@echo ""
@@ -97,15 +97,15 @@ validate-json: venv
 	@. $(VENV)/bin/activate && PYTHONPATH=. python -m cli.main validate --type addresses
 	@echo "Validating providers/*/limits.json..."
 	@. $(VENV)/bin/activate && PYTHONPATH=. python -m cli.main validate --type limits
-	@echo "Validating porto_id vocabulary and native-id refs..."
-	@. $(VENV)/bin/activate && PYTHONPATH=. python -m cli.main validate --type porto_ids
+	@echo "Validating service/feature kinds and concrete-id refs..."
+	@. $(VENV)/bin/activate && PYTHONPATH=. python -m cli.main validate --type kinds
 	@if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then \
-		if [ -n "$$(git diff docs/porto_id.md)" ]; then \
-			echo "❌ docs/porto_id.md is out of date. Run 'porto validate --type porto_ids' and commit the updated file."; \
-			git diff docs/porto_id.md; \
+		if [ -n "$$(git diff docs/kinds.md)" ]; then \
+			echo "❌ docs/kinds.md is out of date. Run 'porto validate --type kinds' and commit the updated file."; \
+			git diff docs/kinds.md; \
 			exit 1; \
 		fi; \
-		echo "✓ docs/porto_id.md is up to date"; \
+		echo "✓ docs/kinds.md is up to date"; \
 	fi
 	@echo "Validating delivery (zone SLAs)..."
 	@. $(VENV)/bin/activate && PYTHONPATH=. python -m cli.main validate --type delivery

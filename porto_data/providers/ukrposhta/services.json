@@ -4,7 +4,7 @@
   "services": [
     {
       "id": "paperove_povidomlennia_vruchennia",
-      "porto_id": "return_receipt",
+      "kind": "return_receipt",
       "name": "Паперове повідомлення про вручення",
       "label": "Return receipt (paper)",
       "description": "Paper delivery notice returned to sender",
@@ -14,7 +14,7 @@
     },
     {
       "id": "elektronne_povidomlennia_vruchennia",
-      "porto_id": "return_receipt",
+      "kind": "return_receipt",
       "name": "Електронне повідомлення про вручення",
       "label": "Return receipt (electronic)",
       "description": "Electronic delivery notice returned to sender",
@@ -24,7 +24,7 @@
     },
     {
       "id": "mizhnarodne_zareiestrovane",
-      "porto_id": "registered",
+      "kind": "registered",
       "name": "Міжнародне зареєстроване",
       "label": "International registered",
       "description": "Registered surcharge for international letters (LETTER; no declared value)",
