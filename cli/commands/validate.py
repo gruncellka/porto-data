@@ -4,10 +4,10 @@ from scripts.data_files import list_provider_ids
 from scripts.validators.addresses import validate_addresses
 from scripts.validators.delivery import validate_delivery
 from scripts.validators.graph import validate_graph as _validate_provider_graph
+from scripts.validators.kinds import validate_kinds as _validate_kinds_impl
 from scripts.validators.limits_scope import validate_limits_scope
 from scripts.validators.mappings_layout import validate_mappings_layout
 from scripts.validators.markets import validate_markets
-from scripts.validators.kinds import validate_kinds as _validate_kinds_impl
 from scripts.validators.schema import validate_all_schemas
 
 

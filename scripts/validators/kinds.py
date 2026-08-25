@@ -157,11 +157,6 @@ def validate_kinds(*, write_mapping_doc: bool = True) -> int:
                     f"{pid}: product id '{native_id}' uses deprecated _intl suffix; "
                     f"use a local-language slug"
                 )
-            if p.get("porto_id") is not None:
-                errors.append(
-                    f"{pid}: product '{native_id}' must not have porto_id "
-                    "(products have no size-bucket or kind field)"
-                )
             if p.get("kind") is not None:
                 errors.append(
                     f"{pid}: product '{native_id}' must not have kind "
@@ -180,8 +175,6 @@ def validate_kinds(*, write_mapping_doc: bool = True) -> int:
                     f"{pid}: service id '{native_id}' uses deprecated _intl suffix; "
                     f"use a local-language slug"
                 )
-            if s.get("porto_id") is not None:
-                errors.append(f"{pid}: service '{native_id}' must use kind, not porto_id")
             if native_id and kind:
                 doc_data[pid]["services"].append((str(native_id), str(kind)))
             if kind and kind not in enums["service_kind"]:
@@ -197,8 +190,6 @@ def validate_kinds(*, write_mapping_doc: bool = True) -> int:
                 continue
             native_id = f.get("id")
             kind = f.get("kind")
-            if f.get("porto_id") is not None:
-                errors.append(f"{pid}: feature '{native_id}' must use kind, not porto_id")
             if native_id and kind:
                 doc_data[pid]["features"].append((str(native_id), str(kind)))
             if isinstance(native_id, str):

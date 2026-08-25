@@ -361,13 +361,6 @@ class TestKindsValidator:
         (prov / "features.json").write_text(json.dumps(features), encoding="utf-8")
         assert validate_kinds(write_mapping_doc=False) == 1
 
-    def test_rejects_product_porto_id_or_kind(self, kinds_sandbox) -> None:
-        _tmp, _root, prov = kinds_sandbox
-        products = json.loads((prov / "products.json").read_text(encoding="utf-8"))
-        products["products"][0]["porto_id"] = "small"
-        (prov / "products.json").write_text(json.dumps(products), encoding="utf-8")
-        assert validate_kinds(write_mapping_doc=False) == 1
-
     def test_skips_non_dict_product_rows(self, kinds_sandbox) -> None:
         _tmp, _root, prov = kinds_sandbox
         products = json.loads((prov / "products.json").read_text(encoding="utf-8"))
@@ -380,16 +373,6 @@ class TestKindsValidator:
         products = json.loads((prov / "products.json").read_text(encoding="utf-8"))
         products["products"][0]["kind"] = "small"
         (prov / "products.json").write_text(json.dumps(products), encoding="utf-8")
-        assert validate_kinds(write_mapping_doc=False) == 1
-
-    def test_rejects_service_and_feature_porto_id(self, kinds_sandbox) -> None:
-        _tmp, _root, prov = kinds_sandbox
-        services = json.loads((prov / "services.json").read_text(encoding="utf-8"))
-        services["services"][0]["porto_id"] = "registered"
-        (prov / "services.json").write_text(json.dumps(services), encoding="utf-8")
-        features = json.loads((prov / "features.json").read_text(encoding="utf-8"))
-        features["features"][0]["porto_id"] = "tracking"
-        (prov / "features.json").write_text(json.dumps(features), encoding="utf-8")
         assert validate_kinds(write_mapping_doc=False) == 1
 
     def test_rejects_missing_service_and_feature_kind(self, kinds_sandbox) -> None:

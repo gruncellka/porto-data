@@ -71,15 +71,15 @@ class TestKindNamingPolicy:
 
     def test_rejects_empty_or_non_string_kind(self) -> None:
         assert validate_kind_token("") == ["kind: kind must be a non-empty string"]
-        assert validate_kind_token("Bad-Kind")  # noqa: not empty
+        assert validate_kind_token("Bad-Kind")  # not empty; fails snake_case / shape
 
     def test_rejects_invalid_snake_case(self) -> None:
         errors = validate_kind_token("BadKind")
         assert any("snake_case" in e for e in errors)
 
-    def test_three_word_with_connector_passes_shape_without_registry(self) -> None:
-        # Legacy shape (proof_of_*) — connector middle word; not in shipped enum.
-        assert validate_kind_token("proof_of_mailing") == []
+    def test_three_word_connector_shape_without_registry(self) -> None:
+        assert validate_kind_token("registered_return_receipt") == []
+        assert validate_kind_token("foo_of_bar") == []  # connector middle word
         errors = validate_kind_token("foo_bar_baz")
         assert any("_THREE_WORD_KINDS" in e for e in errors)
 

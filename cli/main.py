@@ -71,10 +71,10 @@ def main() -> int:
             validate_all,
             validate_delivery_cmd,
             validate_graph,
+            validate_kinds,
             validate_limits,
             validate_mappings,
             validate_markets_cmd,
-            validate_kinds,
             validate_schema,
         )
 

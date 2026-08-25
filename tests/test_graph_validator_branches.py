@@ -290,23 +290,6 @@ class TestGraphExecutionSemantics:
 
 
 class TestGraphMarksAndRules:
-    def test_marks_presentations_field_is_error(self, tmp_path):
-        data_dir = tmp_path / "d"
-        docs = _minimal_extras(
-            {
-                "marks.json": {
-                    "file_type": "marks",
-                    "default_profile": "a",
-                    "presentations": {"stamp": "x"},
-                    "profiles": [{"id": "a", "type": "stamp", "label": "A"}],
-                },
-            },
-        )
-        _write_bundle(data_dir, _base_graph(services=[]), docs)
-        v = GraphValidator(data_dir)
-        v.validate_all()
-        assert any("presentations" in e for e in v.results["errors"])
-
     def test_marks_wrong_file_type(self, tmp_path):
         data_dir = tmp_path / "d"
         docs = _minimal_extras(

@@ -15,7 +15,7 @@
 | Anti-pattern | Correct layer |
 |--------------|---------------|
 | `registered` on `products.json` | native product id / `services.kind` |
-| `kind` or `porto_id` on products | concrete `products.id` only |
+| `kind` on products | concrete `products.id` only |
 | `address_area` / `print_area` in layouts | `window` + `post_mark`; compose in app |
 | `kind` as graph/prices keys | native `product_id` / `service_id` |
 | `productCode` in `execution.json` | `graph.edges.wire` |
@@ -213,20 +213,20 @@ If a PR lists operators out of bundle order **`deutschepost` → `ukrposhta` →
 - **Body:** `Use canonical order deutschepost → ukrposhta → laposte → swisspost in prose, tables, and JSON object keys. Enforced in mappings validation for registry/mappings/metadata.`
 - **Labels:** `maintainability`, `consistency`
 
-### 23) Products must not have `kind` or `porto_id` (blocking)
+### 23) Products must not have `kind` (blocking)
 
-If a PR adds or changes **`products.json`** so any product row includes **`kind`**, **`porto_id`**, or other cross-provider taxonomy fields:
+If a PR adds or changes **`products.json`** so any product row includes **`kind`** or other cross-provider taxonomy fields:
 
-- **Title:** `Product row uses kind or porto_id (removed)`
-- **Body:** `Products have concrete id only. Registered / recommandée / Einschreiben semantics belong on services.json (kind) or are implied by native product id (e.g. La Poste lettre_recommandee_*). Never put kind or porto_id on a product row. See docs/id.md and docs/resolution.md.`
+- **Title:** `Product row uses kind (removed)`
+- **Body:** `Products have concrete id only. Registered / recommandée / Einschreiben semantics belong on services.json (kind) or are implied by native product id (e.g. La Poste lettre_recommandee_*). Never put kind on a product row. See docs/id.md and docs/resolution.md.`
 - **Labels:** `data`, `consistency`, `resolution`
 
 ### 24) Service/feature `kind` must match `kinds.schema.json` (blocking)
 
-If a PR edits **`kinds.schema.json`** or any **`services.json`** / **`features.json`** `kind` field with values outside the canonical enums, or reintroduces **`porto_id`** on service/feature rows:
+If a PR edits **`kinds.schema.json`** or any **`services.json`** / **`features.json`** `kind` field with values outside the canonical enums:
 
-- **Title:** `Invalid or legacy kind on catalog row`
-- **Body:** `Services and features use kind (not porto_id). Enum source: kinds.schema.json. Service/feature may share tokens where capability and priced add-on align (id.md). CI enforces via scripts/validators/kinds.py and tests/test_kinds.py.`
+- **Title:** `Invalid kind on catalog row`
+- **Body:** `Services and features use kind. Enum source: kinds.schema.json. Service/feature may share tokens where capability and priced add-on align (id.md). CI enforces via scripts/validators/kinds.py and tests/test_kinds.py.`
 - **Labels:** `data`, `consistency`
 
 ### 25) `kind` catalog changes need validator + mapping doc (blocking)

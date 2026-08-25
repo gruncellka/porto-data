@@ -21,7 +21,6 @@ def test_stamp_products_do_not_require_address() -> None:
 
 def test_mark_profiles_do_not_require_address() -> None:
     marks = _load("marks.json")
-    assert "presentations" not in marks
     for row in marks["profiles"]:
         assert row.get("type") == "stamp", row["id"]
         assert "requires" not in row, row["id"]

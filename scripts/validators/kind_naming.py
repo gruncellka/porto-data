@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import re
-from typing import Iterable
+from collections.abc import Iterable
 
 # Same rule family as product names (PortoMark): prefer one word; add words only when needed.
 MAX_KIND_WORDS = 3
