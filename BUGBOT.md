@@ -4,7 +4,7 @@
 
 - Review **this `porto-data` tree only**: integrity, validators, release safety.
 - Layer philosophy: [`.cursor/rules/data.mdc`](.cursor/rules/data.mdc) · `docs/identity.md` — do not restate here.
-- Consistency: registry ↔ mappings ↔ disk; markets ↔ providers; catalog ↔ `graph.json`; `kind` ↔ native ids.
+- Consistency: registry ↔ mappings ↔ disk; markets ↔ providers; catalog ↔ `graph.json`; `kind` ↔ catalog ids.
 - Resolution: `graph.json` (`dependencies`, `edges`, `edges.wire`, `services`) + optional `execution.json` (wire + billing/execution tokens only — not wire tables).
 - Provider order in prose: `deutschepost` → `ukrposhta` → `laposte` → `swisspost`.
 - Empty `limits.json` `limits[]` is valid (global restrictions in `policy/restrictions.json`).
@@ -14,10 +14,10 @@
 
 | Anti-pattern | Correct layer |
 |--------------|---------------|
-| `registered` on `products.json` | native product id / `services.kind` |
+| `registered` on `products.json` | catalog product id / `services.kind` |
 | `kind` on products | concrete `products.id` only |
 | `address_area` / `print_area` in layouts | `window` + `post_mark`; compose in app |
-| `kind` as graph/prices keys | native `product_id` / `service_id` |
+| `kind` as graph/prices keys | catalog `product_id` / `service_id` |
 | `productCode` in `execution.json` | `graph.edges.wire` |
 | `native_id` on product/service rows | `edges.wire` |
 | Compose blocks in `layouts.json` | `formats/addresses.json` |
@@ -106,7 +106,7 @@ These rules align reviews with validators under `scripts/validators/` and **`mak
 If a PR adds or keeps a **top-level** `"links"` or `"available_services"` key in any `porto_data/providers/**/graph.json`, or reintroduces **`services.integrations`**:
 
 - **Title:** `graph.json uses removed top-level keys`
-- **Body:** `Use edges (product → zones + weight_tiers; wire under edges.wire) and top-level services (native service ids). Remove links, available_services, services.integrations, lookup_rules, global_settings, price_lookup per graph.schema.json. Execution manifest: execution.json.`
+- **Body:** `Use edges (product → zones + weight_tiers; wire under edges.wire) and top-level services (catalog service ids). Remove links, available_services, services.integrations, lookup_rules, global_settings, price_lookup per graph.schema.json. Execution manifest: execution.json.`
 - **Labels:** `data`, `resolution`
 
 ### 10) Provider registry and mappings stay in lockstep (blocking)
@@ -130,7 +130,7 @@ If a PR adds a new `*.json` under `porto_data/providers/<id>/` and the file is a
 If a PR changes any of **`graph.json`** (`edges`, `services`, `dependencies`), **`products.json`**, **`prices/products.json`**, **`prices/services.json`**, **`zones.json`**, or **`weights.json`** for a provider:
 
 - **Title:** `Verify graph resolution and cross-file consistency`
-- **Body:** `Run porto validate --type graph (or make validate) for that provider. Confirm edges reference existing product_ids; zones and weight_tiers match products and price rows; dependencies price paths are correct; graph services and price service_ids use native ids from services.json.`
+- **Body:** `Run porto validate --type graph (or make validate) for that provider. Confirm edges reference existing product_ids; zones and weight_tiers match products and price rows; dependencies price paths are correct; graph services and price service_ids use catalog ids from services.json.`
 - **Labels:** `resolution`, `consistency`
 
 ### 13) Validator changes must keep tests and coverage (blocking)
@@ -189,12 +189,12 @@ If a PR adds or keeps **`intl_ccy`**, **`intl_excl`**, top-level **`vat.inclusiv
 - **Body:** `Porto keys: international_currency (not intl_ccy); vat.domestic.inclusive and vat.international.inclusive (not intl_excl or flat vat.inclusive). See JSON naming doctrine in .cursorrules.`
 - **Labels:** `data`, `consistency`
 
-### 20) Porto-assigned native ids must not use _intl suffix (blocking)
+### 20) Catalog ids must not use _intl suffix (blocking)
 
-If a PR adds a **new** native product or service `id` ending in **`_intl`** (Porto-assigned naming; carrier tokens like `inter_r` are OK):
+If a PR adds a **new** catalog product or service `id` ending in **`_intl`** (Porto-assigned naming; carrier tokens like `inter_r` are OK):
 
-- **Title:** `Native id uses deprecated _intl suffix`
-- **Body:** `Native ids must be local-language slugs of the operator display name (see docs/provider-template.md). Avoid English semantic ids and abbreviated locale tokens. _intl suffix is deprecated for new ids. Enforced in scripts/validators/kinds.py.`
+- **Title:** `Catalog id uses deprecated _intl suffix`
+- **Body:** `Catalog ids must be local-language slugs of the operator display name (see docs/provider-template.md). Avoid English semantic ids and abbreviated locale tokens. _intl suffix is deprecated for new ids. Enforced in scripts/validators/kinds.py.`
 - **Labels:** `data`, `consistency`
 
 ### 21) Market row key order (non-blocking)
@@ -218,7 +218,7 @@ If a PR lists operators out of bundle order **`deutschepost` → `ukrposhta` →
 If a PR adds or changes **`products.json`** so any product row includes **`kind`** or other cross-provider taxonomy fields:
 
 - **Title:** `Product row uses kind (removed)`
-- **Body:** `Products have concrete id only. Registered / recommandée / Einschreiben semantics belong on services.json (kind) or are implied by native product id (e.g. La Poste lettre_recommandee_*). Never put kind on a product row. See docs/id.md and docs/resolution.md.`
+- **Body:** `Products have concrete id only. Registered / recommandée / Einschreiben semantics belong on services.json (kind) or are implied by catalog product id (e.g. La Poste lettre_recommandee_*). Never put kind on a product row. See docs/id.md and docs/resolution.md.`
 - **Labels:** `data`, `consistency`, `resolution`
 
 ### 24) Service/feature `kind` must match `kinds.schema.json` (blocking)
@@ -247,10 +247,10 @@ If a PR adds or restores layout or format fields that describe **addressing work
 
 ### 27) Cross-layer identifier misuse (blocking)
 
-If a PR uses **`kind`** (or other cross-provider tokens) in **`graph.json`**, **`prices/*.json`**, or **`rules.json`** keys/refs where **native `id`** is required — or conflates **`mark_profile`** ids / **zone** ids with **`kind`** without updating `docs/identity.md`:
+If a PR uses **`kind`** (or other cross-provider tokens) in **`graph.json`**, **`prices/*.json`**, or **`rules.json`** keys/refs where catalog **`id`** is required — or conflates **`mark_profile`** ids / **zone** ids with **`kind`** without updating `docs/identity.md`:
 
 - **Title:** `Wrong identifier layer in catalog wiring`
-- **Body:** `graph, prices, rules: native product_id / service_id only. kind is consumer intent on services/features. mark_profile and zone are separate namespaces. See docs/identity.md.`
+- **Body:** `graph, prices, rules: catalog product_id / service_id only. kind is consumer intent on services/features. mark_profile and zone are separate namespaces. See docs/identity.md.`
 - **Labels:** `data`, `resolution`, `consistency`
 
 ### 28) New schema field without clear owning layer (non-blocking)
@@ -266,7 +266,7 @@ If a PR adds properties to **`porto_data/schemas/**`** or new top-level keys in 
 If a PR adds normative rules only to **`docs/*.md`** or **`.cursorrules`** for catalog behavior that **`make validate` does not check**, and the invariant is machine-checkable:
 
 - **Title:** `Catalog rule lacks validator coverage`
-- **Body:** `Encode checkable invariants in scripts/validators/ + tests/ (make test-cov). Examples: kind enum validation, layout window-only geometry, native-id refs in prices/graph.`
+- **Body:** `Encode checkable invariants in scripts/validators/ + tests/ (make test-cov). Examples: kind enum validation, layout window-only geometry, catalog id refs in prices/graph.`
 - **Labels:** `quality`, `tests`
 
 ### 30) Product delivery must cover every zone (blocking)
@@ -282,7 +282,7 @@ If a PR adds or changes **`products.json`** and any product’s **`delivery[]`**
 If a PR adds **`lane`**, **`priority`**, **`economy`**, or similar interpreter enums on **`products.json`** or **`products.schema.json`** to mean carrier speed class:
 
 - **Title:** `Speed class belongs in SDK, not catalog`
-- **Body:** `Catalog stores operator time facts (delivery span + days per zone) and markets.working_days calendar. Disambiguation (A-Post vs B-Post) uses native product id or delivery hints — not a normalized lane enum.`
+- **Body:** `Catalog stores operator time facts (delivery span + days per zone) and markets.working_days calendar. Disambiguation (A-Post vs B-Post) uses catalog product id or delivery hints — not a normalized lane enum.`
 - **Labels:** `data`, `architecture`, `consistency`
 
 ### 32) Product indemnity and twin disambiguation (blocking)
@@ -315,7 +315,7 @@ If a PR adds or changes **`execution.json`** and:
 If a PR adds **`native_id`**, **`productCode`**, or adapter checkout keys on **`products.json`** / **`services.json`** rows (or in schemas as required catalog fields) instead of **`graph.edges.wire`**:
 
 - **Title:** `Adapter wire code on catalog entity row`
-- **Body:** `Checkout catalog keys are per wire in graph.edges.wire (product × zone [× service composite]). products/services keep operator native id; services/features may carry kind. CI: wire_edges entity guard.`
+- **Body:** `Checkout catalog keys are per wire in graph.edges.wire (product × zone [× service composite]). products/services keep catalog id; services/features may carry kind. CI: wire_edges entity guard.`
 - **Labels:** `data`, `resolution`, `consistency`
 
 ### 35) Mark calibrations must align with wire ids (blocking)

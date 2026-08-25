@@ -12,8 +12,8 @@ Mistake without this: smuggle compose/workflow into catalog JSON, put service se
 porto-data is a **factual bundle** + schemas + validators — not UI, compose, or SDK resolver. One fact per layer; SDK/app resolve across layers.
 
 ```text
-SDK / app input     →  country, weight, envelope?, service kind or id, optional product id
-Catalog facts       →  native id, zones, weights, prices, geometry (this repo)
+SDK / app input     →  country, weight, envelope?, services (kind), optional product_id / service_ids
+Catalog facts       →  id, zones, weights, prices, geometry (this repo)
 Layout output       →  mark_profile, window, post_mark
 Adapter wiring      →  graph.edges.wire productCode
 Execution gate      →  execution.json wire + billing/execution tokens
@@ -22,7 +22,7 @@ Runtime             →  mark bytes, tracking (not here)
 
 1. One identifier, one job — products have concrete `id` only; no `kind` or size-bucket taxonomy.
 2. Facts vs normalization vs workflow — workflow stays in SDK/consumer compose.
-3. Native `id` in graph/prices/rules; `kind` on services/features for cross-operator intent only.
+3. Catalog `id` in graph/prices/rules; `kind` on services/features for cross-operator intent only.
 4. `execution.json` ≠ wire tables; `graph.edges.wire` holds checkout codes.
 5. Layouts: `window` / `post_mark` / `standard` only; address forms in `formats/addresses.json`.
 6. Validators enforce philosophy — not prose alone.

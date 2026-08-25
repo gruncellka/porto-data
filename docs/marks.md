@@ -8,7 +8,8 @@ How franking **graphic footprints** are named and stored in **porto-data**.
 
 | Layer | Where defined | Examples |
 |-------|---------------|----------|
-| **Carrier native** | `products.json` (`id`), `graph.edges.wire` | `standardbrief`, wire `10001` (Deutsche Post Internetmarke) |
+| **Catalog `id`** | `products.json` (`id`), `services.json` (`id`) | `standardbrief`, `einschreiben` |
+| **Wire code** | `graph.edges.wire` | `10001` (Deutsche Post Internetmarke) |
 | **Porto `kind`** | `schemas/kinds.schema.json` | `registered` (service); `tracking` (feature) |
 | **Porto `mark_profile`** | `marks.json` → `profiles[].id` | `domestic`, `registered_international` |
 
@@ -31,7 +32,7 @@ Validators check profile ids, `edges.marks` keys vs `zones.json`, service ids vs
 
 ## `graph.edges` shape
 
-Example (Deutsche Post native ids — other operators use their own `products.json` / `services.json` keys):
+Example (Deutsche Post catalog ids — other operators use their own `products.json` / `services.json` keys):
 
 ```json
 "edges": {
@@ -63,11 +64,11 @@ Example (Deutsche Post native ids — other operators use their own `products.js
 **Resolution (consumer):**
 
 1. Read `graph.edges.marks[zone].profile` (else `marks.default_profile`).
-2. For each selected native service id, if `edges.marks[zone].services[service_id]` exists → use that profile.
+2. For each selected catalog service `id`, if `edges.marks[zone].services[service_id]` exists → use that profile.
 3. Look up `marks.profiles[id].size` and `formats/layouts.json` `post_mark`.
 4. When `marks.calibrations[]` is present, use it for wire-specific checkout output size (mm/px at a given dpi).
 
-Service keys are **native ids** from `graph.services` / `services.json`, not `kind`.
+Service keys are catalog **`id`** values from `graph.services` / `services.json`, not `kind`.
 
 ## Per-provider mark tables
 
