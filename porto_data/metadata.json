@@ -2,10 +2,10 @@
   "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/metadata.schema.json",
   "project": {
     "name": "gruncellka-porto-data",
-    "version": "0.6.0",
+    "version": "0.7.0",
     "description": "Multi-provider postal JSON: operator catalogs, pricing, shared policy (markets, restrictions), and schemas"
   },
-  "generated_at": "2026-08-28T15:22:30.750827Z",
+  "generated_at": "2026-08-28T16:33:54.439801Z",
   "policy": {
     "jurisdictions": {
       "data": {
