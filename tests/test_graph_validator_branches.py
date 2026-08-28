@@ -58,7 +58,7 @@ def _envelopes_fixture():
                 "label": "C6",
                 "width": 162,
                 "height": 114,
-                "standard": "ISO269",
+                "standards": ["ISO269", "DIN678"],
                 "sheets": [{"sheet": "A4", "fold": "quarter", "description": "Test"}],
             }
         ],
@@ -76,7 +76,6 @@ def _layouts_fixture():
                         "orientation": "landscape",
                         "layout": {
                             "window": {"supported": False},
-                            "post_mark": {"x": 90, "y": 5},
                         },
                     }
                 }
@@ -611,7 +610,6 @@ class TestGraphLayoutsAndProducts:
                             "orientation": "landscape",
                             "layout": {
                                 "window": {"supported": False},
-                                "post_mark": {"x": 0, "y": 0},
                             },
                         }
                     }
@@ -640,7 +638,6 @@ class TestGraphLayoutsAndProducts:
                         "C6": {
                             "layout": {
                                 "window": {"supported": False},
-                                "post_mark": {"x": 90, "y": 5},
                             },
                         }
                     }
@@ -671,7 +668,6 @@ class TestGraphLayoutsAndProducts:
                                     "supported": True,
                                     "area": {"x": 0.5, "y": 0, "width": 100, "height": 80},
                                 },
-                                "post_mark": {"x": 90, "y": 5},
                             },
                         }
                     }

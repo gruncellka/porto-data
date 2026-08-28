@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/addresses.schema.json",
   "title": "Address forms by jurisdiction",
-  "description": "Postal address validity facts per ISO 3166-1 alpha-2 jurisdiction (sparse opt-in). When layouts.jurisdictions[CC] exists, standard must match that layout token; otherwise a local-authority token is allowed (e.g. UKRPOSHTA). Not provider wire encoding.",
+  "description": "Postal address validity facts per ISO 3166-1 alpha-2 jurisdiction (sparse opt-in). When layouts.jurisdictions[CC] exists, standard must match that layout token (e.g. DIN678, SN010130, NFZ10011, DSTU3876). Not provider wire encoding.",
   "type": "object",
   "required": [
     "file_type",
@@ -37,7 +37,7 @@
         "house_number",
         "post_box",
         "postal_code",
-        "city",
+        "locality",
         "country_code",
         "region_code"
       ]
@@ -78,7 +78,7 @@
         "standard": {
           "type": "string",
           "minLength": 1,
-          "description": "Norm token shared with layouts when present (DIN678, SN010130, NFZ10011) or local authority (e.g. UKRPOSHTA)"
+          "description": "Norm token shared with layouts when present (DIN678, SN010130, NFZ10011, DSTU3876)"
         },
         "postal_code": {
           "type": "object",

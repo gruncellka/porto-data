@@ -194,7 +194,7 @@ def test_forms_errors(tmp_path, capsys) -> None:
                     "standard": "DIN678",
                     "forms": [
                         {"kind": "street", "required": ["name"]},
-                        {"kind": "street", "required": ["city"]},
+                        {"kind": "street", "required": ["locality"]},
                     ],
                 }
             }

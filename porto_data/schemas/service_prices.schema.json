@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/service_prices.schema.json",
   "title": "Service surcharge prices",
-  "description": "Add-on service amounts keyed by service_id (catalog id from services.json). Convention: price[].effective_from uses the catalog baseline date (currently 2026-01-01) as bundle snapshot start, not carrier historical introduction dates.",
+  "description": "Add-on service amounts keyed by service_id (catalog id from services.json). Optional zone scopes an amount to one zones.json id — same join as product_prices. Omit zone when one amount covers every supported_zones entry. Convention: price[].effective_from uses the catalog baseline date (currently 2026-01-01) as bundle snapshot start, not carrier historical introduction dates.",
   "type": "object",
   "required": [
     "file_type",
@@ -56,6 +56,11 @@
             "type": "string",
             "pattern": "^[a-z0-9_]+$",
             "description": "Must match services.json id"
+          },
+          "zone": {
+            "type": "string",
+            "pattern": "^[a-z0-9_]+$",
+            "description": "When present, this amount applies only to that zones.json id. Omit when one amount covers every supported_zones entry."
           },
           "currency": {
             "type": "string",

@@ -97,13 +97,6 @@
       ],
       "description": "Global destination restrictions (bundled as policy/restrictions.json); optional cross-reference to zones and products"
     },
-    "limits": {
-      "file": "limits.json",
-      "depends_on": [
-        "policy/restrictions.json"
-      ],
-      "description": "Provider operational limits extend global restrictions after load"
-    },
     "features": {
       "file": "features.json",
       "depends_on": [],

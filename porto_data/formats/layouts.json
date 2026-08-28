@@ -19,10 +19,6 @@
                 "width": 90,
                 "height": 45
               }
-            },
-            "post_mark": {
-              "x": 160,
-              "y": 10
             }
           }
         },
@@ -38,10 +34,6 @@
                 "width": 90,
                 "height": 45
               }
-            },
-            "post_mark": {
-              "x": 110,
-              "y": 10
             }
           }
         },
@@ -57,10 +49,6 @@
                 "width": 90,
                 "height": 45
               }
-            },
-            "post_mark": {
-              "x": 180,
-              "y": 15
             }
           }
         },
@@ -76,10 +64,6 @@
                 "width": 90,
                 "height": 55
               }
-            },
-            "post_mark": {
-              "x": 270,
-              "y": 15
             }
           }
         },
@@ -89,10 +73,6 @@
           "layout": {
             "window": {
               "supported": false
-            },
-            "post_mark": {
-              "x": 300,
-              "y": 15
             }
           }
         }
@@ -112,10 +92,6 @@
                 "width": 90,
                 "height": 45
               }
-            },
-            "post_mark": {
-              "x": 160,
-              "y": 10
             }
           }
         },
@@ -131,10 +107,6 @@
                 "width": 90,
                 "height": 45
               }
-            },
-            "post_mark": {
-              "x": 110,
-              "y": 10
             }
           }
         },
@@ -150,10 +122,6 @@
                 "width": 90,
                 "height": 45
               }
-            },
-            "post_mark": {
-              "x": 180,
-              "y": 15
             }
           }
         },
@@ -169,10 +137,6 @@
                 "width": 90,
                 "height": 55
               }
-            },
-            "post_mark": {
-              "x": 270,
-              "y": 15
             }
           }
         },
@@ -182,10 +146,6 @@
           "layout": {
             "window": {
               "supported": false
-            },
-            "post_mark": {
-              "x": 300,
-              "y": 15
             }
           }
         }
@@ -205,10 +165,6 @@
                 "width": 90,
                 "height": 45
               }
-            },
-            "post_mark": {
-              "x": 160,
-              "y": 10
             }
           }
         },
@@ -224,10 +180,6 @@
                 "width": 90,
                 "height": 45
               }
-            },
-            "post_mark": {
-              "x": 110,
-              "y": 10
             }
           }
         },
@@ -243,10 +195,6 @@
                 "width": 90,
                 "height": 45
               }
-            },
-            "post_mark": {
-              "x": 180,
-              "y": 15
             }
           }
         },
@@ -262,10 +210,6 @@
                 "width": 90,
                 "height": 55
               }
-            },
-            "post_mark": {
-              "x": 270,
-              "y": 15
             }
           }
         },
@@ -275,10 +219,73 @@
           "layout": {
             "window": {
               "supported": false
-            },
-            "post_mark": {
-              "x": 300,
-              "y": 15
+            }
+          }
+        }
+      }
+    },
+    "UA": {
+      "envelopes": {
+        "C6": {
+          "standard": "DSTU3876",
+          "orientation": "landscape",
+          "layout": {
+            "window": {
+              "supported": true,
+              "area": {
+                "x": 52,
+                "y": 49,
+                "width": 90,
+                "height": 45
+              }
+            }
+          }
+        },
+        "DL": {
+          "standard": "DSTU3876",
+          "orientation": "landscape",
+          "layout": {
+            "window": {
+              "supported": true,
+              "area": {
+                "x": 110,
+                "y": 45,
+                "width": 90,
+                "height": 45
+              }
+            }
+          }
+        },
+        "C5": {
+          "standard": "DSTU3876",
+          "orientation": "landscape",
+          "layout": {
+            "window": {
+              "supported": true,
+              "area": {
+                "x": 119,
+                "y": 97,
+                "width": 90,
+                "height": 45
+              }
+            }
+          }
+        },
+        "C4": {
+          "standard": "DSTU3876",
+          "orientation": "landscape",
+          "layout": {
+            "window": {
+              "supported": false
+            }
+          }
+        },
+        "B4": {
+          "standard": "DSTU3876",
+          "orientation": "landscape",
+          "layout": {
+            "window": {
+              "supported": false
             }
           }
         }

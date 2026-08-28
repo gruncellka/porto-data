@@ -77,7 +77,6 @@ def minimal_envelope_layouts():
                         "orientation": "landscape",
                         "layout": {
                             "window": {"supported": False},
-                            "post_mark": {"x": 90, "y": 5},
                         },
                     }
                 }
@@ -117,7 +116,7 @@ def minimal_data_files(
                     "label": "C6",
                     "width": 162,
                     "height": 114,
-                    "standard": "ISO269",
+                    "standards": ["ISO269", "DIN678"],
                     "sheets": [{"sheet": "A4", "fold": "quarter", "description": "Test fixture"}],
                 }
             ],
@@ -190,7 +189,7 @@ def create_test_data_files(tmp_path, **file_data):
                     "label": "C6",
                     "width": 162,
                     "height": 114,
-                    "standard": "ISO269",
+                    "standards": ["ISO269", "DIN678"],
                     "sheets": [{"sheet": "A4", "fold": "quarter", "description": "Test fixture"}],
                 }
             ],
@@ -205,7 +204,6 @@ def create_test_data_files(tmp_path, **file_data):
                             "orientation": "landscape",
                             "layout": {
                                 "window": {"supported": False},
-                                "post_mark": {"x": 90, "y": 5},
                             },
                         }
                     }

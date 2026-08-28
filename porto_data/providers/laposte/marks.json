@@ -5,13 +5,47 @@
     "dimension": "mm"
   },
   "default_profile": "domestic",
+  "placement": {
+    "envelopes": {
+      "DL": {
+        "x": 146,
+        "y": 0,
+        "width": 74,
+        "height": 40
+      },
+      "C6": {
+        "x": 88,
+        "y": 0,
+        "width": 74,
+        "height": 40
+      },
+      "C5": {
+        "x": 155,
+        "y": 0,
+        "width": 74,
+        "height": 40
+      },
+      "C4": {
+        "x": 250,
+        "y": 0,
+        "width": 74,
+        "height": 40
+      },
+      "B4": {
+        "x": 279,
+        "y": 0,
+        "width": 74,
+        "height": 40
+      }
+    }
+  },
   "profiles": [
     {
       "id": "domestic",
       "type": "label",
       "label": "Mon Timbre en ligne domestic",
       "description": "MTEL stamp label for France and Outre-mer",
-      "scope_notes": "Nominal Avery L7159 label 63.5×33.9 mm; registered MTEL uses same stamp size (no separate profile until measured) plus paper liasse",
+      "scope_notes": "Nominal Avery L7159 label 63.5\u00d733.9 mm; registered MTEL uses same stamp size (no separate profile until measured) plus paper liasse",
       "size": {
         "width": 64,
         "height": 34

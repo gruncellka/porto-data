@@ -268,7 +268,7 @@ def get_data_file_path(
     """Resolve a data file path from mappings.json (schema stem → relative data path).
 
     Args:
-        entity_name: Entity name (e.g., 'products', 'zones', 'graph', 'limits')
+        entity_name: Entity name (e.g., 'products', 'zones', 'graph')
         provider: Optional provider ID (default: deutschepost for provider-scoped entities)
         project_root: Optional bundle root (directory containing mappings.json); default: auto-detect
 
@@ -500,7 +500,6 @@ _REQUIRED_ENTITIES = [
     "restrictions",
     "features",
     "graph",
-    "limits",
     "marks",
     "product_prices",
     "service_prices",
@@ -535,4 +534,3 @@ MARKS_FILE = _FILE_NAMES["marks"]
 EXECUTION_FILE = _FILE_NAMES.get("execution", "execution.json")
 RESTRICTIONS_FILE = _FILE_NAMES["restrictions"]
 MARKETS_FILE = _FILE_NAMES["markets"]
-LIMITS_FILE = _FILE_NAMES["limits"]

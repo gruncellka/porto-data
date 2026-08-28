@@ -63,14 +63,6 @@ repos:
             pass_filenames: false
             always_run: false
 
-          - id: validate-limits
-            name: Validate limits.json (letter scope)
-            entry: bash -c 'if [ -f venv/bin/activate ]; then . venv/bin/activate; fi && PYTHONPATH=. python -m cli.main validate --type limits'
-            language: system
-            files: ^porto_data/providers/.*/limits\.json$|^porto_data/providers\.json$|^porto_data/policy/jurisdictions\.json$|^porto_data/schemas/limits\.schema\.json$
-            pass_filenames: false
-            always_run: false
-
           - id: validate-kinds
             name: Validate service/feature kinds and concrete ids
             entry: bash -c 'if [ -f venv/bin/activate ]; then . venv/bin/activate; fi && PYTHONPATH=. python -m cli.main validate --type kinds && git add docs/kinds.md'
@@ -91,7 +83,7 @@ repos:
             name: Validate graph.json consistency
             entry: bash -c 'if [ -f venv/bin/activate ]; then . venv/bin/activate; fi && PYTHONPATH=. python -m cli.main validate --type graph'
             language: system
-            files: ^porto_data/providers/.*/graph\.json$|^porto_data/providers/.*/(products|zones|weights|services|features|limits|marks|rules)\.json$|^porto_data/providers/.*/prices/.*\.json$|^porto_data/(policy|formats|schemas)/.*\.json$
+            files: ^porto_data/providers/.*/graph\.json$|^porto_data/providers/.*/(products|zones|weights|services|features|marks|rules)\.json$|^porto_data/providers/.*/prices/.*\.json$|^porto_data/(policy|formats|schemas)/.*\.json$
             pass_filenames: false
             always_run: false
 

@@ -106,13 +106,6 @@
       "file": "features.json",
       "depends_on": [],
       "description": "Feature catalog"
-    },
-    "limits": {
-      "file": "limits.json",
-      "depends_on": [
-        "policy/restrictions.json"
-      ],
-      "description": "Operational limits overlay"
     }
   },
   "services": [

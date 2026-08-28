@@ -6,24 +6,5 @@ def minimal_restrictions_document() -> dict:
     return {
         "file_type": "restrictions",
         "unit": {"country_code": "ISO 3166-1 alpha-2", "date": "ISO 8601"},
-        "sources": [],
         "disclaimer": "test",
-        "destinations": [
-            {
-                "country_code": "DE",
-                "restrictions": {
-                    "EU": [
-                        {
-                            "id": "_fixture_placeholder",
-                            "reason": "test",
-                            "notes": "test",
-                            "status": "operational",
-                            "reference": None,
-                            "effective_from": None,
-                            "effective_to": None,
-                        }
-                    ],
-                },
-            }
-        ],
     }

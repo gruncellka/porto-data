@@ -40,7 +40,6 @@ This catalog models **letters only** — no parcels, postcards, personal-deliver
 | `marks.json` | `marks` | Label profiles |
 | `weights.json` | `weights` | Weight tiers |
 | `zones.json` | `zones` | `domestic`, flat `world` (letters) |
-| `limits.json` | `limits` | Provider overlays |
 | `graph.json` | `graph` | Edges, units (default UAH cents), `services` |
 
 **Loaded with the bundle:** `policy/jurisdictions.json`, `policy/markets.json`, `policy/restrictions.json`, `formats/envelopes.json`, `formats/layouts.json` — see `graph.json` `dependencies`.

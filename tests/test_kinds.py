@@ -188,7 +188,7 @@ class TestKindsHelpers:
 
 class TestKindsValidator:
     def test_required_provider_schemas_count(self) -> None:
-        assert len(REQUIRED_PROVIDER_SCHEMAS) == 10
+        assert len(REQUIRED_PROVIDER_SCHEMAS) == 9
         assert "schemas/graph.schema.json" in REQUIRED_PROVIDER_SCHEMAS
 
     def test_render_mapping_doc(self) -> None:

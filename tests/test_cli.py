@@ -10,7 +10,6 @@ import pytest
 from cli.commands.validate import (
     validate_all,
     validate_graph,
-    validate_limits,
     validate_mappings,
     validate_schema,
 )
@@ -73,7 +72,6 @@ class TestCLIValidateCommands:
         [
             (["validate", "--type", "schema"], "Validating JSON schemas"),
             (["validate", "--type", "mappings"], "Validating mappings"),
-            (["validate", "--type", "limits"], "limits.json checks"),
             (["validate", "--type", "graph"], "Validating graph.json"),
             (
                 ["validate", "--type", "graph", "--analyze"],
@@ -182,20 +180,11 @@ class TestCLICommandFunctions:
         monkeypatch.setattr("cli.commands.validate.validate_addresses_cmd", lambda: 1)
         assert validate_all() == 1
 
-    def test_validate_all_stops_on_limits_failure(self, monkeypatch):
-        monkeypatch.setattr("cli.commands.validate.validate_schema", lambda: 0)
-        monkeypatch.setattr("cli.commands.validate.validate_mappings", lambda: 0)
-        monkeypatch.setattr("cli.commands.validate.validate_markets_cmd", lambda: 0)
-        monkeypatch.setattr("cli.commands.validate.validate_addresses_cmd", lambda: 0)
-        monkeypatch.setattr("cli.commands.validate.validate_limits", lambda: 1)
-        assert validate_all() == 1
-
     def test_validate_all_stops_on_kinds_failure(self, monkeypatch):
         monkeypatch.setattr("cli.commands.validate.validate_schema", lambda: 0)
         monkeypatch.setattr("cli.commands.validate.validate_mappings", lambda: 0)
         monkeypatch.setattr("cli.commands.validate.validate_markets_cmd", lambda: 0)
         monkeypatch.setattr("cli.commands.validate.validate_addresses_cmd", lambda: 0)
-        monkeypatch.setattr("cli.commands.validate.validate_limits", lambda: 0)
         monkeypatch.setattr("cli.commands.validate.validate_kinds", lambda: 1)
         assert validate_all() == 1
 
@@ -204,16 +193,13 @@ class TestCLICommandFunctions:
         monkeypatch.setattr("cli.commands.validate.validate_mappings", lambda: 0)
         monkeypatch.setattr("cli.commands.validate.validate_markets_cmd", lambda: 0)
         monkeypatch.setattr("cli.commands.validate.validate_addresses_cmd", lambda: 0)
-        monkeypatch.setattr("cli.commands.validate.validate_limits", lambda: 0)
         monkeypatch.setattr("cli.commands.validate.validate_kinds", lambda: 0)
         monkeypatch.setattr("cli.commands.validate.validate_delivery_cmd", lambda: 1)
         assert validate_all() == 1
 
-    def test_validate_mappings_and_limits_delegate(self, monkeypatch):
+    def test_validate_mappings_delegate(self, monkeypatch):
         monkeypatch.setattr("cli.commands.validate.validate_mappings_layout", lambda: 42)
-        monkeypatch.setattr("cli.commands.validate.validate_limits_scope", lambda: 7)
         assert validate_mappings() == 42
-        assert validate_limits() == 7
 
 
 class TestCLIExitCodes:

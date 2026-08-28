@@ -1,6 +1,6 @@
 # Product resolution
 
-Consumers resolve catalog **`product.id`** from provider context, destination zone, weight, optional envelope filter, and optional explicit product pin. There is no cross-provider product size taxonomy — see [id.md](id.md).
+Catalog **`product.id`** is selected from provider context, destination zone, weight, optional envelope filter, and optional explicit product pin. There is no cross-provider product size taxonomy — see [id.md](id.md).
 
 ## Inputs
 
@@ -11,7 +11,7 @@ Consumers resolve catalog **`product.id`** from provider context, destination zo
 | `weight` | Shipment weight (unit from `graph.unit.weight` / `weights.json`) → `weight_tier` |
 | `envelope_id` | Optional physical fit filter on `envelope_ids[]`. Absent = no constraint. Present = drop incompatible products. Never selects among remaining rows. Empty `envelope_ids[]` currently matches any envelope. |
 | `product_id` | Optional explicit pin to catalog `products.id` |
-| `services[]` | Optional requested service **kinds** (consumer intent). Never catalog ids. |
+| `services[]` | Optional requested service **kinds** (intent). Never catalog ids. |
 | `service_ids[]` | Optional pins to catalog `services.id` among options for those kinds |
 
 ## Resolution order
@@ -27,7 +27,7 @@ Consumers resolve catalog **`product.id`** from provider context, destination zo
 9. **Delivery hint:** pick the `products.delivery[]` entry whose `zones` contains the shipment `zone`; join with `markets[CC].working_days` from `providers.json` → `country` (see below).
 10. **Wire code (online purchase only):** when `execution.json` exists, `execution.wire` selects the active **`edges.wire`** channel; then `graph.edges.wire[wire][product_id][zone_id]` — optional `services[service_id]` override when `strategy` is `service` (Deutsche Post Internetmarke). See [Wire resolution](#wire-resolution) below.
 
-When step 7 still leaves multiple products, the consumer must apply the provider-specific rules below (or an explicit user/operator hint). The bundle does not encode speed class or registered tier as separate product kinds.
+When step 7 still leaves multiple products, apply the provider-specific rules below (or an explicit user/operator hint). The bundle does not encode speed class or registered tier as separate product kinds.
 
 Cross-file refs (graph, prices, rules) always use catalog **`id`**, never `kind`. See [CONTRIBUTING.md](../CONTRIBUTING.md).
 
@@ -46,13 +46,13 @@ After catalog `product.id` is resolved, expose an indicative **`delivery_hint`**
 | `working_days.weekdays` | Entry override or `markets[CC].working_days.weekdays` |
 | `working_days.exclude_public_holidays` | `markets[CC].working_days.exclude_public_holidays` |
 
-Indicative only — not a guaranteed delivery date. No consumer speed-class enum (`lane`); disambiguation uses catalog `product.id`, delivery preference, or explicit user choice.
+Indicative only — not a guaranteed delivery date. No speed-class enum (`lane`); disambiguation uses catalog `product.id`, delivery preference, or explicit user choice.
 
 **Coverage:** each product’s `delivery[].zones` must partition `product.zones` exactly (validated in CI).
 
 ## Candidate enrichment (resolution facts)
 
-After graph filtering, each remaining candidate carries optional facts for SDK/UI disambiguation (no French name parsing):
+After graph filtering, each remaining candidate carries optional facts for disambiguation (no French name parsing):
 
 | Field | Source | Role |
 |-------|--------|------|
@@ -94,7 +94,7 @@ Disambiguation is **deterministic** from **zone + weight_tier** (not user choice
 | 1001–2000 | W2000 | `zone_1_eu`, `zone_2_europe`, `world` | `maxibrief_ausland` |
 | 1001–2000 | W2000 | `domestic` | *(no product — `maxibrief_ausland` is abroad-only)* |
 
-`maxibrief_ausland` never appears in `domestic` zone. BDD and adapter matrices should use **501 g** for `maxibrief` (W1000) and **1001 g** (or higher in W2000) for `maxibrief_ausland` — not 500 g (W0500, `grossbrief` tier).
+`maxibrief_ausland` never appears in `domestic` zone. Use **501 g** for `maxibrief` (W1000) and **1001 g** (or higher in W2000) for `maxibrief_ausland` — not 500 g (W0500, `grossbrief` tier).
 
 ### Ukrposhta — standard letter vs document (letters only)
 
@@ -154,13 +154,13 @@ After catalog `product.id`, `zone`, and optional `service_ids[]` are known:
 
 Adapter wire codes live in **`graph.edges.wire` only** — not on `products.json` or `services.json` rows. Validators reject `native_id`, `zone_native_ids`, and `product_native_ids` on entity files.
 
-Lookup rules (consumer):
+Lookup rules:
 
 1. No selected services → use `.base`.
 2. `service` + one or more service ids → last matching entry in `services` map wins (mirrors `edges.marks` override order).
 3. Missing or `null` base → fail closed.
 
-**La Poste / Swiss Post wire keys:** until operator API SKUs are harvested, `base` is the stable **`product.id` string** (catalog key). Adapters resolve catalog keys to live MTEL / WebStamp `post_product_number` via Options harvest or runtime lookup — same pattern as Ukrposhta `"letter"` / `"document"` keys.
+**La Poste / Swiss Post wire keys:** until operator API SKUs are harvested, `base` is the stable **`product.id` string** (catalog key). Live MTEL / WebStamp `post_product_number` mapping is outside this bundle — same pattern as Ukrposhta `"letter"` / `"document"` keys.
 
 ## Currency and VAT
 
