@@ -41,8 +41,8 @@ Thumbs.db
 .coverage
 htmlcov/
 coverage.xml
-test-publish-npm/
-test-publish-pypi/
+artifact-smoke-npm/
+artifact-smoke-pypi/
 dist-test/
 gruncellka-porto-data-*.tgz
 gruncellka_porto_data-*.whl
