@@ -1,11 +1,12 @@
 {
   "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/jurisdictions.schema.json",
   "file_type": "jurisdictions",
-  "description": "Reference data for restriction resolver: symbolic blocs EU and UN (members + timezone) plus per-country entries (ISO 3166-1 alpha-2 uppercase key, timezone only). Switzerland uses key CH only (no separate CH bloc). providers.json country resolves timezone via jurisdictions[COUNTRY].timezone. Per-country timezones are maintained in-repo (typically CLDR-aligned IANA ids).",
+  "description": "Reference data for restriction resolver: symbolic blocs EU and UN (members + timezone) plus per-country entries (ISO 3166-1 alpha-2 uppercase key, timezone + country_code_3). Switzerland uses key CH only (no separate CH bloc). providers.json country resolves timezone via jurisdictions[COUNTRY].timezone. Per-country timezones are maintained in-repo (typically CLDR-aligned IANA ids).",
   "unit": {
     "country_code": "ISO 3166-1 alpha-2",
     "region_code": "ISO 3166-2",
-    "date": "ISO 8601"
+    "date": "ISO 8601",
+    "country_code_3": "ISO 3166-1 alpha-3"
   },
   "jurisdictions": {
     "EU": {
@@ -239,601 +240,800 @@
       "timezone": "Europe/Zurich"
     },
     "AD": {
-      "timezone": "Europe/Andorra"
+      "timezone": "Europe/Andorra",
+      "country_code_3": "AND"
     },
     "AE": {
-      "timezone": "Asia/Dubai"
+      "timezone": "Asia/Dubai",
+      "country_code_3": "ARE"
     },
     "AF": {
-      "timezone": "Asia/Kabul"
+      "timezone": "Asia/Kabul",
+      "country_code_3": "AFG"
     },
     "AG": {
-      "timezone": "America/Antigua"
+      "timezone": "America/Antigua",
+      "country_code_3": "ATG"
     },
     "AL": {
-      "timezone": "Europe/Tirane"
+      "timezone": "Europe/Tirane",
+      "country_code_3": "ALB"
     },
     "AM": {
-      "timezone": "Asia/Yerevan"
+      "timezone": "Asia/Yerevan",
+      "country_code_3": "ARM"
     },
     "AO": {
-      "timezone": "Africa/Luanda"
+      "timezone": "Africa/Luanda",
+      "country_code_3": "AGO"
     },
     "AR": {
-      "timezone": "America/Buenos_Aires"
+      "timezone": "America/Buenos_Aires",
+      "country_code_3": "ARG"
     },
     "AT": {
-      "timezone": "Europe/Vienna"
+      "timezone": "Europe/Vienna",
+      "country_code_3": "AUT"
     },
     "AU": {
-      "timezone": "Australia/Sydney"
+      "timezone": "Australia/Sydney",
+      "country_code_3": "AUS"
     },
     "AZ": {
-      "timezone": "Asia/Baku"
+      "timezone": "Asia/Baku",
+      "country_code_3": "AZE"
     },
     "BA": {
-      "timezone": "Europe/Sarajevo"
+      "timezone": "Europe/Sarajevo",
+      "country_code_3": "BIH"
     },
     "BB": {
-      "timezone": "America/Barbados"
+      "timezone": "America/Barbados",
+      "country_code_3": "BRB"
     },
     "BD": {
-      "timezone": "Asia/Dhaka"
+      "timezone": "Asia/Dhaka",
+      "country_code_3": "BGD"
     },
     "BE": {
-      "timezone": "Europe/Brussels"
+      "timezone": "Europe/Brussels",
+      "country_code_3": "BEL"
     },
     "BF": {
-      "timezone": "Africa/Ouagadougou"
+      "timezone": "Africa/Ouagadougou",
+      "country_code_3": "BFA"
     },
     "BG": {
-      "timezone": "Europe/Sofia"
+      "timezone": "Europe/Sofia",
+      "country_code_3": "BGR"
     },
     "BH": {
-      "timezone": "Asia/Bahrain"
+      "timezone": "Asia/Bahrain",
+      "country_code_3": "BHR"
     },
     "BI": {
-      "timezone": "Africa/Bujumbura"
+      "timezone": "Africa/Bujumbura",
+      "country_code_3": "BDI"
     },
     "BJ": {
-      "timezone": "Africa/Porto-Novo"
+      "timezone": "Africa/Porto-Novo",
+      "country_code_3": "BEN"
     },
     "BN": {
-      "timezone": "Asia/Brunei"
+      "timezone": "Asia/Brunei",
+      "country_code_3": "BRN"
     },
     "BO": {
-      "timezone": "America/La_Paz"
+      "timezone": "America/La_Paz",
+      "country_code_3": "BOL"
     },
     "BR": {
-      "timezone": "America/Sao_Paulo"
+      "timezone": "America/Sao_Paulo",
+      "country_code_3": "BRA"
     },
     "BS": {
-      "timezone": "America/Nassau"
+      "timezone": "America/Nassau",
+      "country_code_3": "BHS"
     },
     "BT": {
-      "timezone": "Asia/Thimphu"
+      "timezone": "Asia/Thimphu",
+      "country_code_3": "BTN"
     },
     "BW": {
-      "timezone": "Africa/Gaborone"
+      "timezone": "Africa/Gaborone",
+      "country_code_3": "BWA"
     },
     "BY": {
-      "timezone": "Europe/Minsk"
+      "timezone": "Europe/Minsk",
+      "country_code_3": "BLR"
     },
     "BZ": {
-      "timezone": "America/Belize"
+      "timezone": "America/Belize",
+      "country_code_3": "BLZ"
     },
     "CA": {
-      "timezone": "America/Toronto"
+      "timezone": "America/Toronto",
+      "country_code_3": "CAN"
     },
     "CD": {
-      "timezone": "Africa/Kinshasa"
+      "timezone": "Africa/Kinshasa",
+      "country_code_3": "COD"
     },
     "CF": {
-      "timezone": "Africa/Bangui"
+      "timezone": "Africa/Bangui",
+      "country_code_3": "CAF"
     },
     "CG": {
-      "timezone": "Africa/Brazzaville"
+      "timezone": "Africa/Brazzaville",
+      "country_code_3": "COG"
     },
     "CH": {
-      "timezone": "Europe/Zurich"
+      "timezone": "Europe/Zurich",
+      "country_code_3": "CHE"
     },
     "CI": {
-      "timezone": "Africa/Abidjan"
+      "timezone": "Africa/Abidjan",
+      "country_code_3": "CIV"
     },
     "CL": {
-      "timezone": "America/Punta_Arenas"
+      "timezone": "America/Punta_Arenas",
+      "country_code_3": "CHL"
     },
     "CM": {
-      "timezone": "Africa/Douala"
+      "timezone": "Africa/Douala",
+      "country_code_3": "CMR"
     },
     "CN": {
-      "timezone": "Asia/Shanghai"
+      "timezone": "Asia/Shanghai",
+      "country_code_3": "CHN"
     },
     "CO": {
-      "timezone": "America/Bogota"
+      "timezone": "America/Bogota",
+      "country_code_3": "COL"
     },
     "CR": {
-      "timezone": "America/Costa_Rica"
+      "timezone": "America/Costa_Rica",
+      "country_code_3": "CRI"
     },
     "CU": {
-      "timezone": "America/Havana"
+      "timezone": "America/Havana",
+      "country_code_3": "CUB"
     },
     "CV": {
-      "timezone": "Atlantic/Cape_Verde"
+      "timezone": "Atlantic/Cape_Verde",
+      "country_code_3": "CPV"
     },
     "CY": {
-      "timezone": "Asia/Nicosia"
+      "timezone": "Asia/Nicosia",
+      "country_code_3": "CYP"
     },
     "CZ": {
-      "timezone": "Europe/Prague"
+      "timezone": "Europe/Prague",
+      "country_code_3": "CZE"
     },
     "DE": {
-      "timezone": "Europe/Berlin"
+      "timezone": "Europe/Berlin",
+      "country_code_3": "DEU"
     },
     "DJ": {
-      "timezone": "Africa/Djibouti"
+      "timezone": "Africa/Djibouti",
+      "country_code_3": "DJI"
     },
     "DK": {
-      "timezone": "Europe/Copenhagen"
+      "timezone": "Europe/Copenhagen",
+      "country_code_3": "DNK"
     },
     "DM": {
-      "timezone": "America/Dominica"
+      "timezone": "America/Dominica",
+      "country_code_3": "DMA"
     },
     "DO": {
-      "timezone": "America/Santo_Domingo"
+      "timezone": "America/Santo_Domingo",
+      "country_code_3": "DOM"
     },
     "DZ": {
-      "timezone": "Africa/Algiers"
+      "timezone": "Africa/Algiers",
+      "country_code_3": "DZA"
     },
     "EC": {
-      "timezone": "America/Guayaquil"
+      "timezone": "America/Guayaquil",
+      "country_code_3": "ECU"
     },
     "EE": {
-      "timezone": "Europe/Tallinn"
+      "timezone": "Europe/Tallinn",
+      "country_code_3": "EST"
     },
     "EG": {
-      "timezone": "Africa/Cairo"
+      "timezone": "Africa/Cairo",
+      "country_code_3": "EGY"
     },
     "EH": {
-      "timezone": "Africa/El_Aaiun"
+      "timezone": "Africa/El_Aaiun",
+      "country_code_3": "ESH"
     },
     "ER": {
-      "timezone": "Africa/Asmera"
+      "timezone": "Africa/Asmera",
+      "country_code_3": "ERI"
     },
     "ES": {
-      "timezone": "Atlantic/Canary"
+      "timezone": "Atlantic/Canary",
+      "country_code_3": "ESP"
     },
     "ET": {
-      "timezone": "Africa/Addis_Ababa"
+      "timezone": "Africa/Addis_Ababa",
+      "country_code_3": "ETH"
     },
     "FI": {
-      "timezone": "Europe/Helsinki"
+      "timezone": "Europe/Helsinki",
+      "country_code_3": "FIN"
     },
     "FJ": {
-      "timezone": "Pacific/Fiji"
+      "timezone": "Pacific/Fiji",
+      "country_code_3": "FJI"
     },
     "FM": {
-      "timezone": "Pacific/Truk"
+      "timezone": "Pacific/Truk",
+      "country_code_3": "FSM"
     },
     "FR": {
-      "timezone": "Europe/Paris"
+      "timezone": "Europe/Paris",
+      "country_code_3": "FRA"
     },
     "GA": {
-      "timezone": "Africa/Libreville"
+      "timezone": "Africa/Libreville",
+      "country_code_3": "GAB"
     },
     "GB": {
-      "timezone": "Europe/London"
+      "timezone": "Europe/London",
+      "country_code_3": "GBR"
     },
     "GD": {
-      "timezone": "America/Grenada"
+      "timezone": "America/Grenada",
+      "country_code_3": "GRD"
     },
     "GE": {
-      "timezone": "Asia/Tbilisi"
+      "timezone": "Asia/Tbilisi",
+      "country_code_3": "GEO"
     },
     "GH": {
-      "timezone": "Africa/Accra"
+      "timezone": "Africa/Accra",
+      "country_code_3": "GHA"
     },
     "GM": {
-      "timezone": "Africa/Banjul"
+      "timezone": "Africa/Banjul",
+      "country_code_3": "GMB"
     },
     "GN": {
-      "timezone": "Africa/Conakry"
+      "timezone": "Africa/Conakry",
+      "country_code_3": "GIN"
     },
     "GQ": {
-      "timezone": "Africa/Malabo"
+      "timezone": "Africa/Malabo",
+      "country_code_3": "GNQ"
     },
     "GR": {
-      "timezone": "Europe/Athens"
+      "timezone": "Europe/Athens",
+      "country_code_3": "GRC"
     },
     "GT": {
-      "timezone": "America/Guatemala"
+      "timezone": "America/Guatemala",
+      "country_code_3": "GTM"
     },
     "GW": {
-      "timezone": "Africa/Bissau"
+      "timezone": "Africa/Bissau",
+      "country_code_3": "GNB"
     },
     "GY": {
-      "timezone": "America/Guyana"
+      "timezone": "America/Guyana",
+      "country_code_3": "GUY"
     },
     "HN": {
-      "timezone": "America/Tegucigalpa"
+      "timezone": "America/Tegucigalpa",
+      "country_code_3": "HND"
     },
     "HR": {
-      "timezone": "Europe/Zagreb"
+      "timezone": "Europe/Zagreb",
+      "country_code_3": "HRV"
     },
     "HT": {
-      "timezone": "America/Port-au-Prince"
+      "timezone": "America/Port-au-Prince",
+      "country_code_3": "HTI"
     },
     "HU": {
-      "timezone": "Europe/Budapest"
+      "timezone": "Europe/Budapest",
+      "country_code_3": "HUN"
     },
     "ID": {
-      "timezone": "Asia/Jakarta"
+      "timezone": "Asia/Jakarta",
+      "country_code_3": "IDN"
     },
     "IE": {
-      "timezone": "Europe/Dublin"
+      "timezone": "Europe/Dublin",
+      "country_code_3": "IRL"
     },
     "IL": {
-      "timezone": "Asia/Jerusalem"
+      "timezone": "Asia/Jerusalem",
+      "country_code_3": "ISR"
     },
     "IN": {
-      "timezone": "Asia/Calcutta"
+      "timezone": "Asia/Calcutta",
+      "country_code_3": "IND"
     },
     "IQ": {
-      "timezone": "Asia/Baghdad"
+      "timezone": "Asia/Baghdad",
+      "country_code_3": "IRQ"
     },
     "IR": {
-      "timezone": "Asia/Tehran"
+      "timezone": "Asia/Tehran",
+      "country_code_3": "IRN"
     },
     "IS": {
-      "timezone": "Atlantic/Reykjavik"
+      "timezone": "Atlantic/Reykjavik",
+      "country_code_3": "ISL"
     },
     "IT": {
-      "timezone": "Europe/Rome"
+      "timezone": "Europe/Rome",
+      "country_code_3": "ITA"
     },
     "JM": {
-      "timezone": "America/Jamaica"
+      "timezone": "America/Jamaica",
+      "country_code_3": "JAM"
     },
     "JO": {
-      "timezone": "Asia/Amman"
+      "timezone": "Asia/Amman",
+      "country_code_3": "JOR"
     },
     "JP": {
-      "timezone": "Asia/Tokyo"
+      "timezone": "Asia/Tokyo",
+      "country_code_3": "JPN"
     },
     "KE": {
-      "timezone": "Africa/Nairobi"
+      "timezone": "Africa/Nairobi",
+      "country_code_3": "KEN"
     },
     "KG": {
-      "timezone": "Asia/Bishkek"
+      "timezone": "Asia/Bishkek",
+      "country_code_3": "KGZ"
     },
     "KH": {
-      "timezone": "Asia/Phnom_Penh"
+      "timezone": "Asia/Phnom_Penh",
+      "country_code_3": "KHM"
     },
     "KI": {
-      "timezone": "Pacific/Enderbury"
+      "timezone": "Pacific/Enderbury",
+      "country_code_3": "KIR"
     },
     "KM": {
-      "timezone": "Indian/Comoro"
+      "timezone": "Indian/Comoro",
+      "country_code_3": "COM"
     },
     "KN": {
-      "timezone": "America/St_Kitts"
+      "timezone": "America/St_Kitts",
+      "country_code_3": "KNA"
     },
     "KP": {
-      "timezone": "Asia/Pyongyang"
+      "timezone": "Asia/Pyongyang",
+      "country_code_3": "PRK"
     },
     "KR": {
-      "timezone": "Asia/Seoul"
+      "timezone": "Asia/Seoul",
+      "country_code_3": "KOR"
     },
     "KW": {
-      "timezone": "Asia/Kuwait"
+      "timezone": "Asia/Kuwait",
+      "country_code_3": "KWT"
     },
     "KZ": {
-      "timezone": "Asia/Qyzylorda"
+      "timezone": "Asia/Qyzylorda",
+      "country_code_3": "KAZ"
     },
     "LA": {
-      "timezone": "Asia/Vientiane"
+      "timezone": "Asia/Vientiane",
+      "country_code_3": "LAO"
     },
     "LB": {
-      "timezone": "Asia/Beirut"
+      "timezone": "Asia/Beirut",
+      "country_code_3": "LBN"
     },
     "LC": {
-      "timezone": "America/St_Lucia"
+      "timezone": "America/St_Lucia",
+      "country_code_3": "LCA"
     },
     "LI": {
-      "timezone": "Europe/Vaduz"
+      "timezone": "Europe/Vaduz",
+      "country_code_3": "LIE"
     },
     "LK": {
-      "timezone": "Asia/Colombo"
+      "timezone": "Asia/Colombo",
+      "country_code_3": "LKA"
     },
     "LR": {
-      "timezone": "Africa/Monrovia"
+      "timezone": "Africa/Monrovia",
+      "country_code_3": "LBR"
     },
     "LS": {
-      "timezone": "Africa/Maseru"
+      "timezone": "Africa/Maseru",
+      "country_code_3": "LSO"
     },
     "LT": {
-      "timezone": "Europe/Vilnius"
+      "timezone": "Europe/Vilnius",
+      "country_code_3": "LTU"
     },
     "LU": {
-      "timezone": "Europe/Luxembourg"
+      "timezone": "Europe/Luxembourg",
+      "country_code_3": "LUX"
     },
     "LV": {
-      "timezone": "Europe/Riga"
+      "timezone": "Europe/Riga",
+      "country_code_3": "LVA"
     },
     "LY": {
-      "timezone": "Africa/Tripoli"
+      "timezone": "Africa/Tripoli",
+      "country_code_3": "LBY"
     },
     "MA": {
-      "timezone": "Africa/Casablanca"
+      "timezone": "Africa/Casablanca",
+      "country_code_3": "MAR"
     },
     "MC": {
-      "timezone": "Europe/Monaco"
+      "timezone": "Europe/Monaco",
+      "country_code_3": "MCO"
     },
     "MD": {
-      "timezone": "Europe/Chisinau"
+      "timezone": "Europe/Chisinau",
+      "country_code_3": "MDA"
     },
     "ME": {
-      "timezone": "Europe/Podgorica"
+      "timezone": "Europe/Podgorica",
+      "country_code_3": "MNE"
     },
     "MG": {
-      "timezone": "Indian/Antananarivo"
+      "timezone": "Indian/Antananarivo",
+      "country_code_3": "MDG"
     },
     "MH": {
-      "timezone": "Pacific/Majuro"
+      "timezone": "Pacific/Majuro",
+      "country_code_3": "MHL"
     },
     "MK": {
-      "timezone": "Europe/Skopje"
+      "timezone": "Europe/Skopje",
+      "country_code_3": "MKD"
     },
     "ML": {
-      "timezone": "Africa/Bamako"
+      "timezone": "Africa/Bamako",
+      "country_code_3": "MLI"
     },
     "MM": {
-      "timezone": "Asia/Rangoon"
+      "timezone": "Asia/Rangoon",
+      "country_code_3": "MMR"
     },
     "MN": {
-      "timezone": "Asia/Hovd"
+      "timezone": "Asia/Hovd",
+      "country_code_3": "MNG"
     },
     "MR": {
-      "timezone": "Africa/Nouakchott"
+      "timezone": "Africa/Nouakchott",
+      "country_code_3": "MRT"
     },
     "MS": {
-      "timezone": "America/Montserrat"
+      "timezone": "America/Montserrat",
+      "country_code_3": "MSR"
     },
     "MT": {
-      "timezone": "Europe/Malta"
+      "timezone": "Europe/Malta",
+      "country_code_3": "MLT"
     },
     "MU": {
-      "timezone": "Indian/Mauritius"
+      "timezone": "Indian/Mauritius",
+      "country_code_3": "MUS"
     },
     "MV": {
-      "timezone": "Indian/Maldives"
+      "timezone": "Indian/Maldives",
+      "country_code_3": "MDV"
     },
     "MW": {
-      "timezone": "Africa/Blantyre"
+      "timezone": "Africa/Blantyre",
+      "country_code_3": "MWI"
     },
     "MX": {
-      "timezone": "America/Mexico_City"
+      "timezone": "America/Mexico_City",
+      "country_code_3": "MEX"
     },
     "MY": {
-      "timezone": "Asia/Kuala_Lumpur"
+      "timezone": "Asia/Kuala_Lumpur",
+      "country_code_3": "MYS"
     },
     "MZ": {
-      "timezone": "Africa/Maputo"
+      "timezone": "Africa/Maputo",
+      "country_code_3": "MOZ"
     },
     "NA": {
-      "timezone": "Africa/Windhoek"
+      "timezone": "Africa/Windhoek",
+      "country_code_3": "NAM"
     },
     "NE": {
-      "timezone": "Africa/Niamey"
+      "timezone": "Africa/Niamey",
+      "country_code_3": "NER"
     },
     "NG": {
-      "timezone": "Africa/Lagos"
+      "timezone": "Africa/Lagos",
+      "country_code_3": "NGA"
     },
     "NI": {
-      "timezone": "America/Managua"
+      "timezone": "America/Managua",
+      "country_code_3": "NIC"
     },
     "NL": {
-      "timezone": "Europe/Amsterdam"
+      "timezone": "Europe/Amsterdam",
+      "country_code_3": "NLD"
     },
     "NO": {
-      "timezone": "Europe/Oslo"
+      "timezone": "Europe/Oslo",
+      "country_code_3": "NOR"
     },
     "NP": {
-      "timezone": "Asia/Katmandu"
+      "timezone": "Asia/Katmandu",
+      "country_code_3": "NPL"
     },
     "NR": {
-      "timezone": "Pacific/Nauru"
+      "timezone": "Pacific/Nauru",
+      "country_code_3": "NRU"
     },
     "NZ": {
-      "timezone": "Pacific/Auckland"
+      "timezone": "Pacific/Auckland",
+      "country_code_3": "NZL"
     },
     "OM": {
-      "timezone": "Asia/Muscat"
+      "timezone": "Asia/Muscat",
+      "country_code_3": "OMN"
     },
     "PA": {
-      "timezone": "America/Panama"
+      "timezone": "America/Panama",
+      "country_code_3": "PAN"
     },
     "PE": {
-      "timezone": "America/Lima"
+      "timezone": "America/Lima",
+      "country_code_3": "PER"
     },
     "PG": {
-      "timezone": "Pacific/Bougainville"
+      "timezone": "Pacific/Bougainville",
+      "country_code_3": "PNG"
     },
     "PH": {
-      "timezone": "Asia/Manila"
+      "timezone": "Asia/Manila",
+      "country_code_3": "PHL"
     },
     "PK": {
-      "timezone": "Asia/Karachi"
+      "timezone": "Asia/Karachi",
+      "country_code_3": "PAK"
     },
     "PL": {
-      "timezone": "Europe/Warsaw"
+      "timezone": "Europe/Warsaw",
+      "country_code_3": "POL"
     },
     "PT": {
-      "timezone": "Atlantic/Azores"
+      "timezone": "Atlantic/Azores",
+      "country_code_3": "PRT"
     },
     "PS": {
-      "timezone": "Asia/Gaza"
+      "timezone": "Asia/Gaza",
+      "country_code_3": "PSE"
     },
     "PW": {
-      "timezone": "Pacific/Palau"
+      "timezone": "Pacific/Palau",
+      "country_code_3": "PLW"
     },
     "PY": {
-      "timezone": "America/Asuncion"
+      "timezone": "America/Asuncion",
+      "country_code_3": "PRY"
     },
     "QA": {
-      "timezone": "Asia/Qatar"
+      "timezone": "Asia/Qatar",
+      "country_code_3": "QAT"
     },
     "RO": {
-      "timezone": "Europe/Bucharest"
+      "timezone": "Europe/Bucharest",
+      "country_code_3": "ROU"
     },
     "RS": {
-      "timezone": "Europe/Belgrade"
+      "timezone": "Europe/Belgrade",
+      "country_code_3": "SRB"
     },
     "RU": {
-      "timezone": "Europe/Moscow"
+      "timezone": "Europe/Moscow",
+      "country_code_3": "RUS"
     },
     "RW": {
-      "timezone": "Africa/Kigali"
+      "timezone": "Africa/Kigali",
+      "country_code_3": "RWA"
     },
     "SA": {
-      "timezone": "Asia/Riyadh"
+      "timezone": "Asia/Riyadh",
+      "country_code_3": "SAU"
     },
     "SB": {
-      "timezone": "Pacific/Guadalcanal"
+      "timezone": "Pacific/Guadalcanal",
+      "country_code_3": "SLB"
     },
     "SC": {
-      "timezone": "Indian/Mahe"
+      "timezone": "Indian/Mahe",
+      "country_code_3": "SYC"
     },
     "SD": {
-      "timezone": "Africa/Khartoum"
+      "timezone": "Africa/Khartoum",
+      "country_code_3": "SDN"
     },
     "SE": {
-      "timezone": "Europe/Stockholm"
+      "timezone": "Europe/Stockholm",
+      "country_code_3": "SWE"
     },
     "SG": {
-      "timezone": "Asia/Singapore"
+      "timezone": "Asia/Singapore",
+      "country_code_3": "SGP"
     },
     "SI": {
-      "timezone": "Europe/Ljubljana"
+      "timezone": "Europe/Ljubljana",
+      "country_code_3": "SVN"
     },
     "SK": {
-      "timezone": "Europe/Bratislava"
+      "timezone": "Europe/Bratislava",
+      "country_code_3": "SVK"
     },
     "SL": {
-      "timezone": "Africa/Freetown"
+      "timezone": "Africa/Freetown",
+      "country_code_3": "SLE"
     },
     "SM": {
-      "timezone": "Europe/San_Marino"
+      "timezone": "Europe/San_Marino",
+      "country_code_3": "SMR"
     },
     "SN": {
-      "timezone": "Africa/Dakar"
+      "timezone": "Africa/Dakar",
+      "country_code_3": "SEN"
     },
     "SO": {
-      "timezone": "Africa/Mogadishu"
+      "timezone": "Africa/Mogadishu",
+      "country_code_3": "SOM"
     },
     "SR": {
-      "timezone": "America/Paramaribo"
+      "timezone": "America/Paramaribo",
+      "country_code_3": "SUR"
     },
     "SS": {
-      "timezone": "Africa/Juba"
+      "timezone": "Africa/Juba",
+      "country_code_3": "SSD"
     },
     "ST": {
-      "timezone": "Africa/Sao_Tome"
+      "timezone": "Africa/Sao_Tome",
+      "country_code_3": "STP"
     },
     "SV": {
-      "timezone": "America/El_Salvador"
+      "timezone": "America/El_Salvador",
+      "country_code_3": "SLV"
     },
     "SY": {
-      "timezone": "Asia/Damascus"
+      "timezone": "Asia/Damascus",
+      "country_code_3": "SYR"
     },
     "SZ": {
-      "timezone": "Africa/Mbabane"
+      "timezone": "Africa/Mbabane",
+      "country_code_3": "SWZ"
     },
     "TC": {
-      "timezone": "America/Grand_Turk"
+      "timezone": "America/Grand_Turk",
+      "country_code_3": "TCA"
     },
     "TD": {
-      "timezone": "Africa/Ndjamena"
+      "timezone": "Africa/Ndjamena",
+      "country_code_3": "TCD"
     },
     "TG": {
-      "timezone": "Africa/Lome"
+      "timezone": "Africa/Lome",
+      "country_code_3": "TGO"
     },
     "TH": {
-      "timezone": "Asia/Bangkok"
+      "timezone": "Asia/Bangkok",
+      "country_code_3": "THA"
     },
     "TJ": {
-      "timezone": "Asia/Dushanbe"
+      "timezone": "Asia/Dushanbe",
+      "country_code_3": "TJK"
     },
     "TL": {
-      "timezone": "Asia/Dili"
+      "timezone": "Asia/Dili",
+      "country_code_3": "TLS"
     },
     "TM": {
-      "timezone": "Asia/Ashgabat"
+      "timezone": "Asia/Ashgabat",
+      "country_code_3": "TKM"
     },
     "TN": {
-      "timezone": "Africa/Tunis"
+      "timezone": "Africa/Tunis",
+      "country_code_3": "TUN"
     },
     "TO": {
-      "timezone": "Pacific/Tongatapu"
+      "timezone": "Pacific/Tongatapu",
+      "country_code_3": "TON"
     },
     "TR": {
-      "timezone": "Europe/Istanbul"
+      "timezone": "Europe/Istanbul",
+      "country_code_3": "TUR"
     },
     "TT": {
-      "timezone": "America/Port_of_Spain"
+      "timezone": "America/Port_of_Spain",
+      "country_code_3": "TTO"
     },
     "TV": {
-      "timezone": "Pacific/Funafuti"
+      "timezone": "Pacific/Funafuti",
+      "country_code_3": "TUV"
     },
     "TW": {
-      "timezone": "Asia/Taipei"
+      "timezone": "Asia/Taipei",
+      "country_code_3": "TWN"
     },
     "TZ": {
-      "timezone": "Africa/Dar_es_Salaam"
+      "timezone": "Africa/Dar_es_Salaam",
+      "country_code_3": "TZA"
     },
     "UA": {
-      "timezone": "Europe/Kyiv"
+      "timezone": "Europe/Kyiv",
+      "country_code_3": "UKR"
     },
     "UG": {
-      "timezone": "Africa/Kampala"
+      "timezone": "Africa/Kampala",
+      "country_code_3": "UGA"
     },
     "US": {
-      "timezone": "America/New_York"
+      "timezone": "America/New_York",
+      "country_code_3": "USA"
     },
     "UY": {
-      "timezone": "America/Montevideo"
+      "timezone": "America/Montevideo",
+      "country_code_3": "URY"
     },
     "UZ": {
-      "timezone": "Asia/Tashkent"
+      "timezone": "Asia/Tashkent",
+      "country_code_3": "UZB"
     },
     "VC": {
-      "timezone": "America/St_Vincent"
+      "timezone": "America/St_Vincent",
+      "country_code_3": "VCT"
     },
     "VE": {
-      "timezone": "America/Caracas"
+      "timezone": "America/Caracas",
+      "country_code_3": "VEN"
     },
     "VN": {
-      "timezone": "Asia/Saigon"
+      "timezone": "Asia/Saigon",
+      "country_code_3": "VNM"
     },
     "VU": {
-      "timezone": "Pacific/Efate"
+      "timezone": "Pacific/Efate",
+      "country_code_3": "VUT"
     },
     "WS": {
-      "timezone": "Pacific/Apia"
+      "timezone": "Pacific/Apia",
+      "country_code_3": "WSM"
     },
     "YE": {
-      "timezone": "Asia/Aden"
+      "timezone": "Asia/Aden",
+      "country_code_3": "YEM"
     },
     "YT": {
-      "timezone": "Indian/Mayotte"
+      "timezone": "Indian/Mayotte",
+      "country_code_3": "MYT"
     },
     "ZA": {
-      "timezone": "Africa/Johannesburg"
+      "timezone": "Africa/Johannesburg",
+      "country_code_3": "ZAF"
     },
     "ZM": {
-      "timezone": "Africa/Lusaka"
+      "timezone": "Africa/Lusaka",
+      "country_code_3": "ZMB"
     },
     "ZW": {
-      "timezone": "Africa/Harare"
+      "timezone": "Africa/Harare",
+      "country_code_3": "ZWE"
     }
   }
 }

@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/jurisdictions.schema.json",
   "title": "Jurisdictions (membership reference)",
-  "description": "Symbolic blocs EU and UN (members + timezone) plus per-country IANA zones (uppercase ISO alpha-2 key, timezone only). EU is an exceptionally reserved ISO 3166-1 code used here as a membership bloc, not a country timezone row; UN is a symbolic bloc (not an ISO country). Switzerland is keyed CH only (no lowercase ch bloc). providers.json resolves operational timezone via jurisdictions[COUNTRY].timezone.",
+  "description": "Symbolic blocs EU and UN (members + timezone) plus per-country IANA zones and ISO 3166-1 alpha-3 (uppercase ISO alpha-2 key, timezone + country_code_3). EU is an exceptionally reserved ISO 3166-1 code used here as a membership bloc, not a country timezone row; UN is a symbolic bloc (not an ISO country). Switzerland is keyed CH only (no lowercase ch bloc). providers.json resolves operational timezone via jurisdictions[COUNTRY].timezone.",
   "type": "object",
   "required": [
     "file_type",
@@ -23,14 +23,19 @@
     },
     "unit": {
       "type": "object",
-      "description": "Human-readable encoding hints for this file and related porto-data fields. Required: country_code (alpha-2 in jurisdictions.*.members and uppercase country keys). Other keys are optional documentation (e.g. region_code, date); values are short standard names.",
+      "description": "Human-readable encoding hints for this file and related porto-data fields. Required: country_code (alpha-2 in jurisdictions.*.members and uppercase country keys) and country_code_3 (ISO 3166-1 alpha-3 on per-country rows). Other keys are optional documentation (e.g. region_code, date); values are short standard names.",
       "required": [
-        "country_code"
+        "country_code",
+        "country_code_3"
       ],
       "properties": {
         "country_code": {
           "type": "string",
           "const": "ISO 3166-1 alpha-2"
+        },
+        "country_code_3": {
+          "type": "string",
+          "const": "ISO 3166-1 alpha-3"
         },
         "region_code": {
           "type": "string",
@@ -48,7 +53,7 @@
     },
     "jurisdictions": {
       "type": "object",
-      "description": "Keys: EU, UN (blocs with members + timezone). Other uppercase ISO alpha-2: timezone only. Framework tag CH resolves via country entry CH, not a ch bloc.",
+      "description": "Keys: EU, UN (blocs with members + timezone). Other uppercase ISO alpha-2: timezone + country_code_3. Framework tag CH resolves via country entry CH, not a ch bloc.",
       "required": [
         "EU",
         "UN"
@@ -98,15 +103,21 @@
     },
     "jurisdiction_country": {
       "type": "object",
-      "description": "Primary legal/operational IANA zone for this country code (same key as ISO alpha-2).",
+      "description": "Primary legal/operational IANA zone and ISO 3166-1 alpha-3 for this country code (same key as ISO alpha-2).",
       "required": [
-        "timezone"
+        "timezone",
+        "country_code_3"
       ],
       "properties": {
         "timezone": {
           "type": "string",
           "minLength": 3,
           "pattern": "^[A-Za-z0-9_+-]+(/[A-Za-z0-9_+-]+)+$"
+        },
+        "country_code_3": {
+          "type": "string",
+          "description": "ISO 3166-1 alpha-3 country code (one-way companion to the alpha-2 map key)",
+          "pattern": "^[A-Z]{3}$"
         }
       },
       "additionalProperties": false
