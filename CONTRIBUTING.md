@@ -97,7 +97,7 @@ Disambiguation when multiple products share zone + weight: [docs/resolution.md](
 | `make test` / `make test-cov` | Tests (**100%** coverage gate on `scripts/` + `cli/`) |
 | `make metadata` | Regenerate metadata (`CHECK=1` to verify committed copy) |
 | `make quality` | validate + format + lint + types |
-| `make test-publish` | npm + PyPI smoke test |
+| `make artifact` | build npm+PyPI once, verify, smoke (keeps tarball + `dist/`) |
 
 ## CI and pre-commit
 

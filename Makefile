@@ -1,6 +1,6 @@
 .PHONY: . help venv install-hooks
 .PHONY: schema mappings markets addresses kinds delivery graph
-.PHONY: format lint types test test-cov metadata validate quality test-publish
+.PHONY: format lint types test test-cov metadata validate quality artifact
 
 # Prefer Python 3.13+ (project requires >=3.13). Override in CI: PYTHON3=python
 PYTHON3 ?= $(shell command -v python3.13 2>/dev/null || command -v python3 2>/dev/null || echo python3)
@@ -46,7 +46,7 @@ help:
 	@echo "  make quality       - validate + format + lint + types"
 	@echo ""
 	@echo "Publish:"
-	@echo "  make test-publish  - npm + PyPI install smoke test"
+	@echo "  make artifact      - build npm+PyPI once, verify, smoke (keeps tarball + dist/)"
 	@echo ""
 
 venv:
@@ -146,5 +146,5 @@ metadata: venv
 
 quality: venv validate format lint types
 
-test-publish: venv
-	@./tests/test_publish.sh
+artifact: venv
+	@./scripts/release/verify_artifact.sh
