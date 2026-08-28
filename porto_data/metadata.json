@@ -5,13 +5,13 @@
     "version": "0.6.0",
     "description": "Multi-provider postal JSON: operator catalogs, pricing, shared policy (markets, restrictions), and schemas"
   },
-  "generated_at": "2026-08-28T07:19:25.242110Z",
+  "generated_at": "2026-08-28T15:01:50.075424Z",
   "policy": {
     "jurisdictions": {
       "data": {
         "path": "policy/jurisdictions.json",
-        "checksum": "50267625e11715c1dac4846b8087a9508beaab76019beef9a637b63edf7f6a98",
-        "size": 20948
+        "checksum": "9c572b1e8c54ab11153ae4772c739ffa83e65ea64763f4dd1a717328ee35d1a7",
+        "size": 20641
       },
       "schema": {
         "path": "schemas/jurisdictions.schema.json",
@@ -23,8 +23,8 @@
     "markets": {
       "data": {
         "path": "policy/markets.json",
-        "checksum": "b2ae680fafac5688fbd240f5e6fe7273c7bfab4ecbc68a8afe686784df42fbdd",
-        "size": 1717
+        "checksum": "8c78199fe24a0820000da60729eea93f26e1c014999dbf5067a146d70945dc66",
+        "size": 1644
       },
       "schema": {
         "path": "schemas/markets.schema.json",
@@ -134,8 +134,8 @@
       "features": {
         "data": {
           "path": "providers/deutschepost/features.json",
-          "checksum": "24c3fab4c02306fe89dfd4d0676f3d8bfc1d8d5152f6421f106a7d904620d95f",
-          "size": 1265
+          "checksum": "43cd8792e4c53919e771dcfedb9ee731a2866a57d0df44bc0cc6e6b0256224b8",
+          "size": 1239
         },
         "schema": {
           "path": "schemas/features.schema.json",
@@ -147,8 +147,8 @@
       "services": {
         "data": {
           "path": "providers/deutschepost/services.json",
-          "checksum": "ed63ac760a68d7ea20ab06bbf750d6cc5fc426ad7bae6340f81a9b988bc681ee",
-          "size": 2143
+          "checksum": "2169a06d104274873d8901ce735f650b588e0fabb25d5b64e00b05d4e87e275b",
+          "size": 2116
         },
         "schema": {
           "path": "schemas/services.schema.json",
@@ -212,8 +212,8 @@
       "graph": {
         "data": {
           "path": "providers/deutschepost/graph.json",
-          "checksum": "b09751b4498d5eb5c9bcece37ace42b427223e48238e369de2756a59bbb790d6",
-          "size": 8999
+          "checksum": "7ce504e380baf3ef7fe0c068408d1a8ff70185598e3671b6db69f661e39aaa4b",
+          "size": 8301
         },
         "schema": {
           "path": "schemas/graph.schema.json",
@@ -279,8 +279,8 @@
       "services": {
         "data": {
           "path": "providers/ukrposhta/services.json",
-          "checksum": "fcf56376d7833aaf2c953e3db36ab6c16d65ed760b54d131927d7bbce8fc92ed",
-          "size": 1285
+          "checksum": "f9fb1c2d64967372ed77a2333ee3a0fcf51a2d7a0509fe48307485b2d7c972d0",
+          "size": 1253
         },
         "schema": {
           "path": "schemas/services.schema.json",
@@ -344,8 +344,8 @@
       "graph": {
         "data": {
           "path": "providers/ukrposhta/graph.json",
-          "checksum": "46031bf01a25327ef63c0240aa72f826c778da83fb6990cf5eea3a6d51a91d09",
-          "size": 4319
+          "checksum": "0b047e0b12338923e5c82747712d328d92ffa8d44499d3d05defc462244688b6",
+          "size": 4036
         },
         "schema": {
           "path": "schemas/graph.schema.json",
@@ -385,8 +385,8 @@
       "features": {
         "data": {
           "path": "providers/laposte/features.json",
-          "checksum": "91832516f5aa0a12c3e96c55460f2539019f9c48a4a3313cd5b3c18c11e9f6d6",
-          "size": 1353
+          "checksum": "ee9c824445c87d134c81e187b7e08264f9986a503255dbae1e293631e586bb4d",
+          "size": 1249
         },
         "schema": {
           "path": "schemas/features.schema.json",
@@ -398,8 +398,8 @@
       "services": {
         "data": {
           "path": "providers/laposte/services.json",
-          "checksum": "8aadbc563a9c0178731655fcfaca9d0b1500d50e95d5222a2f212762bb3b21a9",
-          "size": 1605
+          "checksum": "f0b8a48c497073c6d17c37d5df0e653adc835187a30130b0940b795b18bb60cb",
+          "size": 1344
         },
         "schema": {
           "path": "schemas/services.schema.json",
@@ -437,8 +437,8 @@
       "zones": {
         "data": {
           "path": "providers/laposte/zones.json",
-          "checksum": "ef17af5d3ea67009a977d4f37e5879f7b33727260286054b9dc84582df4efea0",
-          "size": 3851
+          "checksum": "4d68290cb0de5108a92483219e4890fb90486cfce1743af735b5b3ce002a3ece",
+          "size": 3665
         },
         "schema": {
           "path": "schemas/zones.schema.json",
@@ -463,8 +463,8 @@
       "graph": {
         "data": {
           "path": "providers/laposte/graph.json",
-          "checksum": "cd5dfd3ded86f2e99c2e457f8b3f437de0608567f185e75143d9cd8c96a8cd22",
-          "size": 7298
+          "checksum": "e811197659955d28b7c207e14f29fdc38cb226d2ad4306fc01782becf5047945",
+          "size": 6750
         },
         "schema": {
           "path": "schemas/graph.schema.json",
@@ -491,8 +491,8 @@
       "rules": {
         "data": {
           "path": "providers/swisspost/rules.json",
-          "checksum": "ae265b66aa927edc23beda90e5a736e4da997a2608ba2b4a93259ba227e7cd28",
-          "size": 809
+          "checksum": "0b4abf672d5ded66811420e793998bea1bbc6e41a52f18f5be906b36d49d7f7e",
+          "size": 685
         },
         "schema": {
           "path": "schemas/rules.schema.json",
@@ -517,8 +517,8 @@
       "features": {
         "data": {
           "path": "providers/swisspost/features.json",
-          "checksum": "d2f6a4175e8caa39ab190d3869c2346b1162418cb1e6f2b8a5b39672b4030765",
-          "size": 742
+          "checksum": "ede3203e4d2042c7854fb84a3647226a31c865abfbdbe164b4dfff3d0ffae420",
+          "size": 632
         },
         "schema": {
           "path": "schemas/features.schema.json",
@@ -530,8 +530,8 @@
       "services": {
         "data": {
           "path": "providers/swisspost/services.json",
-          "checksum": "0a3150ee9cb9dd26ab6d9ca409df9a9bb578f7269533fc6df13bbafa07957be3",
-          "size": 1141
+          "checksum": "053a35c8944b7f8c26ca10a9fa32e328bb3b18df6a7a609ad5b8eb0a83f8e37a",
+          "size": 940
         },
         "schema": {
           "path": "schemas/services.schema.json",
@@ -569,8 +569,8 @@
       "zones": {
         "data": {
           "path": "providers/swisspost/zones.json",
-          "checksum": "a48f2f57413afe68c2eaa806524e5636be5908104b762db21d7d19822a98f50f",
-          "size": 3689
+          "checksum": "e0eb8c4cdf042233f62378c9cc47edd2731472b052633059923aee182f96cdf9",
+          "size": 3520
         },
         "schema": {
           "path": "schemas/zones.schema.json",
@@ -595,8 +595,8 @@
       "graph": {
         "data": {
           "path": "providers/swisspost/graph.json",
-          "checksum": "c94938ba744a8090ba6ef1568c2b122e5fd74d1d23707dc7c68c3fd548027926",
-          "size": 6687
+          "checksum": "c002cf2461ff205cdda16d0cd4d222a0a8f1a7864df4609f41e756c8de283035",
+          "size": 6085
         },
         "schema": {
           "path": "schemas/graph.schema.json",

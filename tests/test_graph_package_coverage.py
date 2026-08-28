@@ -485,7 +485,13 @@ class TestGraphValidatorEarlyReturnsAndBranches:
             encoding="utf-8",
         )
         (data_dir / "restrictions.json").write_text(
-            json.dumps({"file_type": "restrictions", "unit": {"country_code": "ISO 3166-1 alpha-2", "date": "ISO 8601"}, "disclaimer": "test"}),
+            json.dumps(
+                {
+                    "file_type": "restrictions",
+                    "unit": {"country_code": "ISO 3166-1 alpha-2", "date": "ISO 8601"},
+                    "disclaimer": "test",
+                }
+            ),
             encoding="utf-8",
         )
         (data_dir / "features.json").write_text(
@@ -581,7 +587,13 @@ class TestGraphValidatorEarlyReturnsAndBranches:
             encoding="utf-8",
         )
         (data_dir / "restrictions.json").write_text(
-            json.dumps({"file_type": "restrictions", "unit": {"country_code": "ISO 3166-1 alpha-2", "date": "ISO 8601"}, "disclaimer": "test"}),
+            json.dumps(
+                {
+                    "file_type": "restrictions",
+                    "unit": {"country_code": "ISO 3166-1 alpha-2", "date": "ISO 8601"},
+                    "disclaimer": "test",
+                }
+            ),
             encoding="utf-8",
         )
         (data_dir / "features.json").write_text(
@@ -685,7 +697,13 @@ class TestGraphValidatorMoreBranches:
             encoding="utf-8",
         )
         (data_dir / "restrictions.json").write_text(
-            json.dumps({"file_type": "restrictions", "unit": {"country_code": "ISO 3166-1 alpha-2", "date": "ISO 8601"}, "disclaimer": "test"}),
+            json.dumps(
+                {
+                    "file_type": "restrictions",
+                    "unit": {"country_code": "ISO 3166-1 alpha-2", "date": "ISO 8601"},
+                    "disclaimer": "test",
+                }
+            ),
             encoding="utf-8",
         )
         (data_dir / "features.json").write_text(
@@ -779,7 +797,13 @@ class TestGraphValidatorMoreBranches:
             encoding="utf-8",
         )
         (data_dir / "restrictions.json").write_text(
-            json.dumps({"file_type": "restrictions", "unit": {"country_code": "ISO 3166-1 alpha-2", "date": "ISO 8601"}, "disclaimer": "test"}),
+            json.dumps(
+                {
+                    "file_type": "restrictions",
+                    "unit": {"country_code": "ISO 3166-1 alpha-2", "date": "ISO 8601"},
+                    "disclaimer": "test",
+                }
+            ),
             encoding="utf-8",
         )
         (data_dir / "features.json").write_text(
@@ -873,7 +897,13 @@ class TestGraphValidatorMoreBranches:
             encoding="utf-8",
         )
         (data_dir / "restrictions.json").write_text(
-            json.dumps({"file_type": "restrictions", "unit": {"country_code": "ISO 3166-1 alpha-2", "date": "ISO 8601"}, "disclaimer": "test"}),
+            json.dumps(
+                {
+                    "file_type": "restrictions",
+                    "unit": {"country_code": "ISO 3166-1 alpha-2", "date": "ISO 8601"},
+                    "disclaimer": "test",
+                }
+            ),
             encoding="utf-8",
         )
         (data_dir / "features.json").write_text(

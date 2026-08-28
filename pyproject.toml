@@ -91,6 +91,9 @@ omit = [
     "scripts/format_json_file.py",
 ]
 
+[tool.coverage.report]
+fail_under = 100
+
 [tool.mypy]
 python_version = "3.13"
 warn_return_any = true

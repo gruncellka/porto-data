@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+- **CI / Make / pre-commit naming:** validation workflow jobs, Make targets, and hook IDs use short concern names (`schema`, `format`, `lint`, `types`, `test`, `mappings`, …, `validate` aggregator). Independent leaves run in parallel; `validate` is the branch-protection check.
 - **Catalog descriptions:** neutralize graph dependency blurbs and product/service/feature copy — factual operator wording only; drop implementor notes (wire/API, file paths, resolver hints).
 - **Docs / rules:** address place field documented as **`locality`** (UPU); catalog key wording prefers **catalog `id`** over “native id” in contributor rules. Policy docs stay catalog-layer (no SDK result shape).
 

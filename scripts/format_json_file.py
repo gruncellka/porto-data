@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Format a single JSON file (same output as make format-json).
+"""Format a single JSON file (same output as make format).
 
 Usage:
   python format_json_file.py <file_path>       # format in place
   python format_json_file.py --check <file>    # return 0 if already formatted, 1 otherwise
 
-This ensures Cmd+S and make format-json produce identical output.
+This ensures Cmd+S and make format produce identical output.
 """
 
 import json

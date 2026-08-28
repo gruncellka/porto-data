@@ -535,7 +535,7 @@ class TestEdgeAccessCoverage:
         assert not ok
         assert any("edges must be an object" in e for e in r["errors"])
 
-    def test_validate_edges_container_legacy_mark_edges(self) -> None:
+    def test_validate_edges_container_rejects_top_level_mark_edges(self) -> None:
         r = _empty_results()
         ok = validate_edges_container(
             r, graph={"edges": {"products": {}, "marks": {}}, "mark_edges": {}}
@@ -559,15 +559,6 @@ class TestMarkEdgesCoverage:
             marks=_marks_doc(profiles=[{"id": "a", "type": "stamp", "label": "A"}]),
         )
         assert any("edges.marks must be an object" in e for e in r["errors"])
-
-    def test_legacy_top_level_mark_edges_rejected(self) -> None:
-        r = _empty_results()
-        run_validate_mark_edges(
-            r,
-            graph={"file_type": "graph", "edges": {"products": {}, "marks": {}}, "mark_edges": {}},
-            marks=_marks_doc(profiles=[{"id": "a", "type": "stamp", "label": "A"}]),
-        )
-        assert any("mark_edges is removed" in e for e in r["errors"])
 
     def test_edges_marks_requires_marks(self) -> None:
         r = _empty_results()

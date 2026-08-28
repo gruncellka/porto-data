@@ -74,7 +74,7 @@
       "type": "stamp",
       "label": "Internetmarke registered domestic",
       "description": "Domestic registered (Einschreiben) franking graphic",
-      "scope_notes": "Einschreiben, Einwurf, and R\u00fcckschein share this footprint.",
+      "scope_notes": "Einschreiben, Einwurf, and Rückschein share this footprint.",
       "size": {
         "width": 62,
         "height": 20

@@ -6,7 +6,10 @@
   "definitions": {
     "token": {
       "type": "string",
-      "enum": ["ADDRESS_SENDER", "ADDRESS_RECIPIENT"]
+      "enum": [
+        "ADDRESS_SENDER",
+        "ADDRESS_RECIPIENT"
+      ]
     },
     "requires": {
       "type": "array",

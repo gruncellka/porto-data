@@ -1,4 +1,4 @@
-"""Tests for scripts/format_json_file.py (CLI used by make format-json)."""
+"""Tests for scripts/format_json_file.py (CLI used by make format)."""
 
 import json
 import subprocess

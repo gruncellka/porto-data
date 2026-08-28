@@ -97,7 +97,7 @@ CI (`.github/workflows/validation.yml`) must run the same chain; include **`vali
 - After JSON or schema edits: **`make validate`** and **`make format`** (or **`make quality`** for the full gate).
 - If `metadata.json` regenerates, **stage it in the same commit** as the data/schema/mappings change.
 - New validation behavior → **tests** in `tests/` (**100%** coverage on `make test-cov` for `scripts/` + `cli/`).
-- Pre-commit **`format-json`** uses `require_serial: true` — do not run parallel `git add` per file inside hooks (submodule index.lock races).
+- Pre-commit **`format`** uses `require_serial: true` — do not run parallel `git add` per file inside hooks (submodule index.lock races).
 
 ## Domain tokens (high level)
 

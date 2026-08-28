@@ -91,19 +91,19 @@ Disambiguation when multiple products share zone + weight: [docs/resolution.md](
 | `make` | venv + hooks |
 | `make venv` | venv + dev deps only (CI) |
 | `make help` | Show all commands |
-| `make validate` | Same as full `porto validate` |
-| `make validate-graph` | Graph only |
-| `make format` / `make lint` / `make type-check` | Quality |
+| `make validate` | Full `porto validate` chain |
+| `make schema` … `make graph` | Single validation stage (see `make help`) |
+| `make format` / `make lint` / `make types` | Quality |
 | `make test` / `make test-cov` | Tests (**100%** coverage gate on `scripts/` + `cli/`) |
-| `make metadata` | Regenerate metadata |
-| `make quality` | validate + format + lint + type-check |
+| `make metadata` | Regenerate metadata (`CHECK=1` to verify committed copy) |
+| `make quality` | validate + format + lint + types |
 | `make test-publish` | npm + PyPI smoke test |
 
 ## CI and pre-commit
 
-Hooks may format, validate, lint, type-check, and refresh `metadata.json`. If they change files, re-stage and commit again. Unstaged `metadata.json` after regeneration fails the commit by design.
+CI job names match Make concerns: `schema`, `format`, `lint`, `types`, `test`, `mappings`, `markets`, `addresses`, `kinds`, `delivery`, `graph`, `metadata`, and aggregate **`validate`** (branch-protection check). CI is Make; hooks are local; `CHECK=1` is how CI proves the committed tree already matches (`make format CHECK=1`, `make metadata CHECK=1`).
 
-Use a branch. CI runs validation, format checks, metadata consistency, tests, lint, and MyPy.
+Hooks may format, validate, lint, types-check, and refresh `metadata.json`. If they change files, re-stage and commit again. Unstaged `metadata.json` after regeneration fails the commit by design.
 
 ## Releases
 

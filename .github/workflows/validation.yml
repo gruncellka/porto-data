@@ -1,233 +1,210 @@
+# Porto Data validation. Leaf jobs map to Make: schema, format, lint, types, test,
+# mappings, markets, addresses, kinds, delivery, graph, metadata.
+# Aggregator job `validate` is the branch-protection check.
+
 name: validation
 
 on:
     push:
+    pull_request:
 
 concurrency:
-    group: ${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
+    group: validation-${{ github.workflow }}-${{ github.head_ref || github.ref_name }}
     cancel-in-progress: true
+
+permissions:
+    contents: read
 
 env:
     PYTHON_VERSION: '3.13'
 
 jobs:
-    # ==========================================
-    # JSON Validation (MUST RUN FIRST)
-    # ==========================================
-    # These can run in parallel - schema validation and formatting are independent
-    validate-schemas:
-        name: Validate JSON Schemas
-        runs-on: ubuntu-22.04
+    schema:
+        name: schema
+        runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
             - uses: actions/setup-python@v5
               with:
                   python-version: ${{ env.PYTHON_VERSION }}
                   cache: 'pip'
-            - name: Validate JSON files against schemas
-              run: |
-                  . venv/bin/activate 2>/dev/null || true
-                  make venv
-                  . venv/bin/activate && PYTHONPATH=. python -m cli.main validate --type schema
+            - name: schema
+              run: make schema
 
-    format-json:
-        name: Check JSON Formatting
-        runs-on: ubuntu-22.04
-        steps:
-            - uses: actions/checkout@v4
-            - uses: actions/setup-python@v5
-              with:
-                  python-version: ${{ env.PYTHON_VERSION }}
-            - name: Check JSON formatting
-              run: make format-json CHECK=1
-
-    # Semantic validators — parallel after schema (each reads the repo; no job-to-job artifacts)
-    validate-mappings:
-        name: Validate mappings
-        runs-on: ubuntu-22.04
-        needs: [validate-schemas]
+    format:
+        name: format
+        runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
             - uses: actions/setup-python@v5
               with:
                   python-version: ${{ env.PYTHON_VERSION }}
                   cache: 'pip'
-            - name: Validate mappings.json, providers registry, metadata alignment
-              run: |
-                  make venv
-                  . venv/bin/activate && PYTHONPATH=. python -m cli.main validate --type mappings
+            - name: format
+              run: make format CHECK=1
 
-    validate-markets:
-        name: Validate policy/markets.json
-        runs-on: ubuntu-22.04
-        needs: [validate-schemas]
+    lint:
+        name: lint
+        runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
             - uses: actions/setup-python@v5
               with:
                   python-version: ${{ env.PYTHON_VERSION }}
                   cache: 'pip'
-            - name: Validate markets vs provider countries
-              run: |
-                  make venv
-                  . venv/bin/activate && PYTHONPATH=. python -m cli.main validate --type markets
+            - name: lint
+              run: make lint
 
-    validate-addresses:
-        name: Validate formats/addresses.json
-        runs-on: ubuntu-22.04
-        needs: [validate-schemas]
+    types:
+        name: types
+        runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
             - uses: actions/setup-python@v5
               with:
                   python-version: ${{ env.PYTHON_VERSION }}
                   cache: 'pip'
-            - name: Validate address forms vs layouts/jurisdictions
-              run: |
-                  make venv
-                  . venv/bin/activate && PYTHONPATH=. python -m cli.main validate --type addresses
-
-    validate-kinds:
-        name: Validate kinds
-        runs-on: ubuntu-22.04
-        needs: [validate-schemas]
-        steps:
-            - uses: actions/checkout@v4
-            - uses: actions/setup-python@v5
-              with:
-                  python-version: ${{ env.PYTHON_VERSION }}
-                  cache: 'pip'
-            - name: Validate service/feature kinds and concrete-id refs
-              run: |
-                  make venv
-                  . venv/bin/activate && PYTHONPATH=. python -m cli.main validate --type kinds
-                  if [ -n "$(git diff docs/kinds.md)" ]; then
-                    echo "❌ docs/kinds.md is out of date. The file must be regenerated and committed."
-                    echo "Run 'porto validate --type kinds' locally, then commit the updated docs/kinds.md file."
-                    git diff docs/kinds.md
-                    exit 1
-                  fi
-                  echo "✓ docs/kinds.md is up to date"
-
-    validate-delivery:
-        name: Validate delivery
-        runs-on: ubuntu-22.04
-        needs: [validate-schemas]
-        steps:
-            - uses: actions/checkout@v4
-            - uses: actions/setup-python@v5
-              with:
-                  python-version: ${{ env.PYTHON_VERSION }}
-                  cache: 'pip'
-            - name: Validate delivery[], included_features, indemnity on products.json
-              run: |
-                  make venv
-                  . venv/bin/activate && PYTHONPATH=. python -m cli.main validate --type delivery
-
-    validate-graph:
-        name: Validate provider graph.json
-        runs-on: ubuntu-22.04
-        needs: [validate-schemas]
-        steps:
-            - uses: actions/checkout@v4
-            - uses: actions/setup-python@v5
-              with:
-                  python-version: ${{ env.PYTHON_VERSION }}
-                  cache: 'pip'
-            - name: Validate graph consistency (dependencies, edges, cross-file refs)
-              run: make validate-graph
-
-    verify-metadata:
-        name: Verify Metadata
-        runs-on: ubuntu-22.04
-        needs: [validate-schemas, validate-mappings, validate-markets, validate-addresses, validate-kinds, validate-delivery, validate-graph]
-        steps:
-            - uses: actions/checkout@v4
-            - uses: actions/setup-python@v5
-              with:
-                  python-version: ${{ env.PYTHON_VERSION }}
-                  cache: 'pip'
-            - name: Verify metadata.json is up to date
-              run: |
-                  make metadata
-                  if [ -n "$(git diff porto_data/metadata.json)" ]; then
-                    echo "❌ metadata.json is out of date. The file must be regenerated and committed."
-                    echo "Run 'make metadata' locally, then commit the updated porto_data/metadata.json file."
-                    git diff porto_data/metadata.json
-                    exit 1
-                  fi
-                  echo "✓ metadata.json is up to date"
-
-    format-code:
-        name: Check Python Formatting
-        runs-on: ubuntu-22.04
-        steps:
-            - uses: actions/checkout@v4
-            - uses: actions/setup-python@v5
-              with:
-                  python-version: ${{ env.PYTHON_VERSION }}
-                  cache: 'pip'
-            - name: Check Python code formatting
-              run: make format-code CHECK=1
-
-    lint-code:
-        name: Lint Python Code
-        runs-on: ubuntu-22.04
-        steps:
-            - uses: actions/checkout@v4
-            - uses: actions/setup-python@v5
-              with:
-                  python-version: ${{ env.PYTHON_VERSION }}
-                  cache: 'pip'
-            - name: Lint Python code
-              run: make lint-code
-
-    type-check:
-        name: Type Check Python
-        runs-on: ubuntu-22.04
-        steps:
-            - uses: actions/checkout@v4
-            - uses: actions/setup-python@v5
-              with:
-                  python-version: ${{ env.PYTHON_VERSION }}
-                  cache: 'pip'
-            - name: Type check Python code
-              run: make type-check
+            - name: types
+              run: make types
 
     test:
-        name: Run Tests with Coverage
-        runs-on: ubuntu-22.04
+        name: test
+        runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@v4
             - uses: actions/setup-python@v5
               with:
                   python-version: ${{ env.PYTHON_VERSION }}
                   cache: 'pip'
-            - name: Run tests with coverage
+            - name: test
               run: make test-cov
-            - name: Upload coverage reports to Codecov
-              uses: codecov/codecov-action@v6.0.0
+            - name: Upload coverage
+              uses: codecov/codecov-action@v6
               continue-on-error: true
               with:
                   token: ${{ secrets.CODECOV_TOKEN }}
 
-    validation:
-        name: Porto Data Validation
-        runs-on: ubuntu-22.04
-        needs:
-            - validate-schemas
-            - format-json
-            - validate-mappings
-            - validate-markets
-            - validate-addresses
-            - validate-kinds
-            - validate-delivery
-            - validate-graph
-            - verify-metadata
-            - format-code
-            - lint-code
-            - type-check
-            - test
+    mappings:
+        name: mappings
+        runs-on: ubuntu-latest
         steps:
-            - name: All validation checks passed
-              run: echo "✅ All validation checks passed successfully!"
+            - uses: actions/checkout@v4
+            - uses: actions/setup-python@v5
+              with:
+                  python-version: ${{ env.PYTHON_VERSION }}
+                  cache: 'pip'
+            - name: mappings
+              run: make mappings
+
+    markets:
+        name: markets
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-python@v5
+              with:
+                  python-version: ${{ env.PYTHON_VERSION }}
+                  cache: 'pip'
+            - name: markets
+              run: make markets
+
+    addresses:
+        name: addresses
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-python@v5
+              with:
+                  python-version: ${{ env.PYTHON_VERSION }}
+                  cache: 'pip'
+            - name: addresses
+              run: make addresses
+
+    kinds:
+        name: kinds
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-python@v5
+              with:
+                  python-version: ${{ env.PYTHON_VERSION }}
+                  cache: 'pip'
+            - name: kinds
+              run: make kinds
+
+    delivery:
+        name: delivery
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-python@v5
+              with:
+                  python-version: ${{ env.PYTHON_VERSION }}
+                  cache: 'pip'
+            - name: delivery
+              run: make delivery
+
+    graph:
+        name: graph
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-python@v5
+              with:
+                  python-version: ${{ env.PYTHON_VERSION }}
+                  cache: 'pip'
+            - name: graph
+              run: make graph
+
+    metadata:
+        name: metadata
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-python@v5
+              with:
+                  python-version: ${{ env.PYTHON_VERSION }}
+                  cache: 'pip'
+            - name: metadata
+              run: make metadata CHECK=1
+
+    validate:
+        name: validate
+        if: always()
+        needs:
+            - schema
+            - format
+            - lint
+            - types
+            - test
+            - mappings
+            - markets
+            - addresses
+            - kinds
+            - delivery
+            - graph
+            - metadata
+        runs-on: ubuntu-latest
+        steps:
+            - name: All required jobs passed
+              run: |
+                  set -eu
+                  for result in \
+                    ${{ needs.schema.result }} \
+                    ${{ needs.format.result }} \
+                    ${{ needs.lint.result }} \
+                    ${{ needs.types.result }} \
+                    ${{ needs.test.result }} \
+                    ${{ needs.mappings.result }} \
+                    ${{ needs.markets.result }} \
+                    ${{ needs.addresses.result }} \
+                    ${{ needs.kinds.result }} \
+                    ${{ needs.delivery.result }} \
+                    ${{ needs.graph.result }} \
+                    ${{ needs.metadata.result }}; do
+                    case "$result" in
+                      success) ;;
+                      *) echo "required job result=$result"; exit 1 ;;
+                    esac
+                  done
+                  echo "validate OK"

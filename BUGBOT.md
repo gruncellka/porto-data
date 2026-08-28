@@ -76,7 +76,7 @@ If a PR adds `sys.path` mutation under `scripts/**` or `cli/**`:
 If changed JSON under `porto_data/**` is minified, not 2-space indented, or keys reshuffled without need:
 
 - **Title:** `JSON formatting or key-order drift`
-- **Body:** `Keep 2 spaces, preserve key order, format with make format-json or scripts/format_json_file.py.`
+- **Body:** `Keep 2 spaces, preserve key order, format with make format or scripts/format_json_file.py.`
 - **Labels:** `maintainability`
 
 ### 7) User-visible contract changes → changelog (non-blocking)
