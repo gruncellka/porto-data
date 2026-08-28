@@ -31,7 +31,6 @@ REQUIRED_PROVIDER_SCHEMAS: tuple[str, ...] = (
     "schemas/service_prices.schema.json",
     "schemas/zones.schema.json",
     "schemas/weights.schema.json",
-    "schemas/limits.schema.json",
     "schemas/graph.schema.json",
 )
 
@@ -99,8 +98,8 @@ def _render_mapping_doc(providers_data: dict[str, dict[str, list[tuple[str, str]
             lines.append("")
             lines.append("| `id` |")
             lines.append("|------|")
-            for native_id, _ in sorted(products):
-                lines.append(f"| `{native_id}` |")
+            for catalog_id, _ in sorted(products):
+                lines.append(f"| `{catalog_id}` |")
             lines.append("")
         for entity in ("services", "features"):
             rows = blocks.get(entity) or []
@@ -110,8 +109,8 @@ def _render_mapping_doc(providers_data: dict[str, dict[str, list[tuple[str, str]
             lines.append("")
             lines.append(f"| `id` | {entity} `kind` |")
             lines.append("|------|----------------|")
-            for native_id, kind in sorted(rows):
-                lines.append(f"| `{native_id}` | `{kind}` |")
+            for catalog_id, kind in sorted(rows):
+                lines.append(f"| `{catalog_id}` | `{kind}` |")
             lines.append("")
     return "\n".join(lines).rstrip() + "\n"
 
@@ -151,55 +150,55 @@ def validate_kinds(*, write_mapping_doc: bool = True) -> int:
         for p in products.get("products", []):
             if not isinstance(p, dict):
                 continue
-            native_id = p.get("id")
-            if isinstance(native_id, str) and native_id.endswith("_intl"):
+            catalog_id = p.get("id")
+            if isinstance(catalog_id, str) and catalog_id.endswith("_intl"):
                 errors.append(
-                    f"{pid}: product id '{native_id}' uses deprecated _intl suffix; "
+                    f"{pid}: product id '{catalog_id}' uses deprecated _intl suffix; "
                     f"use a local-language slug"
                 )
             if p.get("kind") is not None:
                 errors.append(
-                    f"{pid}: product '{native_id}' must not have kind "
+                    f"{pid}: product '{catalog_id}' must not have kind "
                     "(no cross-provider product taxonomy)"
                 )
-            if native_id:
-                doc_data[pid]["products"].append((str(native_id), ""))
+            if catalog_id:
+                doc_data[pid]["products"].append((str(catalog_id), ""))
 
         for s in services.get("services", []):
             if not isinstance(s, dict):
                 continue
-            native_id = s.get("id")
+            catalog_id = s.get("id")
             kind = s.get("kind")
-            if isinstance(native_id, str) and native_id.endswith("_intl"):
+            if isinstance(catalog_id, str) and catalog_id.endswith("_intl"):
                 errors.append(
-                    f"{pid}: service id '{native_id}' uses deprecated _intl suffix; "
+                    f"{pid}: service id '{catalog_id}' uses deprecated _intl suffix; "
                     f"use a local-language slug"
                 )
-            if native_id and kind:
-                doc_data[pid]["services"].append((str(native_id), str(kind)))
+            if catalog_id and kind:
+                doc_data[pid]["services"].append((str(catalog_id), str(kind)))
             if kind and kind not in enums["service_kind"]:
                 errors.append(
-                    f"{pid}: service '{native_id}' kind '{kind}' not in canonical service_kind enum"
+                    f"{pid}: service '{catalog_id}' kind '{kind}' not in canonical service_kind enum"
                 )
             elif not kind:
-                errors.append(f"{pid}: service '{native_id}' missing kind")
+                errors.append(f"{pid}: service '{catalog_id}' missing kind")
 
         feature_ids: set[str] = set()
         for f in features.get("features", []):
             if not isinstance(f, dict):
                 continue
-            native_id = f.get("id")
+            catalog_id = f.get("id")
             kind = f.get("kind")
-            if native_id and kind:
-                doc_data[pid]["features"].append((str(native_id), str(kind)))
-            if isinstance(native_id, str):
-                feature_ids.add(native_id)
+            if catalog_id and kind:
+                doc_data[pid]["features"].append((str(catalog_id), str(kind)))
+            if isinstance(catalog_id, str):
+                feature_ids.add(catalog_id)
             if kind and kind not in enums["feature_kind"]:
                 errors.append(
-                    f"{pid}: feature '{native_id}' kind '{kind}' not in canonical feature_kind enum"
+                    f"{pid}: feature '{catalog_id}' kind '{kind}' not in canonical feature_kind enum"
                 )
             elif not kind:
-                errors.append(f"{pid}: feature '{native_id}' missing kind")
+                errors.append(f"{pid}: feature '{catalog_id}' missing kind")
 
         for s in services.get("services", []):
             if not isinstance(s, dict):
@@ -215,10 +214,10 @@ def validate_kinds(*, write_mapping_doc: bool = True) -> int:
                 )
 
         svc_dupes = _kinds_by_entity(services.get("services", []))
-        for kind, native_ids in sorted(svc_dupes.items()):
-            if len(native_ids) > 1:
+        for kind, catalog_ids in sorted(svc_dupes.items()):
+            if len(catalog_ids) > 1:
                 warnings.append(
-                    f"{pid}: service kind '{kind}' maps to ids {native_ids} "
+                    f"{pid}: service kind '{kind}' maps to ids {catalog_ids} "
                     "(expected for operator variants)"
                 )
 

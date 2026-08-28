@@ -1,6 +1,6 @@
 .PHONY: . help venv install-hooks
-.PHONY: validate-json validate-graph format-json lint-json format-code lint-code type-check
-.PHONY: validate format lint metadata test test-cov quality test-publish
+.PHONY: schema mappings markets addresses kinds delivery graph
+.PHONY: format lint types test test-cov metadata validate quality test-publish
 
 # Prefer Python 3.13+ (project requires >=3.13). Override in CI: PYTHON3=python
 PYTHON3 ?= $(shell command -v python3.13 2>/dev/null || command -v python3 2>/dev/null || echo python3)
@@ -10,6 +10,8 @@ VENV := venv
 VENV_PYTHON := $(VENV)/bin/python
 VENV_MARKER := $(VENV)/.setup-complete
 
+JSON_PATHS = porto_data/*.json porto_data/schemas/*.json porto_data/policy/*.json porto_data/formats/*.json porto_data/providers/*/*.json porto_data/providers/*/prices/*.json
+
 # Plain `make`
 .DEFAULT_GOAL := .
 
@@ -17,42 +19,36 @@ VENV_MARKER := $(VENV)/.setup-complete
 	@echo "✓ Ready — make targets use venv automatically (no source needed)"
 
 help:
-	@echo "Porto Data - Schema Validation & Code Quality"
-	@echo "=============================================="
+	@echo "Porto Data — validation & quality"
+	@echo "=================================="
 	@echo ""
-	@echo "  make               - venv + dev deps + pre-commit hooks (targets use venv automatically)"
+	@echo "  make               - venv + dev deps + pre-commit hooks"
 	@echo "  make help          - Show this help"
-	@echo "  make venv          - Create venv + install dev deps only (CI / scripts)"
+	@echo "  make venv          - venv + dev deps only (CI / scripts)"
 	@echo ""
-	@echo "Most Common Commands:"
-	@echo "  make quality       - validate + format + lint + type-check"
-	@echo "  make validate      - Validate all JSON (schema → mappings → markets → addresses → limits → kinds → delivery → graph)"
-	@echo "  make format        - Format JSON and Python"
-	@echo "  make lint          - Lint JSON and Python"
+	@echo "Validation (porto validate stages):"
+	@echo "  make validate      - schema → mappings → markets → addresses → kinds → delivery → graph"
+	@echo "  make schema        - JSON vs schemas"
+	@echo "  make mappings      - mappings.json, registry, metadata alignment"
+	@echo "  make markets       - policy/markets.json"
+	@echo "  make addresses     - formats/addresses.json"
+	@echo "  make kinds         - service/feature kinds (+ docs/kinds.md freshness)"
+	@echo "  make delivery      - zone delivery SLAs"
+	@echo "  make graph         - provider graph.json"
+	@echo "  make metadata      - regenerate metadata.json (CHECK=1 to verify committed copy)"
 	@echo ""
-	@echo "JSON Commands:"
-	@echo "  make validate-json  - Full JSON validation chain"
-	@echo "  make validate-graph - graph.json only"
-	@echo "  make format-json    - Format JSON (CHECK=1 for read-only)"
-	@echo "  make lint-json      - JSON syntax check"
-	@echo ""
-	@echo "Code Commands:"
-	@echo "  make format-code    - Ruff format (CHECK=1 for read-only)"
-	@echo "  make lint-code      - Ruff lint"
-	@echo "  make type-check     - MyPy"
-	@echo ""
-	@echo "Testing:"
-	@echo "  make test           - Run tests"
-	@echo "  make test-cov       - Tests with coverage"
-	@echo ""
-	@echo "Metadata:"
-	@echo "  make metadata       - Regenerate metadata.json"
+	@echo "Quality:"
+	@echo "  make format        - JSON + Python (CHECK=1 for read-only)"
+	@echo "  make lint          - JSON syntax + Ruff"
+	@echo "  make types         - MyPy on scripts/ + cli/"
+	@echo "  make test          - pytest"
+	@echo "  make test-cov      - pytest + coverage reports"
+	@echo "  make quality       - validate + format + lint + types"
 	@echo ""
 	@echo "Publish:"
-	@echo "  make test-publish   - npm + PyPI install smoke test"
+	@echo "  make test-publish  - npm + PyPI install smoke test"
 	@echo ""
 
-# CI / scripts: setup only — no hooks
 venv:
 	@if [ ! -x "$(VENV_PYTHON)" ] || [ ! -f "$(VENV_MARKER)" ]; then \
 		echo "Setting up porto-data (venv + dev deps)..."; \
@@ -74,121 +70,81 @@ install-hooks: venv
 		echo "✓ Pre-commit hooks installed"; \
 	fi
 
-# ==========================================
-# Most Common Commands
-# ==========================================
-validate: venv validate-json
+validate: venv schema mappings markets addresses kinds delivery graph
 
-format: venv format-json format-code
-
-lint: venv lint-json lint-code
-
-# ==========================================
-# JSON Commands
-# ==========================================
-validate-json: venv
-	@echo "Validating JSON against schemas..."
+schema: venv
 	@. $(VENV)/bin/activate && PYTHONPATH=. python -m cli.main validate --type schema
-	@echo "Validating mappings (mappings.json, registry, metadata, stray files)..."
+
+mappings: venv
 	@. $(VENV)/bin/activate && PYTHONPATH=. python -m cli.main validate --type mappings
-	@echo "Validating policy/markets.json..."
+
+markets: venv
 	@. $(VENV)/bin/activate && PYTHONPATH=. python -m cli.main validate --type markets
-	@echo "Validating formats/addresses.json..."
+
+addresses: venv
 	@. $(VENV)/bin/activate && PYTHONPATH=. python -m cli.main validate --type addresses
-	@echo "Validating providers/*/limits.json..."
-	@. $(VENV)/bin/activate && PYTHONPATH=. python -m cli.main validate --type limits
-	@echo "Validating service/feature kinds and concrete-id refs..."
+
+kinds: venv
 	@. $(VENV)/bin/activate && PYTHONPATH=. python -m cli.main validate --type kinds
 	@if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then \
 		if [ -n "$$(git diff docs/kinds.md)" ]; then \
-			echo "❌ docs/kinds.md is out of date. Run 'porto validate --type kinds' and commit the updated file."; \
+			echo "❌ docs/kinds.md is out of date. Run 'make kinds' and commit the updated file."; \
 			git diff docs/kinds.md; \
 			exit 1; \
 		fi; \
-		echo "✓ docs/kinds.md is up to date"; \
 	fi
-	@echo "Validating delivery (zone SLAs)..."
+
+delivery: venv
 	@. $(VENV)/bin/activate && PYTHONPATH=. python -m cli.main validate --type delivery
-	@echo "Validating graph.json..."
+
+graph: venv
 	@. $(VENV)/bin/activate && PYTHONPATH=. python -m cli.main validate --type graph
 
-validate-graph: venv
-	@echo "Validating graph.json consistency..."
-	@. $(VENV)/bin/activate && PYTHONPATH=. python -m cli.main validate --type graph
-
-format-json:
-	@if [ -n "$(CHECK)" ]; then echo "Checking JSON formatting..."; else echo "Formatting JSON files..."; fi
-	@for file in porto_data/*.json porto_data/schemas/*.json porto_data/policy/*.json porto_data/formats/*.json porto_data/providers/*/*.json porto_data/providers/*/prices/*.json; do \
+format: venv
+	@if [ -n "$(CHECK)" ]; then echo "Checking formatting..."; else echo "Formatting..."; fi
+	@for file in $(JSON_PATHS); do \
 		if [ -f "$$file" ]; then \
 			if [ -n "$(CHECK)" ]; then \
-				$(PYTHON3) scripts/format_json_file.py --check "$$file" && echo "✓ $$file (already formatted)" || (echo "✗ $$file is not properly formatted"; exit 1); \
+				$(PYTHON3) scripts/format_json_file.py --check "$$file" || exit 1; \
 			else \
-				$(PYTHON3) scripts/format_json_file.py "$$file" && echo "✓ Formatted $$file" || (echo "✗ $$file: Invalid JSON - cannot format"; exit 1); \
+				$(PYTHON3) scripts/format_json_file.py "$$file" || exit 1; \
 			fi; \
 		fi; \
 	done
-	@if [ -n "$(CHECK)" ]; then echo "✓ All JSON files are properly formatted"; else echo "✓ All JSON files formatted"; fi
-
-lint-json:
-	@echo "Linting JSON files for syntax errors..."
-	@for file in porto_data/*.json porto_data/schemas/*.json porto_data/policy/*.json porto_data/formats/*.json porto_data/providers/*/*.json porto_data/providers/*/prices/*.json; do \
-		if [ -f "$$file" ]; then \
-			$(PYTHON3) -m json.tool "$$file" > /dev/null && echo "✓ $$file" || (echo "✗ $$file: JSON syntax error" && exit 1); \
-		fi; \
-	done
-	@echo "✓ All JSON files are valid"
-
-# ==========================================
-# Code Commands
-# ==========================================
-format-code: venv
 	@if [ -n "$(CHECK)" ]; then \
-		echo "Checking Python code formatting..."; \
-		. $(VENV)/bin/activate && ruff format --check . || (echo "✗ Code is not properly formatted. Run 'make format-code' to fix." && exit 1); \
-		echo "✓ Code formatting check complete"; \
+		. $(VENV)/bin/activate && ruff format --check . || exit 1; \
 	else \
-		echo "Formatting Python code..."; \
-		. $(VENV)/bin/activate && ruff format . || (echo "✗ Failed to format code with ruff" && exit 1); \
-		. $(VENV)/bin/activate && ruff check --fix . || (echo "✗ Failed to fix linting issues with ruff" && exit 1); \
-		echo "✓ Code formatted"; \
+		. $(VENV)/bin/activate && ruff format . && ruff check --fix . || exit 1; \
 	fi
 
-lint-code: venv
-	@echo "Linting Python code..."
-	@. $(VENV)/bin/activate && ruff check . || (echo "✗ Code linting failed. Fix issues before committing." && exit 1)
-	@echo "✓ Code linting complete"
+lint: venv
+	@for file in $(JSON_PATHS); do \
+		if [ -f "$$file" ]; then \
+			$(PYTHON3) -m json.tool "$$file" > /dev/null || (echo "✗ $$file: JSON syntax error" && exit 1); \
+		fi; \
+	done
+	@. $(VENV)/bin/activate && ruff check .
 
-type-check: venv
-	@echo "Type checking Python code..."
+types: venv
 	@. $(VENV)/bin/activate && PYTHONPATH=. mypy scripts/ cli/
-	@echo "✓ Type check complete"
 
-# ==========================================
-# Testing
-# ==========================================
 test: venv
-	@echo "Running tests..."
 	@. $(VENV)/bin/activate && PYTHONPATH=. pytest
-	@echo "✓ Tests complete"
 
 test-cov: venv
-	@echo "Running tests with coverage..."
 	@. $(VENV)/bin/activate && PYTHONPATH=. pytest --cov-report=html --cov-report=xml
-	@echo "✓ Coverage report complete (see htmlcov/index.html for detailed report)"
 
-# ==========================================
-# Metadata
-# ==========================================
 metadata: venv
 	@. $(VENV)/bin/activate && PYTHONPATH=. python -m cli.main metadata
+	@if [ -n "$(CHECK)" ] && git rev-parse --is-inside-work-tree >/dev/null 2>&1; then \
+		if [ -n "$$(git diff porto_data/metadata.json)" ]; then \
+			echo "❌ metadata.json is out of date. Run 'make metadata' and commit."; \
+			git diff porto_data/metadata.json; \
+			exit 1; \
+		fi; \
+	fi
 
-# ==========================================
-# Quality
-# ==========================================
-quality: venv validate format lint type-check
+quality: venv validate format lint types
 
-# ==========================================
-# Test before publish (npm + PyPI)
-# ==========================================
 test-publish: venv
 	@./tests/test_publish.sh

@@ -14,7 +14,6 @@ Every operator in `porto_data/providers/<id>/` follows this layout. Registry id 
 | `service_prices.schema.json` | `prices/services.json` | `service_prices` |
 | `zones.schema.json` | `zones.json` | `zones` |
 | `weights.schema.json` | `weights.json` | `weights` |
-| `limits.schema.json` | `limits.json` | `limits` |
 | `graph.schema.json` | `graph.json` | `graph` |
 
 `mappings.json` → `mappings.providers.<id>` must list all required schema→path pairs. CI enforces this via mappings validation.

@@ -27,7 +27,6 @@ Reference for **reconciling JSON with official letter/postcard tariffs** (not a 
 | `execution.json` | `execution` | Execution manifest (`internetmarke`, billing/execution capability tokens) |
 | `weights.json` | `weights` | Weight tier ids (`W0020` …) |
 | `zones.json` | `zones` | Domestic / EU / Europe / world buckets |
-| `limits.json` | `limits` | Provider operational overlays on top of global policy (often empty) |
 | `graph.json` | `graph` | Edges, units (EUR cents), `services` |
 
 **Loaded with the bundle:** `policy/jurisdictions.json`, `policy/markets.json`, `policy/restrictions.json`, `formats/envelopes.json`, `formats/layouts.json` — see `graph.json` `dependencies`.
@@ -74,7 +73,7 @@ Reference for **reconciling JSON with official letter/postcard tariffs** (not a 
 
 **International (worldwide):** Standard / Postkarte **1,25** · Kompakt **1,80** · Groß **3,30** · Maxi **6,50** · heavy Maxi (1,001–2,000 g) **17,00**.
 
-**Einschreiben (add to base):** Einwurf **+2,35** · standard **+2,65** · Rückschein **+4,85**.
+**Einschreiben (add to base):** Einwurf **+2,35** · standard **+2,65** domestic / **+3,70** international (`zone_1_eu` / `zone_2_europe` / `world`) · Rückschein **+4,85**.
 
 ---
 
@@ -88,7 +87,7 @@ Reference for **reconciling JSON with official letter/postcard tariffs** (not a 
 | `maxibrief` | 290 | 650 | W1000 (501–1000 g) |
 | `maxibrief_ausland` | — | 1700 | Abroad only, W2000 (1001–2000 g) |
 
-**`service_prices` (cents):** `einschreiben` 265 · `einschreiben_einwurf` 235 · `einschreiben_rueckschein` 485 · `zusatzversicherung` 250.
+**`service_prices` (cents):** `einschreiben` 265 domestic / 370 international (`zone_1_eu`, `zone_2_europe`, `world`) · `einschreiben_einwurf` 235 · `einschreiben_rueckschein` 485 · `zusatzversicherung` 250.
 
 **Graph:** weight tiers in official ladder must appear in **`edges`**; prices via `dependencies` + `prices/products.json` / `prices/services.json`.
 
@@ -118,7 +117,18 @@ Mapped in `graph.json` → `edges.marks`; catalog sizes in `marks.json` → `pro
 | `FRANKING_ZONE` | Marke only (per Porto `profiles[].id` in `by_mark_profile`) | 37×20 · 62×20 · 62×32.5 | 437×236 · 732×236 · 732×384 |
 | `ADDRESS_ZONE` | Full label (all Porto profiles) | **85×43** | **1004×508** |
 
-`profiles[].id` / `by_mark_profile` keys are Porto **mark profiles** (`domestic`, …). `calibrations[].mark_profile` is the wire checkout layout token (Internetmarke `voucherLayout`: `FRANKING_ZONE` / `ADDRESS_ZONE`). `profiles[].size` is nominal marke footprint (mm).
+`profiles[].id` / `by_mark_profile` keys are Porto **mark profiles** (`domestic`, …). `calibrations[].mark_profile` is the wire checkout layout token (Internetmarke `voucherLayout`: `FRANKING_ZONE` / `ADDRESS_ZONE`). `profiles[].size` is nominal marke footprint (mm). Wire layout tokens stay **internal** — not public SDK vocabulary.
+
+### Addresses vs mark profile (CIS R-202802)
+
+Address requirements follow the **selected mark/output profile**, not services such as `einschreiben` / `registered`:
+
+| Output | SDK rule |
+|--------|----------|
+| Stamp / `FRANKING_ZONE` | No `ADDRESS_*` in `requires`. Einschreiben is encoded in the franking graphic. |
+| Label / `ADDRESS_ZONE` | Profile may set `ADDRESS_*` in `requires`; SDK refuses empty address-zone labels when required. |
+
+CIS ticket **R-202802**: addresses on Internetmarke are descriptive; consumers may purchase a stamp now and compose Licko address labels later (Sperrflächen). Deutsche Post / Portokasse backends delete address data after about **10 days** — Licko must **persist purchased marks** at buy time. Grouping which letters share one checkout is a **Licko** concern; the SDK executes the given list in order.
 
 ---
 

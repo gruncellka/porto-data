@@ -200,7 +200,7 @@ class TestServicePriceConsistency:
                         "label": "C6",
                         "width": 162,
                         "height": 114,
-                        "standard": "ISO269",
+                        "standards": ["ISO269", "DIN678"],
                         "sheets": [
                             {"sheet": "A4", "fold": "quarter", "description": "Test fixture"}
                         ],
@@ -217,7 +217,6 @@ class TestServicePriceConsistency:
                                 "orientation": "landscape",
                                 "layout": {
                                     "window": {"supported": False},
-                                    "post_mark": {"x": 90, "y": 5},
                                 },
                             }
                         }
@@ -241,9 +240,7 @@ class TestServicePriceConsistency:
                 "file_type": "marks",
                 "provider": "deutschepost",
                 "default_profile": "test_stamp",
-                "profiles": [
-                    {"id": "test_stamp", "type": "stamp", "label": "Test stamp profile"}
-                ],
+                "profiles": [{"id": "test_stamp", "type": "stamp", "label": "Test stamp profile"}],
             },
             "restrictions.json": minimal_restrictions_document(),
         }
@@ -349,7 +346,7 @@ class TestServicePriceConsistency:
                         "label": "C6",
                         "width": 162,
                         "height": 114,
-                        "standard": "ISO269",
+                        "standards": ["ISO269", "DIN678"],
                         "sheets": [
                             {"sheet": "A4", "fold": "quarter", "description": "Test fixture"}
                         ],
@@ -366,7 +363,6 @@ class TestServicePriceConsistency:
                                 "orientation": "landscape",
                                 "layout": {
                                     "window": {"supported": False},
-                                    "post_mark": {"x": 90, "y": 5},
                                 },
                             }
                         }
@@ -390,9 +386,7 @@ class TestServicePriceConsistency:
                 "file_type": "marks",
                 "provider": "deutschepost",
                 "default_profile": "test_stamp",
-                "profiles": [
-                    {"id": "test_stamp", "type": "stamp", "label": "Test stamp profile"}
-                ],
+                "profiles": [{"id": "test_stamp", "type": "stamp", "label": "Test stamp profile"}],
             },
             "restrictions.json": minimal_restrictions_document(),
         }

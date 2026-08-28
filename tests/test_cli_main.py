@@ -103,15 +103,6 @@ class TestMainFunction:
             assert result == 0
             mock_validate_addresses.assert_called_once()
 
-    @patch("cli.commands.validate.validate_limits")
-    def test_main_validate_limits(self, mock_validate_limits):
-        """Test main with validate --type limits."""
-        mock_validate_limits.return_value = 0
-        with patch("sys.argv", ["porto", "validate", "--type", "limits"]):
-            result = main()
-            assert result == 0
-            mock_validate_limits.assert_called_once()
-
     @patch("cli.commands.validate.validate_kinds")
     def test_main_validate_kinds(self, mock_validate_kinds):
         """Test main with validate --type kinds."""

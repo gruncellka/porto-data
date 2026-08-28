@@ -9,24 +9,24 @@ Mistake without this: smuggle compose/workflow into catalog JSON, put service se
 
 **Hub:** `docs/identity.md` · `docs/id.md` · Bugbot: [BUGBOT.md](../../BUGBOT.md)
 
-porto-data is a **factual bundle** + schemas + validators — not UI, compose, or SDK resolver. One fact per layer; SDK/app resolve across layers.
+porto-data is a **factual bundle** + schemas + validators — not UI, compose, or a resolver. One fact per layer.
 
 ```text
-SDK / app input     →  country, weight, envelope?, services (kind), optional product_id / service_ids
+Lookup dimensions   →  country, weight, envelope?, services (kind), optional product_id / service_ids
 Catalog facts       →  id, zones, weights, prices, geometry (this repo)
-Layout output       →  mark_profile, window, post_mark
+Layout output       →  mark_profile, size, mark size + placement
 Adapter wiring      →  graph.edges.wire productCode
 Execution gate      →  execution.json wire + billing/execution tokens
 Runtime             →  mark bytes, tracking (not here)
 ```
 
 1. One identifier, one job — products have concrete `id` only; no `kind` or size-bucket taxonomy.
-2. Facts vs normalization vs workflow — workflow stays in SDK/consumer compose.
+2. Facts vs normalization vs workflow — workflow stays outside this package.
 3. Catalog `id` in graph/prices/rules; `kind` on services/features for cross-operator intent only.
 4. `execution.json` ≠ wire tables; `graph.edges.wire` holds checkout codes.
-5. Layouts: `window` / `post_mark` / `standard` only; address forms in `formats/addresses.json`.
+5. Layouts: shared/jurisdiction-standard **window** facts + `standard` only; mark **size** / **placement** on `marks.json`; address forms in `formats/addresses.json` (place field **`locality`**).
 6. Validators enforce philosophy — not prose alone.
 
-**Red flags:** compose fields on products; `kind` keys in graph/prices; `productCode` in execution.json; `lane` on products; SDK method names in catalog docs.
+**Red flags:** compose fields on products; `kind` keys in graph/prices; `productCode` in execution.json; `lane` on products; `city` on address forms; implementor method names in catalog docs.
 
-Before merge: name owning layer → `make validate` → refresh metadata → `make test-cov` → CHANGELOG when consumer-facing.
+Before merge: name owning layer → `make validate` → refresh metadata → `make test-cov` → CHANGELOG when catalog-facing.

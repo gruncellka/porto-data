@@ -9,9 +9,24 @@ from scripts.validators.base import ValidationResults
 
 from .envelope_geometry import (
     envelope_rect_complete,
+    envelope_rect_on_face,
     envelope_validation_views,
     resolve_envelope_layout_row,
 )
+
+
+def _envelope_faces(envelopes: dict[str, Any] | None) -> dict[str, tuple[int, int]]:
+    out: dict[str, tuple[int, int]] = {}
+    if not envelopes:
+        return out
+    for row in envelopes.get("envelopes") or []:
+        if not isinstance(row, dict) or not row.get("id"):
+            continue
+        try:
+            out[str(row["id"])] = (int(row["width"]), int(row["height"]))
+        except (TypeError, ValueError, KeyError):
+            continue
+    return out
 
 
 def _envelope_format_ids(envelopes: dict[str, Any]) -> set[str]:
@@ -87,12 +102,15 @@ def run_validate_envelope_address_window(
     results: ValidationResults,
     *,
     envelope_layouts: dict[str, Any] | None,
+    envelopes: dict[str, Any] | None = None,
 ) -> None:
     if not envelope_layouts:
         return
     jurisdictions = envelope_layouts.get("jurisdictions")
     if not isinstance(jurisdictions, dict):
         return
+
+    faces = _envelope_faces(envelopes)
 
     for cc, jblock in jurisdictions.items():
         if not isinstance(jblock, dict):
@@ -111,6 +129,13 @@ def run_validate_envelope_address_window(
                 layout_fingerprint_id=fid, path=path, env=env
             ):
                 results["errors"].append(msg)
+            wa = envelope_validation_views(env)["wa"]
+            if wa is not None and fid in faces:
+                face_w, face_h = faces[fid]
+                if not envelope_rect_on_face(wa, width=face_w, height=face_h):
+                    results["errors"].append(
+                        f"{path}: window.area is not on the envelope face ({face_w}×{face_h})"
+                    )
 
 
 def run_validate_envelope_ids(

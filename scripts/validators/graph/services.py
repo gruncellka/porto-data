@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from scripts.data_files import GRAPH_FILE, SERVICE_PRICES_FILE, SERVICES_FILE
+from scripts.data_files import GRAPH_FILE, SERVICE_PRICES_FILE, SERVICES_FILE, ZONES_FILE
 from scripts.validators.base import ValidationResults
 
 
@@ -85,8 +85,9 @@ def run_validate_graph_services(
     graph: dict[str, Any],
     services: dict[str, Any] | None,
     service_prices: list[dict[str, Any]],
+    zone_ids: set[str] | None = None,
 ) -> None:
-    """Validate ``graph.services`` native ids and service-price consistency."""
+    """Validate ``graph.services`` catalog ids and service-price consistency."""
     attached = graph.get("services", [])
 
     valid_ids = service_ids_set(services)
@@ -97,7 +98,7 @@ def run_validate_graph_services(
         if str(sid) not in valid_ids:
             results["errors"].append(
                 f"Service '{sid}' in service_prices does not exist in {SERVICES_FILE} "
-                f"(native id required). Found in: {SERVICE_PRICES_FILE} -> service_prices"
+                f"(catalog id required). Found in: {SERVICE_PRICES_FILE} -> service_prices"
             )
 
     for service_id in attached:
@@ -115,3 +116,79 @@ def run_validate_graph_services(
             )
 
     run_validate_service_prices(results, services=services, service_prices=service_prices)
+    run_validate_service_price_zones(
+        results,
+        services=services,
+        service_prices=service_prices,
+        zone_ids=zone_ids or set(),
+    )
+
+
+def run_validate_service_price_zones(
+    results: ValidationResults,
+    *,
+    services: dict[str, Any] | None,
+    service_prices: list[dict[str, Any]],
+    zone_ids: set[str],
+) -> None:
+    """Unzoned vs zoned encoding: never mix; zoned rows cover supported_zones."""
+    by_sid: dict[str, list[dict[str, Any]]] = {}
+    seen: set[tuple[str, str | None]] = set()
+    for sp in service_prices:
+        if not isinstance(sp, dict):
+            continue
+        sid = sp.get("service_id")
+        if not sid:
+            continue
+        sid_str = str(sid)
+        zone_raw = sp.get("zone")
+        zone_key = str(zone_raw) if zone_raw else None
+        key = (sid_str, zone_key)
+        if key in seen:
+            label = f"{sid_str}/{zone_key}" if zone_key else sid_str
+            results["errors"].append(
+                f"Duplicate service_prices key '{label}'. "
+                f"Found in: {SERVICE_PRICES_FILE} -> service_prices"
+            )
+        seen.add(key)
+        by_sid.setdefault(sid_str, []).append(sp)
+        if zone_key and zone_ids and zone_key not in zone_ids:
+            results["errors"].append(
+                f"Service '{sid_str}' price zone '{zone_key}' is not in {ZONES_FILE}. "
+                f"Found in: {SERVICE_PRICES_FILE} -> service_prices"
+            )
+
+    for sid, rows in by_sid.items():
+        zoned = [row for row in rows if row.get("zone")]
+        unzoned = [row for row in rows if not row.get("zone")]
+        if zoned and unzoned:
+            results["errors"].append(
+                f"Service '{sid}' mixes unzoned and zoned service_prices rows. "
+                f"Use one unzoned amount or one row per supported zone. "
+                f"Found in: {SERVICE_PRICES_FILE} -> service_prices"
+            )
+            continue
+        if len(unzoned) > 1:
+            results["errors"].append(
+                f"Service '{sid}' has more than one unzoned service_prices row. "
+                f"Found in: {SERVICE_PRICES_FILE} -> service_prices"
+            )
+            continue
+        if not zoned:
+            continue
+        service = get_service_by_id(services, sid)
+        supported = {str(z) for z in ((service or {}).get("supported_zones") or []) if z}
+        priced = {str(row.get("zone")) for row in zoned}
+        missing = supported - priced
+        extra = priced - supported
+        if missing:
+            results["errors"].append(
+                f"Service '{sid}' is zoned but missing service_prices for "
+                f"{sorted(missing)}. Found in: {SERVICE_PRICES_FILE} -> service_prices"
+            )
+        if extra:
+            results["errors"].append(
+                f"Service '{sid}' has service_prices zones {sorted(extra)} "
+                f"not in services[].supported_zones. "
+                f"Found in: {SERVICE_PRICES_FILE} -> service_prices"
+            )

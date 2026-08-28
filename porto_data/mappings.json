@@ -24,7 +24,6 @@
         "schemas/service_prices.schema.json": "providers/deutschepost/prices/services.json",
         "schemas/zones.schema.json": "providers/deutschepost/zones.json",
         "schemas/weights.schema.json": "providers/deutschepost/weights.json",
-        "schemas/limits.schema.json": "providers/deutschepost/limits.json",
         "schemas/graph.schema.json": "providers/deutschepost/graph.json",
         "schemas/execution.schema.json": "providers/deutschepost/execution.json"
       },
@@ -37,7 +36,6 @@
         "schemas/service_prices.schema.json": "providers/ukrposhta/prices/services.json",
         "schemas/zones.schema.json": "providers/ukrposhta/zones.json",
         "schemas/weights.schema.json": "providers/ukrposhta/weights.json",
-        "schemas/limits.schema.json": "providers/ukrposhta/limits.json",
         "schemas/graph.schema.json": "providers/ukrposhta/graph.json"
       },
       "laposte": {
@@ -49,7 +47,6 @@
         "schemas/service_prices.schema.json": "providers/laposte/prices/services.json",
         "schemas/zones.schema.json": "providers/laposte/zones.json",
         "schemas/weights.schema.json": "providers/laposte/weights.json",
-        "schemas/limits.schema.json": "providers/laposte/limits.json",
         "schemas/graph.schema.json": "providers/laposte/graph.json"
       },
       "swisspost": {
@@ -62,7 +59,6 @@
         "schemas/service_prices.schema.json": "providers/swisspost/prices/services.json",
         "schemas/zones.schema.json": "providers/swisspost/zones.json",
         "schemas/weights.schema.json": "providers/swisspost/weights.json",
-        "schemas/limits.schema.json": "providers/swisspost/limits.json",
         "schemas/graph.schema.json": "providers/swisspost/graph.json"
       }
     }

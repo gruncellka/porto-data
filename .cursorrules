@@ -19,7 +19,7 @@ Registry keys, `PROVIDER_IDS_ORDER`, and `mappings.json` follow this order. Extr
 - `porto_data/policy/` — shared policy JSON (`jurisdictions.json`, `restrictions.json`, **`markets.json`**).
 - `porto_data/formats/` — shared envelope catalog, print layouts, and address forms (`envelopes.json`, `layouts.json`, **`addresses.json`**).
 - `porto_data/providers.json` — provider id registry (**no `vat`** — fiscal defaults live in **`markets.json`**).
-- `porto_data/providers/<provider_id>/` — per-operator JSON (`products`, `services`, `prices`, `zones`, `weights.json`, **`graph.json`**, **`limits.json`**, `features.json`, optional **`execution.json`** (execution manifest when an adapter ships), optional `rules.json`, …).
+- `porto_data/providers/<provider_id>/` — per-operator JSON (`products`, `services`, `prices`, `zones`, `weights.json`, **`graph.json`**, `features.json`, optional **`execution.json`** (execution manifest when an adapter ships), optional `rules.json`, …).
 - `porto_data/schemas/` — JSON Schema (including `kinds.schema.json`, `markets.schema.json`).
 - `porto_data/mappings.json` — which logical entities exist for each provider (paths are authoritative for tooling).
 - `porto_data/metadata.json` — **generated** (checksums, manifest). Regenerate with `make metadata` / `porto metadata`; do not edit by hand.
@@ -37,16 +37,15 @@ There is **no** `porto_data/data/`, `data_links.json`, or `porto_data/global/` b
 
 See `docs/identity.md`, `docs/marks.md` (generic), `docs/providers/<id>.md` (operator tables).
 
-## Policy vs limits (restrictions model)
+## Restrictions catalog
 
 | Layer | File | Role |
 | ----- | ---- | ---- |
-| Global sanctions / destination regimes | `policy/restrictions.json` | Shared legal-style rows; versioned with bundle |
+| Destination restrictions | `policy/restrictions.json` | Country-keyed `legal` / `routing`; legal regions use `jurisdictions` keyed by `jurisdictions.json` ids |
 | Country fiscal defaults | `policy/markets.json` | `currency`, `international_currency`, `vat`, `settlement`, **`working_days`** per `markets[CC]` |
-| Provider overlay | `providers/<id>/limits.json` | **Often empty** (`limits[]`: `[]`) — durable operator letter rules only |
-| Runtime | Porto SDK / app | Strikes, live suspensions, carrier API status |
+| Runtime | Porto SDK / app | Live operator status, strikes, suspensions |
 
-Merge order documented in provider `limits.json` `context`: restrictions → limits → SDK overlay. See [docs/policy.md](docs/policy.md).
+See [docs/policy.md](docs/policy.md).
 
 ## JSON conventions
 
@@ -66,7 +65,7 @@ Merge order documented in provider `limits.json` `context`: restrictions → lim
 
 **Market row key order:** `currency` → `international_currency` → `vat` → `settlement`. Inside `vat`: `rate` → `exempt` → `domestic` → `international`.
 
-**Native ids:** local-language slug of the operator `name` (ASCII snake_case). Disambiguate with operator tokens (`ausland`, `internationale`, `r_deux`) — not English semantic ids (`return_receipt_*`, `recommended_international`) or abbreviated locale fragments (`inter`, `heavy`). Swiss `international_*` prefix is operator-local and kept.
+**Catalog `id`:** local-language slug of the operator `name` (ASCII snake_case). Disambiguate with operator tokens (`ausland`, `internationale`, `r_deux`) — not English semantic ids (`return_receipt_*`, `recommended_international`) or abbreviated locale fragments (`inter`, `heavy`). Swiss `international_*` prefix is operator-local and kept.
 
 **Allowed abbreviations:** `fx`/`fx_date`, ISO country/currency codes, weight tier codes (`W0050`), `zone_1_eu`.
 
@@ -84,14 +83,13 @@ Merge order documented in provider `limits.json` `context`: restrictions → lim
 - `scripts.validators.markets` — `policy/markets.json` vs **every** `providers.json` country, fiscal shape, and **`working_days`**.
 - `scripts.validators.addresses` — `formats/addresses.json` vs jurisdictions and layout `standard` (when a layout jurisdiction exists).
 - `scripts.validators.delivery` — zone-scoped **`delivery[]`**, optional **`included_features[]`** / **`indemnity`**, twin fingerprint guard on every `products.json`.
-- `scripts.validators.limits_scope` — `providers/*/limits.json` letter-scope rules (empty `limits[]` is valid).
 - `scripts.validators.kinds` — service/feature `kind` enums and concrete-id cross-file refs.
 - `scripts/validators/graph/` — package for `graph.json` (`validator`, `runner`, `edges`, `services`, `units`, `dependencies`, **`execution_manifest`**, **`marks_profiles`**, …). Import as `scripts.validators.graph`.
 - Results shape: `ValidationResults` in `scripts.validators.base`.
 
-CLI / default order: **schema → mappings → markets → addresses → limits → kinds → delivery → graph** (`porto validate` / `make validate`).
+CLI / default order: **schema → mappings → markets → addresses → kinds → delivery → graph** (`porto validate` / `make validate`).
 
-CI (`.github/workflows/validation.yml`) must run the same chain; include **`validate-markets`** and **`validate-addresses`** between mappings and limits.
+CI (`.github/workflows/validation.yml`) must run the same chain; include **`validate-markets`** and **`validate-addresses`** between mappings and kinds.
 
 ## Workflow
 
@@ -99,15 +97,16 @@ CI (`.github/workflows/validation.yml`) must run the same chain; include **`vali
 - After JSON or schema edits: **`make validate`** and **`make format`** (or **`make quality`** for the full gate).
 - If `metadata.json` regenerates, **stage it in the same commit** as the data/schema/mappings change.
 - New validation behavior → **tests** in `tests/` (**100%** coverage on `make test-cov` for `scripts/` + `cli/`).
-- Pre-commit **`format-json`** uses `require_serial: true` — do not run parallel `git add` per file inside hooks (submodule index.lock races).
+- Pre-commit **`format`** uses `require_serial: true` — do not run parallel `git add` per file inside hooks (submodule index.lock races).
 
 ## Domain tokens (high level)
 
 - **`kind`** — cross-provider grouping on services/features; enum in `kinds.schema.json`. Products have no `kind`.
-- **Native `id`** — operator catalog key; used in graph, prices, rules.
+- **Catalog `id`** — operator catalog key; used in graph, prices, rules.
 - **Currency:** `row.currency` → file `unit.currency` → `markets[country].currency`; intl overrides → `markets[country].international_currency`.
 - Country codes: **ISO 3166-1 alpha-2** where used.
-- Jurisdiction blocs: **`EU`**, **`UN`** in restrictions; operator letter overlays in **`limits.json`**.
+- Jurisdiction blocs: **`EU`**, **`UN`** in `jurisdictions.json`; legal restriction `jurisdictions` map keys use **`EU`**, **`CH`**, **`UA`**.
+- Address place field: **`locality`** (not `city`).
 
 ## Catalog layering doctrine (strict)
 
@@ -117,11 +116,11 @@ porto-data = **facts + contracts**. SDK/app = **resolution + workflow**. Do not 
 
 | Layer | Owns | Never owns |
 | ----- | ---- | ---------- |
-| **Catalog JSON** | Native ids, tariffs, zones, weights, factual mm geometry | Compose, sender placement, `kind` in graph/prices |
+| **Catalog JSON** | Catalog ids, tariffs, zones, weights, factual mm geometry | Compose, sender placement, `kind` in graph/prices |
 | **`kind` enums** | Cross-provider grouping on services/features | Product rows; graph/price keys |
-| **`formats/layouts`** | `window`, `post_mark`, `standard` | `address_area`, `print_area`, printable workflow |
-| **`formats/addresses`** | Sparse jurisdiction forms (`street` / `post_box`) | Compose zones, world directory, provider wire |
-| **`marks` / `mark_profile`** | Stamp/label footprint; optional **`calibrations[]`** (checkout px/mm) | Product size or service semantics |
+| **`formats/layouts`** | Shared/jurisdiction-standard **window** facts + `standard` | `post_mark`, `address_area`, `print_area`, compose workflow |
+| **`formats/addresses`** | Sparse jurisdiction forms (`street` / `post_box`; field token **`locality`**) | Compose zones, world directory, provider wire, `city` |
+| **`marks` / `mark_profile`** | Stamp/label **size**, **placement**, optional **`clearance`**; optional **`calibrations[]`** (checkout px/mm) | Product size, service semantics, composed draw origin |
 | **`providers/<id>/*.json`** | `file_type` + entity payload | Repeat `provider` (path is SoT) |
 | **`edges.wire`** | Adapter catalog codes per wire channel | billing/execution capability tokens or credentials |
 | **Generated docs** | Drift detection (`kinds.md`, `metadata.json`) | Hand-edited checksums |
@@ -129,7 +128,7 @@ porto-data = **facts + contracts**. SDK/app = **resolution + workflow**. Do not 
 **`kind` (instance of the doctrine):**
 
 - Products have **no** `kind` and **no** `porto_id` — identity is concrete `id` only.
-- Service/feature `kind` is cross-operator intent; graph and prices use native `id`.
+- Service/feature `kind` is cross-operator intent; graph and prices use catalog `id`.
 - Registered-letter SKUs (La Poste recommandée) are distinct **product** rows, not service `registered`.
 - Einschreiben → `kind: registered` on **service** row only.
 
@@ -140,5 +139,4 @@ When adding **any** catalog field or enum: name the owning layer, add a validato
 - Prefer editing **`policy/`**, **`formats/`**, or **`providers/<id>/`** JSON, not inventing legacy paths.
 - When touching **`graph.json`**, keep **`edges`**, **`services`**, and `graph.schema.json` aligned.
 - Do not hand-edit **`metadata.json`**.
-- Do not flag empty **`limits[]`** as missing data — intentional until a citable provider overlay exists.
 - Match existing style in `scripts/` and `cli/`; add types and tests for new logic.

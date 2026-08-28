@@ -14,6 +14,22 @@ def envelope_rect_complete(r: Any) -> bool:
     return all(isinstance(r.get(k), int) for k in _RECT_KEYS)
 
 
+def envelope_rect_on_face(
+    r: dict[str, Any],
+    *,
+    width: int,
+    height: int,
+) -> bool:
+    """True if complete rect sits on the envelope face (origin top-left)."""
+    if not envelope_rect_complete(r):
+        return False
+    x = int(r["x"])
+    y = int(r["y"])
+    w = int(r["width"])
+    h = int(r["height"])
+    return x >= 0 and y >= 0 and x + w <= width and y + h <= height
+
+
 def envelope_validation_views(env: dict[str, Any]) -> dict[str, Any]:
     """Nested layout.window or legacy top-level window flags."""
     rend = env.get("layout")

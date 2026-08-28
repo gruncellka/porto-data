@@ -5,6 +5,40 @@
     "dimension": "mm"
   },
   "default_profile": "domestic",
+  "placement": {
+    "envelopes": {
+      "DL": {
+        "x": 146,
+        "y": 0,
+        "width": 74,
+        "height": 40
+      },
+      "C6": {
+        "x": 88,
+        "y": 0,
+        "width": 74,
+        "height": 40
+      },
+      "C5": {
+        "x": 155,
+        "y": 0,
+        "width": 74,
+        "height": 40
+      },
+      "C4": {
+        "x": 250,
+        "y": 0,
+        "width": 74,
+        "height": 40
+      },
+      "B4": {
+        "x": 279,
+        "y": 0,
+        "width": 74,
+        "height": 40
+      }
+    }
+  },
   "profiles": [
     {
       "id": "domestic",

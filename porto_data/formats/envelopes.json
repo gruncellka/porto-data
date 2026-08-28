@@ -10,7 +10,10 @@
       "label": "DL envelope",
       "width": 220,
       "height": 110,
-      "standard": "ISO269",
+      "standards": [
+        "ISO269",
+        "DIN678"
+      ],
       "sheets": [
         {
           "sheet": "A4",
@@ -25,7 +28,10 @@
       "label": "C6 envelope",
       "width": 162,
       "height": 114,
-      "standard": "ISO269",
+      "standards": [
+        "ISO269",
+        "DIN678"
+      ],
       "sheets": [
         {
           "sheet": "A4",
@@ -49,7 +55,10 @@
       "label": "C5 envelope",
       "width": 229,
       "height": 162,
-      "standard": "ISO269",
+      "standards": [
+        "ISO269",
+        "DIN678"
+      ],
       "sheets": [
         {
           "sheet": "A4",
@@ -68,7 +77,10 @@
       "label": "C4 envelope",
       "width": 324,
       "height": 229,
-      "standard": "ISO269",
+      "standards": [
+        "ISO269",
+        "DIN678"
+      ],
       "sheets": [
         {
           "sheet": "A4",
@@ -92,7 +104,10 @@
       "label": "B4 envelope",
       "width": 353,
       "height": 250,
-      "standard": "ISO269",
+      "standards": [
+        "ISO269",
+        "DIN678"
+      ],
       "sheets": [
         {
           "sheet": "B4",

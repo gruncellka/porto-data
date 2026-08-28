@@ -27,7 +27,7 @@
       "kind": "registered",
       "name": "Міжнародне зареєстроване",
       "label": "International registered",
-      "description": "Registered surcharge for international letters (LETTER; no declared value)",
+      "description": "International registered letter surcharge.",
       "features": [
         "nomer_vidstezhennia",
         "osobyste_vruchennia"

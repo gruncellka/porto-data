@@ -113,11 +113,15 @@ def validate_kind_enum(*, service_kinds: Iterable[str], feature_kinds: Iterable[
 
     for kind, _reason in _THREE_WORD_KINDS.items():
         if kind not in all_kinds:
-            errors.append(f"kind_naming: _THREE_WORD_KINDS lists {kind!r} but it is not in kinds.schema.json")
+            errors.append(
+                f"kind_naming: _THREE_WORD_KINDS lists {kind!r} but it is not in kinds.schema.json"
+            )
 
     for kind, _reason in _TWO_WORD_KINDS.items():
         if kind not in all_kinds:
-            errors.append(f"kind_naming: _TWO_WORD_KINDS lists {kind!r} but it is not in kinds.schema.json")
+            errors.append(
+                f"kind_naming: _TWO_WORD_KINDS lists {kind!r} but it is not in kinds.schema.json"
+            )
 
     for kind in all_kinds:
         wc = kind_word_count(kind)

@@ -374,7 +374,7 @@ class TestGetMappingsProviderIdsEdgeCases:
 
 
 class TestGetDataFilePathProjectRoot:
-    def test_resolves_limits_relative_to_given_root(self, tmp_path):
+    def test_resolves_marks_relative_to_given_root(self, tmp_path):
         (tmp_path / "policy").mkdir()
         (tmp_path / "providers.json").write_text(
             json.dumps(
@@ -401,7 +401,7 @@ class TestGetDataFilePathProjectRoot:
                         "registry": {},
                         "providers": {
                             "acme": {
-                                "schemas/limits.schema.json": "providers/acme/limits.json",
+                                "schemas/marks.schema.json": "providers/acme/marks.json",
                             }
                         },
                     }
@@ -410,5 +410,5 @@ class TestGetDataFilePathProjectRoot:
             encoding="utf-8",
         )
         (tmp_path / "providers" / "acme").mkdir(parents=True)
-        p = data_files.get_data_file_path("limits", "acme", project_root=tmp_path)
-        assert p == tmp_path / "providers" / "acme" / "limits.json"
+        p = data_files.get_data_file_path("marks", "acme", project_root=tmp_path)
+        assert p == tmp_path / "providers" / "acme" / "marks.json"

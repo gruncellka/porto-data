@@ -27,7 +27,7 @@
       "kind": "registered",
       "name": "Einschreiben Einwurf",
       "label": "Registered mail (mailbox delivery)",
-      "description": "Registered delivery into mailbox (service variant, not a feature). Internetmarke API: domestic only.",
+      "description": "Registered delivery into the recipient's mailbox (domestic only).",
       "features": [
         "sendungsnummer"
       ],
@@ -43,7 +43,7 @@
       "kind": "registered_return_receipt",
       "name": "Einschreiben Rückschein",
       "label": "Registered mail with return receipt",
-      "description": "Registered mail with signature and return receipt. Internetmarke API: domestic only.",
+      "description": "Registered mail requiring recipient signature with return receipt to sender (domestic only).",
       "features": [
         "sendungsnummer",
         "unterschrift_empfanger",

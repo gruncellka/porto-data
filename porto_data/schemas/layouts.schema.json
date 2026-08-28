@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/layouts.schema.json",
   "title": "Envelope layouts by jurisdiction",
-  "description": "Print geometry on the envelope front per ISO 3166-1 alpha-2 jurisdiction. Physical sizes: formats/envelopes.json. Coordinates: origin top-left, mm, landscape front. Optional standard cites the norm (e.g. DIN678, SN010130, NFEN13850).",
+  "description": "Shared / jurisdiction-standard envelope layout facts (window size and position) keyed by ISO 3166-1 alpha-2. Not national-only: a shared norm such as DIN 680 may define the same window millimetres for several jurisdictions. Physical face: formats/envelopes.json. Coordinates: origin top-left, mm, landscape front. Optional standard cites the layout norm (e.g. DIN678, SN010130, NFZ10011, DSTU3876). Mark franking zones live in providers/<id>/marks.json placement.",
   "type": "object",
   "required": [
     "file_type",
@@ -38,34 +38,12 @@
       },
       "additionalProperties": false
     },
-    "postMarkAnchorMm": {
-      "type": "object",
-      "required": [
-        "x",
-        "y"
-      ],
-      "properties": {
-        "x": {
-          "type": "integer",
-          "minimum": 0
-        },
-        "y": {
-          "type": "integer",
-          "minimum": 0
-        }
-      },
-      "additionalProperties": false
-    },
     "layoutBody": {
       "type": "object",
       "required": [
-        "post_mark",
         "window"
       ],
       "properties": {
-        "post_mark": {
-          "$ref": "#/definitions/postMarkAnchorMm"
-        },
         "window": {
           "type": "object",
           "required": [

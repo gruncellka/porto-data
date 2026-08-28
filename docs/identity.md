@@ -1,6 +1,6 @@
 # Identity map — names, ids, variables, relations
 
-One-page map of **who names what** across **porto-data** (JSON + schemas) and **carrier APIs**. Consumers (Porto SDK, apps) load this bundle; this repo has **no resolver and no SDK surface**.
+One-page map of **who names what** across **porto-data** (JSON + schemas) and **carrier APIs**. This repo has **no resolver**.
 
 **See also:** [id.md](id.md) · [marks.md](marks.md) · [resolution.md](resolution.md)
 
@@ -10,24 +10,17 @@ One-page map of **who names what** across **porto-data** (JSON + schemas) and **
 
 ```text
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│  CONSUMER (SDK / app)                                                        │
-│  input:  country_code, weight, envelope?, services (kind),                  │
-│          optional product_id / service_ids                                  │
-│  output: resolved product/price facts (+ mark bytes after adapter call)     │
-└───────────────────────────────────┬─────────────────────────────────────────┘
-                                    │ reads bundle only via loader
-┌───────────────────────────────────▼─────────────────────────────────────────┐
 │  PORTO-DATA (this repo — published JSON + schemas)                            │
 │  providers/<id>/…  policy/…  formats/…  schemas/…  validators (repo only)   │
 └───────────────────────────────────┬─────────────────────────────────────────┘
-                                    │ adapters only
+                                    │ wire / adapter codes only
 ┌───────────────────────────────────▼─────────────────────────────────────────┐
 │  CARRIER APIs (Internetmarke, MTEL, WebStamp, Ukrposhta eCom, …)             │
 │  native product codes, PDF/PNG bytes, tracking numbers                       │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
-Do **not** document consumer SDK class or method names here — that drifts with SDK releases. Catalog contracts stay in this file; SDK API lives in Lab / SDK repos.
+Catalog contracts stay in this file. Do not document implementor class or method names here.
 
 ---
 
@@ -35,7 +28,7 @@ Do **not** document consumer SDK class or method names here — that drifts with
 
 | Name | Owner | Example | Used in | Never used in |
 |------|-------|---------|---------|---------------|
-| **`provider`** | Porto registry + **`providers/<id>/` path** | `deutschepost` | consumer context, bundle layout | in-file repeat on path-scoped JSON |
+| **`provider`** | Porto registry + **`providers/<id>/` path** | `deutschepost` | bundle layout, registry | in-file repeat on path-scoped JSON |
 | **`label` / `name`** | Display / legal | `"Deutsche Post"`, `"Deutsche Post AG"` | UI, docs | resolution |
 | **`country`** | Registry → markets | `DE`, `FR`, `UA`, `CH` | VAT, currency, layouts | product id |
 | **`id`** (product/service/feature) | Porto catalog | `standardbrief`, `einschreiben` | **graph, prices, rules, pins** | — |
@@ -51,9 +44,10 @@ Do **not** document consumer SDK class or method names here — that drifts with
 | **`requires`** | Porto tokens | `ADDRESS_SENDER`, `ADDRESS_RECIPIENT` | product / service / feature / mark profile | omit when none |
 | **`tracking`** | Porto enum | `none`, `optional`, `included` | product row | — |
 | **`envelope_id`** | Shared formats | `DL`, `C6`, `C4` | products, layouts | — |
+| **`locality`** | Address form field | `Berlin` | `formats/addresses.json` `forms[].required` | `city` (ambiguous; UPU uses locality) |
 | **`wire`** | `execution.json` | `internetmarke` | execution manifest | graph body |
 | **`billing[]` / `execution[]`** | `execution.json` | `wallet`, `mark` | capability tokens | graph body |
-| **`graph.strategy`** | Provider graph | `service`, `id`, `speed`, `min` | **Disambiguation** when multiple products share zone+weight | hard-coded provider rules in consumers |
+| **`graph.strategy`** | Provider graph | `service`, `id`, `speed`, `min` | **Disambiguation** when multiple products share zone+weight | hard-coded provider forks outside the catalog |
 | **`features[].id`** | Provider | `sendungsnummer` | services link | cross-provider |
 
 Product rows have **no `kind`**. Service/feature `kind` enums may share tokens (`tracking`) where a priced add-on and a capability align.
@@ -64,7 +58,7 @@ Product rows have **no `kind`**. Service/feature `kind` enums may share tokens (
 
 ```text
 "registered" (service kind)
-  └─ kind on SERVICE row           → Einschreiben / intl registered surcharge (consumer intent)
+  └─ kind on SERVICE row           → Einschreiben / intl registered surcharge (intent)
 
 "registered" (mark_profile id)
   └─ mark_profile in marks.json    → domestic registered STAMP size (layout output)
@@ -80,7 +74,7 @@ La Poste recommandée
 "id"
   ├─ products.id / services.id     → catalog id (standardbrief, einschreiben)
   ├─ marks.profiles[].id           → mark_profile (domestic)
-  └─ mark result id (consumer)     → UUID after purchase — not a provider handle
+  └─ runtime mark handle           → UUID after purchase — not a provider handle
 
 "tracking"
   ├─ products.tracking             → none | optional | included
@@ -134,7 +128,10 @@ services.json
 
 marks.json
   profiles[].id = mark_profile
-  profiles[].size ────────────────► layout width/height (mm)
+  profiles[].type ────────────────► stamp | label
+  profiles[].size ────────────────► graphic footprint (mm)
+  profiles[].clearance? ──────────► optional mm around the graphic (omit unless required)
+  placement.envelopes[id] ────────► franking zone rectangle (mm), not stamp size
   default_profile ────────────────► fallback when edges.marks omits a zone
 
 execution.json
@@ -142,12 +139,16 @@ execution.json
   billing[] / execution[] ─────────► capability tokens (wallet, mark)
   graph.dependencies.execution ► bundle index only — not execution data
 
+formats/envelopes.json
+  envelopes[].standards[] ────────► face-size citations (e.g. ISO269, DIN678); not window position
+
 formats/layouts.json
-  jurisdictions[DE].post_mark ────► envelope anchor (mm), not stamp size
+  jurisdictions[CC].envelopes[id].layout.window ──► shared/jurisdiction-standard window (mm)
+                                                    (DIN 680-style left window; DSTU3876 bottom-right; …)
 
 formats/addresses.json
   jurisdictions[DE].standard ─────► must match layouts standard when layouts[CC] exists
-  jurisdictions[DE].forms[] ──────► street / post_box required fields (not compose geometry)
+  jurisdictions[DE].forms[] ──────► street / post_box required fields (locality, not city)
 ```
 
 ---
@@ -159,7 +160,7 @@ Envelope is an optional physical **filter**, not a product selector. Empty `prod
 ```text
 INPUT                          RESOLVE                        OUTPUT FIELD
 ─────                          ───────                        ────────────
-provider: deutschepost    →    (loader scope)
+provider: deutschepost    →    (provider scope)
 country_code: US          →    zone: world
 weight: 20               →    weight_tier: W0020
 envelope?: DL            →    filter envelope_ids[]           (does not select product)
@@ -173,7 +174,7 @@ zone + bound services     →    graph.edges.marks[zone] + services overrides
                           →    mark_profile: registered_international
                           →    size 57×30, type stamp
 
-adapter purchase          →    graph.edges.wire.internetmarke[product][zone][service?]
+purchase                  →    graph.edges.wire.internetmarke[product][zone][service?]
                           →    wire_code (e.g. 10001) + API payload
                           →    execution.json.wire selects wire table
                           →    execution.json billing/execution gate capabilities
@@ -192,7 +193,7 @@ adapter purchase          →    graph.edges.wire.internetmarke[product][zone][s
 | `swisspost` | CH | stamp | 2 |
 | `ukrposhta` | UA | label | 1 (`domestic`; `world` zone maps to same profile via `graph.edges.marks`) — **letters only**; products `lyst_standartnyi` + domestic `dokument` |
 
-Folder rule: **`providers.json` key = `providers/<key>/` directory = consumer `provider` string.**
+Folder rule: **`providers.json` key = `providers/<key>/` directory = registry `provider` string.**
 
 ---
 

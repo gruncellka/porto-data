@@ -26,7 +26,6 @@ Reference for **reconciling JSON with official letter tariffs** (not a legal tar
 | `marks.json` | `marks` | Mark profiles |
 | `weights.json` | `weights` | Tiers incl. **W0050** for recommandée steps |
 | `zones.json` | `zones` | Domestic vs international groups |
-| `limits.json` | `limits` | Provider overlays on global policy |
 | `graph.json` | `graph` | Edges, units (EUR cents), `services` |
 
 **Loaded with the bundle:** `policy/jurisdictions.json`, `policy/markets.json`, `policy/restrictions.json`, `formats/envelopes.json`, `formats/layouts.json` — see `graph.json` `dependencies`.

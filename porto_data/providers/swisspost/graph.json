@@ -18,14 +18,14 @@
         "features.json",
         "marks.json"
       ],
-      "description": "Products require zones, weight tiers, canonical envelope format ids, services, features, and mark profiles"
+      "description": "Postal product catalog"
     },
     "services": {
       "file": "services.json",
       "depends_on": [
         "features.json"
       ],
-      "description": "Services require features"
+      "description": "Optional add-on services"
     },
     "product_prices": {
       "file": "prices/products.json",
@@ -34,7 +34,7 @@
         "zones.json",
         "weights.json"
       ],
-      "description": "Base postage grid; file providers/<id>/prices/products.json (file_type product_prices)"
+      "description": "Base postage rates by product, zone, and weight tier"
     },
     "service_prices": {
       "file": "prices/services.json",
@@ -44,31 +44,31 @@
         "zones.json",
         "weights.json"
       ],
-      "description": "Service surcharge amounts; file providers/<id>/prices/services.json (file_type service_prices)"
+      "description": "Add-on service surcharge rates"
     },
     "zones": {
       "file": "zones.json",
       "depends_on": [
         "policy/restrictions.json"
       ],
-      "description": "Zones may have restricted destinations"
+      "description": "Destination zones and included country codes"
     },
     "weights": {
       "file": "weights.json",
       "depends_on": [],
-      "description": "Weight brackets (tier ids) are standalone definitions"
+      "description": "Weight tier definitions"
     },
     "envelopes": {
       "file": "formats/envelopes.json",
       "depends_on": [],
-      "description": "Global envelope id catalog: physical front size (mm); international baseline (e.g. ISO 269); file formats/envelopes.json"
+      "description": "Standard envelope formats and dimensions"
     },
     "envelope_layouts": {
       "file": "formats/layouts.json",
       "depends_on": [
         "formats/envelopes.json"
       ],
-      "description": "Jurisdiction-keyed print/window layout (DE/CH/FR); file formats/layouts.json"
+      "description": "Print and window layout standards by jurisdiction"
     },
     "address_forms": {
       "file": "formats/addresses.json",
@@ -76,17 +76,17 @@
         "policy/jurisdictions.json",
         "formats/layouts.json"
       ],
-      "description": "Jurisdiction-keyed address forms (DE/CH/FR/UA); layout-aligned standards where layouts exist; file formats/addresses.json"
+      "description": "Postal address formatting rules by jurisdiction"
     },
     "jurisdictions": {
       "file": "policy/jurisdictions.json",
       "depends_on": [],
-      "description": "UN/EU membership sets for restriction framework jurisdiction resolution"
+      "description": "Country and regional jurisdiction reference"
     },
     "markets": {
       "file": "policy/markets.json",
       "depends_on": [],
-      "description": "Country-level currency, VAT, and international quote currencies for providers.json country"
+      "description": "Currency, VAT, and postal working-day calendar by country"
     },
     "restrictions": {
       "file": "policy/restrictions.json",
@@ -95,24 +95,17 @@
         "zones.json",
         "products.json"
       ],
-      "description": "Global destination restrictions (bundled as policy/restrictions.json); optional cross-reference to zones and products"
-    },
-    "limits": {
-      "file": "limits.json",
-      "depends_on": [
-        "policy/restrictions.json"
-      ],
-      "description": "Provider operational limits extend global restrictions after load"
+      "description": "Destination mailing restrictions by country and region"
     },
     "features": {
       "file": "features.json",
       "depends_on": [],
-      "description": "Features are standalone"
+      "description": "Service capability features"
     },
     "marks": {
       "file": "marks.json",
       "depends_on": [],
-      "description": "Franking profile catalog: profiles[] (sizes); resolution in graph.edges.marks"
+      "description": "Franking mark profiles and dimensions"
     },
     "rules": {
       "file": "rules.json",
@@ -123,7 +116,7 @@
         "zones.json",
         "prices/services.json"
       ],
-      "description": "Conditional letter policies (e.g. thickness surcharge); consumers evaluate after base resolution"
+      "description": "Conditional letter surcharges and policies"
     }
   },
   "services": [

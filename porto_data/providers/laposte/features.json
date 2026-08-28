@@ -7,35 +7,35 @@
       "kind": "tracking",
       "name": "Numéro de suivi",
       "label": "Tracking number",
-      "description": "Suivi / Lettre suivie style tracking when the ordered service provides it"
+      "description": "Tracking number when the ordered service includes suivi."
     },
     {
       "id": "preuve_depot",
       "kind": "acceptance_proof",
       "name": "Preuve de dépôt",
       "label": "Proof of mailing",
-      "description": "Attestation de dépôt (recommandé and similar services)"
+      "description": "Proof of mailing (attestation de dépôt)."
     },
     {
       "id": "signature_destinataire",
       "kind": "recipient_signature",
       "name": "Signature du destinataire",
       "label": "Recipient signature",
-      "description": "Signature upon delivery when offered by the service"
+      "description": "Recipient signature upon delivery."
     },
     {
       "id": "avis_reception",
       "kind": "return_receipt",
       "name": "Avis de réception",
       "label": "Return receipt",
-      "description": "Avis de réception returned to the sender (recommandé AR)"
+      "description": "Return receipt (avis de réception) sent to the sender."
     },
     {
       "id": "preuve_livraison",
       "kind": "delivery_proof",
       "name": "Preuve de distribution",
       "label": "Proof of delivery",
-      "description": "Derived from delivery confirmation / tracking outcome where applicable"
+      "description": "Proof of delivery."
     }
   ]
 }

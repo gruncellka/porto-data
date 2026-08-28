@@ -2,13 +2,43 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/marks.schema.json",
   "title": "Provider mark profiles",
-  "description": "Per-provider catalog of mark geometry and payload type. Profile size (width × height) is nominal footprint in mm. Resolution paths live in graph.json edges.marks.",
+  "description": "Per-provider catalog of mark geometry and payload type. Profile size (width × height) is nominal footprint in mm. placement.envelopes is the operator franking area per envelope id. Optional profiles[].clearance is quiet zone around this graphic only. Resolution paths live in graph.json edges.marks.",
   "type": "object",
   "required": [
     "file_type",
     "default_profile",
     "profiles"
   ],
+  "definitions": {
+    "rectangleMm": {
+      "type": "object",
+      "required": [
+        "x",
+        "y",
+        "width",
+        "height"
+      ],
+      "properties": {
+        "x": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "y": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "width": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "additionalProperties": false
+    }
+  },
   "properties": {
     "$schema": {
       "type": "string",
@@ -38,6 +68,23 @@
       "type": "string",
       "pattern": "^[a-z0-9_]+$",
       "description": "Fallback profile id when graph.edges.marks has no entry for a zone"
+    },
+    "placement": {
+      "type": "object",
+      "description": "Allowed franking area on the envelope front (origin top-left, landscape). Numbers are millimetres in file unit.dimension. Not a composed draw origin.",
+      "required": [
+        "envelopes"
+      ],
+      "properties": {
+        "envelopes": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "$ref": "#/definitions/rectangleMm"
+          }
+        }
+      },
+      "additionalProperties": false
     },
     "profiles": {
       "type": "array",
@@ -100,6 +147,11 @@
               }
             },
             "additionalProperties": false
+          },
+          "clearance": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "description": "Operator-required quiet zone in file unit.dimension (mm) around this graphic. Omit when the operator has no such rule for this profile."
           },
           "mime_type": {
             "type": "array",

@@ -21,7 +21,7 @@ Examples:
 - `id: einschreiben`, `kind: registered`
 - `id: sendungsnummer`, `kind: tracking`
 
-Many-to-one is expected (`einschreiben` and `einschreiben_einwurf` both `registered`). Consumer `kind` is intent; matching catalog `id`s are options. Pin with `service_ids` when more than one row matches. Do not map `kind` to a single `id`.
+Many-to-one is expected (`einschreiben` and `einschreiben_einwurf` both `registered`). `kind` is intent; matching catalog `id`s are options. Pin with `service_ids` when more than one row matches. Do not map `kind` to a single `id`.
 
 ### Service kinds
 

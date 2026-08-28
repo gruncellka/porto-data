@@ -5,15 +5,9 @@ from scripts.validators.addresses import validate_addresses
 from scripts.validators.delivery import validate_delivery
 from scripts.validators.graph import validate_graph as _validate_provider_graph
 from scripts.validators.kinds import validate_kinds as _validate_kinds_impl
-from scripts.validators.limits_scope import validate_limits_scope
 from scripts.validators.mappings_layout import validate_mappings_layout
 from scripts.validators.markets import validate_markets
 from scripts.validators.schema import validate_all_schemas
-
-
-def validate_limits() -> int:
-    """Validate providers/*/limits.json (letter-send scope, frameworks, provider id)."""
-    return validate_limits_scope()
 
 
 def validate_schema() -> int:
@@ -60,7 +54,7 @@ def validate_graph(analyze: bool = False, provider: str | None = None) -> int:
 
 
 def validate_all() -> int:
-    """Validate data bundle: schema → mappings → markets → addresses → limits → kinds → delivery → graph."""
+    """Validate data bundle: schema → mappings → markets → addresses → kinds → delivery → graph."""
     schema_result = validate_schema()
     if schema_result != 0:
         return schema_result
@@ -73,9 +67,6 @@ def validate_all() -> int:
     addresses_result = validate_addresses_cmd()
     if addresses_result != 0:
         return addresses_result
-    limits_result = validate_limits()
-    if limits_result != 0:
-        return limits_result
     kinds_result = validate_kinds()
     if kinds_result != 0:
         return kinds_result

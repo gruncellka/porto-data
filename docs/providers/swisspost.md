@@ -26,7 +26,6 @@ Reference for **reconciling JSON with official letter tariffs** (not a legal tar
 | `marks.json` | `marks` | Mark profiles |
 | `weights.json` | `weights` | Tiers for standard / gross / maxi ladders |
 | `zones.json` | `zones` | `domestic`, `zone_1_eu`, `world` |
-| `limits.json` | `limits` | Provider overlays on global policy |
 | **`rules.json`** | **`provider_rules`** | Thickness band → `zuschlag_dicke` |
 | `graph.json` | `graph` | Edges, units (CHF cents/rappen), `services` |
 
@@ -38,7 +37,7 @@ Reference for **reconciling JSON with official letter tariffs** (not a legal tar
 
 ## Known pitfalls
 
-- **A Mail vs B Mail:** separate product ids (`a_post_*` vs `b_post_*`); resolver cannot infer from weight alone.
+- **A Mail vs B Mail:** separate product ids (`a_post_*` vs `b_post_*`); weight alone does not pick between them.
 - **Thickness surcharge:** domestic letters **>2 cm and ≤5 cm** → **+2,00 CHF** via `rules.json` + `zuschlag_dicke` (200 rappen).
 - **Midi letters (101–500 g):** separate prices on site (A 1,70 / B 1,40) — **not** split in minimal model (standard product covers 1–100 g flat rate per DigitalStamp table).
 - **International flat zones:** `zone_1_eu` and `world` share amounts where post.ch table is destination-independent.

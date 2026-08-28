@@ -282,6 +282,7 @@ class GraphValidator:
             graph=self.graph,
             services=self.services,
             service_prices=self.service_prices,
+            zone_ids=set(self.zone_ids.keys()),
         )
 
     def validate_execution_semantics(self) -> None:
@@ -302,6 +303,9 @@ class GraphValidator:
             self.results,
             graph=self.graph,
             marks=self.marks,
+            envelopes=self.envelopes,
+            envelope_layouts=self.envelope_layouts,
+            provider_id=str(self.provider_dir.name),
         )
 
     def validate_mark_edges(self) -> None:
@@ -361,6 +365,7 @@ class GraphValidator:
         run_validate_envelope_address_window(
             self.results,
             envelope_layouts=self.envelope_layouts,
+            envelopes=self.envelopes,
         )
 
     def validate_product_envelope_format_ids(self) -> None:

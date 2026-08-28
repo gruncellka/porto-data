@@ -4,8 +4,27 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- **`jurisdictions[].country_code_3`:** ISO 3166-1 alpha-3 on every per-country row (companion to the alpha-2 map key); required in `jurisdictions.schema.json`. Blocs `EU` / `UN` stay members + timezone only.
+- **`service_prices[].zone`:** optional zone id so add-on amounts can vary by zone (same join as `product_prices`). Deutsche Post `einschreiben`: 265 domestic, 370 on `zone_1_eu` / `zone_2_europe` / `world`. Omit `zone` when one amount covers every `supported_zones` entry.
+- **`marks.placement.envelopes`:** per-envelope franking rectangle (mm, origin top-left). Deutsche Post Internetmarke **74×40** from top-right (Frankiervermerk-Merkblatt / IM FAQ). La Poste MTEL **74×40** from top-right (Guide pratique courrier — La Poste original, not copied from DE). Swiss Post WebStamp **74×38** from top-right (post.ch couvert templates); size⊆placement is skipped for Swiss while catalog stamp **40×40** is nominal. Ukrposhta eCom **omits** placement (label, not an envelope-face stamp). Optional **`profiles[].clearance`** (mm around the graphic); omit unless the operator requires it for that graphic. No `tolerance`.
+- **`layouts.UA`:** ДСТУ 3876-99 window facts (C6/DL/C5 **90×45** bottom-right; C4/B4 no window). Address `UA.standard` is **`DSTU3876`**.
+
+### Changed
+
+- **CI / Make / pre-commit naming:** validation workflow jobs, Make targets, and hook IDs use short concern names (`schema`, `format`, `lint`, `types`, `test`, `mappings`, …, `validate` aggregator). Independent leaves run in parallel; `validate` is the branch-protection check.
+- **Catalog descriptions:** neutralize graph dependency blurbs and product/service/feature copy — factual operator wording only; drop implementor notes (wire/API, file paths, resolver hints).
+- **Docs / rules:** address place field documented as **`locality`** (UPU); catalog key wording prefers **catalog `id`** over “native id” in contributor rules. Policy docs stay catalog-layer (no SDK result shape).
+
 ### Changed (breaking)
 
+- **Restrictions legal `frameworks` → `jurisdictions`:** map keys are `jurisdictions.json` identifiers (`EU` \| `CH` \| `UA`) to instrument arrays (`reference`, `effective_from`, optional `effective_to`). Legal rows keep short neutral `reason` / `description` (not political labels). Routing keeps `authority` / `reference` / `reason` / `description` and must not have `jurisdictions`. `partial: true` unchanged (absent = full coverage of the represented region).
+- **Restrictions:** collections are country-keyed maps (`legal`, `routing`), then region-keyed maps. No `operational` collection. No record `id`. No top-level `sources` array. Machine impact (`block` \| `warn`) is resolved by the SDK, not stored in the catalog. Load fails closed without required fields. Census: UA legal facts and Cyprus routing.
+- **Drop `limits.json`:** no per-provider overlay file, schema, graph node, mapping, or `porto validate --type limits`.
+- **Address form field `city` → `locality`:** UPU postal vocabulary (`locality` covers town/village/place; `city` is ambiguous). Enum in `addresses.schema.json` and all `forms[].required` entries.
+- **Envelope face `standards[]`:** `envelopes.json` cites **ISO 269** and **DIN 678** together; drop singular `standard`. DL/C-series faces are worldwide formats, not DE-owned sizes copied globally.
+- **Layouts drop `post_mark`.** `layouts.json` holds shared/jurisdiction-standard **window** facts only (DIN 680-style windows may match across DE/CH/FR because they share a window norm — that is not “DE copied”). Mark **placement** lives on provider `marks.json`.
 - **Drop `porto_id`.** Catalog identity is concrete `id` only (`name` native, `label` English). Products have no size bucket / `kind`. Country + weight + zone are the core facts; optional envelope **filters** `envelope_ids[]` (does not select a product). Pin with `product_id` / `service_ids`; `services` is `kind` intent. Graph, prices, and `services[].features[]` stay on `id`.
 - **Docs:** consumer input splits `kind` vs catalog `id` (no “kind or id” slot; catalog keys are not “native id”). Envelope is a fit filter; several remaining rows is selection or ambiguity.
 - **`porto_ids.schema.json` → `kinds.schema.json`**; `porto validate --type kinds` regenerates `docs/kinds.md` (removed `docs/porto_id.md`). Kind renames: `proof_of_mailing` → `acceptance_proof`, `proof_of_delivery` → `delivery_proof`.
@@ -108,7 +127,7 @@ Release since **v0.3.1**: multi-provider bundle layout, **`policy/markets.json`*
 - **Operators:** Full letter catalogs for Deutsche Post, Ukrposhta, La Poste, and Swiss Post under **`providers/<id>/`**.
 - **Policy:** **`policy/jurisdictions.json`**, **`policy/restrictions.json`**, **`policy/markets.json`** (DE, FR, CH, UA fiscal defaults).
 - **Swiss Post:** Optional **`providers/swisspost/rules.json`** (e.g. thickness surcharge) where modeled.
-- **Docs:** [docs/providers/](docs/providers/) tariff notes per operator; [resolution.md](docs/resolution.md), [provider-template.md](docs/provider-template.md), [porto_id.md](docs/porto_id.md), [tariff-verification.md](docs/tariff-verification.md); [id.md](docs/id.md), [policy.md](docs/policy.md), [formats.md](docs/formats.md).
+- **Docs:** [docs/providers/](docs/providers/) tariff notes per operator; [resolution.md](docs/resolution.md), [template.md](docs/template.md), [porto_id.md](docs/porto_id.md), [tariffs.md](docs/tariffs.md); [id.md](docs/id.md), [policy.md](docs/policy.md), [formats.md](docs/formats.md).
 - **Mappings:** Required provider template schemas enforced in mappings validation.
 
 **Validation**
@@ -131,7 +150,7 @@ Release since **v0.3.1**: multi-provider bundle layout, **`policy/markets.json`*
 - **Ukrposhta docs:** Letters-only bundle scope; verification **verified** for in-scope letter products; `porto_id` **`large`** = domestic `dokument` documented in [id.md](docs/id.md), [resolution.md](docs/resolution.md), [providers/ukrposhta.md](docs/providers/ukrposhta.md).
 - **Mark layout data model:** Removed `marks.zones` and top-level `mark_edges`. Resolution lives in **`graph.edges.marks`**; `marks.json` is catalog only.
 - **Marks `scope_notes`:** DE sizes flagged as sample-based; CH/FR registered documented as same footprint as lane until measured.
-- **Docs:** `marks.md`, `resolution.md`, `identity.md`, `provider-template.md` — data vs SDK split.
+- **Docs:** `marks.md`, `resolution.md`, `identity.md`, `template.md` — data vs SDK split.
 - **Validation order:** schema → mappings → **markets** → limits → **porto_ids** → **delivery** → graph.
 - **`porto_ids.schema.json`:** Validator rejects **product** enum overlap with **service** or **feature** tokens; products are size buckets only.
 - **`metadata.json`:** Generated with 2-space indent (matches data JSON).

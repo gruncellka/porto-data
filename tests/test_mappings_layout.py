@@ -21,7 +21,6 @@ def _full_provider_schema_map(provider_id: str, **extra: str) -> dict[str, str]:
         "schemas/service_prices.schema.json": f"providers/{provider_id}/prices/services.json",
         "schemas/zones.schema.json": f"providers/{provider_id}/zones.json",
         "schemas/weights.schema.json": f"providers/{provider_id}/weights.json",
-        "schemas/limits.schema.json": f"providers/{provider_id}/limits.json",
         "schemas/graph.schema.json": f"providers/{provider_id}/graph.json",
     }
     assert set(rel) == set(REQUIRED_PROVIDER_SCHEMAS)
@@ -40,7 +39,6 @@ def _write_stub_provider_files(root: Path, provider_id: str) -> None:
         "services.json",
         "zones.json",
         "weights.json",
-        "limits.json",
         "graph.json",
         "prices/products.json",
         "prices/services.json",

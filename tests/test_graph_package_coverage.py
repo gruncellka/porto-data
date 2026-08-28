@@ -11,6 +11,7 @@ from scripts.validators.graph.dependencies import run_validate_price_dependencie
 from scripts.validators.graph.edges import run_validate_edges
 from scripts.validators.graph.envelope_geometry import (
     envelope_rect_complete,
+    envelope_rect_on_face,
     resolve_envelope_layout_row,
 )
 from scripts.validators.graph.layouts import (
@@ -103,6 +104,12 @@ class TestEnvelopeGeometryResolve:
     def test_envelope_rect_complete_rejects_non_dict(self) -> None:
         assert envelope_rect_complete(None) is False
         assert envelope_rect_complete({"x": 0, "y": 0, "width": 1}) is False
+
+    def test_envelope_rect_on_face(self) -> None:
+        rect = {"x": 52, "y": 49, "width": 90, "height": 45}
+        assert envelope_rect_on_face(rect, width=162, height=114) is True
+        assert envelope_rect_on_face(rect, width=140, height=114) is False
+        assert envelope_rect_on_face({"x": 0, "y": 0, "width": 1}, width=10, height=10) is False
 
 
 class TestLayoutsPureAndRunners:
@@ -221,7 +228,6 @@ class TestLayoutsPureAndRunners:
                                 "orientation": "landscape",
                                 "layout": {
                                     "window": {"supported": True},
-                                    "post_mark": {"x": 0, "y": 0},
                                 },
                             }
                         }
@@ -230,6 +236,51 @@ class TestLayoutsPureAndRunners:
             },
         )
         assert r["errors"]
+
+    def test_run_address_window_skips_malformed_envelope_faces(self) -> None:
+        r = _results()
+        run_validate_envelope_address_window(
+            r,
+            envelope_layouts={
+                "jurisdictions": {
+                    "DE": {
+                        "envelopes": {
+                            "C6": {
+                                "orientation": "landscape",
+                                "layout": {"window": {"supported": False}},
+                            }
+                        }
+                    }
+                }
+            },
+            envelopes={"envelopes": [{"id": "C6", "width": "wide", "height": 114}]},
+        )
+        assert not r["errors"]
+
+    def test_run_address_window_rejects_off_face_area(self) -> None:
+        r = _results()
+        run_validate_envelope_address_window(
+            r,
+            envelope_layouts={
+                "jurisdictions": {
+                    "UA": {
+                        "envelopes": {
+                            "C6": {
+                                "orientation": "landscape",
+                                "layout": {
+                                    "window": {
+                                        "supported": True,
+                                        "area": {"x": 100, "y": 0, "width": 90, "height": 45},
+                                    }
+                                },
+                            }
+                        }
+                    }
+                }
+            },
+            envelopes={"envelopes": [{"id": "C6", "width": 162, "height": 114}, "skip"]},
+        )
+        assert any("not on the envelope face" in e for e in r["errors"])
 
     def test_run_product_envelope_ids_skips_and_errors(self) -> None:
         r = _results()
@@ -434,7 +485,13 @@ class TestGraphValidatorEarlyReturnsAndBranches:
             encoding="utf-8",
         )
         (data_dir / "restrictions.json").write_text(
-            json.dumps({"file_type": "restrictions", "version": 1, "destinations": []}),
+            json.dumps(
+                {
+                    "file_type": "restrictions",
+                    "unit": {"country_code": "ISO 3166-1 alpha-2", "date": "ISO 8601"},
+                    "disclaimer": "test",
+                }
+            ),
             encoding="utf-8",
         )
         (data_dir / "features.json").write_text(
@@ -530,7 +587,13 @@ class TestGraphValidatorEarlyReturnsAndBranches:
             encoding="utf-8",
         )
         (data_dir / "restrictions.json").write_text(
-            json.dumps({"file_type": "restrictions", "version": 1, "destinations": []}),
+            json.dumps(
+                {
+                    "file_type": "restrictions",
+                    "unit": {"country_code": "ISO 3166-1 alpha-2", "date": "ISO 8601"},
+                    "disclaimer": "test",
+                }
+            ),
             encoding="utf-8",
         )
         (data_dir / "features.json").write_text(
@@ -634,7 +697,13 @@ class TestGraphValidatorMoreBranches:
             encoding="utf-8",
         )
         (data_dir / "restrictions.json").write_text(
-            json.dumps({"file_type": "restrictions", "version": 1, "destinations": []}),
+            json.dumps(
+                {
+                    "file_type": "restrictions",
+                    "unit": {"country_code": "ISO 3166-1 alpha-2", "date": "ISO 8601"},
+                    "disclaimer": "test",
+                }
+            ),
             encoding="utf-8",
         )
         (data_dir / "features.json").write_text(
@@ -728,7 +797,13 @@ class TestGraphValidatorMoreBranches:
             encoding="utf-8",
         )
         (data_dir / "restrictions.json").write_text(
-            json.dumps({"file_type": "restrictions", "version": 1, "destinations": []}),
+            json.dumps(
+                {
+                    "file_type": "restrictions",
+                    "unit": {"country_code": "ISO 3166-1 alpha-2", "date": "ISO 8601"},
+                    "disclaimer": "test",
+                }
+            ),
             encoding="utf-8",
         )
         (data_dir / "features.json").write_text(
@@ -822,7 +897,13 @@ class TestGraphValidatorMoreBranches:
             encoding="utf-8",
         )
         (data_dir / "restrictions.json").write_text(
-            json.dumps({"file_type": "restrictions", "version": 1, "destinations": []}),
+            json.dumps(
+                {
+                    "file_type": "restrictions",
+                    "unit": {"country_code": "ISO 3166-1 alpha-2", "date": "ISO 8601"},
+                    "disclaimer": "test",
+                }
+            ),
             encoding="utf-8",
         )
         (data_dir / "features.json").write_text(

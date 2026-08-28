@@ -8,8 +8,6 @@ Instrument for **real catalog envelopes** and shipment preparation — not a 1:1
 envelope_ids  → which real catalog envelopes the product works with
 graph         → allowed weight_tiers for the product
 weights.json  → weight bound (tier → grams)
-resolver      → finds product and price
-Compose       → only checks selected envelope + weight against the already selected product
 ```
 
 No absolute packaging mm bands duplicated beside `envelope_ids`.
@@ -38,25 +36,25 @@ providers/<id>/prices/…         price: product_id × zone × weight_tier
 | Allowed envelopes | `products[].envelope_ids` | Membership SoT for envelope fit |
 | Allowed weight tiers | `graph.edges.products[].weight_tiers` | Which tiers the product may use |
 | Weight bound | `weights.json` | Tier → max grams |
-| Product + price | Consumer resolver | Not desk check |
-| Sanctions / overlays | `policy/restrictions.json`, `limits.json` | Not packaging |
+| Product + price | `graph` ∩ products ∩ prices | See [resolution.md](resolution.md) |
+| Destination restrictions | `policy/restrictions.json` | Not packaging |
 
 **Invariant:** every id in `envelope_ids` must exist in `formats/envelopes.json`. Empty `envelope_ids` = no format filter (rare).
 
 ## How it is resolved
 
-### Resolver (product + price)
+### Product + price
 
 1. `graph ∩ products` → candidates for zone + weight_tier
 2. Disambiguate twins (see [resolution.md](resolution.md))
 3. Price = `product_id × zone × weight_tier`
 
-### Desk (already selected product)
+### Already selected product
 
 Against the **already selected** product:
 
 - Envelope: `format_id ∈ product.envelope_ids` — else mismatch (never auto-change envelope)
-- Weight: vs max from weights via graph tiers — upgrade or oversized as the consumer defines
+- Weight: vs max from weights via graph tiers
 
 Strict envelope fit is membership only.
 

@@ -220,6 +220,299 @@ class TestMarksProfilesCoverage:
         assert any("label_canvas missing" in e for e in r["errors"])
 
 
+def _c6_envelopes() -> dict:
+    return {
+        "envelopes": [
+            {"id": "C6", "width": 162, "height": 114},
+        ]
+    }
+
+
+def _placement_marks(*, size: dict, clearance: float | None = None) -> dict:
+    profile: dict = {"id": "a", "type": "stamp", "label": "A", "size": size}
+    if clearance is not None:
+        profile["clearance"] = clearance
+    marks = {
+        "file_type": "marks",
+        "default_profile": "a",
+        "profiles": [profile],
+    }
+    return marks
+
+
+class TestMarksPlacement:
+    def test_unknown_envelope_id(self) -> None:
+        r = _empty_results()
+        marks = _placement_marks(size={"width": 10, "height": 10})
+        marks["placement"] = {"envelopes": {"XX": {"x": 0, "y": 0, "width": 74, "height": 40}}}
+        run_validate_marks_profiles(r, graph={}, marks=marks, envelopes=_c6_envelopes())
+        assert any("unknown envelope id" in e for e in r["errors"])
+
+    def test_off_face_rectangle(self) -> None:
+        r = _empty_results()
+        marks = _placement_marks(size={"width": 10, "height": 10})
+        marks["placement"] = {"envelopes": {"C6": {"x": 100, "y": 0, "width": 74, "height": 40}}}
+        run_validate_marks_profiles(r, graph={}, marks=marks, envelopes=_c6_envelopes())
+        assert any("not on the envelope face" in e for e in r["errors"])
+
+    def test_size_does_not_fit(self) -> None:
+        r = _empty_results()
+        marks = _placement_marks(size={"width": 80, "height": 10})
+        marks["placement"] = {"envelopes": {"C6": {"x": 88, "y": 0, "width": 74, "height": 40}}}
+        run_validate_marks_profiles(r, graph={}, marks=marks, envelopes=_c6_envelopes())
+        assert any("does not fit" in e for e in r["errors"])
+
+    def test_swisspost_skips_size_fit(self) -> None:
+        r = _empty_results()
+        marks = _placement_marks(size={"width": 40, "height": 40})
+        marks["placement"] = {"envelopes": {"C6": {"x": 88, "y": 0, "width": 74, "height": 38}}}
+        run_validate_marks_profiles(
+            r,
+            graph={},
+            marks=marks,
+            envelopes=_c6_envelopes(),
+            provider_id="swisspost",
+        )
+        assert not r["errors"]
+
+    def test_size_plus_clearance_must_fit(self) -> None:
+        r = _empty_results()
+        marks = _placement_marks(size={"width": 70, "height": 36}, clearance=3)
+        marks["placement"] = {"envelopes": {"C6": {"x": 88, "y": 0, "width": 74, "height": 40}}}
+        run_validate_marks_profiles(r, graph={}, marks=marks, envelopes=_c6_envelopes())
+        assert any("does not fit" in e for e in r["errors"])
+
+    def test_placement_fits(self) -> None:
+        r = _empty_results()
+        marks = _placement_marks(size={"width": 37, "height": 20})
+        marks["placement"] = {"envelopes": {"C6": {"x": 88, "y": 0, "width": 74, "height": 40}}}
+        run_validate_marks_profiles(r, graph={}, marks=marks, envelopes=_c6_envelopes())
+        assert not r["errors"]
+
+    def test_placement_not_object(self) -> None:
+        r = _empty_results()
+        marks = _placement_marks(size={"width": 10, "height": 10})
+        marks["placement"] = "bad"
+        run_validate_marks_profiles(r, graph={}, marks=marks, envelopes=_c6_envelopes())
+        assert any("placement must be an object" in e for e in r["errors"])
+
+    def test_incomplete_rect(self) -> None:
+        r = _empty_results()
+        marks = _placement_marks(size={"width": 10, "height": 10})
+        marks["placement"] = {"envelopes": {"C6": {"x": 0, "y": 0, "width": 10}}}
+        run_validate_marks_profiles(r, graph={}, marks=marks, envelopes=_c6_envelopes())
+        assert any("integer x, y, width, height" in e for e in r["errors"])
+
+    def test_address_zone_larger_than_de_window(self) -> None:
+        r = _empty_results()
+        marks = _placement_marks(size={"width": 10, "height": 10})
+        marks["calibrations"] = [
+            {
+                "wire": "internetmarke",
+                "mark_profile": "ADDRESS_ZONE",
+                "mime_type": "image/png",
+                "dpi": 300,
+                "label_canvas": {
+                    "width_px": 1,
+                    "height_px": 1,
+                    "width_mm": 91.0,
+                    "height_mm": 45.0,
+                },
+            }
+        ]
+        layouts = {
+            "jurisdictions": {
+                "DE": {
+                    "envelopes": {
+                        "C5": {
+                            "orientation": "landscape",
+                            "layout": {
+                                "window": {
+                                    "supported": True,
+                                    "area": {"x": 20, "y": 57, "width": 90, "height": 45},
+                                }
+                            },
+                        }
+                    }
+                }
+            }
+        }
+        run_validate_marks_profiles(
+            r,
+            graph={},
+            marks=marks,
+            envelope_layouts=layouts,
+            provider_id="deutschepost",
+        )
+        assert any("ADDRESS_ZONE" in e and "does not fit" in e for e in r["errors"])
+
+    def test_placement_empty_envelopes_map(self) -> None:
+        r = _empty_results()
+        marks = _placement_marks(size={"width": 10, "height": 10})
+        marks["placement"] = {"envelopes": {}}
+        run_validate_marks_profiles(r, graph={}, marks=marks, envelopes=_c6_envelopes())
+        assert any("envelopes must be a non-empty object" in e for e in r["errors"])
+
+    def test_skips_non_dict_size_and_non_int_dims(self) -> None:
+        r = _empty_results()
+        marks = {
+            "file_type": "marks",
+            "default_profile": "a",
+            "profiles": [
+                {"id": "a", "type": "stamp", "label": "A", "size": "bad"},
+                {"id": "b", "type": "stamp", "label": "B", "size": {"width": "x", "height": 1}},
+            ],
+            "placement": {"envelopes": {"C6": {"x": 88, "y": 0, "width": 74, "height": 40}}},
+        }
+        run_validate_marks_profiles(r, graph={}, marks=marks, envelopes=_c6_envelopes())
+        assert not r["errors"]
+
+    def test_bad_clearance_type(self) -> None:
+        r = _empty_results()
+        marks = _placement_marks(size={"width": 10, "height": 10})
+        marks["profiles"][0]["clearance"] = "wide"
+        marks["placement"] = {"envelopes": {"C6": {"x": 88, "y": 0, "width": 74, "height": 40}}}
+        run_validate_marks_profiles(r, graph={}, marks=marks, envelopes=_c6_envelopes())
+        assert any("clearance must be a number" in e for e in r["errors"])
+
+    def test_envelope_faces_skips_malformed_rows(self) -> None:
+        r = _empty_results()
+        marks = _placement_marks(size={"width": 10, "height": 10})
+        marks["placement"] = {"envelopes": {"C6": {"x": 88, "y": 0, "width": 74, "height": 40}}}
+        run_validate_marks_profiles(
+            r,
+            graph={},
+            marks=marks,
+            envelopes={"envelopes": ["bad", {"id": "C6"}, {"id": "C6", "width": "x", "height": 1}]},
+        )
+        assert any("unknown envelope id" in e for e in r["errors"])
+
+    def test_envelope_faces_empty_when_envelopes_missing(self) -> None:
+        r = _empty_results()
+        marks = _placement_marks(size={"width": 10, "height": 10})
+        marks["placement"] = {"envelopes": {"C6": {"x": 88, "y": 0, "width": 74, "height": 40}}}
+        run_validate_marks_profiles(r, graph={}, marks=marks, envelopes=None)
+        assert any("unknown envelope id" in e for e in r["errors"])
+
+    def test_address_zone_skips_without_canvas_or_de(self) -> None:
+        marks = _placement_marks(size={"width": 10, "height": 10})
+        marks["calibrations"] = [
+            {
+                "wire": "internetmarke",
+                "mark_profile": "FRANKING_ZONE",
+                "mime_type": "image/png",
+                "dpi": 300,
+                "label_canvas": {
+                    "width_px": 1,
+                    "height_px": 1,
+                    "width_mm": 1.0,
+                    "height_mm": 1.0,
+                },
+            }
+        ]
+        r = _empty_results()
+        run_validate_marks_profiles(
+            r,
+            graph={},
+            marks=marks,
+            envelope_layouts={"jurisdictions": {}},
+            provider_id="deutschepost",
+        )
+        assert not r["errors"]
+
+        marks["calibrations"] = [
+            {
+                "wire": "internetmarke",
+                "mark_profile": "ADDRESS_ZONE",
+                "mime_type": "image/png",
+                "dpi": 300,
+                "label_canvas": {
+                    "width_px": 1,
+                    "height_px": 1,
+                    "width_mm": "x",
+                    "height_mm": 43.0,
+                },
+            }
+        ]
+        r = _empty_results()
+        run_validate_marks_profiles(
+            r,
+            graph={},
+            marks=marks,
+            envelope_layouts={"jurisdictions": {"DE": "bad"}},
+            provider_id="deutschepost",
+        )
+        assert not r["errors"]
+
+        marks["calibrations"] = [
+            {
+                "wire": "internetmarke",
+                "mark_profile": "ADDRESS_ZONE",
+                "mime_type": "image/png",
+                "dpi": 300,
+                "label_canvas": {
+                    "width_px": 1,
+                    "height_px": 1,
+                    "width_mm": 85.0,
+                    "height_mm": 43.0,
+                },
+            }
+        ]
+        r = _empty_results()
+        run_validate_marks_profiles(
+            r,
+            graph={},
+            marks=marks,
+            envelope_layouts={"jurisdictions": {"DE": "bad"}},
+            provider_id="deutschepost",
+        )
+        run_validate_marks_profiles(
+            r,
+            graph={},
+            marks=marks,
+            envelope_layouts={"jurisdictions": {"DE": {"envelopes": []}}},
+            provider_id="deutschepost",
+        )
+        run_validate_marks_profiles(
+            r,
+            graph={},
+            marks=marks,
+            envelope_layouts={
+                "jurisdictions": {
+                    "DE": {
+                        "envelopes": {
+                            "skip": "bad",
+                            "C6": {
+                                "orientation": "landscape",
+                                "layout": {"window": {"supported": False}},
+                            },
+                            "C5": {
+                                "orientation": "landscape",
+                                "layout": {
+                                    "window": {
+                                        "supported": True,
+                                        "area": {"x": 20, "y": 57, "width": "90", "height": 45},
+                                    }
+                                },
+                            },
+                            "DL": {
+                                "orientation": "landscape",
+                                "layout": {
+                                    "window": {
+                                        "supported": True,
+                                        "area": {"x": 20, "y": 50, "width": 90, "height": 45},
+                                    }
+                                },
+                            },
+                        }
+                    }
+                }
+            },
+            provider_id="deutschepost",
+        )
+        assert not r["errors"]
+
+
 class TestEdgeAccessCoverage:
     def test_product_edges_empty_when_no_edges_root(self) -> None:
         assert product_edges(None) == {}
@@ -242,7 +535,7 @@ class TestEdgeAccessCoverage:
         assert not ok
         assert any("edges must be an object" in e for e in r["errors"])
 
-    def test_validate_edges_container_legacy_mark_edges(self) -> None:
+    def test_validate_edges_container_rejects_top_level_mark_edges(self) -> None:
         r = _empty_results()
         ok = validate_edges_container(
             r, graph={"edges": {"products": {}, "marks": {}}, "mark_edges": {}}
@@ -266,15 +559,6 @@ class TestMarkEdgesCoverage:
             marks=_marks_doc(profiles=[{"id": "a", "type": "stamp", "label": "A"}]),
         )
         assert any("edges.marks must be an object" in e for e in r["errors"])
-
-    def test_legacy_top_level_mark_edges_rejected(self) -> None:
-        r = _empty_results()
-        run_validate_mark_edges(
-            r,
-            graph={"file_type": "graph", "edges": {"products": {}, "marks": {}}, "mark_edges": {}},
-            marks=_marks_doc(profiles=[{"id": "a", "type": "stamp", "label": "A"}]),
-        )
-        assert any("mark_edges is removed" in e for e in r["errors"])
 
     def test_edges_marks_requires_marks(self) -> None:
         r = _empty_results()

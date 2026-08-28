@@ -7,7 +7,6 @@
 - Consistency: registry ↔ mappings ↔ disk; markets ↔ providers; catalog ↔ `graph.json`; `kind` ↔ catalog ids.
 - Resolution: `graph.json` (`dependencies`, `edges`, `edges.wire`, `services`) + optional `execution.json` (wire + billing/execution tokens only — not wire tables).
 - Provider order in prose: `deutschepost` → `ukrposhta` → `laposte` → `swisspost`.
-- Empty `limits.json` `limits[]` is valid (global restrictions in `policy/restrictions.json`).
 - Align with `.cursorrules`, `data.mdc`, `CONTRIBUTING.md`.
 
 ## Anti-patterns (do not reintroduce)
@@ -16,11 +15,12 @@
 |--------------|---------------|
 | `registered` on `products.json` | catalog product id / `services.kind` |
 | `kind` on products | concrete `products.id` only |
-| `address_area` / `print_area` in layouts | `window` + `post_mark`; compose in app |
+| `address_area` / `print_area` / `post_mark` in layouts | `window` on layouts; mark size/placement on `marks.json`; compose in app |
 | `kind` as graph/prices keys | catalog `product_id` / `service_id` |
 | `productCode` in `execution.json` | `graph.edges.wire` |
 | `native_id` on product/service rows | `edges.wire` |
 | Compose blocks in `layouts.json` | `formats/addresses.json` |
+| `city` on address forms | `locality` (UPU) |
 
 ## Severity
 
@@ -76,7 +76,7 @@ If a PR adds `sys.path` mutation under `scripts/**` or `cli/**`:
 If changed JSON under `porto_data/**` is minified, not 2-space indented, or keys reshuffled without need:
 
 - **Title:** `JSON formatting or key-order drift`
-- **Body:** `Keep 2 spaces, preserve key order, format with make format-json or scripts/format_json_file.py.`
+- **Body:** `Keep 2 spaces, preserve key order, format with make format or scripts/format_json_file.py.`
 - **Labels:** `maintainability`
 
 ### 7) User-visible contract changes → changelog (non-blocking)
@@ -99,7 +99,7 @@ If new/changed code adds `TODO` or `FIXME` without an issue reference (`#123`, `
 
 ## Data consistency and resolution
 
-These rules align reviews with validators under `scripts/validators/` and **`make validate`** (same order as **`porto validate`**: schema → mappings → markets → addresses → limits → kinds → delivery → graph). Graph logic lives in package **`scripts/validators/graph/`** (not a single `graph.py` file).
+These rules align reviews with validators under `scripts/validators/` and **`make validate`** (same order as **`porto validate`**: schema → mappings → markets → addresses → kinds → delivery → graph). Graph logic lives in package **`scripts/validators/graph/`** (not a single `graph.py` file).
 
 ### 9) Graph uses `edges` and `services`, not legacy keys (blocking)
 
@@ -151,10 +151,10 @@ If a PR changes **`porto_data/schemas/graph.schema.json`**, **`markets.schema.js
 
 ### 15) Markets must be validated in CI (blocking)
 
-If a PR changes validation tooling or **`.github/workflows/validation.yml`** and the workflow runs mappings / limits / kinds / graph but **not** `porto validate --type markets` (or equivalent **`validate-markets`** job) or **not** `porto validate --type addresses` (or equivalent **`validate-addresses`** job):
+If a PR changes validation tooling or **`.github/workflows/validation.yml`** and the workflow runs mappings / kinds / graph but **not** `porto validate --type markets` (or equivalent **`validate-markets`** job) or **not** `porto validate --type addresses` (or equivalent **`validate-addresses`** job):
 
 - **Title:** `CI skips markets or addresses validation`
-- **Body:** `make validate and pre-commit include markets then addresses between mappings and limits. Add validate-markets and validate-addresses jobs so policy/markets.json and formats/addresses.json cannot drift silently.`
+- **Body:** `make validate and pre-commit include markets then addresses between mappings and kinds. Add validate-markets and validate-addresses jobs so policy/markets.json and formats/addresses.json cannot drift silently.`
 - **Labels:** `ci`, `consistency`
 
 ### 16) Markets validator must cover all registry providers (blocking)
@@ -165,15 +165,7 @@ If **`scripts/validators/markets.py`** (or equivalent) iterates only a fixed pro
 - **Body:** `Every providers.json entry with a country must have a matching markets[CC] row; walk the full registry, not a hard-coded subset.`
 - **Labels:** `data`, `consistency`
 
-### 17) Do not require rows in empty limits.json (non-blocking)
-
-If a review comment treats **`limits[]`: []** or **`frameworks`: {}** in **`providers/*/limits.json`** as incomplete or missing compliance data:
-
-- **Title:** `Empty limits.json is intentional`
-- **Body:** `Sanctions and destination regimes belong in policy/restrictions.json. limits.json is an optional provider overlay slot; empty is the expected steady state until a citable operator letter rule is modeled.`
-- **Labels:** `docs`, `consistency`
-
-### 18) VAT and currency belong in markets, not providers.json (blocking)
+### 17) VAT and currency belong in markets, not providers.json (blocking)
 
 If a PR adds **`vat`** or per-provider default currency fields to **`providers.json`** instead of **`policy/markets.json`**:
 
@@ -194,7 +186,7 @@ If a PR adds or keeps **`intl_ccy`**, **`intl_excl`**, top-level **`vat.inclusiv
 If a PR adds a **new** catalog product or service `id` ending in **`_intl`** (Porto-assigned naming; carrier tokens like `inter_r` are OK):
 
 - **Title:** `Catalog id uses deprecated _intl suffix`
-- **Body:** `Catalog ids must be local-language slugs of the operator display name (see docs/provider-template.md). Avoid English semantic ids and abbreviated locale tokens. _intl suffix is deprecated for new ids. Enforced in scripts/validators/kinds.py.`
+- **Body:** `Catalog ids must be local-language slugs of the operator display name (see docs/template.md). Avoid English semantic ids and abbreviated locale tokens. _intl suffix is deprecated for new ids. Enforced in scripts/validators/kinds.py.`
 - **Labels:** `data`, `consistency`
 
 ### 21) Market row key order (non-blocking)
@@ -242,7 +234,7 @@ If a PR changes **`kinds.schema.json`**, any **`services.json`** / **`features.j
 If a PR adds or restores layout or format fields that describe **addressing workflow**, **sender/recipient placement**, **printable regions**, or other **app compose** concerns — e.g. **`address_area`**, **`print_area`**, `margins_mm` derived from invented print zones, or product fields that duplicate UI resolution:
 
 - **Title:** `Workflow semantics leaked into catalog JSON`
-- **Body:** `porto-data owns factual geometry (layouts: window, post_mark, standard) and tariff facts. Compose and addressing belong in SDK/app. Do not reintroduce removed layout zones or invent catalog fields to shortcut resolution.`
+- **Body:** `porto-data owns factual geometry (layouts: window + standard; marks: size, placement, optional clearance) and tariff facts. Compose and addressing belong in the consumer. Do not reintroduce removed layout zones, post_mark anchors, or invent catalog fields to shortcut composition.`
 - **Labels:** `data`, `architecture`, `consistency`
 
 ### 27) Cross-layer identifier misuse (blocking)
@@ -348,5 +340,5 @@ If a PR adds or changes **`formats/addresses.json`** / **`formats/layouts.json`*
 - lets **`standard`** disagree with **`layouts.json`** for a jurisdiction that has layouts:
 
 - **Title:** `Address forms misplaced or unvalidated`
-- **Body:** `Forms (street/post_box, postcode pattern) live in formats/addresses.json. Layouts keep window/post_mark/standard only. Sparse jurisdictions; layout standard match when layouts[CC] exists. CI: porto validate --type addresses. See docs/formats.md and docs/identity.md.`
+- **Body:** `Forms (street/post_box, postal_code pattern, locality — not city) live in formats/addresses.json. Layouts keep window/standard only (shared or jurisdiction-standard facts). Mark placement lives on marks.json. Sparse jurisdictions; layout standard match when layouts[CC] exists. CI: porto validate --type addresses. See docs/formats.md and docs/identity.md.`
 - **Labels:** `data`, `architecture`, `consistency`

@@ -1,29 +1,27 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/restrictions.schema.json",
-  "title": "Restrictions Schema",
-  "description": "Global destination restrictions (file: policy/restrictions.json). Grouped by ISO 3166-1 alpha-2 under destinations[].country_code. Per destination, restrictions holds only non-empty EU, UN, and/or CH arrays (sender legal lens); omit empty buckets. Each item: id, reason, notes, optional region_code (ISO 3166-2) and optional description, status, reference (URL or null), effective_from / effective_to, optional partial. Sender blocs: policy/jurisdictions.json. Operator overlays: providers/<id>/limits.json.",
+  "title": "Restrictions schema",
+  "description": "Durable destination restrictions (file: policy/restrictions.json). Collections legal and routing are objects keyed by ISO 3166-1 alpha-2, then optional regions keyed by ISO 3166-2. No record id. Legal jurisdictions are a map of jurisdictions.json identifiers (EU|CH|UA) to instrument arrays (reference, effective_from, optional effective_to). Legal rows also carry short human-readable reason/description (not political labels). Routing keeps authority/reference/reason/description and must not have jurisdictions. Machine impact (block|warn) is resolved by the SDK, not stored here. Load fails closed if a required field is missing.",
   "type": "object",
+  "additionalProperties": false,
   "required": [
     "file_type",
     "unit",
-    "sources",
-    "disclaimer",
-    "destinations"
+    "disclaimer"
   ],
   "properties": {
     "$schema": {
       "type": "string",
-      "format": "uri",
-      "description": "JSON Schema URI reference"
+      "format": "uri"
     },
     "file_type": {
       "type": "string",
-      "const": "restrictions",
-      "description": "File type identifier"
+      "const": "restrictions"
     },
     "unit": {
       "type": "object",
+      "additionalProperties": false,
       "required": [
         "country_code",
         "date"
@@ -37,144 +35,229 @@
           "type": "string",
           "const": "ISO 8601"
         }
-      },
-      "additionalProperties": false
-    },
-    "sources": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "description": "List of information sources"
+      }
     },
     "disclaimer": {
       "type": "string",
-      "description": "Legal disclaimer text"
+      "minLength": 1
     },
-    "destinations": {
-      "type": "array",
-      "minItems": 1,
-      "description": "Countries with restriction rows split by jurisdiction bucket (EU, UN, CH).",
-      "items": {
-        "type": "object",
-        "required": [
-          "country_code",
-          "restrictions"
-        ],
-        "additionalProperties": false,
-        "properties": {
-          "country_code": {
-            "type": "string",
-            "pattern": "^[A-Z]{2}$",
-            "description": "ISO 3166-1 alpha-2; rows below apply to this state/territory code."
-          },
-          "restrictions": {
-            "type": "object",
-            "minProperties": 1,
-            "additionalProperties": false,
-            "description": "Non-empty arrays only: include EU, UN, and/or CH keys when that jurisdiction has rows; omit empty buckets entirely.",
-            "properties": {
-              "EU": {
-                "type": "array",
-                "minItems": 1,
-                "items": {
-                  "$ref": "#/definitions/jurisdiction_restriction_item"
-                }
-              },
-              "UN": {
-                "type": "array",
-                "minItems": 1,
-                "items": {
-                  "$ref": "#/definitions/jurisdiction_restriction_item"
-                }
-              },
-              "CH": {
-                "type": "array",
-                "minItems": 1,
-                "items": {
-                  "$ref": "#/definitions/jurisdiction_restriction_item"
-                }
-              }
-            }
-          }
-        }
-      }
+    "legal": {
+      "$ref": "#/definitions/legalMap"
+    },
+    "routing": {
+      "$ref": "#/definitions/routingMap"
     }
   },
   "definitions": {
-    "jurisdiction_restriction_item": {
+    "countryKey": {
+      "type": "string",
+      "pattern": "^[A-Z]{2}$"
+    },
+    "regionKey": {
+      "type": "string",
+      "pattern": "^[A-Z]{2}-[A-Z0-9]{1,3}$"
+    },
+    "instrument": {
       "type": "object",
-      "required": [
-        "id",
-        "reason",
-        "notes",
-        "status",
-        "reference",
-        "effective_from",
-        "effective_to"
-      ],
       "additionalProperties": false,
+      "required": [
+        "reference",
+        "effective_from"
+      ],
       "properties": {
-        "id": {
-          "type": "string",
-          "minLength": 1,
-          "description": "Stable id for this row; unique per destinations[].country_code + jurisdiction bucket (EU|UN|CH). Same id may repeat in another bucket (e.g. EU vs CH)."
-        },
-        "region_code": {
-          "type": "string",
-          "description": "ISO 3166-2 when restriction is sub-national; omit for country-wide row."
-        },
-        "reason": {
-          "type": "string"
-        },
-        "description": {
-          "type": "string"
-        },
-        "notes": {
-          "type": "string"
-        },
-        "areas": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "partial": {
-          "type": "boolean"
-        },
-        "status": {
-          "type": "string",
-          "enum": [
-            "restricted",
-            "limited",
-            "prohibited",
-            "severe",
-            "operational"
-          ]
-        },
         "reference": {
           "type": [
             "string",
             "null"
-          ],
-          "description": "Primary official URL for this row; null if policy-only."
+          ]
         },
         "effective_from": {
           "type": [
             "string",
             "null"
           ],
-          "format": "date"
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
         },
         "effective_to": {
           "type": [
             "string",
             "null"
           ],
-          "format": "date"
+          "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
         }
       }
+    },
+    "instruments": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/definitions/instrument"
+      }
+    },
+    "jurisdictionMap": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": false,
+      "properties": {
+        "EU": {
+          "$ref": "#/definitions/instruments"
+        },
+        "CH": {
+          "$ref": "#/definitions/instruments"
+        },
+        "UA": {
+          "$ref": "#/definitions/instruments"
+        }
+      }
+    },
+    "geoRegion": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "partial": {
+          "type": "boolean",
+          "const": true
+        }
+      }
+    },
+    "legalRegion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "jurisdictions",
+        "reason",
+        "description"
+      ],
+      "properties": {
+        "partial": {
+          "type": "boolean",
+          "const": true
+        },
+        "jurisdictions": {
+          "$ref": "#/definitions/jurisdictionMap"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "legalRegions": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {
+        "$ref": "#/definitions/regionKey"
+      },
+      "additionalProperties": {
+        "$ref": "#/definitions/legalRegion"
+      }
+    },
+    "geoRegions": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {
+        "$ref": "#/definitions/regionKey"
+      },
+      "additionalProperties": {
+        "$ref": "#/definitions/geoRegion"
+      }
+    },
+    "legalCountryRegional": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "regions"
+      ],
+      "properties": {
+        "regions": {
+          "$ref": "#/definitions/legalRegions"
+        }
+      }
+    },
+    "legalCountryWide": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "jurisdictions",
+        "reason",
+        "description"
+      ],
+      "properties": {
+        "jurisdictions": {
+          "$ref": "#/definitions/jurisdictionMap"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "legalCountry": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/legalCountryRegional"
+        },
+        {
+          "$ref": "#/definitions/legalCountryWide"
+        }
+      ]
+    },
+    "routingCountry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authority",
+        "reference",
+        "reason",
+        "description"
+      ],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reference": {
+          "type": "string",
+          "minLength": 1
+        },
+        "regions": {
+          "$ref": "#/definitions/geoRegions"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "legalMap": {
+      "type": "object",
+      "propertyNames": {
+        "$ref": "#/definitions/countryKey"
+      },
+      "additionalProperties": {
+        "$ref": "#/definitions/legalCountry"
+      }
+    },
+    "routingMap": {
+      "type": "object",
+      "propertyNames": {
+        "$ref": "#/definitions/countryKey"
+      },
+      "additionalProperties": {
+        "$ref": "#/definitions/routingCountry"
+      }
     }
-  },
-  "additionalProperties": false
+  }
 }

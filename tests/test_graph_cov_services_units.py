@@ -7,6 +7,7 @@ from scripts.validators.base import ValidationResults
 from scripts.validators.graph.services import (
     get_service_by_ref,
     run_validate_graph_services,
+    run_validate_service_price_zones,
     run_validate_service_prices,
     service_refs_set,
 )
@@ -44,6 +45,112 @@ class TestServicesHelpersCoverage:
         run_validate_graph_services(r, graph=graph, services=services, service_prices=prices)
         assert any("ghost" in e for e in r["errors"])
         assert any("real" in w and "no row" in w for w in r["warnings"])
+
+    def test_zoned_service_prices_cover_supported_zones(self) -> None:
+        r = _empty_results()
+        graph = {"services": ["einschreiben"]}
+        services = {
+            "services": [
+                {
+                    "id": "einschreiben",
+                    "supported_zones": ["domestic", "world"],
+                }
+            ]
+        }
+        prices = [
+            {"service_id": "einschreiben", "zone": "domestic", "price": [{"amount": 265}]},
+            {"service_id": "einschreiben", "price": [{"amount": 265}]},
+        ]
+        run_validate_graph_services(
+            r,
+            graph=graph,
+            services=services,
+            service_prices=prices,
+            zone_ids={"domestic", "world"},
+        )
+        assert any("mixes unzoned and zoned" in e for e in r["errors"])
+
+    def test_zoned_service_prices_missing_supported_zone(self) -> None:
+        r = _empty_results()
+        graph = {"services": ["einschreiben"]}
+        services = {
+            "services": [
+                {
+                    "id": "einschreiben",
+                    "supported_zones": ["domestic", "world"],
+                }
+            ]
+        }
+        prices = [
+            {"service_id": "einschreiben", "zone": "domestic", "price": [{"amount": 265}]},
+        ]
+        run_validate_graph_services(
+            r,
+            graph=graph,
+            services=services,
+            service_prices=prices,
+            zone_ids={"domestic", "world"},
+        )
+        assert any("missing service_prices" in e and "world" in e for e in r["errors"])
+
+    def test_service_price_zones_skips_non_dict_and_empty_id(self) -> None:
+        r = _empty_results()
+        run_validate_service_price_zones(
+            r,
+            services={"services": [{"id": "s1", "supported_zones": ["domestic"]}]},
+            service_prices=["skip", {}, {"service_id": "s1"}],
+            zone_ids={"domestic"},
+        )
+        assert r["errors"] == []
+
+    def test_service_price_zones_duplicate_key(self) -> None:
+        r = _empty_results()
+        run_validate_service_price_zones(
+            r,
+            services={"services": [{"id": "s1", "supported_zones": ["domestic"]}]},
+            service_prices=[
+                {"service_id": "s1", "zone": "domestic"},
+                {"service_id": "s1", "zone": "domestic"},
+            ],
+            zone_ids={"domestic"},
+        )
+        assert any("Duplicate service_prices key" in e for e in r["errors"])
+
+    def test_service_price_zones_unknown_zone_id(self) -> None:
+        r = _empty_results()
+        run_validate_service_price_zones(
+            r,
+            services={"services": [{"id": "s1", "supported_zones": ["ghost"]}]},
+            service_prices=[{"service_id": "s1", "zone": "ghost"}],
+            zone_ids={"domestic"},
+        )
+        assert any("not in" in e and "ghost" in e for e in r["errors"])
+
+    def test_service_price_zones_two_unzoned_rows(self) -> None:
+        r = _empty_results()
+        run_validate_service_price_zones(
+            r,
+            services={"services": [{"id": "s1"}]},
+            service_prices=[
+                {"service_id": "s1", "price": [{"amount": 1}]},
+                {"service_id": "s1", "price": [{"amount": 2}]},
+            ],
+            zone_ids={"domestic"},
+        )
+        assert any("more than one unzoned" in e for e in r["errors"])
+
+    def test_service_price_zones_extra_zone_not_supported(self) -> None:
+        r = _empty_results()
+        run_validate_service_price_zones(
+            r,
+            services={"services": [{"id": "s1", "supported_zones": ["domestic"]}]},
+            service_prices=[
+                {"service_id": "s1", "zone": "domestic"},
+                {"service_id": "s1", "zone": "world"},
+            ],
+            zone_ids={"domestic", "world"},
+        )
+        assert any("not in services[].supported_zones" in e for e in r["errors"])
 
     def test_service_price_consistency_branches(self) -> None:
         r = _empty_results()
