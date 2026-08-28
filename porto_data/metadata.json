@@ -5,7 +5,7 @@
     "version": "0.6.0",
     "description": "Multi-provider postal JSON: operator catalogs, pricing, shared policy (markets, restrictions), and schemas"
   },
-  "generated_at": "2026-08-28T15:01:50.075424Z",
+  "generated_at": "2026-08-28T15:22:30.750827Z",
   "policy": {
     "jurisdictions": {
       "data": {
@@ -108,8 +108,8 @@
       "marks": {
         "data": {
           "path": "providers/deutschepost/marks.json",
-          "checksum": "e4ebe6487a0389d5758dc2e6d96087c1df686f35b8397284041627743b3f7a5c",
-          "size": 3383
+          "checksum": "18d8d7364f1ba01e721da25dc8f1354ffc58649f40fe7350a5314d46fb54607f",
+          "size": 3379
         },
         "schema": {
           "path": "schemas/marks.schema.json",
@@ -359,8 +359,8 @@
       "marks": {
         "data": {
           "path": "providers/laposte/marks.json",
-          "checksum": "1f760691a58b234a4d2cef94156183c2b69bd7dc3fe980a5216b0be76980e1c6",
-          "size": 1660
+          "checksum": "32f142eee202dd1ed6379dd08b18ec293ba03f9b077a35f56a2aa7a2ff2205ea",
+          "size": 1656
         },
         "schema": {
           "path": "schemas/marks.schema.json",
