@@ -7,7 +7,7 @@
       "kind": "tracking",
       "name": "A-Mail Plus",
       "label": "Tracked letter with next-day domestic delivery (A-Mail Plus)",
-      "description": "Premium domestic letter with electronic tracking; orderable online where Swiss Post offers it (e.g. WebStamp). International letters in this catalog use untracked products unless the operator adds a supported service.",
+      "description": "Domestic letter with next-business-day delivery and electronic tracking (A-Mail Plus).",
       "features": [
         "sendungsnummer"
       ],
@@ -20,7 +20,7 @@
       "kind": "thickness",
       "name": "Zuschlag Dicke",
       "label": "Letter thickness surcharge (>2 cm up to 5 cm)",
-      "description": "Rule-attached surcharge when thickness > 20 mm and <= 50 mm for domestic A/B letters; not user-selectable. Amount in prices/services.json.",
+      "description": "Surcharge for domestic A/B letters thicker than 2 cm and up to 5 cm.",
       "features": [
         "brief_dicke_band"
       ],

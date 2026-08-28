@@ -9,7 +9,7 @@
       "id": "domestic_letter_thickness",
       "kind": "band_attach",
       "metric": "thickness",
-      "description": "Swiss Post A/B Mail domestic letters: thickness > 2 cm and <= 5 cm incurs surcharge per post.ch footnotes (verify live tariff). Amount in prices/services.json. Zone scope follows graph.edges for each product_id.",
+      "description": "Domestic A/B Mail letters thicker than 2 cm and up to 5 cm incur a thickness surcharge.",
       "product_ids": [
         "a_post_standardbrief",
         "a_post_grossbrief",

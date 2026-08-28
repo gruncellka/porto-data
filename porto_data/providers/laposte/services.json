@@ -7,7 +7,7 @@
       "kind": "tracking",
       "name": "Option suivi (add-on)",
       "label": "Optional tracking add-on",
-      "description": "Optional tracking when posting Lettre verte without using Lettre verte suivie (e.g. Mon Timbre en ligne). Catalog uses a nominal add-on row; verify current fee on laposte.fr.",
+      "description": "Optional tracking add-on for Lettre verte (domestic).",
       "features": [
         "numero_suivi"
       ],
@@ -20,7 +20,7 @@
       "kind": "return_receipt",
       "name": "Avis de réception (national)",
       "label": "Return receipt add-on (France)",
-      "description": "Optional avis de réception papier national, priced per official Lettre recommandée table (laposte.fr tarifs 2026). Add to a recommandée base product when the purchase flow offers it.",
+      "description": "Paper return receipt (avis de réception) for domestic registered mail.",
       "features": [
         "avis_reception"
       ],
@@ -33,7 +33,7 @@
       "kind": "return_receipt",
       "name": "Avis de réception (international)",
       "label": "Return receipt add-on (international)",
-      "description": "Optional avis de réception for international registered letter, per official 2026 tariff table.",
+      "description": "Return receipt (avis de réception) for international registered mail.",
       "features": [
         "avis_reception"
       ],

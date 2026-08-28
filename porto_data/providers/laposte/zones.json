@@ -18,7 +18,7 @@
       "id": "zone_1_eu",
       "name": "Zone 1 - EU",
       "label": "Zone 1 - EU",
-      "description": "European Union member countries (for France-origin international letters). Switzerland and other non-EU European states are in zone_2_europe.",
+      "description": "European Union member countries.",
       "country_codes": [
         "AT",
         "BE",
@@ -51,7 +51,7 @@
       "id": "zone_2_europe",
       "name": "Zone 2 - Europa",
       "label": "Zone 2 - Europe",
-      "description": "European countries outside the EU (e.g. CH, NO, GB). Switzerland is not an EU member and is priced here when posting from France.",
+      "description": "European countries outside the EU (e.g. CH, NO, GB).",
       "country_codes": [
         "AL",
         "AD",

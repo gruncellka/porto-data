@@ -1,7 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/gruncellka/porto-data/refs/heads/main/porto_data/schemas/jurisdictions.schema.json",
   "file_type": "jurisdictions",
-  "description": "Reference data for restriction resolver: symbolic blocs EU and UN (members + timezone) plus per-country entries (ISO 3166-1 alpha-2 uppercase key, timezone + country_code_3). Switzerland uses key CH only (no separate CH bloc). providers.json country resolves timezone via jurisdictions[COUNTRY].timezone. Per-country timezones are maintained in-repo (typically CLDR-aligned IANA ids).",
+  "description": "EU and UN membership blocs plus per-country time zones and ISO country codes.",
   "unit": {
     "country_code": "ISO 3166-1 alpha-2",
     "region_code": "ISO 3166-2",

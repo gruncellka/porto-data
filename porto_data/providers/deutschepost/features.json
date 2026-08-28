@@ -35,7 +35,7 @@
       "kind": "delivery_proof",
       "name": "Zustellnachweis",
       "label": "Proof of delivery",
-      "description": "Derived from tracking status; not a separate API capability"
+      "description": "Proof that the item was delivered"
     }
   ]
 }
