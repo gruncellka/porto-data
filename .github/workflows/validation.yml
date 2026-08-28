@@ -2,9 +2,12 @@ name: validation
 
 on:
     push:
+        branches:
+            - '**'
+    workflow_call:
 
 concurrency:
-    group: ${{ github.workflow }}-${{ github.ref_name }}
+    group: validation-${{ github.ref_name }}
     cancel-in-progress: true
 
 permissions:
