@@ -23,10 +23,10 @@ def envelope_rect_on_face(
     """True if complete rect sits on the envelope face (origin top-left)."""
     if not envelope_rect_complete(r):
         return False
-    x = r["x"]
-    y = r["y"]
-    w = r["width"]
-    h = r["height"]
+    x = int(r["x"])
+    y = int(r["y"])
+    w = int(r["width"])
+    h = int(r["height"])
     return x >= 0 and y >= 0 and x + w <= width and y + h <= height
 
 
