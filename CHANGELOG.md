@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-08-28
+
 ### Added
 
 - **`jurisdictions[].country_code_3`:** ISO 3166-1 alpha-3 on every per-country row (companion to the alpha-2 map key); required in `jurisdictions.schema.json`. Blocs `EU` / `UN` stay members + timezone only.
