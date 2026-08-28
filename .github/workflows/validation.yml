@@ -1,7 +1,3 @@
-# Porto Data validation. Leaf jobs map to Make: schema, format, lint, types, test,
-# mappings, markets, addresses, kinds, delivery, graph, metadata.
-# Aggregator job `validate` is the branch-protection check.
-
 name: validation
 
 on:
