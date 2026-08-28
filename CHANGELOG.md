@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- **`jurisdictions[].country_code_3`:** ISO 3166-1 alpha-3 on every per-country row (companion to the alpha-2 map key); required in `jurisdictions.schema.json`. Blocs `EU` / `UN` stay members + timezone only.
 - **`service_prices[].zone`:** optional zone id so add-on amounts can vary by zone (same join as `product_prices`). Deutsche Post `einschreiben`: 265 domestic, 370 on `zone_1_eu` / `zone_2_europe` / `world`. Omit `zone` when one amount covers every `supported_zones` entry.
 - **`marks.placement.envelopes`:** per-envelope franking rectangle (mm, origin top-left). Deutsche Post Internetmarke **74×40** from top-right (Frankiervermerk-Merkblatt / IM FAQ). La Poste MTEL **74×40** from top-right (Guide pratique courrier — La Poste original, not copied from DE). Swiss Post WebStamp **74×38** from top-right (post.ch couvert templates); size⊆placement is skipped for Swiss while catalog stamp **40×40** is nominal. Ukrposhta eCom **omits** placement (label, not an envelope-face stamp). Optional **`profiles[].clearance`** (mm around the graphic); omit unless the operator requires it for that graphic. No `tolerance`.
 - **`layouts.UA`:** ДСТУ 3876-99 window facts (C6/DL/C5 **90×45** bottom-right; C4/B4 no window). Address `UA.standard` is **`DSTU3876`**.
