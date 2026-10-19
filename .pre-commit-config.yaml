@@ -5,9 +5,19 @@
 
 fail_fast: true
 
+default_install_hook_types: [pre-commit, commit-msg]
+
 repos:
     - repo: local
       hooks:
+          - id: commit-msg-length
+            name: commit message length
+            entry: .githooks/commit-msg
+            language: system
+            pass_filenames: true
+            always_run: true
+            stages: [commit-msg]
+
           - id: schema
             name: schema
             entry: bash -c 'if [ -f venv/bin/activate ]; then . venv/bin/activate; fi && PYTHONPATH=. python -m cli.main validate --type schema'

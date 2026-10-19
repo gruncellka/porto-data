@@ -67,7 +67,7 @@ Disambiguation when multiple products share zone + weight: [docs/resolution.md](
 1. Edit JSON and/or schemas.
 2. `make validate`, then `make format` (or `make quality` for the full local gate).
 3. If hooks regenerate **`porto_data/metadata.json`** or **`docs/kinds.md`**, include those files in the commit.
-4. Commit.
+4. Commit. Subject prefer ≤50 characters, hard max 72. Optional body after a blank line, wrap at 72. `.githooks/commit-msg` rejects a subject or body line over 72, a body that does not follow a blank line, and a trailing period. Re-run `make install-hooks` once so an existing clone picks up that hook.
 
 ## Commands
 
