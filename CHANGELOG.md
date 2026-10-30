@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Docs
+
+- Clearance hub: DE Frankierzone 74×40 verified; IM sizes measured; clearance omitted; no catalog invent.
+
 ## [0.7.0] - 2026-08-28
 
 ### Added

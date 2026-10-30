@@ -2,7 +2,7 @@
 
 One-page map of **who names what** across **porto-data** (JSON + schemas) and **carrier APIs**. This repo has **no resolver**.
 
-**See also:** [id.md](id.md) · [marks.md](marks.md) · [resolution.md](resolution.md)
+**See also:** [id.md](id.md) · [marks.md](marks.md) · [clearance/README.md](clearance/README.md) · [resolution.md](resolution.md)
 
 ---
 

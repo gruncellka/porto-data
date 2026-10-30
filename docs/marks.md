@@ -19,8 +19,8 @@ Display-only: `marks.profiles[].label` — operator-facing text in `marks.json`.
 
 | File | Fields |
 |------|--------|
-| `marks.json` → `profiles[]` | `id`, `type` (`stamp` \| `label`), `size` (mm), `mime_type`; optional `requires`; optional `clearance` (mm around the graphic) |
-| `marks.json` → `placement.envelopes` | Allowed franking **area** per envelope `id` (`x`, `y`, `width`, `height` mm, origin top-left). Omit when the operator has no envelope-face zone (e.g. Ukrposhta eCom label). |
+| `marks.json` → `profiles[]` | `id`, `type` (`stamp` \| `label`), `size` (mm), `mime_type`; optional `requires`; optional `clearance` (mm **around the graphic** only — not edge silence) |
+| `marks.json` → `placement.envelopes` | Operator **franking zone** per envelope `id` (`x`, `y`, `width`, `height` mm, origin top-left). Reserved area — **not** automatic free placement of every graphic inside it. Omit when the operator has no envelope-face zone (e.g. Ukrposhta eCom label). |
 | `marks.json` → `calibrations[]` | Optional checkout output dimensions: `wire` × `mark_profile` (provider layout token) × dpi; franking sizes keyed by Porto profile id in `by_mark_profile`. Measured from real order artifacts — not placement, not clearance. |
 | `marks.json` → `default_profile` | Fallback when `graph.edges.marks` omits a zone |
 | `graph.json` → `edges.marks` | Per zone: `profile` + optional `services` overrides |
@@ -77,7 +77,7 @@ Service keys are catalog **`id`** values from `graph.services` / `services.json`
 
 ## Per-provider mark tables
 
-Operator-specific profile matrices, measured sizes, and adapter calibrations live in **`docs/providers/<id>.md`** (not here).
+Operator-specific profile matrices, measured sizes, and adapter calibrations live in **`docs/providers/<id>.md`** (not here). Public franking-zone / edge-silence evidence vs catalog fields: [clearance/README.md](clearance/README.md).
 
 | Provider | Doc |
 |----------|-----|
@@ -88,6 +88,7 @@ Operator-specific profile matrices, measured sizes, and adapter calibrations liv
 
 ## See also
 
+- [clearance/README.md](clearance/README.md) — franking zone / clearance evidence (Deutsche Post focus; no invent)
 - [resolution.md](resolution.md) — product disambiguation via `graph.edges.products`
 - [id.md](id.md) — catalog identity and `kind` vocabulary
 - `porto_data/schemas/marks.schema.json` · `porto_data/schemas/graph.schema.json`

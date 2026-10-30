@@ -95,7 +95,7 @@ Reference for **reconciling JSON with official letter/postcard tariffs** (not a 
 
 ## Mark profiles & Internetmarke calibrations
 
-Cross-provider resolution rules: [marks.md](../marks.md).
+Cross-provider resolution rules: [marks.md](../marks.md). Public clearance matrix: [clearance/README.md](../clearance/README.md).
 
 ### Zone × service → profile
 
@@ -107,6 +107,18 @@ Cross-provider resolution rules: [marks.md](../marks.md).
 | `world` | `einschreiben` | `registered_international` |
 
 Mapped in `graph.json` → `edges.marks`; catalog sizes in `marks.json` → `profiles[]`.
+
+### Envelope franking placement
+
+[clearance/README.md](../clearance/README.md)
+
+| Field | Catalog | Confidence |
+|-------|---------|------------|
+| `placement` | **74×40** TR flush (`x = face−74`, `y: 0`) on DL/C6/C5/C4/B4 | **verified** — Frankiervermerk-Merkblatt / automation PDF |
+| `size` | 37×20 · 62×20 · 62×33 | **measured** — IM calibrations (reg-intl cal **32.5** vs profile **33**) |
+| `clearance` | omit | IM FAQ has no mm; Frankierwelle **5 mm** “sollte” is **not** IM clearance |
+
+Zone = reserved area, not free drag, not flush-to-edge mandate. Composition inset stays in Licko (fit-check per profile).
 
 ### Internetmarke checkout calibrations
 
